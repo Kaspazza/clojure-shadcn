@@ -1,0 +1,14 @@
+{:deps {:aliases [:cljs-dev]}
+
+ :nrepl {:port 8777 :middleware [cider.piggieback/wrap-cljs-repl]}
+
+ :builds
+ {;; Storybook stories — compiled to :npm-module format so Storybook's Vite
+  ;; bundler can import them. Run with: bb watch-stories
+  ;; Then in a second terminal: bb storybook (or bb dev for both)
+  :stories
+  {:target       :npm-module
+   :output-dir   "cljs-stories"
+   :ns-regexp    "stories$"
+   :devtools     {:enabled false}
+   :build-hooks  [(clojure-shadcn.stories.helpers.bridge-gen/flush)]}}}

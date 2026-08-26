@@ -1,0 +1,24 @@
+# Clojure
+.cpcache/
+.lsp/
+.clj-kondo/.cache/
+target/
+classes/
+
+# Shadow-CLJS
+.shadow-cljs/
+node_modules/
+out/
+
+# Build output
+cljs-stories/
+stories/js/
+storybook-static/
+resources/public/css/
+public/
+
+# Misc
+.nrepl-port
+*.log
+.DS_Store
+calva/

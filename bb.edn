@@ -1,0 +1,34 @@
+;; clojure-shadcn — bb tasks
+;;
+;; Dev workflow:
+;;   bb dev           — stories watcher + Storybook dev server
+;;   bb watch-stories — shadow-cljs stories watcher only
+;;   bb build-storybook — static site into storybook-static/
+
+{:tasks
+ {dev
+  {:doc "Full dev environment: shadow-cljs stories watcher + Storybook"
+   :task (let [futures [(future (shell "npx shadow-cljs watch stories"))
+                        (future (shell "npx storybook dev -p 6010"))]]
+           (doseq [f futures] (deref f)))}
+
+  watch-stories
+  {:doc "Watch and compile CLJS stories only"
+   :task (shell "npx shadow-cljs watch stories")}
+
+  compile-stories
+  {:doc "One-shot compile of CLJS stories (generates ESM bridges)"
+   :task (shell "npx shadow-cljs compile stories")}
+
+  storybook
+  {:doc "Run Storybook dev server on port 6010"
+   :task (shell "npx storybook dev -p 6010")}
+
+  build-storybook
+  {:doc "Build static Storybook site into storybook-static/"
+   :task (do (shell "npx shadow-cljs compile stories")
+             (shell "npx storybook build"))}
+
+  clean
+  {:doc "Remove build artifacts"
+   :task (shell "rm -rf .shadow-cljs cljs-stories stories/js storybook-static")}}}
