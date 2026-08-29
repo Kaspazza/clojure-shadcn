@@ -370,7 +370,7 @@
           "Grab the handle (⋮⋮) on the left and drag to reorder rows"]
          [sut/data-table {:columns @columns
                           :data (clj->js @data)
-                          :dnd-config {:get-row-id (fn [row] (.-id (.-original row)))
+                          :dnd-config {:get-row-id (fn [row] (.-id row))
                                        :on-drag-end move-row}
                           :initial-page-size 10}]]))))]))
 
@@ -445,7 +445,7 @@
          [sut/data-table {:columns @columns
                           :data (clj->js @data)
                           :render-sub-component render-sub-component
-                          :dnd-config {:get-row-id (fn [row] (.-id (.-original row)))
+                          :dnd-config {:get-row-id (fn [row] (.-id row))
                                        :on-drag-end move-row}
                           :initial-page-size 10}]]))))]))
 

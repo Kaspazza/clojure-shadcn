@@ -1,9 +1,9 @@
 (ns clojure-shadcn.ui.components.data-table
   "Data table component with sorting, filtering, pagination, and selection.
-  
+
   A comprehensive data table built on TanStack Table with full feature support:
   sorting, filtering, faceting, pagination, row selection.
-  
+
   All TanStack Table interactions happen in this component
 
 Version: 1.0.0
@@ -103,14 +103,14 @@ Custom component implementation."
 
 (defn- extract-toolbar-data
   "Extracts toolbar state and callbacks from table instance and config.
-  
+
   Transforms toolbar-config into a reactive data structure with callbacks
   for the toolbar-ui component. Handles both text filter and faceted filters.
-  
+
   Args:
   - toolbar-config: Map with :text-filter, :faceted-filters, :toolbar-end
   - table-instance: TanStack Table instance
-  
+
   Returns:
   Map with extracted state for toolbar-ui component."
   [toolbar-config table-instance]
@@ -181,12 +181,12 @@ Custom component implementation."
 
 (defn faceted-filter-ui
   "Data table faceted filter with multi-select support.
-  
+
   Pure UI component - receives all state and callbacks from parent.
   Displays a popover with a searchable command menu for selecting multiple filter values.
   Shows selected values as badges in the trigger button.
   Displays facet counts (number of rows with each value) when available.
-  
+
   Props:
   - `:title`            - Filter title to display in button and search placeholder (required)
   - `:options`          - Vector of filter option maps (required)
@@ -198,7 +198,7 @@ Custom component implementation."
   - `:on-change`        - Callback (fn [new-selected-set]) called when selection changes (required)
   - `:facet-counts`     - Map of value -> count for displaying facet counts (optional)
   Both kebab-case and camelCase prop spellings are accepted.
-  
+
   Features:
   - Multi-select with checkbox-style indicators
   - Search/filter options via command input
@@ -278,9 +278,9 @@ Custom component implementation."
 
 (defn toolbar-ui
   "Renders a toolbar for data tables with text search and faceted filters.
-  
+
   Pure UI component - receives all state and callbacks from parent.
-  
+
   Props:
   - `:text-filter-value`      - Current value for text search filter (string, optional)
   - `:on-text-filter-change`  - Callback (fn [value]) when search input changes (optional)
@@ -290,7 +290,7 @@ Custom component implementation."
   - `:on-reset-filters`       - Callback (fn []) called when reset button is clicked (optional)
   - `:toolbar-end`            - Component to render on the right side of toolbar (optional)
   Both kebab-case and camelCase prop spellings are accepted.
-  
+
   Faceted filter config shape:
   ```clojure
   {:title 'Status'                           ; Filter button label
@@ -335,14 +335,14 @@ Custom component implementation."
 
 (defn column-header-ui
   "Data table column header with sorting and visibility controls.
-  
+
   Pure UI component - receives all state and callbacks from parent.
-  
+
   Behavior:
   - If `:on-toggle-visibility` is provided: Shows dropdown menu with sort options and hide
   - Otherwise: Clicking cycles through sort states (unsorted → asc → desc → unsorted)
   - If column cannot be sorted: Renders simple div with title
-  
+
   Props:
   - `:title`                 - Column title to display (required)
   - `:can-sort?`             - Whether column supports sorting (default: false)
@@ -408,9 +408,9 @@ Custom component implementation."
 
 (defn- table-ui
   "Renders the table structure with headers and rows.
-  
+
   Pure UI component - all data is pre-extracted from table instance.
-  
+
   Props:
   - `:header-groups`     - Header groups from table instance (array)
   - `:rows`              - Row model rows from table instance (array)
@@ -505,15 +505,15 @@ Custom component implementation."
 
 (defn pagination-ui
   "Pagination controls for data table.
-  
+
   Pure UI component - receives all state and callbacks from parent.
-  
+
   Displays:
   - Selected rows count (left side)
   - Rows per page selector (10, 20, 25, 30, 40, 50)
   - Current page number and total pages
   - Navigation buttons (first, previous, next, last)
-  
+
   Props:
   - `:page-size`           - Current page size (number, required)
   - `:page-index`          - Current page index (0-based, number, required)
@@ -528,7 +528,7 @@ Custom component implementation."
   - `:on-next-page`        - Callback (fn []) to go to next page (optional)
   - `:on-last-page`        - Callback (fn []) to go to last page (optional)
   Both kebab-case and camelCase prop spellings are accepted.
-  
+
   The component automatically disables navigation buttons based on `:can-previous?` and `:can-next?`.
   First/last page buttons are hidden on mobile (< lg breakpoint) to save space."
   [{:as raw-props}]
@@ -606,10 +606,10 @@ Custom component implementation."
 
 (defc data-table
  "Comprehensive data table component with full TanStack Table integration.
-  
+
   This component manages all TanStack Table state and API interactions.
   Child components are pure UI that receive extracted state and callbacks.
-  
+
   Props:
   - `:columns`                    - Vector of TanStack Table column definitions (required)
   - `:data`                       - Vector of data rows (required)
@@ -622,7 +622,7 @@ Custom component implementation."
   - `:get-row-can-expand`         - Function (fn [row]) to determine if row can expand (optional, defaults to all rows expandable)
   - `:dnd-config`                 - Drag-and-drop configuration (optional)
   Both kebab-case and camelCase prop spellings are accepted.
-  
+
   Toolbar config shape:
   ```clojure
   {:text-filter {:column-id 'title'            ; Column to apply text search on
@@ -632,13 +632,13 @@ Custom component implementation."
                       :options [{:label 'Done' :value 'done'}]}]
    :toolbar-end (fn [table] ...)}              ; Optional custom content on right
   ```
-  
+
   Drag-and-drop config shape:
   ```clojure
   {:get-row-id (fn [row] ...)     ; Extract unique ID from row data (required)
    :on-drag-end (fn [active-id over-id] ...)}  ; Called when drag ends (required)
   ```
-  
+
   Features:
   - **Sorting**: Click column headers to sort (if configured in column def)
   - **Filtering**: Text search and multi-select faceted filters
@@ -668,6 +668,17 @@ Custom component implementation."
          [column-filters set-column-filters] (rhooks/use-state #js [])
          [sorting set-sorting] (rhooks/use-state #js [])
          [expanded set-expanded] (rhooks/use-state #js {})
+         ;; Normalize data rows to plain JS objects. TanStack reads cells via
+         ;; property access (e.g. `(.-original row)` returns the row object and
+         ;; accessors read `(.-id row)`); CLJS maps don't expose keyword keys
+         ;; as JS properties, so `(.-id nil)` crashes and map values render as
+         ;; opaque objects. Accept both CLJS vectors-of-maps and JS arrays.
+         data (rhooks/use-memo
+               (fn []
+                 (cond
+                   (and (array? data) (every? #(not (map? %)) data)) data
+                   :else (clj->js (vec data))))
+               #js [data])
          ;; Drag-and-drop setup - must be defined before table-config
          dnd-enabled? (some? dnd-config)
          get-row-id-fn (when dnd-enabled? (:get-row-id dnd-config))
@@ -698,7 +709,10 @@ Custom component implementation."
                                    :getFacetedRowModel (getFacetedRowModel)
                                    :getFacetedUniqueValues (getFacetedUniqueValues)
                                    :getExpandedRowModel (getExpandedRowModel)}]
-              ;; Add getRowId when drag-and-drop is enabled
+              ;; Add getRowId when drag-and-drop is enabled. TanStack calls
+              ;; getRowId with the *original data row*, and our other two call
+              ;; sites (dnd-row-ids, get-row-id below) also pass the raw data
+              ;; row — so get-row-id uniformly receives a plain JS data row.
               (when (and dnd-enabled? get-row-id-fn) (aset base-config "getRowId" get-row-id-fn))
               base-config))
           #js [data
@@ -749,7 +763,7 @@ Custom component implementation."
                      :render-sub-component render-sub-component
                      :dnd-enabled? dnd-enabled?
                      :dnd-row-ids dnd-row-ids
-                     :get-row-id (when dnd-enabled? (fn [row] (get-row-id-fn (.-original row))))}
+                     :get-row-id (when dnd-enabled? (fn [row] (get-row-id-fn row)))}
          table-content [:div {:class "flex min-h-0 flex-1 flex-col gap-4"}
                         (when toolbar-data [toolbar-ui toolbar-data])
                         [table-ui table-data]

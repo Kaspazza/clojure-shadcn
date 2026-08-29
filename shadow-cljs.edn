@@ -3,12 +3,14 @@
  :nrepl {:port 8777 :middleware [cider.piggieback/wrap-cljs-repl]}
 
  :builds
- {;; Storybook stories — compiled to :npm-module format so Storybook's Vite
-  ;; bundler can import them. Run with: bb watch-stories
-  ;; Then in a second terminal: bb storybook (or bb dev for both)
+ {;; Storybook stories — compiled to native ESM format for Storybook/Vite.
+  ;; `bb generate-story-modules` derives :modules from story sources and each
+  ;; workflow passes that generated config through shadow-cljs --config-merge.
   :stories
-  {:target       :npm-module
+  {:target       :esm
    :output-dir   "cljs-stories"
-   :ns-regexp    "stories$"
+   ;; Let Storybook/Vite resolve npm dependencies. In particular, Reagent and
+   ;; Storybook must use the same React instance for the hooks dispatcher.
+   :js-options   {:js-provider :import}
    :devtools     {:enabled false}
    :build-hooks  [(clojure-shadcn.stories.helpers.bridge-gen/flush)]}}}
