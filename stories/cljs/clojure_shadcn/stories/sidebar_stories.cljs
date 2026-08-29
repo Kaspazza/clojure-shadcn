@@ -5,9 +5,7 @@
    [clojure-shadcn.stories.helpers       :as helpers]
    [clojure-shadcn.ui.components.sidebar :as sut]
    [reagent.core                           :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Sidebar"
@@ -24,10 +22,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/sidebar.cljs"
               :filename "sidebar.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "sidebar_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -154,7 +152,7 @@
         [:pre {:class "text-xs overflow-x-auto"}
          [:code "[sidebar-provider {}\n [sidebar {:variant :inset}\n  [sidebar-header {}]\n  [sidebar-content {}]\n  [sidebar-footer {}]]\n [sidebar-inset {} [:main {:class \"p-4\"} \"Content\"]]]" ]]]]])))
 
-(defn ^:export SidebarDemo
+(defstory SidebarDemo
   "Basic sidebar layout with header, menu, and footer.
 
   Custom component with composable slots.
@@ -162,7 +160,7 @@
   Use sidebar-content and sidebar-menu to structure navigation."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SidebarDemo) :filename "sidebar_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/sidebar {:open? true
                    :is-mobile false
@@ -193,7 +191,7 @@
        [:div {:class "text-xs text-muted-foreground px-2"}
         "v1.0"]]]])))
 
-(defn ^:export SidebarMenu
+(defstory SidebarMenu
   "Menu items with actions and badges.
 
   Custom component with optional menu actions.
@@ -201,7 +199,7 @@
   Use menu-action and menu-badge for per-item utilities."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SidebarMenu) :filename "sidebar_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/sidebar {:open? true
                    :is-mobile false
@@ -224,7 +222,7 @@
          [sut/sidebar-menu-button {}
           "Archives"]]]]]])))
 
-(defn ^:export SidebarMenuSub
+(defstory SidebarMenuSub
   "Sidebar submenu with nested links.
 
   Custom component with nested menu-sub elements.
@@ -232,7 +230,7 @@
   Use menu-sub for secondary navigation."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SidebarMenuSub) :filename "sidebar_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/sidebar {:open? true
                    :is-mobile false
@@ -256,7 +254,7 @@
          [sut/sidebar-menu-button {}
           "Analytics"]]]]]])))
 
-(defn ^:export SidebarMenuCollapsible
+(defstory SidebarMenuCollapsible
   "Collapsible sidebar (icon mode).
 
   Custom component supports :collapsible 'icon'.
@@ -264,7 +262,7 @@
   When collapsed, icons remain visible while labels hide."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SidebarMenuCollapsible) :filename "sidebar_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/sidebar {:open? false
                    :is-mobile false
@@ -284,7 +282,7 @@
           [:> Users]
           "Team"]]]]]])))
 
-(defn ^:export SidebarControlled
+(defstory SidebarControlled
   "Controlled open/close state.
 
   Custom component expects open? and callbacks from the consumer.
@@ -293,7 +291,7 @@
   []
   (r/as-element [(fn [] (let [open? (r/atom true)]
      (fn []
-       (helpers/wrap-component {:source (embed-body SidebarControlled) :filename "sidebar_stories.cljs"} [:div {:class "p-6"}
+       (helpers/wrap-component [:div {:class "p-6"}
                                            [:button {:class "mb-4 text-sm underline"
                                                      :on-click #(swap! open? not)}
                                             (if @open? "Collapse" "Expand")]
@@ -309,7 +307,7 @@
                                                [sut/sidebar-menu-button {}
                                                 "Reports"]]]]]]))))]))
 
-(defn ^:export SidebarMobile
+(defstory SidebarMobile
   "Mobile sidebar rendered as a sheet.
 
   Custom component toggles to a sheet when :is-mobile is true.
@@ -317,7 +315,7 @@
   Use for off-canvas mobile navigation."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SidebarMobile) :filename "sidebar_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/sidebar {:open? true
                                                      :is-mobile true
                                                      :collapsible "offcanvas"}

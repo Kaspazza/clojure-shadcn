@@ -4,7 +4,7 @@
    [clojure-shadcn.stories.helpers     :as helpers]
    [clojure-shadcn.ui.components.badge :as badge]
    [reagent.core                       :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [defstory]]))
 
 (def ^:export default
   #js {:title      "Docs/Introduction"
@@ -34,11 +34,11 @@
    [:code {}
     code]])
 
-(defn ^:export Overview
+(defstory Overview
   "What clojure-shadcn is and when to use it."
   []
   (r/as-element
-   (helpers/wrap-component {:source (embed-body Overview) :filename "intro_stories.cljs"}
+   (helpers/wrap-component
     [:div {:class "max-w-3xl p-6 space-y-2"}
      [badge/badge {:variant :secondary
                    :class "mb-4"}
@@ -60,11 +60,11 @@
       [feature-card "Controlled" "State stays in your app; components are pure."]
       [feature-card "Radix under the hood" "Accessible primitives where needed."]]])))
 
-(defn ^:export Installation
+(defstory Installation
   "How to bring a component into your project."
   []
   (r/as-element
-   (helpers/wrap-component {:source (embed-body Installation) :filename "intro_stories.cljs"}
+   (helpers/wrap-component
     [:div {:class "max-w-3xl p-6 space-y-2"}
      [:h1 {:class "text-2xl font-bold mb-4"}
       "Installation"]
@@ -87,11 +87,11 @@
       [:p {}
        "Because you copy the source, there's no npm package to depend on.  Your build compiles the .cljs directly; the only upstreams are npm primitives and the Tailwind tokens."]]])))
 
-(defn ^:export UsageExamples
+(defstory UsageExamples
   "Common patterns for using clojure-shadcn components."
   []
   (r/as-element
-   (helpers/wrap-component {:source (embed-body UsageExamples) :filename "intro_stories.cljs"}
+   (helpers/wrap-component
     [:div {:class "max-w-3xl p-6 space-y-2"}
      [:h1 {:class "text-2xl font-bold mb-4"}
       "Usage"]

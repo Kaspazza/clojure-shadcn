@@ -6,9 +6,7 @@
    [clojure-shadcn.ui.components.label  :as label]
    [clojure-shadcn.ui.components.switch :as sut]
    [reagent.core                          :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Switch"
@@ -25,10 +23,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/switch.cljs"
               :filename "switch.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "switch_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -57,7 +55,7 @@
                   [:code "(let [enabled? (r/atom false)]\n  [:div {:class \"flex items-center gap-2\"}\n   [switch {:id \"notifications\"\n            :checked @enabled?\n            :on-checked-change #(reset! enabled? %)\n            :name \"notifications\"\n            :value \"enabled\"}]\n   [label {:html-for \"notifications\"} \"Enable notifications\"]])"]]
             ]]])))
 
-(defn ^:export SwitchDemo
+(defstory SwitchDemo
   "Switch paired with a label.
 
   Radix primitive: @radix-ui/react-switch
@@ -65,13 +63,13 @@
   Useful for single boolean preferences."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SwitchDemo) :filename "switch_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [:div {:class "flex items-center gap-2"}
                                         [sut/switch {:id "airplane-mode"}]
                                         [label/label {:html-for "airplane-mode"}
                                          "Airplane Mode"]]])))
 
-(defn ^:export FieldSwitch
+(defstory FieldSwitch
   "Switch inside Field layout with description.
 
   Radix primitive: @radix-ui/react-switch
@@ -79,7 +77,7 @@
   Use for richer settings forms with copy."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body FieldSwitch) :filename "switch_stories.cljs"} [:div {:class "p-6 max-w-md"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-md"}
                                        [field/field {:orientation :horizontal}
                                         [field/field-content {}
                                          [field/field-label {:html-for "mfa"}
@@ -88,7 +86,7 @@
                                           "Enable MFA for additional account security."]]
                                         [sut/switch {:id "mfa"}]]])))
 
-(defn ^:export SwitchDisabled
+(defstory SwitchDisabled
   "Disabled switch state.
 
   Radix primitive: @radix-ui/react-switch
@@ -96,7 +94,7 @@
   Use disabled state when the preference is locked."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SwitchDisabled) :filename "switch_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [:div {:class "flex items-center gap-2"}
                                         [sut/switch {:id "locked"
                                                      :disabled true
@@ -104,7 +102,7 @@
                                         [:span {:class "text-sm text-muted-foreground"}
                                          "Locked setting"]]])))
 
-(defn ^:export SwitchInvalid
+(defstory SwitchInvalid
   "Invalid switch state for form validation.
 
   Radix primitive: @radix-ui/react-switch
@@ -112,7 +110,7 @@
   Use :aria-invalid true and helper text for validation feedback."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SwitchInvalid) :filename "switch_stories.cljs"} [:div {:class "p-6 space-y-2"}
+  (helpers/wrap-component [:div {:class "p-6 space-y-2"}
                                        [:div {:class "flex items-center gap-2"}
                                         [sut/switch {:id "terms-invalid"
                                                      :aria-invalid true
@@ -122,7 +120,7 @@
                                        [:p {:class "text-destructive text-sm"}
                                         "You must accept terms to continue."]])))
 
-(defn ^:export SwitchControlled
+(defstory SwitchControlled
   "Controlled switch with live state.
 
   Radix primitive: @radix-ui/react-switch
@@ -131,7 +129,7 @@
   []
   (r/as-element [(fn [] (let [enabled? (r/atom true)]
      (fn []
-       (helpers/wrap-component {:source (embed-body SwitchControlled) :filename "switch_stories.cljs"} [:div {:class "p-6 flex items-center gap-3"}
+       (helpers/wrap-component [:div {:class "p-6 flex items-center gap-3"}
                                            [sut/switch {:checked @enabled?
                                                         :on-checked-change #(reset! enabled? %)}]
                                            [:span {:class "text-sm"}

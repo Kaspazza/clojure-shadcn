@@ -8,9 +8,7 @@
    [clojure-shadcn.ui.components.button :as button]
    [clojure-shadcn.ui.components.empty  :as sut]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Empty State"
@@ -27,10 +25,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/empty.cljs"
               :filename "empty.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "empty_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -76,7 +74,7 @@
                  [:pre {:class "text-xs overflow-x-auto"}
                   [:code "[empty {}\n [empty-header {}\n  [empty-media {:variant :icon} [:> Inbox]]\n  [empty-title {} \"No invoices yet\"]\n  [empty-description {} \"Create your first invoice to get started.\"]]\n [empty-content {}\n  [button {} \"Create invoice\"]]]" ]]]]])))
 
-(defn ^:export EmptyDemo
+(defstory EmptyDemo
   "Primary empty state with actions.
 
   Custom component built for empty or zero states.
@@ -84,7 +82,7 @@
   Use primary + outline actions for next steps."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body EmptyDemo) :filename "empty_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/empty {}
       [sut/empty-header {}
@@ -106,7 +104,7 @@
                       "Learn More "
                       [:> ArrowUpRight]])]])))
 
-(defn ^:export EmptyIcon
+(defstory EmptyIcon
   "Grid of empty states with icons.
 
   Custom component built for empty or zero states.
@@ -114,7 +112,7 @@
   Useful for showcasing multiple empty modules."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body EmptyIcon) :filename "empty_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 grid gap-8 md:grid-cols-2"}
      [sut/empty {}
       [sut/empty-header {}
@@ -149,7 +147,7 @@
        [sut/empty-description {}
         "You're all caught up. New notifications will appear here."]]]])))
 
-(defn ^:export EmptyOutline
+(defstory EmptyOutline
   "Outlined empty state variant.
 
   Custom component built for empty or zero states.
@@ -157,7 +155,7 @@
   Use a dashed border to emphasize the empty container."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body EmptyOutline) :filename "empty_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/empty {:class "border border-dashed"}
       [sut/empty-header {}
@@ -172,7 +170,7 @@
                        :size :sm}
                       "Upload Files")]]])))
 
-(defn ^:export EmptyAvatar
+(defstory EmptyAvatar
   "Empty state with an avatar media.
 
   Custom component built for empty or zero states.
@@ -180,7 +178,7 @@
   Use avatar media for user-centric empty states."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body EmptyAvatar) :filename "empty_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/empty {}
       [sut/empty-header {}
@@ -197,7 +195,7 @@
       [sut/empty-content {}
        (button/button {:size :sm} "Leave Message")]]])))
 
-(defn ^:export EmptyBackground
+(defstory EmptyBackground
   "Empty state with muted background.
 
   Custom component built for empty or zero states.
@@ -205,7 +203,7 @@
   Gradient backgrounds help differentiate the empty section."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body EmptyBackground) :filename "empty_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/empty {:class "from-muted/50 to-background bg-gradient-to-b from-30%"}
       [sut/empty-header {}
@@ -221,7 +219,7 @@
                       [:> RefreshCcw]
                       "Refresh")]]])))
 
-(defn ^:export EmptyAvatarGroup
+(defstory EmptyAvatarGroup
   "Empty state with avatar group.
 
   Custom component built for empty or zero states.
@@ -229,7 +227,7 @@
   Use grouped avatars for team invites or collaboration prompts."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body EmptyAvatarGroup) :filename "empty_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/empty {}
       [sut/empty-header {}

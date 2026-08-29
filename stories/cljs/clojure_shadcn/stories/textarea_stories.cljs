@@ -6,9 +6,7 @@
    [clojure-shadcn.ui.components.label    :as label]
    [clojure-shadcn.ui.components.textarea :as sut]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Textarea"
@@ -25,10 +23,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/textarea.cljs"
               :filename "textarea.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "textarea_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -59,7 +57,7 @@
                  [:pre {:class "text-xs overflow-x-auto"}
                   [:code "[:div {:class \"space-y-2 max-w-sm\"}\n [textarea {:placeholder \"Tell us about your project\"}]\n [textarea {:aria-invalid true\n            :default-value \"too short\"\n            :auto-size? false}]]"]]]]])))
 
-(defn ^:export TextareaDemo
+(defstory TextareaDemo
   "Basic textarea for multi-line input.
 
   Native element: <textarea>
@@ -67,10 +65,10 @@
   Uses Tailwind styling and supports auto-sizing via :auto-size?."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body TextareaDemo) :filename "textarea_stories.cljs"} [:div {:class "p-6 max-w-sm"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-sm"}
                                        [sut/textarea {:placeholder "Type your message here."}]])))
 
-(defn ^:export TextareaDisabled
+(defstory TextareaDisabled
   "Disabled textarea for read-only content.
 
   Native element: <textarea>
@@ -78,11 +76,11 @@
   Disabled state applies muted styling and blocks input."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body TextareaDisabled) :filename "textarea_stories.cljs"} [:div {:class "p-6 max-w-sm"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-sm"}
                                        [sut/textarea {:placeholder "Type your message here."
                                                       :disabled true}]])))
 
-(defn ^:export TextareaWithLabel
+(defstory TextareaWithLabel
   "Textarea with a label for accessibility.
 
   Native element: <textarea>
@@ -90,13 +88,13 @@
   Use labels for longer form inputs and clarity."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body TextareaWithLabel) :filename "textarea_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
                                        [label/label {:html-for "message"}
                                         "Your message"]
                                        [sut/textarea {:id "message"
                                                       :placeholder "Type your message here."}]])))
 
-(defn ^:export TextareaInvalid
+(defstory TextareaInvalid
   "Invalid textarea state with inline error.
 
   Native element: <textarea>
@@ -104,7 +102,7 @@
   Pair :aria-invalid with error messaging for clear validation feedback."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body TextareaInvalid) :filename "textarea_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
                                        [label/label {:html-for "feedback-invalid"}
                                         "Feedback"]
                                        [sut/textarea {:id "feedback-invalid"
@@ -114,7 +112,7 @@
                                        [:p {:class "text-destructive text-sm"}
                                         "Feedback should be at least 10 characters."]])))
 
-(defn ^:export TextareaWithButton
+(defstory TextareaWithButton
   "Textarea with a submit button.
 
   Native element: <textarea>
@@ -122,11 +120,11 @@
   Useful for support forms or quick feedback widgets."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body TextareaWithButton) :filename "textarea_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
                                        [sut/textarea {:placeholder "Type your message here."}]
                                        (button/button {} "Send message")])))
 
-(defn ^:export TextareaWithText
+(defstory TextareaWithText
   "Textarea with helper text.
 
   Native element: <textarea>
@@ -134,7 +132,7 @@
   Helper text clarifies what happens after submission."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body TextareaWithText) :filename "textarea_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
                                        [label/label {:html-for "message-2"}
                                         "Your message"]
                                        [sut/textarea {:id "message-2"

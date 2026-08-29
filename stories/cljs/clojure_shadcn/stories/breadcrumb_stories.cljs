@@ -7,9 +7,7 @@
    [clojure-shadcn.ui.components.drawer        :as drawer]
    [clojure-shadcn.ui.components.dropdown-menu :as dropdown-menu]
    [reagent.core                                 :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Breadcrumb"
@@ -27,10 +25,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/breadcrumb.cljs"
               :filename "breadcrumb.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "breadcrumb_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                 [helpers/api-component-card
@@ -77,7 +75,7 @@
                  [:pre {:class "text-xs overflow-x-auto"}
                   [:code "[breadcrumb {}\n [breadcrumb-list {}\n  [breadcrumb-item {} [breadcrumb-link {:href \"/\"} \"Home\"]]\n  [breadcrumb-separator {}]\n  [breadcrumb-item {} [breadcrumb-page {} \"Settings\"]]]]" ]]]]])))
 
-(defn ^:export BreadcrumbDemo
+(defstory BreadcrumbDemo
   "Breadcrumb with ellipsis dropdown in the middle.
 
   Radix primitives: @radix-ui/react-dropdown-menu, @radix-ui/react-separator
@@ -85,7 +83,7 @@
   Useful for long navigation paths."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body BreadcrumbDemo) :filename "breadcrumb_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/breadcrumb {}
       [sut/breadcrumb-list {}
@@ -115,7 +113,7 @@
         [sut/breadcrumb-page {}
          "Breadcrumb"]]]]])))
 
-(defn ^:export BreadcrumbSimple
+(defstory BreadcrumbSimple
   "Simple breadcrumb link example.
 
   Radix primitive: @radix-ui/react-separator
@@ -123,7 +121,7 @@
   Use breadcrumb-link for navigable segments and breadcrumb-page for current."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body BreadcrumbSimple) :filename "breadcrumb_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/breadcrumb {}
                                         [sut/breadcrumb-list {}
                                          [sut/breadcrumb-item {}
@@ -138,7 +136,7 @@
                                           [sut/breadcrumb-page {}
                                            "Breadcrumb"]]]]])))
 
-(defn ^:export BreadcrumbEllipsis
+(defstory BreadcrumbEllipsis
   "Collapsed breadcrumb using ellipsis.
 
   Radix primitives: @radix-ui/react-separator
@@ -146,7 +144,7 @@
   Use the ellipsis when intermediate items are hidden."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body BreadcrumbEllipsis) :filename "breadcrumb_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/breadcrumb {}
       [sut/breadcrumb-list {}
@@ -165,7 +163,7 @@
         [sut/breadcrumb-page {}
          "Breadcrumb"]]]]])))
 
-(defn ^:export BreadcrumbSeparator
+(defstory BreadcrumbSeparator
   "Breadcrumb with custom separator icon.
 
   Radix primitives: @radix-ui/react-separator
@@ -173,7 +171,7 @@
   Custom separators can be inserted per segment."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body BreadcrumbSeparator) :filename "breadcrumb_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/breadcrumb {}
                                         [sut/breadcrumb-list {}
                                          [sut/breadcrumb-item {}
@@ -190,7 +188,7 @@
                                           [sut/breadcrumb-page {}
                                            "Breadcrumb"]]]]])))
 
-(defn ^:export BreadcrumbDropdown
+(defstory BreadcrumbDropdown
   "Breadcrumb with dropdown menu item.
 
   Radix primitives: @radix-ui/react-dropdown-menu, @radix-ui/react-separator
@@ -198,7 +196,7 @@
   Dropdowns can replace intermediate links."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body BreadcrumbDropdown) :filename "breadcrumb_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/breadcrumb {}
       [sut/breadcrumb-list {}
@@ -226,7 +224,7 @@
         [sut/breadcrumb-page {}
          "Breadcrumb"]]]]])))
 
-(defn ^:export BreadcrumbResponsive
+(defstory BreadcrumbResponsive
   "Responsive breadcrumb using dropdown or drawer.
 
   Radix primitives: @radix-ui/react-dropdown-menu, @radix-ui/react-dialog
@@ -245,7 +243,7 @@
                  :label "Data Fetching"}
                 {:label "Caching and Revalidating"}]]
      (fn []
-       (helpers/wrap-component {:source (embed-body BreadcrumbResponsive) :filename "breadcrumb_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-6 space-y-6"}
          [:div {:class "hidden md:block"}
           [sut/breadcrumb {}

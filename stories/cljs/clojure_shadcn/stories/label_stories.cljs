@@ -7,9 +7,7 @@
    [clojure-shadcn.ui.components.label    :as sut]
    [clojure-shadcn.ui.components.textarea :as textarea]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Label"
@@ -26,10 +24,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/label.cljs"
               :filename "label.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "label_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -49,7 +47,7 @@
                  [:pre {:class "text-xs overflow-x-auto"}
                   [:code "[:div {:class \"space-y-2\"}\n [label {:html-for \"email\"} \"Email\"]\n [input {:id \"email\" :type \"email\" :placeholder \"you@example.com\"}]]" ]]]]])))
 
-(defn ^:export LabelDemo
+(defstory LabelDemo
   "Label paired with a checkbox.
 
   Radix primitive: @radix-ui/react-label
@@ -57,13 +55,13 @@
   Labels improve accessibility and click targets."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body LabelDemo) :filename "label_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [:div {:class "flex items-center gap-2"}
                                         [checkbox/checkbox {:id "terms"}]
                                         [sut/label {:html-for "terms"}
                                          "Accept terms and conditions"]]])))
 
-(defn ^:export InputWithLabel
+(defstory InputWithLabel
   "Label with input field.
 
   Radix primitive: @radix-ui/react-label
@@ -71,14 +69,14 @@
   Keep labels close to inputs for clarity."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body InputWithLabel) :filename "label_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
                                        [sut/label {:html-for "email"}
                                         "Email"]
                                        [input/input {:id "email"
                                                      :type "email"
                                                      :placeholder "Email"}]])))
 
-(defn ^:export TextareaWithLabel
+(defstory TextareaWithLabel
   "Label with textarea for multi-line input.
 
   Radix primitive: @radix-ui/react-label
@@ -86,7 +84,7 @@
   Use labels to describe longer-form fields."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body TextareaWithLabel) :filename "label_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
                                        [sut/label {:html-for "message"}
                                         "Your message"]
                                        [textarea/textarea {:id "message"

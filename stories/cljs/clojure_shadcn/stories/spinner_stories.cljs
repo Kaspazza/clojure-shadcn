@@ -6,9 +6,7 @@
    [clojure-shadcn.ui.components.button  :as button]
    [clojure-shadcn.ui.components.spinner :as sut]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Spinner"
@@ -25,10 +23,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/spinner.cljs"
               :filename "spinner.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "spinner_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -49,7 +47,7 @@
                  [:pre {:class "text-xs overflow-x-auto"}
                   [:code "[:div {:class \"flex items-center gap-2\"}\n [spinner {:class \"size-4\"}]\n [:span \"Loading data...\"]]" ]]]]])))
 
-(defn ^:export SpinnerBasic
+(defstory SpinnerBasic
   "Basic spinner indicator.
 
   Icon: lucide-react Loader2
@@ -57,10 +55,10 @@
   Use for lightweight loading indicators."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SpinnerBasic) :filename "spinner_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/spinner {}]])))
 
-(defn ^:export SpinnerSize
+(defstory SpinnerSize
   "Spinner size variants using class overrides.
 
   Icon: lucide-react Loader2
@@ -68,13 +66,13 @@
   Adjust size via Tailwind size classes."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SpinnerSize) :filename "spinner_stories.cljs"} [:div {:class "p-6 flex items-center gap-6"}
+  (helpers/wrap-component [:div {:class "p-6 flex items-center gap-6"}
                                        [sut/spinner {:class "size-3"}]
                                        [sut/spinner {:class "size-4"}]
                                        [sut/spinner {:class "size-6"}]
                                        [sut/spinner {:class "size-8"}]])))
 
-(defn ^:export SpinnerButton
+(defstory SpinnerButton
   "Spinner inside disabled buttons.
 
   Icon: lucide-react Loader2
@@ -82,7 +80,7 @@
   Combine with buttons to show in-progress actions."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SpinnerButton) :filename "spinner_stories.cljs"} [:div {:class "p-6 flex flex-col items-start gap-4"}
+  (helpers/wrap-component [:div {:class "p-6 flex flex-col items-start gap-4"}
                                        (button/button {:disabled true
                                                        :size :sm}
                                                       [sut/spinner {}]
@@ -98,7 +96,7 @@
                                                       [sut/spinner {}]
                                                       "Processing")])))
 
-(defn ^:export SpinnerBadge
+(defstory SpinnerBadge
   "Spinner embedded in badges.
 
   Icon: lucide-react Loader2
@@ -106,7 +104,7 @@
   Useful for background status updates."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SpinnerBadge) :filename "spinner_stories.cljs"} [:div {:class "p-6 flex items-center gap-4"}
+  (helpers/wrap-component [:div {:class "p-6 flex items-center gap-4"}
                                        [badge/badge {}
                                         [sut/spinner {}]
                                         "Syncing"]
@@ -117,7 +115,7 @@
                                         [sut/spinner {}]
                                         "Processing"]])))
 
-(defn ^:export SpinnerColor
+(defstory SpinnerColor
   "Spinner color variations.
 
   Icon: lucide-react Loader2
@@ -125,14 +123,14 @@
   Color via text utility classes."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SpinnerColor) :filename "spinner_stories.cljs"} [:div {:class "p-6 flex items-center gap-6"}
+  (helpers/wrap-component [:div {:class "p-6 flex items-center gap-6"}
                                        [sut/spinner {:class "size-6 text-red-500"}]
                                        [sut/spinner {:class "size-6 text-green-500"}]
                                        [sut/spinner {:class "size-6 text-blue-500"}]
                                        [sut/spinner {:class "size-6 text-yellow-500"}]
                                        [sut/spinner {:class "size-6 text-purple-500"}]])))
 
-(defn ^:export SpinnerDemo
+(defstory SpinnerDemo
   "Spinner inside list item layout.
 
   Icon: lucide-react Loader2
@@ -140,7 +138,7 @@
   Demonstrates inline usage in a row layout."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SpinnerDemo) :filename "spinner_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [:div {:class
             "flex w-full max-w-xs items-center justify-between rounded-lg border bg-muted/50 p-4"}

@@ -6,9 +6,7 @@
    [clojure-shadcn.ui.components.button  :as button]
    [clojure-shadcn.ui.components.spinner :as spinner]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Button"
@@ -25,10 +23,10 @@
       :namespace-path "src/cljs/clojure_shadcn/ui/components/button.cljs"
       :filename "button.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "button_stories.cljs"}
+  (helpers/wrap-component
      [:div {:class "p-6 max-w-4xl"}
       [:div {:class "space-y-6"}
        [:div {:class "space-y-4"}
@@ -58,7 +56,7 @@
          [:pre {:class "text-xs overflow-x-auto"}
           [:code "[:div {:class \"flex items-center gap-2\"}\n [button {:variant :default\n          :on-click #(js/console.log \"continue\")}\n  \"Continue\"]\n [button {:variant :outline\n          :size :icon\n          :aria-label \"Open settings\"}\n  [:> ArrowUpRight]]\n [button {:as-child true}\n  [:a {:href \"/docs\"} \"Documentation\"]]]"]]]]]])))
 
-(defn ^:export ButtonDefault
+(defstory ButtonDefault
   "Default button style for primary actions.
 
   Radix primitive: @radix-ui/react-slot (for :as-child polymorphism)
@@ -67,10 +65,10 @@
   string variants. The default variant is :default."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ButtonDefault) :filename "button_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                         (button/button {} "Continue")])))
 
-(defn ^:export ButtonDestructive
+(defstory ButtonDestructive
   "Destructive button for dangerous actions.
 
   Radix primitive: @radix-ui/react-slot
@@ -78,10 +76,10 @@
   Use :destructive for irreversible actions (delete, remove, etc.)."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ButtonDestructive) :filename "button_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                         (button/button {:variant :destructive} "Delete project")])))
 
-(defn ^:export ButtonOutline
+(defstory ButtonOutline
   "Outlined button for secondary actions.
 
   Radix primitive: @radix-ui/react-slot
@@ -89,10 +87,10 @@
   Outline buttons are visually lighter but still prominent."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ButtonOutline) :filename "button_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                         (button/button {:variant :outline} "View details")])))
 
-(defn ^:export ButtonSecondary
+(defstory ButtonSecondary
   "Secondary button for neutral actions.
 
   Radix primitive: @radix-ui/react-slot
@@ -100,10 +98,10 @@
   Use :secondary to de-emphasize a primary action."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ButtonSecondary) :filename "button_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                         (button/button {:variant :secondary} "Secondary action")])))
 
-(defn ^:export ButtonGhost
+(defstory ButtonGhost
   "Ghost button for low-emphasis actions.
 
   Radix primitive: @radix-ui/react-slot
@@ -111,10 +109,10 @@
   Ghost buttons are useful in dense toolbars."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ButtonGhost) :filename "button_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                         (button/button {:variant :ghost} "Dismiss")])))
 
-(defn ^:export ButtonLink
+(defstory ButtonLink
   "Link-styled button for inline actions.
 
   Radix primitive: @radix-ui/react-slot
@@ -122,10 +120,10 @@
   Use :link when you want a textual action that still behaves like a button."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ButtonLink) :filename "button_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                         (button/button {:variant :link} "Learn more")])))
 
-(defn ^:export ButtonIcon
+(defstory ButtonIcon
   "Icon-only button for compact controls.
 
   Radix primitive: @radix-ui/react-slot
@@ -134,13 +132,13 @@
   Note: shadcn uses size=icon; our wrapper uses :icon."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ButtonIcon) :filename "button_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                         (button/button {:variant :outline
                                                         :size :icon
                                                         :aria-label "Open"}
                                                        [:> ArrowUpRight])])))
 
-(defn ^:export ButtonWithIcon
+(defstory ButtonWithIcon
   "Button with leading icon and label.
 
   Radix primitive: @radix-ui/react-slot
@@ -148,13 +146,13 @@
   Icons should be placed before text for consistent alignment."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ButtonWithIcon) :filename "button_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                         (button/button {:variant :outline
                                                         :size :sm}
                                                        [:> GitBranch]
                                                        "New branch")])))
 
-(defn ^:export ButtonLoading
+(defstory ButtonLoading
   "Loading button with spinner and disabled state.
 
   Radix primitive: @radix-ui/react-slot
@@ -162,14 +160,14 @@
   Use a spinner + disabled to communicate in-progress actions."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ButtonLoading) :filename "button_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                         (button/button {:variant :outline
                                                         :size :sm
                                                         :disabled true}
                                                        [spinner/spinner {:class "size-4"}]
                                                        "Submitting")])))
 
-(defn ^:export ButtonAsChild
+(defstory ButtonAsChild
   "Polymorphic rendering via :as-child.
 
   Radix primitive: @radix-ui/react-slot
@@ -177,12 +175,12 @@
   Use :as-child to render as an anchor while preserving button styles."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ButtonAsChild) :filename "button_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                         (button/button {:as-child true}
                                                        [:a {:href "#"}
                                                         "Go to login"])])))
 
-(defn ^:export ButtonSize
+(defstory ButtonSize
   "Size variants for compact or prominent buttons.
 
   Radix primitive: @radix-ui/react-slot
@@ -190,7 +188,7 @@
   Our wrapper supports :xs, :sm, :default, :lg, and icon sizes (:icon, :icon-xs, :icon-sm, :icon-lg)."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ButtonSize) :filename "button_stories.cljs"} [:div {:class "p-6 flex flex-wrap items-center gap-3"}
+  (helpers/wrap-component [:div {:class "p-6 flex flex-wrap items-center gap-3"}
                                         (button/button {:variant :outline
                                                         :size :xs}
                                                        "XS")
@@ -206,7 +204,7 @@
                                                         :aria-label "Open in new tab"}
                                                        [:> ArrowUpRight])])))
 
-(defn ^:export ButtonRounded
+(defstory ButtonRounded
   "Rounded icon button for floating actions.
 
   Radix primitive: @radix-ui/react-slot
@@ -214,21 +212,21 @@
   Add a custom :class to achieve rounded-full styling."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ButtonRounded) :filename "button_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                         (button/button {:variant :outline
                                                         :size :icon
                                                         :class "rounded-full"
                                                         :aria-label "Move up"}
                                                        [:> ArrowUpRight])])))
 
-(defn ^:export ButtonXsSize
+(defstory ButtonXsSize
   "Extra-small button size for dense interfaces.
 
   Aligned with the current shadcn style profile.
   Use :size :xs for compact toolbars or inline actions."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ButtonXsSize) :filename "button_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                         (button/button {:size :xs
                                                         :variant :secondary}
                                                        "Compact action")])))

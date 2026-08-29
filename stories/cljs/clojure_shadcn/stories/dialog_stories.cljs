@@ -10,9 +10,7 @@
    [clojure-shadcn.ui.components.input   :as input]
    [clojure-shadcn.ui.components.label   :as label]
    [reagent.core                           :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Dialog"
@@ -42,10 +40,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/dialog.cljs"
               :filename "dialog.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "dialog_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -115,7 +113,7 @@
                   [:code "[dialog {:open @open?\n         :onOpenChange #(reset! open? %)}\n [dialog-trigger {:asChild true}\n  [button {:variant :outline} \"Open\"]]\n [dialog-content {:class \"sm:max-w-[425px]\"}\n  [dialog-header {}\n   [dialog-title {} \"Edit profile\"]\n   [dialog-description {} \"Update details and save.\"]]\n  [dialog-footer {}\n   [dialog-close {:asChild true} [button {:variant :outline} \"Cancel\"]]\n   [button {:type \"submit\"} \"Save\"]]]]"]]
                 ]]])))
 
-(defn ^:export DialogDemo
+(defstory DialogDemo
   "Dialog with form fields and footer actions.
 
   Radix primitive: @radix-ui/react-dialog
@@ -123,7 +121,7 @@
   Use dialogs for focused, interruptive workflows such as profile edits."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body DialogDemo) :filename "dialog_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/dialog {}
       [sut/dialog-trigger {:as-child true}
@@ -140,7 +138,7 @@
          (button/button {:variant :outline} "Cancel")]
         (button/button {:type "submit"} "Save changes")]]]])))
 
-(defn ^:export DialogCloseButton
+(defstory DialogCloseButton
   "Dialog with explicit close button in footer.
 
   Radix primitive: @radix-ui/react-dialog
@@ -148,7 +146,7 @@
   Useful for share sheets or info dialogs."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body DialogCloseButton) :filename "dialog_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/dialog {}
       [sut/dialog-trigger {:as-child true}
@@ -173,7 +171,7 @@
                          :variant :secondary}
                         "Close")]]]]])))
 
-(defn ^:export CommandDialog
+(defstory CommandDialog
   "Command palette rendered inside a dialog.
 
   Radix primitive: @radix-ui/react-dialog
@@ -183,7 +181,7 @@
   []
   (r/as-element [(fn [] (let [open? (r/atom false)]
      (fn []
-       (helpers/wrap-component {:source (embed-body CommandDialog) :filename "dialog_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-6 space-y-3"}
          [:p {:class "text-muted-foreground text-sm"}
           "Press the button to open the command palette."]
@@ -216,7 +214,7 @@
                [:> Settings]
                [:span "Settings"]]]]]]]]))))]))
 
-(defn ^:export DrawerDialog
+(defstory DrawerDialog
   "Dialog and drawer pair for responsive workflows.
 
   Radix primitive: @radix-ui/react-dialog
@@ -226,7 +224,7 @@
   (r/as-element [(fn [] (let [dialog-open? (r/atom false)
          drawer-open? (r/atom false)]
      (fn []
-       (helpers/wrap-component {:source (embed-body DrawerDialog) :filename "dialog_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-6 flex flex-wrap gap-4"}
          [sut/dialog {:open @dialog-open?
                       :on-open-change #(reset! dialog-open? %)}

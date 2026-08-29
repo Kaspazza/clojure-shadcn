@@ -8,9 +8,7 @@
    [clojure-shadcn.ui.components.table         :as sut]
    [clojure.string                               :as str]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Table"
@@ -27,10 +25,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/table.cljs"
               :filename "table.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "table_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -86,7 +84,7 @@
                  [:pre {:class "text-xs overflow-x-auto"}
                   [:code "[table {}\n [table-header {}\n  [table-row {}\n   [table-head {} \"Name\"]\n   [table-head {} \"Status\"]]]\n [table-body {}\n  [table-row {:data-state \"selected\"}\n   [table-cell {} \"Project Alpha\"]\n   [table-cell {} \"Active\"]]]]" ]]]]])))
 
-(defn ^:export TableDemo
+(defstory TableDemo
   "Invoice table with header, body, and footer.
 
   Native elements: <table>, <thead>, <tbody>, <tfoot>
@@ -122,7 +120,7 @@
                     :status "Unpaid"
                     :method "Credit Card"
                     :amount "$300.00"}]]
-     (helpers/wrap-component {:source (embed-body TableDemo) :filename "table_stories.cljs"}
+     (helpers/wrap-component
       [:div {:class "p-6"}
        [sut/table {}
         [sut/table-caption {}
@@ -156,7 +154,7 @@
           [sut/table-cell {:class "text-right"}
            "$2,500.00"]]]]]))))
 
-(defn ^:export TypographyTable
+(defstory TypographyTable
   "Typographic table styling example.
 
   Native elements: <table>
@@ -164,7 +162,7 @@
   This example mirrors the typography docs table layout."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body TypographyTable) :filename "table_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [:div {:class "my-6 w-full overflow-y-auto"}
       [:table {:class "w-full"}
@@ -191,7 +189,7 @@
          [:td {:class "border px-4 py-2 text-left"}
           "Ecstatic"]]]]]])))
 
-(defn ^:export TableWithActions
+(defstory TableWithActions
   "Table with status badges and row actions.
 
   Shows how to combine badge and dropdown menu inside table cells.
@@ -235,7 +233,7 @@
                                               "Edit"]
                                              [dropdown-menu/dropdown-menu-item {}
                                               "Archive"]]]]])]
-     (helpers/wrap-component {:source (embed-body TableWithActions) :filename "table_stories.cljs"} [:div {:class "p-6"}
+     (helpers/wrap-component [:div {:class "p-6"}
                                          [sut/table {}
                                           [sut/table-header {}
                                            [sut/table-row {}

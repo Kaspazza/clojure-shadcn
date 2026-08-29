@@ -4,8 +4,7 @@
    [clojure-shadcn.stories.helpers             :as helpers]
    [clojure-shadcn.ui.components.theme-toggle :as sut]
    [reagent.core                              :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/ThemeToggle"
@@ -22,10 +21,10 @@
      :namespace-path "src/cljs/clojure_shadcn/ui/components/theme_toggle.cljs"
      :filename "theme_toggle.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-   (helpers/wrap-component {:source (embed-body ApiReference) :filename "theme_toggle_stories.cljs"}
+   (helpers/wrap-component
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -78,37 +77,37 @@
 
 ;; ── Stories ─────────────────────────────────────────────────────────────────
 
-(defn ^:export ThemeToggleBasic
+(defstory ThemeToggleBasic
   "Live theme toggle. Clicking flips an atom and mirrors it onto the
   document root's `dark` class — the standard wiring for Tailwind dark
   mode. The component itself stays pure: it only fires :on-toggle."
   []
   (r/as-element
-   (helpers/wrap-component {:source (embed-body ThemeToggleBasic) :filename "theme_toggle_stories.cljs"}
+   (helpers/wrap-component
     [:div {:class "p-6"}
      [controlled-toggle]])))
 
-(defn ^:export ThemeToggleLight
+(defstory ThemeToggleLight
   "Static render pinned to :light (Sun icon visible)."
   []
   (r/as-element
-   (helpers/wrap-component {:source (embed-body ThemeToggleLight) :filename "theme_toggle_stories.cljs"}
+   (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/theme-toggle {:theme :light}]])))
 
-(defn ^:export ThemeToggleDark
+(defstory ThemeToggleDark
   "Static render pinned to :dark (Moon icon visible)."
   []
   (r/as-element
-   (helpers/wrap-component {:source (embed-body ThemeToggleDark) :filename "theme_toggle_stories.cljs"}
+   (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/theme-toggle {:theme :dark}]])))
 
-(defn ^:export ThemeToggleInHeader
+(defstory ThemeToggleInHeader
   "Composition demo: toggle inside a minimal header."
   []
   (r/as-element
-   (helpers/wrap-component {:source (embed-body ThemeToggleInHeader) :filename "theme_toggle_stories.cljs"}
+   (helpers/wrap-component
     [:div {:class "relative h-20 rounded-md border bg-background"}
      [:div {:class "flex h-full items-center justify-between px-4"}
       [:span {:class "text-sm font-semibold"}
@@ -122,11 +121,11 @@
         "Docs"]
        [controlled-toggle]]]])))
 
-(defn ^:export ThemeToggleSettingsRow
+(defstory ThemeToggleSettingsRow
   "Settings panel row with descriptive text next to the live toggle."
   []
   (r/as-element
-   (helpers/wrap-component {:source (embed-body ThemeToggleSettingsRow) :filename "theme_toggle_stories.cljs"}
+   (helpers/wrap-component
     [:div {:class "p-6 max-w-sm"}
      [:div {:class "flex items-center justify-between rounded-md border px-4 py-3"}
       [:div {:class "space-y-1"}

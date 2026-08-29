@@ -5,9 +5,7 @@
    [clojure-shadcn.ui.components.field  :as field]
    [clojure-shadcn.ui.components.select :as sut]
    [reagent.core                          :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Select"
@@ -24,10 +22,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/select.cljs"
               :filename "select.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "select_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -89,7 +87,7 @@
          [:code "(let [value (r/atom \"banana\")]\n  [select {:value @value :on-value-change #(reset! value %)}\n   [select-trigger {:class \"w-[180px]\"}\n    [select-value {:placeholder \"Select a fruit\"}]]\n   [select-content {}\n    [select-item {:value \"apple\"} \"Apple\"]\n    [select-item {:value \"banana\"} \"Banana\"]]])"]]
   ]]])))
 
-(defn ^:export SelectDemo
+(defstory SelectDemo
   "Basic select with grouped items.
 
   Radix primitive: @radix-ui/react-select
@@ -98,7 +96,7 @@
   []
   (r/as-element [(fn [] (let [value (r/atom "banana")]
      (fn []
-       (helpers/wrap-component {:source (embed-body SelectDemo) :filename "select_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-6"}
          [sut/select {:value @value
                       :on-value-change #(reset! value %)}
@@ -119,7 +117,7 @@
             [sut/select-item {:value "pineapple"}
              "Pineapple"]]]]]))))]))
 
-(defn ^:export SelectScrollable
+(defstory SelectScrollable
   "Scrollable select content with multiple groups.
 
   Radix primitive: @radix-ui/react-select
@@ -128,7 +126,7 @@
   []
   (r/as-element [(fn [] (let [value (r/atom "cet")]
      (fn []
-       (helpers/wrap-component {:source (embed-body SelectScrollable) :filename "select_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-6"}
          [sut/select {:value @value
                       :on-value-change #(reset! value %)}
@@ -166,7 +164,7 @@
             [sut/select-item {:value "eat"}
              "East Africa Time (EAT)"]]]]]))))]))
 
-(defn ^:export FieldSelect
+(defstory FieldSelect
   "Select inside Field layout with helper copy.
 
   Radix primitive: @radix-ui/react-select
@@ -174,7 +172,7 @@
   Useful for richer forms with descriptions."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body FieldSelect) :filename "select_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 max-w-md"}
      [field/field {}
       [field/field-label {}
@@ -198,7 +196,7 @@
       [field/field-description {}
        "Select your department or area of work."]]])))
 
-(defn ^:export SelectInvalid
+(defstory SelectInvalid
   "Invalid select state with helper error text.
 
   Radix primitive: @radix-ui/react-select
@@ -206,7 +204,7 @@
   Pass :aria-invalid on select-trigger and show error copy beneath field."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SelectInvalid) :filename "select_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
                                        [field/field {}
                                         [field/field-label {}
                                          "Department"]
@@ -221,7 +219,7 @@
                                         [field/field-description {:class "text-destructive"}
                                          "Department is required."]]])))
 
-(defn ^:export SelectDisabledItems
+(defstory SelectDisabledItems
   "Select with disabled items.
 
   Radix primitive: @radix-ui/react-select
@@ -229,7 +227,7 @@
   Use :disabled on items that are not selectable."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SelectDisabledItems) :filename "select_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/select {:default-value "pro"}
                                         [sut/select-trigger {:class "w-[200px]"}
                                          [sut/select-value {:placeholder "Choose a plan"}]]

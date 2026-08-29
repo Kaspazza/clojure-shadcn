@@ -1,7 +1,8 @@
 #!/usr/bin/env bb
 ;; Generates the :modules override required by shadow-cljs's :esm target.
 ;;
-;; Story namespaces and their ^:export vars are the source of truth. This
+;; Story namespaces and their exported vars are the source of truth. Exports
+;; are declared either with ^:export on def/defn or through defstory. This
 ;; avoids manually duplicating module definitions in shadow-cljs.edn.
 ;;
 ;; Usage: bb scripts/generate_story_modules.clj
@@ -24,7 +25,7 @@
               (let [content (slurp file)
                     ns-match (re-find #"(?m)^\(ns\s+([^\s\)]+)" content)
                     ns-sym (some-> ns-match second symbol)
-                    exports (->> (re-seq #"(?m)^\(defn?\s+\^:export\s+([A-Za-z0-9_$-]+)" content)
+                    exports (->> (re-seq #"(?m)^\((?:defn?\s+\^:export\s+|defstory\s+)([A-Za-z0-9_$-]+)" content)
                                  (mapv #(symbol (second %))))]
                 (when-not ns-sym
                   (throw (ex-info "Story source has no namespace declaration"

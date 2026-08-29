@@ -6,9 +6,7 @@
    [clojure-shadcn.ui.components.label       :as label]
    [clojure-shadcn.ui.components.radio-group :as sut]
    [reagent.core                               :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Radio Group"
@@ -25,10 +23,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/radio_group.cljs"
               :filename "radio_group.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "radio_group_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -66,7 +64,7 @@
                  [:div {:class "flex flex-wrap gap-2 mt-3"}
                   ]]]])))
 
-(defn ^:export RadioGroupDemo
+(defstory RadioGroupDemo
   "Radio group with labeled options.
 
   Radix primitive: @radix-ui/react-radio-group
@@ -75,7 +73,7 @@
   []
   (r/as-element [(fn [] (let [value (r/atom "comfortable")]
      (fn []
-       (helpers/wrap-component {:source (embed-body RadioGroupDemo) :filename "radio_group_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-6"}
          [sut/radio-group {:value @value
                            :on-value-change #(reset! value %)}
@@ -95,7 +93,7 @@
            [label/label {:html-for "density-compact"}
             "Compact"]]]]))))]))
 
-(defn ^:export FieldRadio
+(defstory FieldRadio
   "Radio group embedded in Field layout.
 
   Radix primitive: @radix-ui/react-radio-group
@@ -104,7 +102,7 @@
   []
   (r/as-element [(fn [] (let [value (r/atom "monthly")]
      (fn []
-       (helpers/wrap-component {:source (embed-body FieldRadio) :filename "radio_group_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-6 max-w-md"}
          [field/field-set {}
           [field/field-label {}
@@ -132,7 +130,7 @@
                                 :class "font-normal"}
              "Lifetime ($299.99)"]]]]]))))]))
 
-(defn ^:export RadioGroupDisabled
+(defstory RadioGroupDisabled
   "Disabled radio items in a group.
 
   Radix primitive: @radix-ui/react-radio-group
@@ -140,7 +138,7 @@
   Use disabled options for unavailable choices."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body RadioGroupDisabled) :filename "radio_group_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/radio-group {:default-value "standard"}
                                         [:div {:class "flex items-center gap-3"}
                                          [sut/radio-group-item {:value "standard"
@@ -155,7 +153,7 @@
                                                        :class "text-muted-foreground"}
                                           "Premium (coming soon)"]]]])))
 
-(defn ^:export RadioGroupInvalid
+(defstory RadioGroupInvalid
   "Invalid radio group state with validation hint.
 
   Radix primitive: @radix-ui/react-radio-group
@@ -163,7 +161,7 @@
   Apply :aria-invalid on items and show an explicit error message."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body RadioGroupInvalid) :filename "radio_group_stories.cljs"} [:div {:class "p-6 space-y-2"}
+  (helpers/wrap-component [:div {:class "p-6 space-y-2"}
                                        [sut/radio-group {:default-value nil}
                                         [:div {:class "flex items-center gap-3"}
                                          [sut/radio-group-item {:value "free"
@@ -180,7 +178,7 @@
                                        [:p {:class "text-destructive text-sm"}
                                         "Please select a billing plan."]])))
 
-(defn ^:export RadioGroupHorizontal
+(defstory RadioGroupHorizontal
   "Horizontal layout variant.
 
   Radix primitive: @radix-ui/react-radio-group
@@ -189,7 +187,7 @@
   []
   (r/as-element [(fn [] (let [value (r/atom "monthly")]
      (fn []
-       (helpers/wrap-component {:source (embed-body RadioGroupHorizontal) :filename "radio_group_stories.cljs"} [:div {:class "p-6"}
+       (helpers/wrap-component [:div {:class "p-6"}
                                            [sut/radio-group {:value @value
                                                              :orientation :horizontal
                                                              :class "flex items-center gap-6"

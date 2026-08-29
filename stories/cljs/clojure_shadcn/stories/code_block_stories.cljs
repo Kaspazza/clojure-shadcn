@@ -5,9 +5,7 @@
    [clojure-shadcn.ui.components.button     :as button]
    [clojure-shadcn.ui.components.code-block :as sut]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Code Block"
@@ -24,10 +22,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/code_block.cljs"
               :filename "code_block.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "code_block_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -61,25 +59,25 @@
                   [:code
                    ";; Basic code block\n[code-block\n  [code-block-code {:code \"(+ 1 2)\" :language \"clojure\"}]]\n\n;; With filename header and copy button\n[code-block {}\n  [code-block-group {:class \"px-4 py-2 border-b text-xs text-muted-foreground\"}\n    [:span \"core.cljs\"]\n    [button {:size :sm :variant :ghost} \"Copy\"]]\n  [code-block-code {:code \"(defn hello [] ...)\" \n                    :language \"clojure\"\n                    :theme \"github-dark\"}]]"]]]]])))
 
-(defn ^:export CodeBlockSingle
+(defstory CodeBlockSingle
   "Single code block with syntax highlighting.
   Uses Shiki for syntax highlighting.
 
   Use for inline documentation and examples."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body CodeBlockSingle) :filename "code_block_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 max-w-xl"}
      [sut/code-block {}
       [sut/code-block-code {:language "clojure"
                             :code "(defn greet [name]\n  (str \"Hello, \" name \"!\"))"}]]])))
 
-(defn ^:export CodeBlockWithHeader
+(defstory CodeBlockWithHeader
   "Code block with filename header.
   Use code-block-group to build headers or actions."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body CodeBlockWithHeader) :filename "code_block_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 max-w-xl"}
      [sut/code-block {}
       [sut/code-block-group {:class "px-4 py-2 border-b text-xs text-muted-foreground"}
@@ -90,12 +88,12 @@
       [sut/code-block-code {:language "clojure"
                             :code "(defn handle-request [req]\n  {:status 200 :body \"OK\"})"}]]])))
 
-(defn ^:export CodeBlockMultipleLanguages
+(defstory CodeBlockMultipleLanguages
   "Code blocks in multiple languages.
   Shows how to switch language prop for highlighting."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body CodeBlockMultipleLanguages) :filename "code_block_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 grid gap-4"}
      [sut/code-block {}
       [sut/code-block-code {:language "javascript"
@@ -104,12 +102,12 @@
       [sut/code-block-code {:language "python"
                             :code "def greet(name):\n    return f'Hello {name}'"}]]])))
 
-(defn ^:export CodeBlockCopyAction
+(defstory CodeBlockCopyAction
   "Code block with copy action row.
   Demonstrates how to build simple copy UI."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body CodeBlockCopyAction) :filename "code_block_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 max-w-xl"}
      [sut/code-block {}
       [sut/code-block-group {:class "px-4 py-2 border-b flex items-center justify-between"}

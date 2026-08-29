@@ -6,9 +6,7 @@
    [clojure-shadcn.ui.components.button  :as button]
    [clojure-shadcn.ui.components.message :as sut]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Chat/Message"
@@ -25,10 +23,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/message.cljs"
               :filename "message.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "message_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -74,14 +72,14 @@
         [:pre {:class "text-xs overflow-x-auto"}
          [:code "[message {:class \"items-start gap-3\"}\n [message-avatar {:src \"https://placehold.co/40x40\" :alt \"Assistant\" :fallback \"AI\"}]\n [:div {:class \"space-y-2\"}\n  [message-content {:markdown? true} \"**Hello** from the assistant\"]\n  [message-actions {}\n   [message-action {:tooltip \"Copy\"} [button {:size :icon} [:> Copy]]]]]]" ]]]]])))
 
-(defn ^:export MessageBasic
+(defstory MessageBasic
   "Basic message with avatar and content.
   Uses avatar + markdown composition internally.
 
   Use for simple chat messages."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body MessageBasic) :filename "message_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/message {}
                                         [sut/message-avatar {:src "https://placehold.co/40x40/png"
                                                              :alt "User"
@@ -89,12 +87,12 @@
                                         [sut/message-content {}
                                          "Hello! This is a basic message."]]])))
 
-(defn ^:export MessageAvatarFallback
+(defstory MessageAvatarFallback
   "Message showing avatar fallback.
   Useful when image URLs fail or are missing."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body MessageAvatarFallback) :filename "message_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/message {}
                                         [sut/message-avatar {:src ""
                                                              :alt "User"
@@ -102,14 +100,14 @@
                                         [sut/message-content {}
                                          "Fallback initials are shown."]]])))
 
-(defn ^:export MessageMarkdown
+(defstory MessageMarkdown
   "Message with markdown rendering.
   Uses the Markdown component internally.
 
   Useful for rich assistant responses."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body MessageMarkdown) :filename "message_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/message {}
       [sut/message-avatar {:src "https://placehold.co/40x40/png"
@@ -118,14 +116,14 @@
       [sut/message-content {:markdown? true}
        "**Markdown** supports lists:\n\n- First\n- Second\n- Third"]]])))
 
-(defn ^:export MessageActions
+(defstory MessageActions
   "Message with action buttons.
   Actions are wrapped with tooltips.
 
   Use for copy, delete, or feedback actions."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body MessageActions) :filename "message_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/message {}
       [sut/message-avatar {:src "https://placehold.co/40x40/png"
@@ -144,14 +142,14 @@
                          :size :icon}
                         [:> Trash2 {:class "size-4"}])]]]]])))
 
-(defn ^:export MessageUserVsAssistant
+(defstory MessageUserVsAssistant
   "User vs assistant message styling.
   Use classes to align and style different roles.
 
   Helpful for chat UIs with role-based presentation."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body MessageUserVsAssistant) :filename "message_stories.cljs"} [:div {:class "p-6 space-y-4"}
+  (helpers/wrap-component [:div {:class "p-6 space-y-4"}
                                        [sut/message {:class "flex-row-reverse text-right"}
                                         [sut/message-avatar {:src "https://placehold.co/40x40/png"
                                                              :alt "User"

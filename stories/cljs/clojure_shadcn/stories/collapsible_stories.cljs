@@ -5,9 +5,7 @@
    [clojure-shadcn.ui.components.button      :as button]
    [clojure-shadcn.ui.components.collapsible :as sut]
    [reagent.core                               :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Collapsible"
@@ -24,10 +22,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/collapsible.cljs"
               :filename "collapsible.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "collapsible_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -66,7 +64,7 @@
                  [:pre {:class "text-xs overflow-x-auto"}
                   [:code "(let [open? (r/atom false)]\n  [collapsible {:open @open?\n                :on-open-change #(reset! open? %)}\n   [collapsible-trigger {:as-child true}\n    (button {:variant :outline} \"Toggle details\")]\n   [collapsible-content {:class \"mt-3\"}\n    [:div {:class \"rounded-md border p-3\"} \"Collapsible content\"]]])"]]]]])))
 
-(defn ^:export CollapsibleBasic
+(defstory CollapsibleBasic
   "Collapsible content with toggle.
 
   Radix primitive: @radix-ui/react-collapsible
@@ -82,7 +80,7 @@
    [(fn []
       (let [open? (r/atom false)]
         (fn []
-          (helpers/wrap-component {:source (embed-body CollapsibleBasic) :filename "collapsible_stories.cljs"}
+          (helpers/wrap-component
             [:div {:class "p-6"}
              [sut/collapsible {:open @open?
                                :on-open-change #(reset! open? %)}
@@ -94,7 +92,7 @@
                [:div {:class "rounded-md border bg-muted p-4 text-sm"}
                 "This content expands and collapses."]]]]))))]))
 
-(defn ^:export CollapsibleDefaultOpen
+(defstory CollapsibleDefaultOpen
   "Collapsible starting in the open state.
 
   Radix primitive: @radix-ui/react-collapsible
@@ -102,7 +100,7 @@
   Use :default-open for uncontrolled open state."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body CollapsibleDefaultOpen) :filename "collapsible_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/collapsible {:default-open true}
                                         [sut/collapsible-trigger {:as-child true}
                                          (button/button {:variant :outline} "Toggle details")]
@@ -110,7 +108,7 @@
                                          [:div {:class "rounded-md border bg-muted p-4 text-sm"}
                                           "Starts expanded without external state management."]]]])))
 
-(defn ^:export CollapsibleDisabled
+(defstory CollapsibleDisabled
   "Disabled collapsible trigger.
 
   Radix primitive: @radix-ui/react-collapsible
@@ -118,7 +116,7 @@
   Use :disabled to lock the collapsible state."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body CollapsibleDisabled) :filename "collapsible_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/collapsible {:open true
                        :disabled true}
@@ -130,7 +128,7 @@
        [:div {:class "rounded-md border bg-muted p-4 text-sm"}
         "Disabled collapsible remains open and cannot be toggled."]]]])))
 
-(defn ^:export CollapsibleMultiple
+(defstory CollapsibleMultiple
   "Multiple collapsibles in a list.
 
   Radix primitive: @radix-ui/react-collapsible
@@ -145,7 +143,7 @@
                         (swap! open-ids (fn [current]
                                           (if next-open? (conj current id) (disj current id)))))]
         (fn []
-          (helpers/wrap-component {:source (embed-body CollapsibleMultiple) :filename "collapsible_stories.cljs"}
+          (helpers/wrap-component
             [:div {:class "p-6 space-y-4"}
              ;; doall: @open-ids is derefed while realizing the seq; a lazy seq
              ;; would realize outside the reactive context and not re-render.

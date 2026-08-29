@@ -6,9 +6,7 @@
    [clojure-shadcn.ui.components.drawer :as sut]
    [clojure-shadcn.ui.components.input  :as input]
    [reagent.core                          :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Drawer"
@@ -25,10 +23,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/drawer.cljs"
               :filename "drawer.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "drawer_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -83,7 +81,7 @@
                  [:pre {:class "text-xs overflow-x-auto"}
                   [:code "[drawer {:open @open? :on-open-change #(reset! open? %)}\n [drawer-trigger {:as-child true} [button {:variant :outline} \"Open\"]]\n [drawer-content {}\n  [drawer-header {} [drawer-title {} \"Confirm\"]]\n  [drawer-footer {} [button {} \"Continue\"]]] ]" ]]]]])))
 
-(defn ^:export BottomDrawer
+(defstory BottomDrawer
   "Bottom drawer with form example.
    
    Common use case for mobile: a drawer that slides up from the bottom
@@ -91,7 +89,7 @@
   []
   (r/as-element [(fn [] (let [open? (r/atom false)]
      (fn []
-       (helpers/wrap-component {:source (embed-body BottomDrawer) :filename "drawer_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-4"}
          [sut/drawer {:open @open?
                       :on-open-change #(reset! open? %)
@@ -120,7 +118,7 @@
                             :on-click #(reset! open? false)}
                            "Cancel")]]]]))))]))
 
-(defn ^:export RightDrawer
+(defstory RightDrawer
   "Right drawer with navigation example.
    
    Slides in from the right side - useful for navigation menus
@@ -128,7 +126,7 @@
   []
   (r/as-element [(fn [] (let [open? (r/atom false)]
      (fn []
-       (helpers/wrap-component {:source (embed-body RightDrawer) :filename "drawer_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-4"}
          [sut/drawer {:open @open?
                       :on-open-change #(reset! open? %)
@@ -153,14 +151,14 @@
                             :class "w-full"}
                            "Close")]]]]))))]))
 
-(defn ^:export DrawerWithScroll
+(defstory DrawerWithScroll
   "Bottom drawer with scrollable content.
    
    Shows how the drawer handles overflow content with max-height."
   []
   (r/as-element [(fn [] (let [open? (r/atom false)]
      (fn []
-       (helpers/wrap-component {:source (embed-body DrawerWithScroll) :filename "drawer_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-4"}
          [sut/drawer {:open @open?
                       :on-open-change #(reset! open? %)
@@ -188,7 +186,7 @@
                             :on-click #(reset! open? false)}
                            "Decline")]]]]))))]))
 
-(defn ^:export DrawerNoScale
+(defstory DrawerNoScale
   "Drawer without background scaling.
    
    By default, the background scales down slightly when drawer opens.
@@ -196,7 +194,7 @@
   []
   (r/as-element [(fn [] (let [open? (r/atom false)]
      (fn []
-       (helpers/wrap-component {:source (embed-body DrawerNoScale) :filename "drawer_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-4"}
          [sut/drawer {:open @open?
                       :on-open-change #(reset! open? %)
@@ -216,14 +214,14 @@
            [sut/drawer-footer {}
             (button/button {:on-click #(reset! open? false)} "Close")]]]]))))]))
 
-(defn ^:export TopDrawer
+(defstory TopDrawer
   "Top drawer variant.
 
   Useful for non-critical announcements or quick filters sliding from top."
   []
   (r/as-element [(fn [] (let [open? (r/atom false)]
      (fn []
-       (helpers/wrap-component {:source (embed-body TopDrawer) :filename "drawer_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-4"}
          [sut/drawer {:open @open?
                       :on-open-change #(reset! open? %)
@@ -239,14 +237,14 @@
            [sut/drawer-footer {}
             (button/button {:on-click #(reset! open? false)} "Apply")]]]]))))]))
 
-(defn ^:export LeftDrawerNonModal
+(defstory LeftDrawerNonModal
   "Left drawer with non-modal behavior.
 
   Demonstrates :direction :left and :modal false for side-by-side workflows."
   []
   (r/as-element [(fn [] (let [open? (r/atom false)]
      (fn []
-       (helpers/wrap-component {:source (embed-body LeftDrawerNonModal) :filename "drawer_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-4"}
          [sut/drawer {:open @open?
                       :on-open-change #(reset! open? %)

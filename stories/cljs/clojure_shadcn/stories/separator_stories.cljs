@@ -6,9 +6,7 @@
    [clojure-shadcn.ui.components.breadcrumb :as breadcrumb]
    [clojure-shadcn.ui.components.separator  :as sut]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Separator"
@@ -25,10 +23,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/separator.cljs"
               :filename "separator.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "separator_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -50,7 +48,7 @@
                   [:code "[:div {:class \"space-y-3\"}\n [:p \"Section A\"]\n [separator {:orientation :horizontal}]\n [:p \"Section B\"]]" ]]
   ]]])))
 
-(defn ^:export SeparatorDemo
+(defstory SeparatorDemo
   "Horizontal and vertical separators.
 
   Radix primitive: @radix-ui/react-separator
@@ -58,7 +56,7 @@
   Use separators to divide sections or inline items."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SeparatorDemo) :filename "separator_stories.cljs"} [:div {:class "p-6 space-y-4"}
+  (helpers/wrap-component [:div {:class "p-6 space-y-4"}
                                        [:div {:class "space-y-1"}
                                         [:h4 {:class "text-sm font-medium"}
                                          "Radix Primitives"]
@@ -72,7 +70,7 @@
                                         [sut/separator {:orientation :vertical}]
                                         [:div "Source"]]])))
 
-(defn ^:export BreadcrumbSeparator
+(defstory BreadcrumbSeparator
   "Separator used inside breadcrumb navigation.
 
   Radix primitive: @radix-ui/react-separator
@@ -80,7 +78,7 @@
   Custom separators can be inserted between breadcrumb items."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body BreadcrumbSeparator) :filename "separator_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [breadcrumb/breadcrumb {}
                                         [breadcrumb/breadcrumb-list {}
                                          [breadcrumb/breadcrumb-item {}
@@ -97,7 +95,7 @@
                                           [breadcrumb/breadcrumb-page {}
                                            "Separator"]]]]])))
 
-(defn ^:export SeparatorCustom
+(defstory SeparatorCustom
   "Separator with custom styling.
 
   Radix primitive: @radix-ui/react-separator
@@ -105,7 +103,7 @@
   Add classes to adjust thickness or color."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SeparatorCustom) :filename "separator_stories.cljs"} [:div {:class "p-6 space-y-3"}
+  (helpers/wrap-component [:div {:class "p-6 space-y-3"}
                                        [:p {:class "text-sm"}
                                         "Primary accent"]
                                        [sut/separator {:class "bg-primary h-[2px]"}]

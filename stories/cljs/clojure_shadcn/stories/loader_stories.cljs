@@ -4,9 +4,7 @@
    [clojure-shadcn.stories.helpers      :as helpers]
    [clojure-shadcn.ui.components.loader :as sut]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Loader"
@@ -23,10 +21,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/loader.cljs"
               :filename "loader.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "loader_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
        [helpers/api-component-card
@@ -110,7 +108,7 @@
         [:pre {:class "text-xs overflow-x-auto"}
          [:code "[:div {:class \"flex items-center gap-3\"}\n [loader {:variant :circular :size :sm}]\n [loader {:variant :pulse-dot :size :md}]\n [loader {:variant :text-shimmer :text \"Generating\"}]]" ]]]]])))
 
-(defn ^:export LoaderAllVariants
+(defstory LoaderAllVariants
   "All loader variants in a single grid.
   Built with pure CSS animations and Tailwind classes.
 
@@ -130,7 +128,7 @@
                    :text-blink
                    :text-shimmer
                    :loading-dots]]
-     (helpers/wrap-component {:source (embed-body LoaderAllVariants) :filename "loader_stories.cljs"}
+     (helpers/wrap-component
       [:div {:class "p-6 grid gap-4 sm:grid-cols-3"}
        (for [variant variants]
          ^{:key variant}
@@ -140,12 +138,12 @@
           [:span {:class "text-xs text-muted-foreground"}
            (name variant)]])]))))
 
-(defn ^:export LoaderSizes
+(defstory LoaderSizes
   "Loader size comparison.
   All loaders support :sm, :md, :lg sizes."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body LoaderSizes) :filename "loader_stories.cljs"} [:div {:class "p-6 flex items-center gap-6"}
+  (helpers/wrap-component [:div {:class "p-6 flex items-center gap-6"}
                                        [sut/loader {:variant :circular
                                                     :size :sm}]
                                        [sut/loader {:variant :circular
@@ -153,12 +151,12 @@
                                        [sut/loader {:variant :circular
                                                     :size :lg}]])))
 
-(defn ^:export LoaderTextVariants
+(defstory LoaderTextVariants
   "Text-based loaders with custom text.
   Text variants: :text-blink, :text-shimmer, :loading-dots."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body LoaderTextVariants) :filename "loader_stories.cljs"} [:div {:class "p-6 space-y-3"}
+  (helpers/wrap-component [:div {:class "p-6 space-y-3"}
                                        [sut/loader {:variant :text-blink
                                                     :text "Thinking"
                                                     :size :md}]
@@ -169,12 +167,12 @@
                                                     :text "Loading"
                                                     :size :md}]])))
 
-(defn ^:export LoaderComponent
+(defstory LoaderComponent
   "Unified loader component with :variant prop.
   Use the single `loader` function to switch animations per state."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body LoaderComponent) :filename "loader_stories.cljs"} [:div {:class "p-6 flex items-center gap-6"}
+  (helpers/wrap-component [:div {:class "p-6 flex items-center gap-6"}
                                        [sut/loader {:variant :pulse}]
                                        [sut/loader {:variant :typing}]
                                        [sut/loader {:variant :terminal}]])))

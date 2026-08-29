@@ -4,9 +4,7 @@
    [clojure-shadcn.stories.helpers        :as helpers]
    [clojure-shadcn.ui.components.skeleton :as sut]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Skeleton"
@@ -23,10 +21,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/skeleton.cljs"
               :filename "skeleton.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "skeleton_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -48,7 +46,7 @@
                  [:pre {:class "text-xs overflow-x-auto"}
                   [:code "[:div {:class \"space-y-2 w-64\"}\n [skeleton {:class \"h-4 w-40\"}]\n [skeleton {:class \"h-4 w-full\"}]\n [skeleton {:class \"h-4 w-5/6\" :role \"status\" :aria-label \"Loading profile\"}]]" ]]]]])))
 
-(defn ^:export SkeletonDemo
+(defstory SkeletonDemo
   "Avatar + text skeleton layout.
 
   Native element: <div>
@@ -56,14 +54,14 @@
   Use for loading placeholders while data is fetched."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SkeletonDemo) :filename "skeleton_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [:div {:class "flex items-center space-x-4"}
                                         [sut/skeleton {:class "h-12 w-12 rounded-full"}]
                                         [:div {:class "space-y-2"}
                                          [sut/skeleton {:class "h-4 w-[250px]"}]
                                          [sut/skeleton {:class "h-4 w-[200px]"}]]]])))
 
-(defn ^:export SkeletonCard
+(defstory SkeletonCard
   "Card-like skeleton placeholder.
 
   Native element: <div>
@@ -71,14 +69,14 @@
   Use for cards, previews, or media blocks."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SkeletonCard) :filename "skeleton_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [:div {:class "flex flex-col space-y-3"}
                                         [sut/skeleton {:class "h-[125px] w-[250px] rounded-xl"}]
                                         [:div {:class "space-y-2"}
                                          [sut/skeleton {:class "h-4 w-[250px]"}]
                                          [sut/skeleton {:class "h-4 w-[200px]"}]]]])))
 
-(defn ^:export SkeletonGrid
+(defstory SkeletonGrid
   "Multi-column skeleton grid.
 
   Native element: <div>
@@ -86,7 +84,7 @@
   Useful for list or gallery loading states."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SkeletonGrid) :filename "skeleton_stories.cljs"} [:div {:class "p-6 grid gap-4 sm:grid-cols-3"}
+  (helpers/wrap-component [:div {:class "p-6 grid gap-4 sm:grid-cols-3"}
                                        (for [idx (range 6)]
                                          ^{:key idx}
                                          [sut/skeleton {:class "h-24 w-full rounded-lg"}])])))

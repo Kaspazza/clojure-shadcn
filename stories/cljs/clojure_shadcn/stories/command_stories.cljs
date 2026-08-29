@@ -5,9 +5,7 @@
    [clojure-shadcn.stories.helpers       :as helpers]
    [clojure-shadcn.ui.components.command :as sut]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Command"
@@ -24,10 +22,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/command.cljs"
               :filename "command.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "command_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -107,7 +105,7 @@
         [:pre {:class "text-xs overflow-x-auto"}
          [:code "[command {:class \"rounded-lg border\"}\n  [command-input {:placeholder \"Search actions...\"}]\n  [command-list {}\n    [command-empty {} \"No results.\"]\n    [command-group {:heading \"Actions\"}\n      [command-item {:value \"new-project\"\n                     :onSelect #(js/console.log %)}\n        [:span \"New project\"]\n        [command-shortcut {} \"⌘N\"]]]]]"]]]]])))
 
-(defn ^:export CommandDemo
+(defstory CommandDemo
   "Command list with groups, separators, and disabled items.
 
   Library: cmdk
@@ -115,7 +113,7 @@
   Use Command for searchable lists and quick actions."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body CommandDemo) :filename "command_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/command {:class "rounded-lg border shadow-md md:min-w-[450px]"}
       [sut/command-input {:placeholder "Type a command or search..."}]
@@ -141,7 +139,7 @@
          [:> Settings]
          [:span "Settings"]]]]]])))
 
-(defn ^:export CommandDialog
+(defstory CommandDialog
   "Command dialog with open state.
 
   Library: cmdk
@@ -149,7 +147,7 @@
   Useful for global search triggered from a button or shortcut."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body CommandDialog) :filename "command_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 space-y-3"}
      [:p {:class "text-muted-foreground text-sm"}
       "Command dialog rendered in an open state for showcase."]
@@ -178,7 +176,7 @@
          [:> Settings]
          [:span "Settings"]]]]]])))
 
-(defn ^:export CommandComposition
+(defstory CommandComposition
   "Command embedded in a card-like container.
 
   Library: cmdk
@@ -186,7 +184,7 @@
   Demonstrates how Command can be styled to match surrounding UI."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body CommandComposition) :filename "command_stories.cljs"} [:div {:class "p-6 max-w-md"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-md"}
                                        [:div {:class "rounded-lg border bg-card p-4 shadow-sm"}
                                         [:p {:class "text-sm font-medium mb-2"}
                                          "Quick Actions"]

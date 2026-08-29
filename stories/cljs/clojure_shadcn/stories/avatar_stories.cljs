@@ -5,9 +5,7 @@
    [clojure-shadcn.stories.helpers      :as helpers]
    [clojure-shadcn.ui.components.avatar :as sut]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Avatar"
@@ -24,10 +22,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/avatar.cljs"
               :filename "avatar.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "avatar_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
        [helpers/api-component-card
@@ -69,7 +67,7 @@
           "   \"UN\"]\n"
           "  [avatar-badge {:class \"bg-green-600\"}]]"]]]]])))
 
-(defn ^:export AvatarDemo
+(defstory AvatarDemo
   "Avatar with image, fallback, and grouped stack.
 
   Radix primitive: @radix-ui/react-avatar
@@ -77,7 +75,7 @@
   Use fallbacks for initials or offline states."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body AvatarDemo) :filename "avatar_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 flex flex-wrap items-center gap-12"}
      [sut/avatar {}
       [sut/avatar-image {:src "https://github.com/shadcn.png"
@@ -106,7 +104,7 @@
        [sut/avatar-fallback {}
         "ER"]]]])))
 
-(defn ^:export EmptyAvatar
+(defstory EmptyAvatar
   "Avatar-only empty state.
 
   Radix primitive: @radix-ui/react-avatar
@@ -114,7 +112,7 @@
   Use a grayscale avatar as the empty media."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body EmptyAvatar) :filename "avatar_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/avatar {:size :lg}
                                         [sut/avatar-image {:src "https://github.com/shadcn.png"
                                                            :alt "@shadcn"
@@ -122,7 +120,7 @@
                                         [sut/avatar-fallback {}
                                          "LR"]]])))
 
-(defn ^:export EmptyAvatarGroup
+(defstory EmptyAvatarGroup
   "Stacked avatar group for empty states.
 
   Radix primitive: @radix-ui/react-avatar
@@ -130,7 +128,7 @@
   Use stacked avatars to represent teams or groups."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body EmptyAvatarGroup) :filename "avatar_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 flex -space-x-2"}
      [sut/avatar {:size :lg
                   :class "ring-2 ring-background grayscale"}
@@ -151,7 +149,7 @@
       [sut/avatar-fallback {}
        "ER"]]])))
 
-(defn ^:export AvatarCustomSizes
+(defstory AvatarCustomSizes
   "Avatar size variants.
 
   Radix primitive: @radix-ui/react-avatar
@@ -159,7 +157,7 @@
   Use the :size prop for consistent sizing."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body AvatarCustomSizes) :filename "avatar_stories.cljs"} [:div {:class "p-6 flex items-center gap-4"}
+  (helpers/wrap-component [:div {:class "p-6 flex items-center gap-4"}
                                        [sut/avatar {:size :sm}
                                         [sut/avatar-fallback {}
                                          "SM"]]
@@ -170,7 +168,7 @@
                                         [sut/avatar-fallback {}
                                          "LG"]]])))
 
-(defn ^:export AvatarWithBadge
+(defstory AvatarWithBadge
   "Avatar with status badge.
 
   Radix primitive: @radix-ui/react-avatar
@@ -178,7 +176,7 @@
   Use badge to indicate online/offline status or other states."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body AvatarWithBadge) :filename "avatar_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/avatar {}
                                         [sut/avatar-image {:src "https://github.com/shadcn.png"
                                                            :alt "@shadcn"}]
@@ -187,7 +185,7 @@
                                         [sut/avatar-badge {:class
                                                            "bg-green-600 dark:bg-green-800"}]]])))
 
-(defn ^:export AvatarBadgeWithIcon
+(defstory AvatarBadgeWithIcon
   "Avatar with badge containing an icon.
 
   Radix primitive: @radix-ui/react-avatar
@@ -195,7 +193,7 @@
   Use icon inside badge for actions or enhanced status indicators."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body AvatarBadgeWithIcon) :filename "avatar_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/avatar {:class "grayscale"}
                                         [sut/avatar-image {:src "https://github.com/pranathip.png"
                                                            :alt "@pranathip"}]

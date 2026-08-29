@@ -5,9 +5,7 @@
    [clojure-shadcn.ui.components.carousel :as sut]
    [reagent.core                            :as r :refer [defc]]
    [reagent.hooks :as rhooks])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Carousel"
@@ -79,10 +77,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/carousel.cljs"
               :filename "carousel.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "carousel_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -130,7 +128,7 @@
         [:pre {:class "text-xs overflow-x-auto"}
          [:code "[carousel {:opts {:loop true :align \"start\"}\n            :set-api (fn [api] (println \"Carousel ready!\"))}\n  [carousel-content {}\n    [carousel-item {} \"Slide 1\"]\n    [carousel-item {} \"Slide 2\"]]\n  [carousel-previous {}]\n  [carousel-next {}]]"]]]]])))
 
-(defn ^:export CarouselDemo
+(defstory CarouselDemo
   "Basic carousel with previous/next controls.
 
   Library: embla-carousel
@@ -138,7 +136,7 @@
   Use for showcasing images or featured content."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body CarouselDemo) :filename "carousel_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/carousel {:class "w-full max-w-xs"}
                                         (into [sut/carousel-content {}]
                                               (for [idx (range 1 6)]
@@ -147,7 +145,7 @@
                                         [sut/carousel-previous {}]
                                         [sut/carousel-next {}]]])))
 
-(defn ^:export CarouselSize
+(defstory CarouselSize
   "Carousel with smaller item sizes showing multiple slides.
 
   Library: embla-carousel
@@ -155,7 +153,7 @@
   Use basis-1/3 to show 3 items at once. Adjust with responsive classes as needed."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body CarouselSize) :filename "carousel_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/carousel {:opts {:align "start"}
                                                       :class "w-full max-w-sm"}
                                         (into [sut/carousel-content {}]
@@ -166,7 +164,7 @@
                                         [sut/carousel-previous {}]
                                         [sut/carousel-next {}]]])))
 
-(defn ^:export CarouselOrientation
+(defstory CarouselOrientation
   "Vertical carousel orientation.
 
   Library: embla-carousel
@@ -174,7 +172,7 @@
   Use :orientation :vertical for stacked slides. Container height determines visible area."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body CarouselOrientation) :filename "carousel_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/carousel {:opts {:align "start"}
                                                       :orientation :vertical
                                                       :class "w-full max-w-xs"}
@@ -185,7 +183,7 @@
                                         [sut/carousel-previous {}]
                                         [sut/carousel-next {}]]])))
 
-(defn ^:export CarouselSpacing
+(defstory CarouselSpacing
   "Carousel with custom spacing between items.
 
   Library: embla-carousel
@@ -193,7 +191,7 @@
   Use pl-* on items with -ml-* on content to create gaps. Shows 3 items to demonstrate spacing."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body CarouselSpacing) :filename "carousel_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/carousel {:opts {:align "start"}
                                                       :class "w-full max-w-sm"}
                                         (into [sut/carousel-content {:class "-ml-4"}]
@@ -204,7 +202,7 @@
                                         [sut/carousel-previous {}]
                                         [sut/carousel-next {}]]])))
 
-(defn ^:export CarouselLoop
+(defstory CarouselLoop
   "Carousel with infinite looping enabled.
 
   Library: embla-carousel — https://www.embla-carousel.com/api/options
@@ -212,7 +210,7 @@
   Use :loop true in opts for seamless infinite scrolling. Embla auto-adjusts positions."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body CarouselLoop) :filename "carousel_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/carousel {:opts {:loop true}
                                                       :class "w-full max-w-xs"}
                                         (into [sut/carousel-content {}]
@@ -222,7 +220,7 @@
                                         [sut/carousel-previous {}]
                                         [sut/carousel-next {}]]])))
 
-(defn ^:export CarouselDragFree
+(defstory CarouselDragFree
   "Carousel with free-form dragging (no snap points).
 
   Library: embla-carousel — https://www.embla-carousel.com/api/options
@@ -230,7 +228,7 @@
   Use :dragFree true for momentum-based scrolling without snap constraints."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body CarouselDragFree) :filename "carousel_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/carousel {:opts {:dragFree true :loop true}
                                                       :class "w-full max-w-sm"}
                                         (into [sut/carousel-content {}]
@@ -241,7 +239,7 @@
                                         [sut/carousel-previous {}]
                                         [sut/carousel-next {}]]])))
 
-(defn ^:export CarouselSlidesToScroll
+(defstory CarouselSlidesToScroll
   "Carousel scrolling multiple slides at once.
 
   Library: embla-carousel — https://www.embla-carousel.com/api/options
@@ -249,7 +247,7 @@
   Use :slidesToScroll in opts to advance multiple slides per navigation action."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body CarouselSlidesToScroll) :filename "carousel_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/carousel {:opts {:align "start" :slidesToScroll 2}
                                                       :class "w-full max-w-sm"}
                                         (into [sut/carousel-content {}]

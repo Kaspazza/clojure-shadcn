@@ -7,9 +7,7 @@
    [clojure-shadcn.ui.components.label  :as label]
    [clojure-shadcn.ui.components.sheet  :as sut]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Sheet"
@@ -27,10 +25,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/sheet.cljs"
               :filename "sheet.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "sheet_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -96,7 +94,7 @@
                   [:code "[:> sheet {}\n [:> sheet-trigger {:as-child true}\n  [button {:variant :outline} \"Open\"]]\n [sheet-content {:side :right}\n  [sheet-header {}\n   [sheet-title {} \"Edit profile\"]\n   [sheet-description {} \"Update details and save.\"]]\n  [sheet-footer {}\n   [:> sheet-close {:as-child true} [button {:variant :outline} \"Close\"]]]]]"]]
   ]]])))
 
-(defn ^:export SheetDemo
+(defstory SheetDemo
   "Basic sheet with profile form.
 
   Radix primitive: @radix-ui/react-dialog
@@ -107,7 +105,7 @@
   Sheets slide in from an edge to reveal secondary content."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SheetDemo) :filename "sheet_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [:>
       sut/sheet
@@ -134,7 +132,7 @@
         (button/button {:type "submit"} "Save changes")
         [:> sut/sheet-close {:as-child true} (button/button {:variant :outline} "Close")]]]]])))
 
-(defn ^:export SheetSide
+(defstory SheetSide
   "Sheets on all four sides.
 
   Radix primitive: @radix-ui/react-dialog
@@ -142,7 +140,7 @@
   Use :side to control where the sheet appears."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SheetSide) :filename "sheet_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 grid grid-cols-2 gap-2"}
      (for [side [:top :right :bottom :left]]
        ^{:key side}
@@ -174,7 +172,7 @@
          [sut/sheet-footer {}
           [:> sut/sheet-close {:as-child true} (button/button {:type "submit"} "Save changes")]]]])])))
 
-(defn ^:export SheetScrollable
+(defstory SheetScrollable
   "Sheet with scrollable content.
 
   Radix primitive: @radix-ui/react-dialog
@@ -182,7 +180,7 @@
   Use overflow classes to handle long content in sheets."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SheetScrollable) :filename "sheet_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [:>
       sut/sheet

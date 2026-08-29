@@ -6,9 +6,7 @@
    [clojure-shadcn.ui.components.button       :as button]
    [clojure-shadcn.ui.components.prompt-input :as sut]
    [reagent.core                                :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Prompt Input"
@@ -25,10 +23,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/prompt_input.cljs"
               :filename "prompt_input.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "prompt_input_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -76,7 +74,7 @@
                  [:pre {:class "text-xs overflow-x-auto"}
                   [:code "(let [value (r/atom \"\")]\n  [prompt-input {:value @value\n                 :on-value-change #(reset! value %)\n                 :on-submit #(js/console.log \"submit\" @value)}\n   [prompt-input-textarea {:placeholder \"Type your message...\"}]\n   [prompt-input-actions {}\n    [prompt-input-action {:tooltip \"Attach\"} [button {:size :icon} ...]]\n    [prompt-input-action {:tooltip \"Send\"} [button {:size :icon} ...]]]])"]]]]])))
 
-(defn ^:export PromptInputBasic
+(defstory PromptInputBasic
   "Basic prompt input with send action.
   Provides shared context for textarea + actions.
 
@@ -84,7 +82,7 @@
   []
   (r/as-element [(fn [] (let [value (r/atom "")]
      (fn []
-       (helpers/wrap-component {:source (embed-body PromptInputBasic) :filename "prompt_input_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-6 max-w-xl"}
          [sut/prompt-input {:value @value
                             :on-value-change #(reset! value %)
@@ -96,13 +94,13 @@
                             :size :icon}
                            [:> Send {:class "size-4"}])]]]]))))]))
 
-(defn ^:export PromptInputMultipleActions
+(defstory PromptInputMultipleActions
   "Prompt input with multiple actions.
   Use prompt-input-action to wrap action buttons with tooltips."
   []
   (r/as-element [(fn [] (let [value (r/atom "")]
      (fn []
-       (helpers/wrap-component {:source (embed-body PromptInputMultipleActions) :filename "prompt_input_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-6 max-w-xl"}
          [sut/prompt-input {:value @value
                             :on-value-change #(reset! value %)}
@@ -121,12 +119,12 @@
                             :size :icon}
                            [:> Send {:class "size-4"}])]]]]))))]))
 
-(defn ^:export PromptInputDisabled
+(defstory PromptInputDisabled
   "Disabled prompt input state.
   Use :disabled? or :is-loading? for disabled styling."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body PromptInputDisabled) :filename "prompt_input_stories.cljs"} [:div {:class "p-6 max-w-xl"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-xl"}
                                        [sut/prompt-input {:value "Saving..."
                                                           :disabled? true}
                                         [sut/prompt-input-textarea {:placeholder "Disabled"}]
@@ -136,13 +134,13 @@
                                                           :size :icon}
                                                          [:> Send {:class "size-4"}])]]]])))
 
-(defn ^:export PromptInputLoading
+(defstory PromptInputLoading
   "Prompt input with loading state.
   Use :is-loading? when responses are pending."
   []
   (r/as-element [(fn [] (let [value (r/atom "Working on it...")]
      (fn []
-       (helpers/wrap-component {:source (embed-body PromptInputLoading) :filename "prompt_input_stories.cljs"} [:div {:class "p-6 max-w-xl"}
+       (helpers/wrap-component [:div {:class "p-6 max-w-xl"}
                                            [sut/prompt-input {:value @value
                                                               :is-loading? true
                                                               :on-value-change #(reset! value %)}

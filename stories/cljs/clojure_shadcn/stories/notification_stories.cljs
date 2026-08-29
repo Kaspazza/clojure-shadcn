@@ -5,9 +5,7 @@
    [clojure-shadcn.ui.components.button       :as button]
    [clojure-shadcn.ui.components.notification :as sut]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Notification"
@@ -24,10 +22,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/notification.cljs"
               :filename "notification.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "notification_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -113,24 +111,24 @@
          [:code "[:<>\n [toaster {:position \"top-right\"}]\n [button {:on-click #(show-success \"Saved\" {:description \"Profile updated\"})}\n  \"Notify\"]\n [button {:on-click #(let [id (show-loading \"Uploading...\")]\n                       (js/setTimeout #(dismiss-toast id) 1500))}\n  \"Loading demo\"]]"]]
         ]]])))
 
-(defn ^:export ToastBasic
+(defstory ToastBasic
   "Basic toast notification.
   Uses Sonner for toast rendering.
 
   Call show-toast with a simple message."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ToastBasic) :filename "notification_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 space-y-4"}
      [sut/toaster]
      (button/button {:on-click (fn [] (sut/show-toast "Event has been created"))} "Show Toast")])))
 
-(defn ^:export ToastWithDescription
+(defstory ToastWithDescription
   "Toast with description text.
   Use :description to provide context."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ToastWithDescription) :filename "notification_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 space-y-4"}
      [sut/toaster]
      (button/button {:on-click (fn []
@@ -138,12 +136,12 @@
                                                  {:description "Sunday, December 3 at 9:00 AM"}))}
                     "Show Detailed Toast")])))
 
-(defn ^:export ToastWithAction
+(defstory ToastWithAction
   "Toast with action button.
   Use :action for undo or follow-up steps."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ToastWithAction) :filename "notification_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 space-y-4"}
      [sut/toaster]
      (button/button {:on-click (fn []
@@ -153,12 +151,12 @@
                                                                        (js/console.log "undo"))}}))}
                     "Show Action Toast")])))
 
-(defn ^:export ToastDuration
+(defstory ToastDuration
   "Toast with custom duration.
   Use :duration for longer or shorter visibility."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ToastDuration) :filename "notification_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 space-y-4"}
      [sut/toaster]
      (button/button {:on-click (fn [] (sut/show-toast "Auto closes in 10 seconds" {:duration 10000}))}

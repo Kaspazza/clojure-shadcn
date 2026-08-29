@@ -4,9 +4,7 @@
    [clojure-shadcn.stories.helpers              :as helpers]
    [clojure-shadcn.ui.components.system-message :as sut]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/System Message"
@@ -24,10 +22,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/system_message.cljs"
               :filename "system_message.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "system_message_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -52,72 +50,72 @@
                  [:pre {:class "text-xs overflow-x-auto"}
                   [:code "[system-message {:variant :action\n                 :icon [:span \"ℹ️\"]\n                 :fill true}\n \"Your workspace sync is up to date.\"]" ]]]]])))
 
-(defn ^:export SystemMessageDefault
+(defstory SystemMessageDefault
   "Default system message.
   Used for informational or action messages.
 
   Supports optional CTA buttons via :cta prop."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SystemMessageDefault) :filename "system_message_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/system-message {}
                                         "This is an informational system message."]])))
 
-(defn ^:export SystemMessageWarning
+(defstory SystemMessageWarning
   "Warning system message.
   Use :variant :warning for cautionary messages."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SystemMessageWarning) :filename "system_message_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/system-message {:variant :warning}
                                         "Warning: please review your inputs."]])))
 
-(defn ^:export SystemMessageError
+(defstory SystemMessageError
   "Error system message.
   Use :variant :error for failure states."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SystemMessageError) :filename "system_message_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/system-message {:variant :error}
                                         "Something went wrong while saving."]])))
 
-(defn ^:export SystemMessageCta
+(defstory SystemMessageCta
   "System message with CTA button.
   Use :cta to provide an inline action."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SystemMessageCta) :filename "system_message_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/system-message {:variant :error
                                                             :cta {:label "Retry"
                                                                   :on-click #(js/console.log
                                                                               "retry")}}
                                         "A network error occurred."]])))
 
-(defn ^:export SystemMessageNoIcon
+(defstory SystemMessageNoIcon
   "System message without icon.
   Set :icon-hidden? true for a cleaner layout."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SystemMessageNoIcon) :filename "system_message_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/system-message {:icon-hidden? true}
                                         "Minimal message without leading icon."]])))
 
-(defn ^:export SystemMessageFilled
+(defstory SystemMessageFilled
   "Filled system message style.
   Use :fill true for stronger visual emphasis."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SystemMessageFilled) :filename "system_message_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/system-message {:variant :warning
                                                             :fill true}
                                         "Maintenance window starts in 10 minutes."]])))
 
-(defn ^:export SystemMessageCustomIcon
+(defstory SystemMessageCustomIcon
   "System message with custom icon.
   Use :icon to override the default icon per message context."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body SystemMessageCustomIcon) :filename "system_message_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/system-message {:variant :action
                                                             :icon [:span {:aria-hidden true}
                                                                    "🔔"]}

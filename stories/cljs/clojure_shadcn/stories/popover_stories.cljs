@@ -8,9 +8,7 @@
    [clojure-shadcn.ui.components.label   :as label]
    [clojure-shadcn.ui.components.popover :as sut]
    [reagent.core                           :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Popover"
@@ -27,10 +25,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/popover.cljs"
               :filename "popover.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "popover_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -77,7 +75,7 @@
                  [:div {:class "flex flex-wrap gap-2 mt-3"}
                   ]]]])))
 
-(defn ^:export PopoverDemo
+(defstory PopoverDemo
   "Popover with form fields.
 
   Radix primitive: @radix-ui/react-popover
@@ -85,7 +83,7 @@
   Useful for lightweight edits or inline settings."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body PopoverDemo) :filename "popover_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/popover {}
       [sut/popover-trigger {:as-child true}
@@ -123,7 +121,7 @@
                         :default-value "none"
                         :class "col-span-2 h-8"}]]]]]]])))
 
-(defn ^:export ComboboxPopover
+(defstory ComboboxPopover
   "Combobox built with popover + command list.
 
   Radix primitives: @radix-ui/react-popover, @radix-ui/react-dialog
@@ -143,7 +141,7 @@
                    {:value "canceled"
                     :label "Canceled"}]]
      (fn []
-       (helpers/wrap-component {:source (embed-body ComboboxPopover) :filename "popover_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-6 flex items-center gap-4"}
          [:p {:class "text-muted-foreground text-sm"}
           "Status"]
@@ -171,7 +169,7 @@
                                                     (reset! open? false))}
                  label])]]]]]]))))]))
 
-(defn ^:export PopoverTextOnly
+(defstory PopoverTextOnly
   "Simple popover with text content.
 
   Radix primitive: @radix-ui/react-popover
@@ -179,7 +177,7 @@
   Good for quick hints or short explanations."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body PopoverTextOnly) :filename "popover_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/popover {}
       [sut/popover-trigger {:as-child true}

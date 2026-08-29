@@ -9,9 +9,7 @@
    [clojure-shadcn.ui.components.data-table    :as sut]
    [clojure-shadcn.ui.components.dropdown-menu :as dropdown-menu]
    [reagent.core                                 :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Data Table"
@@ -150,10 +148,10 @@
      :namespace-path "src/cljs/clojure_shadcn/ui/components/data_table.cljs"
      :filename "data_table.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "data_table_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -231,7 +229,7 @@
          [:code "[data-table {:columns columns\n             :data rows\n             :initial-page-size 10\n             :toolbar-config {:text-filter {:column-id \"title\"\n                                            :placeholder \"Search tasks...\"}}\n             :dnd-config {:get-row-id (fn [row] (aget row \"id\"))\n                          :on-drag-end (fn [active-id over-id] ... )}}]"]]
        ]]])))
 
-(defn ^:export BasicDataTable
+(defstory BasicDataTable
   "Basic data table with sorting and pagination.
    
    Click column headers to sort, use pagination controls at the bottom."
@@ -239,14 +237,14 @@
   (r/as-element [(fn [] (let [data (r/atom (clj->js (make-task-data)))
          columns (r/atom (make-columns))]
      (fn []
-       (helpers/wrap-component {:source (embed-body BasicDataTable) :filename "data_table_stories.cljs"} [:div {:class "p-8"}
+       (helpers/wrap-component [:div {:class "p-8"}
                                            [:h3 {:class "text-lg font-semibold mb-4"}
                                             "Tasks"]
                                            [sut/data-table {:columns @columns
                                                             :data @data
                                                             :initial-page-size 5}]]))))]))
 
-(defn ^:export TableWithToolbar
+(defstory TableWithToolbar
   "Data table with search and filters.
    
    Use the search box to filter by title, or use the faceted filters
@@ -273,7 +271,7 @@
                                                       {:label "Low"
                                                        :value "low"}]}]}]
      (fn []
-       (helpers/wrap-component {:source (embed-body TableWithToolbar) :filename "data_table_stories.cljs"} [:div {:class "p-8"}
+       (helpers/wrap-component [:div {:class "p-8"}
                                            [:h3 {:class "text-lg font-semibold mb-4"}
                                             "Tasks with Filters"]
                                            [sut/data-table {:columns @columns
@@ -281,7 +279,7 @@
                                                             :toolbar-config toolbar-config
                                                             :initial-page-size 5}]]))))]))
 
-(defn ^:export TableWithExpandableRows
+(defstory TableWithExpandableRows
   "Data table with expandable rows.
    
    NEW FEATURE: Click the chevron to expand rows and see additional details."
@@ -317,7 +315,7 @@
                                     [:p [:strong "Created: "] "2024-01-15"]
                                     [:p [:strong "Due date: "] "2024-02-01"]]]))]
      (fn []
-       (helpers/wrap-component {:source (embed-body TableWithExpandableRows) :filename "data_table_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-8"}
          [:h3 {:class "text-lg font-semibold mb-4"}
           "Expandable Rows"]
@@ -328,7 +326,7 @@
                           :render-sub-component render-sub-component
                           :initial-page-size 5}]]))))]))
 
-(defn ^:export TableWithDragAndDrop
+(defstory TableWithDragAndDrop
   "Data table with drag-and-drop reordering.
    
    NEW FEATURE: Drag rows by the handle on the left to reorder them."
@@ -362,7 +360,7 @@
                      (vec
                       (concat (subvec without 0 new-index) [item] (subvec without new-index)))))))))]
      (fn []
-       (helpers/wrap-component {:source (embed-body TableWithDragAndDrop) :filename "data_table_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-8"}
          [:h3 {:class "text-lg font-semibold mb-4"}
           "Drag-and-Drop Reordering"]
@@ -374,7 +372,7 @@
                                        :on-drag-end move-row}
                           :initial-page-size 10}]]))))]))
 
-(defn ^:export TableWithDndAndExpandable
+(defstory TableWithDndAndExpandable
   "Data table with BOTH drag-and-drop AND expandable rows.
    
    Demonstrates using both new features together."
@@ -436,7 +434,7 @@
                      (vec
                       (concat (subvec without 0 new-index) [item] (subvec without new-index)))))))))]
      (fn []
-       (helpers/wrap-component {:source (embed-body TableWithDndAndExpandable) :filename "data_table_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-8"}
          [:h3 {:class "text-lg font-semibold mb-4"}
           "Full-Featured Table"]
@@ -449,7 +447,7 @@
                                        :on-drag-end move-row}
                           :initial-page-size 10}]]))))]))
 
-(defn ^:export TableEmptyState
+(defstory TableEmptyState
   "Data table with custom empty state."
   []
   (r/as-element [(fn [] (let [columns (r/atom (make-columns))
@@ -457,7 +455,7 @@
                                [:p {:class "text-muted-foreground"}
                                 "No tasks found. Create your first task to get started."]]]
               (fn []
-                (helpers/wrap-component {:source (embed-body TableEmptyState) :filename "data_table_stories.cljs"} [:div {:class "p-8"}
+                (helpers/wrap-component [:div {:class "p-8"}
                                                     [:h3 {:class "text-lg font-semibold mb-4"}
                                                      "Empty State"]
                                                     [sut/data-table {:columns @columns

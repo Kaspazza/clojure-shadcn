@@ -6,9 +6,7 @@
    [clojure-shadcn.ui.components.input  :as sut]
    [clojure-shadcn.ui.components.label  :as label]
    [reagent.core                          :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Input"
@@ -25,10 +23,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/input.cljs"
               :filename "input.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "input_stories.cljs"}
+  (helpers/wrap-component
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -57,7 +55,7 @@
                  [:pre {:class "text-xs overflow-x-auto"}
                   [:code "[:div {:class \"space-y-2 max-w-sm\"}\n [input {:type \"email\"\n         :placeholder \"you@example.com\"\n         :required true}]\n [input {:type \"text\"\n         :aria-invalid true\n         :default-value \"bad value\"}]]"]]]]])))
 
-(defn ^:export InputDemo
+(defstory InputDemo
   "Basic input for standard text or email entry.
 
   Native element: <input>
@@ -65,11 +63,11 @@
   Our wrapper accepts all standard input props with Tailwind defaults."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body InputDemo) :filename "input_stories.cljs"} [:div {:class "p-6 max-w-sm"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-sm"}
                                        [sut/input {:type "email"
                                                    :placeholder "Email"}]])))
 
-(defn ^:export InputFile
+(defstory InputFile
   "File input with a label for upload workflows.
 
   Native element: <input type='file'>
@@ -77,13 +75,13 @@
   File inputs retain the same base styling for consistency."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body InputFile) :filename "input_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
                                        [label/label {:html-for "resume"}
                                         "Resume"]
                                        [sut/input {:id "resume"
                                                    :type "file"}]])))
 
-(defn ^:export InputDisabled
+(defstory InputDisabled
   "Disabled input state for locked fields.
 
   Native element: <input>
@@ -91,12 +89,12 @@
   Disabled inputs are visually muted and non-interactive."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body InputDisabled) :filename "input_stories.cljs"} [:div {:class "p-6 max-w-sm"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-sm"}
                                        [sut/input {:disabled true
                                                    :type "email"
                                                    :placeholder "Email"}]])))
 
-(defn ^:export InputInvalid
+(defstory InputInvalid
   "Invalid input state with validation message.
 
   Native element: <input>
@@ -104,7 +102,7 @@
   Use :aria-invalid true and helper/error text for validation feedback."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body InputInvalid) :filename "input_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
                                        [label/label {:html-for "email-invalid"}
                                         "Email"]
                                        [sut/input {:id "email-invalid"
@@ -114,7 +112,7 @@
                                        [:p {:class "text-destructive text-sm"}
                                         "Please enter a valid email address."]])))
 
-(defn ^:export InputWithLabel
+(defstory InputWithLabel
   "Input paired with a label.
 
   Native element: <input>
@@ -122,14 +120,14 @@
   Use labels for accessible form controls."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body InputWithLabel) :filename "input_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
                                        [label/label {:html-for "contact-email"}
                                         "Email"]
                                        [sut/input {:id "contact-email"
                                                    :type "email"
                                                    :placeholder "Email"}]])))
 
-(defn ^:export InputWithButton
+(defstory InputWithButton
   "Input combined with an inline action button.
 
   Native element: <input>
@@ -137,7 +135,7 @@
   Useful for newsletter signups or quick actions."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body InputWithButton) :filename "input_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [:div {:class "flex w-full max-w-sm items-center gap-2"}
                                         [sut/input {:type "email"
                                                     :placeholder "Email"}]
@@ -145,7 +143,7 @@
                                                         :variant :outline}
                                                        "Subscribe")]])))
 
-(defn ^:export InputWithText
+(defstory InputWithText
   "Input with helper text for guidance.
 
   Native element: <input>
@@ -153,7 +151,7 @@
   Helper text clarifies validation or intent."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body InputWithText) :filename "input_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
                                        [label/label {:html-for "support-email"}
                                         "Email"]
                                        [sut/input {:id "support-email"
@@ -162,7 +160,7 @@
                                        [:p {:class "text-muted-foreground text-sm"}
                                         "Enter your support email address."]])))
 
-(defn ^:export InputControlled
+(defstory InputControlled
   "Controlled input state managed via r/atom.
 
   Demonstrates how to keep input value in app state.
@@ -171,7 +169,7 @@
   []
   (r/as-element [(fn [] (let [value (r/atom "hello@company.com")]
      (fn []
-       (helpers/wrap-component {:source (embed-body InputControlled) :filename "input_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
+       (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
                                            [label/label {:html-for "controlled-email"}
                                             "Contact"]
                                            [sut/input {:id "controlled-email"

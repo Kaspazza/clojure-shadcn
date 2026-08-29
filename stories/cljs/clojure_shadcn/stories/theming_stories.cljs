@@ -4,7 +4,7 @@
    [clojure-shadcn.stories.helpers      :as helpers]
    [clojure-shadcn.ui.components.badge :as badge]
    [reagent.core                        :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [defstory]]))
 
 (def ^:export default
   #js {:title      "Docs/Theming"
@@ -27,11 +27,11 @@
   [name desc]
   [:li [:code name] (str ": " desc)])
 
-(defn ^:export ThemeTokens
+(defstory ThemeTokens
   "Reference of the OKLCH design tokens the components depend on."
   []
   (r/as-element
-   (helpers/wrap-component {:source (embed-body ThemeTokens) :filename "theming_stories.cljs"}
+   (helpers/wrap-component
     [:div {:class "max-w-3xl p-6 space-y-2"}
      [badge/badge {:variant :secondary
                    :class "mb-4"}
@@ -58,11 +58,11 @@
        [scanner-item ":input / :ring" "form elements"]
        [scanner-item ":radius" "border-radius scale"]]]])))
 
-(defn ^:export DarkMode
+(defstory DarkMode
   "How dark mode is wired via the Tailwind `dark` class strategy."
   []
   (r/as-element
-   (helpers/wrap-component {:source (embed-body DarkMode) :filename "theming_stories.cljs"}
+   (helpers/wrap-component
     [:div {:class "max-w-3xl p-6 space-y-2"}
      [:h1 {:class "text-2xl font-bold mb-1"}
       "Dark Mode"]
@@ -80,11 +80,11 @@
       [:p {}
        "The toolbar in the Storybook UI flips the `dark` class live — components respond immediately to the class because they use the semantic tokens."]]])))
 
-(defn ^:export MergeClasses
+(defstory MergeClasses
   "When to use clojure-shadcn.utils.styles/merge-classes to override classes."
   []
   (r/as-element
-   (helpers/wrap-component {:source (embed-body MergeClasses) :filename "theming_stories.cljs"}
+   (helpers/wrap-component
     [:div {:class "max-w-3xl p-6 space-y-2"}
      [:h1 {:class "text-2xl font-bold mb-1"}
       "Merging classes"]

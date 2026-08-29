@@ -11,9 +11,7 @@
    [clojure-shadcn.ui.components.label         :as label]
    [clojure-shadcn.ui.components.textarea      :as textarea]
    [reagent.core                                 :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Dropdown Menu"
@@ -30,10 +28,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/dropdown_menu.cljs"
               :filename "dropdown_menu.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "dropdown_menu_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -149,7 +147,7 @@
          [:code "[dropdown-menu {}\n [dropdown-menu-trigger {:as-child true}\n  [button {:variant :outline} \"Open\"]]\n [dropdown-menu-content {:align \"end\"}\n  [dropdown-menu-label {} \"Actions\"]\n  [dropdown-menu-item {:on-select #(js/console.log \"edit\")} \"Edit\"]\n  [dropdown-menu-separator {}]\n  [dropdown-menu-sub {}\n   [dropdown-menu-sub-trigger {} \"More\"]\n   [dropdown-menu-sub-content {}\n    [dropdown-menu-item {} \"Duplicate\"]]]]]"]]
        ]]])))
 
-(defn ^:export DropdownMenuDemo
+(defstory DropdownMenuDemo
   "Dropdown menu with grouped items and submenu.
 
   Radix primitive: @radix-ui/react-dropdown-menu
@@ -157,7 +155,7 @@
   Use groups, separators, and submenus for structured menus."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body DropdownMenuDemo) :filename "dropdown_menu_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6"}
      [sut/dropdown-menu {}
       [sut/dropdown-menu-trigger {:as-child true}
@@ -215,7 +213,7 @@
         [sut/dropdown-menu-shortcut {}
          "⇧⌘Q"]]]]])))
 
-(defn ^:export DropdownMenuCheckboxes
+(defstory DropdownMenuCheckboxes
   "Dropdown menu with checkbox items.
 
   Radix primitive: @radix-ui/react-dropdown-menu
@@ -226,7 +224,7 @@
          show-activity? (r/atom false)
          show-panel? (r/atom false)]
      (fn []
-       (helpers/wrap-component {:source (embed-body DropdownMenuCheckboxes) :filename "dropdown_menu_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-6"}
          [sut/dropdown-menu {}
           [sut/dropdown-menu-trigger {:as-child true}
@@ -246,7 +244,7 @@
                                              :on-checked-change #(reset! show-panel? %)}
             "Panel"]]]]))))]))
 
-(defn ^:export DropdownMenuRadioGroup
+(defstory DropdownMenuRadioGroup
   "Dropdown menu with radio group selection.
 
   Radix primitive: @radix-ui/react-dropdown-menu
@@ -255,7 +253,7 @@
   []
   (r/as-element [(fn [] (let [position (r/atom "bottom")]
      (fn []
-       (helpers/wrap-component {:source (embed-body DropdownMenuRadioGroup) :filename "dropdown_menu_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-6"}
          [sut/dropdown-menu {}
           [sut/dropdown-menu-trigger {:as-child true}
@@ -273,7 +271,7 @@
             [sut/dropdown-menu-radio-item {:value "right"}
              "Right"]]]]]))))]))
 
-(defn ^:export DropdownMenuDialog
+(defstory DropdownMenuDialog
   "Dropdown menu launching dialogs.
 
   Radix primitives: @radix-ui/react-dropdown-menu, @radix-ui/react-dialog
@@ -283,7 +281,7 @@
   (r/as-element [(fn [] (let [show-new? (r/atom false)
          show-share? (r/atom false)]
      (fn []
-       (helpers/wrap-component {:source (embed-body DropdownMenuDialog) :filename "dropdown_menu_stories.cljs"}
+       (helpers/wrap-component
         [:div {:class "p-6"}
          [sut/dropdown-menu {:modal false}
           [sut/dropdown-menu-trigger {:as-child true}

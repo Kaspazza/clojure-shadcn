@@ -76,14 +76,17 @@
   "Wraps story children and, when given an options map with :source, renders
    an expandable code block below the demo.
 
-  Usage:
-  (wrap-component {:source (embed-body AvatarDemo)
-                   :filename \"avatar_stories.cljs\"}
-    child1
-    child2)
+  Usage with `defstory` (which injects `:source` and infers the filename):
+  (defstory AvatarDemo
+    []
+    (wrap-component
+      child1
+      child2))
 
   The options map is optional; without it wrap-component just groups children
-  into a fragment."
+  into a fragment. Pass {:filename \"custom.cljs\"} only when an explicit
+  filename override is needed. Story declarations should use `defstory` to
+  display their source."
   [& args]
   (let [has-opts?  (and (seq args) (map? (first args)))
         opts       (when has-opts? (first args))

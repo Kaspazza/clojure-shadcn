@@ -5,9 +5,7 @@
    [clojure-shadcn.ui.components.button  :as button]
    [clojure-shadcn.ui.components.tooltip :as sut]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
   #js {:title      "Components/Tooltip"
@@ -25,10 +23,10 @@
               :namespace-path "src/cljs/clojure_shadcn/ui/components/tooltip.cljs"
               :filename "tooltip.cljs"}]))
 
-(defn ^:export ApiReference
+(defstory ApiReference
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body ApiReference) :filename "tooltip_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -65,7 +63,7 @@
          [:code "[tooltip {:trigger [button {:variant :outline} \"Hover me\"]\n          :content \"Helpful context\"\n          :side :top}]" ]]
         ]]])))
 
-(defn ^:export TooltipDemo
+(defstory TooltipDemo
   "Basic tooltip with a button trigger.
 
   Radix primitive: @radix-ui/react-tooltip
@@ -73,12 +71,12 @@
   Use tooltips for concise, contextual hints."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body TooltipDemo) :filename "tooltip_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/tooltip {:trigger [button/button {:variant :outline}
                                                                "Hover"]
                                                      :content "Add to library"}]])))
 
-(defn ^:export KbdTooltip
+(defstory KbdTooltip
   "Tooltip with keyboard shortcut hints.
 
   Radix primitive: @radix-ui/react-tooltip
@@ -86,7 +84,7 @@
   Use inline <kbd> tags to show shortcuts."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body KbdTooltip) :filename "tooltip_stories.cljs"}
+  (helpers/wrap-component
     [:div {:class "p-6 flex flex-wrap gap-4"}
      [sut/tooltip
       {:trigger [button/button {:size :sm
@@ -116,7 +114,7 @@
            "bg-muted text-muted-foreground inline-flex h-5 items-center rounded border px-1.5 font-mono text-[10px]"}
           "P"]]]}]])))
 
-(defn ^:export TooltipCustomContent
+(defstory TooltipCustomContent
   "Tooltip with rich content.
 
   Radix primitive: @radix-ui/react-tooltip
@@ -124,7 +122,7 @@
   Rich content works well for onboarding hints."
   []
   (r/as-element
-  (helpers/wrap-component {:source (embed-body TooltipCustomContent) :filename "tooltip_stories.cljs"} [:div {:class "p-6"}
+  (helpers/wrap-component [:div {:class "p-6"}
                                        [sut/tooltip {:trigger [button/button {:variant :ghost}
                                                                "Hover for info"]
                                                      :content [:div {:class "space-y-1"}
