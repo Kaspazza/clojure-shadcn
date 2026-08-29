@@ -13,7 +13,6 @@ out/
 
 # Build output
 cljs-stories/
-stories/js/
 storybook-static/
 resources/public/css/
 public/

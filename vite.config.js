@@ -9,7 +9,7 @@ import tailwindcss from '@tailwindcss/vite';
 const cljsFullReload = {
   name: 'cljs-full-reload',
   handleHotUpdate({ file, server }) {
-    if (file.includes('/cljs-stories/') || file.includes('/stories/js/')) {
+    if (file.includes('/cljs-stories/')) {
       server.ws.send({ type: 'full-reload' });
       return [];
     }

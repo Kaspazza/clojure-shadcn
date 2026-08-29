@@ -12,5 +12,4 @@
    ;; Let Storybook/Vite resolve npm dependencies. In particular, Reagent and
    ;; Storybook must use the same React instance for the hooks dispatcher.
    :js-options   {:js-provider :import}
-   :devtools     {:enabled false}
-   :build-hooks  [(clojure-shadcn.stories.helpers.bridge-gen/flush)]}}}
+   :devtools     {:enabled false}}}}

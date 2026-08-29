@@ -10,15 +10,10 @@
   {:doc "Generate shadow-cljs ESM module config from CLJS story sources"
    :task (shell "bb scripts/generate_story_modules.clj")}
 
-  generate-story-bridges
-  {:doc "Generate Storybook CSF bridges from compiled ESM story modules"
-   :task (shell "clojure -M:cljs-dev -e \"(require 'clojure-shadcn.stories.helpers.bridge-gen) (clojure-shadcn.stories.helpers.bridge-gen/generate-all!)\"")}
-
   prepare-stories
-  {:doc "Generate config, compile stories, and create bridges before Storybook indexes them"
+  {:doc "Generate config and compile stories before Storybook indexes them"
    :depends [generate-story-modules]
-   :task (do (shell "npx shadow-cljs compile stories --config-merge target/story-modules.edn")
-             (run 'generate-story-bridges))}
+   :task (shell "npx shadow-cljs compile stories --config-merge target/story-modules.edn")}
 
   dev
   {:doc "Full dev environment: prepare stories, then start watcher + Storybook"
@@ -33,10 +28,9 @@
    :task (shell "npx shadow-cljs watch stories --config-merge target/story-modules.edn")}
 
   compile-stories
-  {:doc "One-shot compile of CLJS stories and ESM bridge generation"
+  {:doc "One-shot compile of CLJS stories to ESM"
    :depends [generate-story-modules]
-   :task (do (shell "npx shadow-cljs compile stories --config-merge target/story-modules.edn")
-             (run 'generate-story-bridges))}
+   :task (shell "npx shadow-cljs compile stories --config-merge target/story-modules.edn")}
 
   storybook
   {:doc "Prepare stories, then run Storybook dev server on port 6010"
@@ -50,4 +44,4 @@
 
   clean
   {:doc "Remove build artifacts"
-   :task (shell "rm -rf .shadow-cljs cljs-stories stories/js storybook-static target/story-modules.edn")}}}
+   :task (shell "rm -rf .shadow-cljs cljs-stories storybook-static target/story-modules.edn")}}}
