@@ -5,7 +5,8 @@
    [clojure-shadcn.ui.components.markdown :as sut]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Markdown"
@@ -25,7 +26,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-4xl"}
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "markdown_stories.cljs"} [:div {:class "p-6 max-w-4xl"}
                                                 [:div {:class "space-y-4"}
                                                  [helpers/api-component-card
                                                   {:component-name "markdown"
@@ -56,7 +57,7 @@
   Useful for rich text content blocks."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body MarkdownHeadings) :filename "markdown_stories.cljs"}
     [:div {:class "p-6 max-w-xl"}
      [sut/markdown {:children "# Heading 1\n\n## Heading 2\n\n**Bold** and _italic_ text."}]])))
 
@@ -65,7 +66,7 @@
   Code blocks are highlighted via Shiki."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body MarkdownCodeBlocks) :filename "markdown_stories.cljs"}
     [:div {:class "p-6 max-w-xl"}
      [sut/markdown
       {:children
@@ -76,7 +77,7 @@
   Links receive underline styles via markdown component."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body MarkdownLinksLists) :filename "markdown_stories.cljs"}
     [:div {:class "p-6 max-w-xl"}
      [sut/markdown
       {:children
@@ -87,7 +88,7 @@
   Demonstrates headings, lists, links, and code together."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body MarkdownCombined) :filename "markdown_stories.cljs"}
     [:div {:class "p-6 max-w-xl"}
      [sut/markdown
       {:children

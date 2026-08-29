@@ -33,6 +33,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
    [clojure-shadcn.ui.components.sheet     :as mateuszmazurczak-sheet]
    [clojure-shadcn.ui.components.skeleton  :as mateuszmazurczak-skeleton]
    [clojure-shadcn.ui.components.tooltip   :as mateuszmazurczak-tooltip]
+   [clojure-shadcn.utils.props            :refer [normalize-props]]
    [clojure-shadcn.utils.styles            :refer [merge-classes]]))
 
 ;; -----------------------------------------------------------------------------
@@ -58,14 +59,17 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   - :variant \"sidebar\" | \"floating\" | \"inset\" (default: \"sidebar\")
   - :collapsible \"offcanvas\" | \"icon\" | \"none\" (default: \"offcanvas\")
   - :class - Additional CSS classes
-  - :style - Additional inline styles (merged with CSS vars)"
-  [{:keys [open? is-mobile on-open-change side variant collapsible class style]
-    :or {side "left"
-         variant "sidebar"
-         collapsible "offcanvas"}}
+  - :style - Additional inline styles (merged with CSS vars)
+  Both kebab-case and camelCase prop spellings are accepted."
+  [{:as raw-props}
    &
    children]
-  (let [state (if open? "expanded" "collapsed")
+  (let [{:keys [open? is-mobile on-open-change side variant collapsible class style]
+         :or {side "left"
+              variant "sidebar"
+              collapsible "offcanvas"}}
+        (normalize-props raw-props)]
+    (let [state (if open? "expanded" "collapsed")
         css-vars (merge {"--sidebar-width" SIDEBAR_WIDTH
                          "--sidebar-width-icon" SIDEBAR_WIDTH_ICON}
                         style)]
@@ -128,12 +132,12 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
             "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+_2px)]"
             "group-data-[collapsible=icon]:w-[var(--sidebar-width-icon)] group-data-[side=left]:border-r group-data-[side=right]:border-l")
           class)}
-        (into
-         [:div
-          {:data-sidebar "sidebar"
-           :class
-           "flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"}]
-         children)]])))
+         (into
+          [:div
+           {:data-sidebar "sidebar"
+            :class
+            "flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"}]
+          children)]]))))
 
 ;; -----------------------------------------------------------------------------
 ;; Trigger & Rail - Simple button components
@@ -290,51 +294,55 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
         children))
 
 (defn sidebar-group-label
-  [{:keys [class as-child]
-    :as props}
+  [{:as raw-props}
    &
    children]
-  (let [Comp (if as-child Slot "div")]
-    (into [:>
-           Comp
-           (-> props
-               (dissoc :class :as-child)
-               (assoc :data-sidebar "group-label"
-                      :class
-                      (merge-classes
-                       (str
-                        "flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium "
-                        "text-sidebar-foreground/70 outline-none ring-sidebar-ring "
-                        "transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 "
-                        "[&>svg]:size-4 [&>svg]:shrink-0 ")
-                       "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0"
-                       class)))]
-          children)))
+  (let [{:keys [class as-child]
+         :as props}
+        (normalize-props raw-props)]
+    (let [Comp (if as-child Slot "div")]
+      (into [:>
+             Comp
+             (-> props
+                 (dissoc :class :as-child)
+                 (assoc :data-sidebar "group-label"
+                        :class
+                        (merge-classes
+                         (str
+                          "flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium "
+                          "text-sidebar-foreground/70 outline-none ring-sidebar-ring "
+                          "transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 "
+                          "[&>svg]:size-4 [&>svg]:shrink-0 ")
+                         "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0"
+                         class)))]
+            children))))
 
 (defn sidebar-group-action
-  [{:keys [class as-child]
-    :as props}
+  [{:as raw-props}
    &
    children]
-  (let [Comp (if as-child Slot "button")]
-    (into [:>
-           Comp
-           (->
-             props
-             (dissoc :class :as-child)
-             (assoc
-              :data-sidebar "group-action"
-              :class
-              (merge-classes
-               (str
-                "absolute right-3 top-3.5 flex aspect-square w-5 items-center justify-center "
-                "rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring "
-                "transition-transform hover:bg-sidebar-accent hover:text-sidebar-accent-foreground "
-                "focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0 ")
-               "after:absolute after:-inset-2 after:md:hidden"
-               "group-data-[collapsible=icon]:hidden"
-               class)))]
-          children)))
+  (let [{:keys [class as-child]
+         :as props}
+        (normalize-props raw-props)]
+    (let [Comp (if as-child Slot "button")]
+      (into [:>
+             Comp
+             (->
+               props
+               (dissoc :class :as-child)
+               (assoc
+                :data-sidebar "group-action"
+                :class
+                (merge-classes
+                 (str
+                  "absolute right-3 top-3.5 flex aspect-square w-5 items-center justify-center "
+                  "rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring "
+                  "transition-transform hover:bg-sidebar-accent hover:text-sidebar-accent-foreground "
+                  "focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0 ")
+                 "after:absolute after:-inset-2 after:md:hidden"
+                 "group-data-[collapsible=icon]:hidden"
+                 class)))]
+            children))))
 
 (defn sidebar-group-content
   [{:keys [class]
@@ -402,67 +410,72 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   - :size (:default | :sm | :lg) - Button size
   - :collapsed? (boolean) - Whether sidebar is collapsed (for tooltip visibility)
   - :is-mobile (boolean) - Whether on mobile (hides tooltip)
-  - :class - Additional CSS classes"
-  [{:keys [class as-child is-active? tooltip variant size collapsed? is-mobile]
-    :or {variant :default
-         size :default}
-    :as props}
+  - :class - Additional CSS classes
+  Both kebab-case and camelCase prop spellings are accepted."
+  [{:as raw-props}
    &
    children]
-  (let [Comp (if as-child Slot "button")
+  (let [{:keys [class as-child is-active? tooltip variant size collapsed? is-mobile]
+         :or {variant :default
+              size :default}
+         :as props}
+        (normalize-props raw-props)]
+    (let [Comp (if as-child Slot "button")
+          button-el
+          (into
+           [:>
+            Comp
+            (-> props
+                (dissoc :class :as-child :is-active? :tooltip :variant :size :collapsed? :is-mobile)
+                (assoc :data-sidebar "menu-button"
+                       :data-size (name size)
+                       :data-active (boolean is-active?)
+                       :class (merge-classes (menu-button-classes {:variant variant
+                                                                   :size size})
+                                             class)))]
+           children)]
+      (if (or (not tooltip) (not collapsed?) is-mobile)
         button-el
-        (into
-         [:>
-          Comp
-          (-> props
-              (dissoc :class :as-child :is-active? :tooltip :variant :size :collapsed? :is-mobile)
-              (assoc :data-sidebar "menu-button"
-                     :data-size (name size)
-                     :data-active (boolean is-active?)
-                     :class (merge-classes (menu-button-classes {:variant variant
-                                                                 :size size})
-                                           class)))]
-         children)]
-    (if (or (not tooltip) (not collapsed?) is-mobile)
-      button-el
-      [mateuszmazurczak-tooltip/tooltip {:trigger button-el
-                                         :content tooltip
-                                         :side :right
-                                         :align :center
-                                         :trigger-as-child? true}])))
+        [mateuszmazurczak-tooltip/tooltip {:trigger button-el
+                                           :content tooltip
+                                           :side :right
+                                           :align :center
+                                           :trigger-as-child? true}]))))
 
 (defn sidebar-menu-action
-  [{:keys [class as-child show-on-hover?]
-    :as props}
+  [{:as raw-props}
    &
    children]
-  (let [Comp (if as-child Slot "button")]
-    (into
-     [:>
-      Comp
-      (->
-        props
-        (dissoc :class :as-child :show-on-hover?)
-        (assoc
-         :data-sidebar "menu-action"
-         :class
-         (merge-classes
-          (str
-           "absolute right-1 top-1.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 "
-           "text-sidebar-foreground outline-none ring-sidebar-ring transition-transform "
-           "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 "
-           "peer-hover/menu-button:text-sidebar-accent-foreground [&>svg]:size-4 [&>svg]:shrink-0 ")
-          "after:absolute after:-inset-2 after:md:hidden"
-          "peer-data-[size=sm]/menu-button:top-1"
-          "peer-data-[size=default]/menu-button:top-1.5"
-          "peer-data-[size=lg]/menu-button:top-2.5"
-          "group-data-[collapsible=icon]:hidden"
-          (when show-on-hover?
+  (let [{:keys [class as-child show-on-hover?]
+         :as props}
+        (normalize-props raw-props)]
+    (let [Comp (if as-child Slot "button")]
+      (into
+       [:>
+        Comp
+        (->
+          props
+          (dissoc :class :as-child :show-on-hover?)
+          (assoc
+           :data-sidebar "menu-action"
+           :class
+           (merge-classes
             (str
-             "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 "
-             "peer-data-[active=true]/menu-button:text-sidebar-accent-foreground md:opacity-0"))
-          class)))]
-     children)))
+             "absolute right-1 top-1.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 "
+             "text-sidebar-foreground outline-none ring-sidebar-ring transition-transform "
+             "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 "
+             "peer-hover/menu-button:text-sidebar-accent-foreground [&>svg]:size-4 [&>svg]:shrink-0 ")
+            "after:absolute after:-inset-2 after:md:hidden"
+            "peer-data-[size=sm]/menu-button:top-1"
+            "peer-data-[size=default]/menu-button:top-1.5"
+            "peer-data-[size=lg]/menu-button:top-2.5"
+            "group-data-[collapsible=icon]:hidden"
+            (when show-on-hover?
+              (str
+               "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 "
+               "peer-data-[active=true]/menu-button:text-sidebar-accent-foreground md:opacity-0"))
+            class)))]
+       children))))
 
 (defn sidebar-menu-badge
   [{:keys [class]
@@ -492,21 +505,24 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   
   Props:
   - :show-icon? (boolean) - Show icon skeleton
-  - :class - Additional CSS classes"
-  [{:keys [class show-icon?]
-    :as props}]
-  (let [width (str (+ 50 (rand-int 40)) "%")]
-    [:div
-     (-> props
-         (dissoc :class :show-icon?)
-         (assoc :data-sidebar "menu-skeleton"
-                :class (merge-classes "flex h-8 items-center gap-2 rounded-md px-2" class)))
-     (when show-icon?
-       [mateuszmazurczak-skeleton/skeleton {:class "size-4 rounded-md"
-                                            :data-sidebar "menu-skeleton-icon"}])
-     [mateuszmazurczak-skeleton/skeleton {:class "h-4 max-w-[--skeleton-width] flex-1"
-                                          :data-sidebar "menu-skeleton-text"
-                                          :style {"--skeleton-width" width}}]]))
+  - :class - Additional CSS classes
+  Both kebab-case and camelCase prop spellings are accepted."
+  [{:as raw-props}]
+  (let [{:keys [class show-icon?]
+         :as props}
+        (normalize-props raw-props)]
+    (let [width (str (+ 50 (rand-int 40)) "%")]
+      [:div
+       (-> props
+           (dissoc :class :show-icon?)
+           (assoc :data-sidebar "menu-skeleton"
+                  :class (merge-classes "flex h-8 items-center gap-2 rounded-md px-2" class)))
+       (when show-icon?
+         [mateuszmazurczak-skeleton/skeleton {:class "size-4 rounded-md"
+                                              :data-sidebar "menu-skeleton-icon"}])
+       [mateuszmazurczak-skeleton/skeleton {:class "h-4 max-w-[--skeleton-width] flex-1"
+                                            :data-sidebar "menu-skeleton-text"
+                                            :style {"--skeleton-width" width}}]])))
 
 (defn sidebar-menu-sub
   [{:keys [class]
@@ -539,35 +555,37 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
         children))
 
 (defn sidebar-menu-sub-button
-  [{:keys [class as-child size is-active?]
-    :or {size :md}
-    :as props}
+  [{:as raw-props}
    &
    children]
-  (let [Comp (if as-child Slot "a")
-        size-classes (case size
-                       :sm "text-xs"
-                       :md "text-sm"
-                       "text-sm")]
-    (into
-     [:>
-      Comp
-      (->
-        props
-        (dissoc :class :as-child :size :is-active?)
-        (assoc
-         :data-sidebar "menu-sub-button"
-         :data-size (name size)
-         :data-active (boolean is-active?)
-         :class
-         (merge-classes
-          (str
-           "flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 "
-           "text-sidebar-foreground outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground "
-           "focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 "
-           "aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground ")
-          "data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
-          size-classes
-          "group-data-[collapsible=icon]:hidden" class)))]
-     children)))
+  (let [{:keys [class as-child size is-active?]
+         :or {size :md}
+         :as props}
+        (normalize-props raw-props)]
+    (let [Comp (if as-child Slot "a")
+          size-classes (case size
+                         :sm "text-xs"
+                         :md "text-sm"
+                         "text-sm")]
+      (into
+       [:>
+        Comp
+        (->
+          props
+          (dissoc :class :as-child :size :is-active?)
+          (assoc
+           :data-sidebar "menu-sub-button"
+           :data-size (name size)
+           :data-active (boolean is-active?)
+           :class
+           (merge-classes
+            (str
+             "flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 "
+             "text-sidebar-foreground outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground "
+             "focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 "
+             "aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground ")
+            "data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
+            size-classes
+            "group-data-[collapsible=icon]:hidden" class)))]
+       children))))
 

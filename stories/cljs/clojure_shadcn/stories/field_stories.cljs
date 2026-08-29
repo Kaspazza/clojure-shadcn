@@ -8,7 +8,8 @@
    [clojure-shadcn.ui.components.textarea :as textarea]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Field"
@@ -28,7 +29,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "field_stories.cljs"}
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -106,7 +107,7 @@
   Use field-content to group controls and description text."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-md"}
+  (helpers/wrap-component {:source (embed-body FieldWithInput) :filename "field_stories.cljs"} [:div {:class "p-6 max-w-md"}
                                        [sut/field-set {}
                                         [sut/field-legend {}
                                          "Profile"]
@@ -127,7 +128,7 @@
   Use for multi-line inputs and richer descriptions."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-md"}
+  (helpers/wrap-component {:source (embed-body FieldWithTextarea) :filename "field_stories.cljs"} [:div {:class "p-6 max-w-md"}
                                        [sut/field {}
                                         [sut/field-label {:html-for "bio"}
                                          "Bio"]
@@ -145,7 +146,7 @@
   Combine field + select for structured inputs."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-md"}
+  (helpers/wrap-component {:source (embed-body FieldWithSelect) :filename "field_stories.cljs"} [:div {:class "p-6 max-w-md"}
                                        [sut/field {}
                                         [sut/field-label {}
                                          "Department"]
@@ -170,7 +171,7 @@
   Use field-error to show validation messages."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-md"}
+  (helpers/wrap-component {:source (embed-body FieldWithError) :filename "field_stories.cljs"} [:div {:class "p-6 max-w-md"}
                                        [sut/field {}
                                         [sut/field-label {:html-for "email"}
                                          "Email"]
@@ -190,7 +191,7 @@
   Use field-set + field-group for multi-field sections."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body FieldsetMultipleFields) :filename "field_stories.cljs"}
     [:div {:class "p-6 max-w-md"}
      [sut/field-set {}
       [sut/field-legend {}

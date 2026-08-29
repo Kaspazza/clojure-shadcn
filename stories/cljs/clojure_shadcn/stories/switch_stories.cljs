@@ -7,7 +7,8 @@
    [clojure-shadcn.ui.components.switch :as sut]
    [reagent.core                          :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Switch"
@@ -27,7 +28,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "switch_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -64,7 +65,7 @@
   Useful for single boolean preferences."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body SwitchDemo) :filename "switch_stories.cljs"} [:div {:class "p-6"}
                                        [:div {:class "flex items-center gap-2"}
                                         [sut/switch {:id "airplane-mode"}]
                                         [label/label {:html-for "airplane-mode"}
@@ -78,7 +79,7 @@
   Use for richer settings forms with copy."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-md"}
+  (helpers/wrap-component {:source (embed-body FieldSwitch) :filename "switch_stories.cljs"} [:div {:class "p-6 max-w-md"}
                                        [field/field {:orientation :horizontal}
                                         [field/field-content {}
                                          [field/field-label {:html-for "mfa"}
@@ -95,7 +96,7 @@
   Use disabled state when the preference is locked."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body SwitchDisabled) :filename "switch_stories.cljs"} [:div {:class "p-6"}
                                        [:div {:class "flex items-center gap-2"}
                                         [sut/switch {:id "locked"
                                                      :disabled true
@@ -111,7 +112,7 @@
   Use :aria-invalid true and helper text for validation feedback."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 space-y-2"}
+  (helpers/wrap-component {:source (embed-body SwitchInvalid) :filename "switch_stories.cljs"} [:div {:class "p-6 space-y-2"}
                                        [:div {:class "flex items-center gap-2"}
                                         [sut/switch {:id "terms-invalid"
                                                      :aria-invalid true
@@ -128,11 +129,10 @@
 
   Use controlled switches when state drives other UI."
   []
-  (r/as-element
-  (let [enabled? (r/atom true)]
+  (r/as-element [(fn [] (let [enabled? (r/atom true)]
      (fn []
-       (helpers/wrap-component [:div {:class "p-6 flex items-center gap-3"}
+       (helpers/wrap-component {:source (embed-body SwitchControlled) :filename "switch_stories.cljs"} [:div {:class "p-6 flex items-center gap-3"}
                                            [sut/switch {:checked @enabled?
                                                         :on-checked-change #(reset! enabled? %)}]
                                            [:span {:class "text-sm"}
-                                            (if @enabled? "Enabled" "Disabled")]])))))
+                                            (if @enabled? "Enabled" "Disabled")]]))))]))

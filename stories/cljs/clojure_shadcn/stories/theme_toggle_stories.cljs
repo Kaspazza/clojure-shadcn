@@ -4,7 +4,8 @@
    [clojure-shadcn.stories.helpers             :as helpers]
    [clojure-shadcn.ui.components.theme-toggle :as sut]
    [reagent.core                              :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/ThemeToggle"
@@ -24,7 +25,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-   (helpers/wrap-component
+   (helpers/wrap-component {:source (embed-body ApiReference) :filename "theme_toggle_stories.cljs"}
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -83,7 +84,7 @@
   mode. The component itself stays pure: it only fires :on-toggle."
   []
   (r/as-element
-   (helpers/wrap-component
+   (helpers/wrap-component {:source (embed-body ThemeToggleBasic) :filename "theme_toggle_stories.cljs"}
     [:div {:class "p-6"}
      [controlled-toggle]])))
 
@@ -91,7 +92,7 @@
   "Static render pinned to :light (Sun icon visible)."
   []
   (r/as-element
-   (helpers/wrap-component
+   (helpers/wrap-component {:source (embed-body ThemeToggleLight) :filename "theme_toggle_stories.cljs"}
     [:div {:class "p-6"}
      [sut/theme-toggle {:theme :light}]])))
 
@@ -99,7 +100,7 @@
   "Static render pinned to :dark (Moon icon visible)."
   []
   (r/as-element
-   (helpers/wrap-component
+   (helpers/wrap-component {:source (embed-body ThemeToggleDark) :filename "theme_toggle_stories.cljs"}
     [:div {:class "p-6"}
      [sut/theme-toggle {:theme :dark}]])))
 
@@ -107,7 +108,7 @@
   "Composition demo: toggle inside a minimal header."
   []
   (r/as-element
-   (helpers/wrap-component
+   (helpers/wrap-component {:source (embed-body ThemeToggleInHeader) :filename "theme_toggle_stories.cljs"}
     [:div {:class "relative h-20 rounded-md border bg-background"}
      [:div {:class "flex h-full items-center justify-between px-4"}
       [:span {:class "text-sm font-semibold"}
@@ -125,7 +126,7 @@
   "Settings panel row with descriptive text next to the live toggle."
   []
   (r/as-element
-   (helpers/wrap-component
+   (helpers/wrap-component {:source (embed-body ThemeToggleSettingsRow) :filename "theme_toggle_stories.cljs"}
     [:div {:class "p-6 max-w-sm"}
      [:div {:class "flex items-center justify-between rounded-md border px-4 py-3"}
       [:div {:class "space-y-1"}

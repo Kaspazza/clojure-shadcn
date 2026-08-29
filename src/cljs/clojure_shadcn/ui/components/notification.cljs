@@ -26,6 +26,7 @@ Custom component implementation."
   (:require
    ["lucide-react" :refer [CircleCheckIcon InfoIcon Loader2Icon OctagonXIcon TriangleAlertIcon]]
    ["sonner"       :refer [Toaster toast]]
+   [clojure-shadcn.utils.props :refer [normalize-props]]
    [reagent.core   :as r]))
 
 (defn toaster
@@ -85,6 +86,7 @@ Custom component implementation."
     - :important - Boolean, if true prevents dismissal
     - :on-dismiss - Callback when toast is dismissed
     - :on-auto-close - Callback when toast auto-closes
+  Both kebab-case and camelCase prop spellings are accepted.
   
   Returns:
   - Toast ID that can be used with dismiss-toast
@@ -108,26 +110,28 @@ Custom component implementation."
                :position \"top-center\"})"
   ([message] (show-toast message nil))
   ([message
-    {:keys [description action duration position cancel id important on-dismiss on-auto-close]
-     :or {position "top-right"}
-     :as _options}]
-   (let [opts (cond-> {}
-                description (assoc :description description)
-                action (assoc :action
-                              (clj->js (-> action
-                                           (update :on-click (fn [f] #(f)))
-                                           (update :label identity))))
-                cancel (assoc :cancel
-                              (clj->js (-> cancel
-                                           (update :on-click (fn [f] #(f)))
-                                           (update :label identity))))
-                duration (assoc :duration duration)
-                position (assoc :position position)
-                id (assoc :id id)
-                important (assoc :important important)
-                on-dismiss (assoc :onDismiss (fn [_] (on-dismiss)))
-                on-auto-close (assoc :onAutoClose (fn [_] (on-auto-close))))]
-     (toast message (clj->js opts)))))
+    {:as raw-props}]
+   (let [{:keys [description action duration position cancel id important on-dismiss on-auto-close]
+          :or {position "top-right"}
+          :as _options}
+         (normalize-props raw-props)]
+     (let [opts (cond-> {}
+                  description (assoc :description description)
+                  action (assoc :action
+                                (clj->js (-> action
+                                             (update :on-click (fn [f] #(f)))
+                                             (update :label identity))))
+                  cancel (assoc :cancel
+                                (clj->js (-> cancel
+                                             (update :on-click (fn [f] #(f)))
+                                             (update :label identity))))
+                  duration (assoc :duration duration)
+                  position (assoc :position position)
+                  id (assoc :id id)
+                  important (assoc :important important)
+                  on-dismiss (assoc :onDismiss (fn [_] (on-dismiss)))
+                  on-auto-close (assoc :onAutoClose (fn [_] (on-auto-close))))]
+       (toast message (clj->js opts))))))
 
 (defn show-success
   "Display a success toast with outline styling.

@@ -12,6 +12,7 @@ Custom component implementation."
    ["react"                               :as react]
    [goog.object                           :as gobj]
    [clojure-shadcn.ui.components.button :as mateuszmazurczak-button]
+   [clojure-shadcn.utils.props          :refer [normalize-props]]
    [clojure-shadcn.utils.styles         :refer [merge-classes]]
    [reagent.core                          :as    r
                                           :refer [defc]]
@@ -35,6 +36,7 @@ Custom component implementation."
   - `:orientation` - Carousel orientation: `:horizontal` (default) or `:vertical`
   - `:set-api` - Callback to receive the carousel API: (fn [api] ...)
   - `:class` - Additional Tailwind classes
+  Both kebab-case and camelCase prop spellings are accepted.
   
   Example:
   [carousel {:opts {:align \"start\" :loop true}}
@@ -44,68 +46,70 @@ Custom component implementation."
       [carousel-item {} \"Slide 3\"]]
     [carousel-previous {}]
     [carousel-next {}]]"
- [{:keys [orientation opts set-api plugins class]
-   :or {orientation :horizontal}}
+ [{:as raw-props}
   &
   children]
- (let [use-embla-carousel (or (gobj/get embla-carousel "default") embla-carousel)
-       embla-opts (clj->js (assoc opts :axis (if (= orientation :horizontal) "x" "y")))
-       embla-plugins (clj->js (or plugins []))
-       [carousel-ref api] (use-embla-carousel embla-opts embla-plugins)
-       [can-scroll-prev set-can-scroll-prev] (rhooks/use-state false)
-       [can-scroll-next set-can-scroll-next] (rhooks/use-state false)
-       on-select (rhooks/use-callback (fn [embla-api]
-                                        (when embla-api
-                                          (set-can-scroll-prev (.canScrollPrev embla-api))
-                                          (set-can-scroll-next (.canScrollNext embla-api))))
-                                      [])
-       scroll-prev (rhooks/use-callback (fn [] (when api (.scrollPrev api))) [api])
-       scroll-next (rhooks/use-callback (fn [] (when api (.scrollNext api))) [api])
-       handle-key-down
-       (rhooks/use-callback
-        (fn [event]
-          (when (= (.-key event) "ArrowLeft") (.preventDefault event) (scroll-prev))
-          (when (= (.-key event) "ArrowRight") (.preventDefault event) (scroll-next)))
-        [scroll-prev scroll-next])]
-   ;; Set API callback
-   (rhooks/use-effect (fn [] (when (and api set-api) (set-api api))) [api set-api])
-   ;; Update on select
-   (rhooks/use-effect (fn []
-                        (when api
-                          (on-select api)
-                          (.on api "reInit" on-select)
-                          (.on api "select" on-select)
-                          ;; Cleanup function
-                          (fn [] (.off api "select" on-select))))
-                      [api on-select])
-   (let [ctx-value (rhooks/use-memo (fn []
-                                      #js {:carousel-ref carousel-ref
-                                           :api api
-                                           :opts opts
-                                           :orientation
-                                           (or orientation
-                                               (if (= (:axis opts) "y") :vertical :horizontal))
-                                           :scroll-prev scroll-prev
-                                           :scroll-next scroll-next
-                                           :can-scroll-prev can-scroll-prev
-                                           :can-scroll-next can-scroll-next})
-                                    [carousel-ref
-                                     api
-                                     opts
-                                     orientation
-                                     scroll-prev
-                                     scroll-next
-                                     can-scroll-prev
-                                     can-scroll-next])]
-     [:>
-      (.-Provider CarouselContext)
-      {:value ctx-value}
-      (into [:div {:on-key-down-capture handle-key-down
-                   :class (merge-classes "relative" class)
-                   :role "region"
-                   :aria-roledescription "carousel"
-                   :data-slot "carousel"}]
-            children)])))
+ (let [{:keys [orientation opts set-api plugins class]
+        :or {orientation :horizontal}}
+       (normalize-props raw-props)]
+   (let [use-embla-carousel (or (gobj/get embla-carousel "default") embla-carousel)
+         embla-opts (clj->js (assoc opts :axis (if (= orientation :horizontal) "x" "y")))
+         embla-plugins (clj->js (or plugins []))
+         [carousel-ref api] (use-embla-carousel embla-opts embla-plugins)
+         [can-scroll-prev set-can-scroll-prev] (rhooks/use-state false)
+         [can-scroll-next set-can-scroll-next] (rhooks/use-state false)
+         on-select (rhooks/use-callback (fn [embla-api]
+                                          (when embla-api
+                                            (set-can-scroll-prev (.canScrollPrev embla-api))
+                                            (set-can-scroll-next (.canScrollNext embla-api))))
+                                        [])
+         scroll-prev (rhooks/use-callback (fn [] (when api (.scrollPrev api))) [api])
+         scroll-next (rhooks/use-callback (fn [] (when api (.scrollNext api))) [api])
+         handle-key-down
+         (rhooks/use-callback
+          (fn [event]
+            (when (= (.-key event) "ArrowLeft") (.preventDefault event) (scroll-prev))
+            (when (= (.-key event) "ArrowRight") (.preventDefault event) (scroll-next)))
+          [scroll-prev scroll-next])]
+     ;; Set API callback
+     (rhooks/use-effect (fn [] (when (and api set-api) (set-api api))) [api set-api])
+     ;; Update on select
+     (rhooks/use-effect (fn []
+                          (when api
+                            (on-select api)
+                            (.on api "reInit" on-select)
+                            (.on api "select" on-select)
+                            ;; Cleanup function
+                            (fn [] (.off api "select" on-select))))
+                        [api on-select])
+     (let [ctx-value (rhooks/use-memo (fn []
+                                        #js {:carousel-ref carousel-ref
+                                             :api api
+                                             :opts opts
+                                             :orientation
+                                             (or orientation
+                                                 (if (= (:axis opts) "y") :vertical :horizontal))
+                                             :scroll-prev scroll-prev
+                                             :scroll-next scroll-next
+                                             :can-scroll-prev can-scroll-prev
+                                             :can-scroll-next can-scroll-next})
+                                      [carousel-ref
+                                       api
+                                       opts
+                                       orientation
+                                       scroll-prev
+                                       scroll-next
+                                       can-scroll-prev
+                                       can-scroll-next])]
+       [:>
+        (.-Provider CarouselContext)
+        {:value ctx-value}
+        (into [:div {:on-key-down-capture handle-key-down
+                     :class (merge-classes "relative" class)
+                     :role "region"
+                     :aria-roledescription "carousel"
+                     :data-slot "carousel"}]
+              children)]))))
 
 (defc carousel-content
   "Carousel content wrapper. Contains the carousel items.

@@ -7,7 +7,8 @@
    [clojure-shadcn.ui.components.message :as sut]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Chat/Message"
@@ -27,7 +28,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "message_stories.cljs"}
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -80,7 +81,7 @@
   Use for simple chat messages."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body MessageBasic) :filename "message_stories.cljs"} [:div {:class "p-6"}
                                        [sut/message {}
                                         [sut/message-avatar {:src "https://placehold.co/40x40/png"
                                                              :alt "User"
@@ -93,7 +94,7 @@
   Useful when image URLs fail or are missing."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body MessageAvatarFallback) :filename "message_stories.cljs"} [:div {:class "p-6"}
                                        [sut/message {}
                                         [sut/message-avatar {:src ""
                                                              :alt "User"
@@ -108,7 +109,7 @@
   Useful for rich assistant responses."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body MessageMarkdown) :filename "message_stories.cljs"}
     [:div {:class "p-6"}
      [sut/message {}
       [sut/message-avatar {:src "https://placehold.co/40x40/png"
@@ -124,7 +125,7 @@
   Use for copy, delete, or feedback actions."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body MessageActions) :filename "message_stories.cljs"}
     [:div {:class "p-6"}
      [sut/message {}
       [sut/message-avatar {:src "https://placehold.co/40x40/png"
@@ -150,7 +151,7 @@
   Helpful for chat UIs with role-based presentation."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 space-y-4"}
+  (helpers/wrap-component {:source (embed-body MessageUserVsAssistant) :filename "message_stories.cljs"} [:div {:class "p-6 space-y-4"}
                                        [sut/message {:class "flex-row-reverse text-right"}
                                         [sut/message-avatar {:src "https://placehold.co/40x40/png"
                                                              :alt "User"

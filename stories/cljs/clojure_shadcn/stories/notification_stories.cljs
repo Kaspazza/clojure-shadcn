@@ -6,7 +6,8 @@
    [clojure-shadcn.ui.components.notification :as sut]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Notification"
@@ -26,7 +27,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "notification_stories.cljs"}
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -119,7 +120,7 @@
   Call show-toast with a simple message."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ToastBasic) :filename "notification_stories.cljs"}
     [:div {:class "p-6 space-y-4"}
      [sut/toaster]
      (button/button {:on-click (fn [] (sut/show-toast "Event has been created"))} "Show Toast")])))
@@ -129,7 +130,7 @@
   Use :description to provide context."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ToastWithDescription) :filename "notification_stories.cljs"}
     [:div {:class "p-6 space-y-4"}
      [sut/toaster]
      (button/button {:on-click (fn []
@@ -142,7 +143,7 @@
   Use :action for undo or follow-up steps."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ToastWithAction) :filename "notification_stories.cljs"}
     [:div {:class "p-6 space-y-4"}
      [sut/toaster]
      (button/button {:on-click (fn []
@@ -157,7 +158,7 @@
   Use :duration for longer or shorter visibility."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ToastDuration) :filename "notification_stories.cljs"}
     [:div {:class "p-6 space-y-4"}
      [sut/toaster]
      (button/button {:on-click (fn [] (sut/show-toast "Auto closes in 10 seconds" {:duration 10000}))}

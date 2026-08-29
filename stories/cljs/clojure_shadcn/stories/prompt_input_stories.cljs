@@ -7,7 +7,8 @@
    [clojure-shadcn.ui.components.prompt-input :as sut]
    [reagent.core                                :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Prompt Input"
@@ -27,7 +28,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "prompt_input_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -81,10 +82,9 @@
 
   Useful for chat or command input fields."
   []
-  (r/as-element
-  (let [value (r/atom "")]
+  (r/as-element [(fn [] (let [value (r/atom "")]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body PromptInputBasic) :filename "prompt_input_stories.cljs"}
         [:div {:class "p-6 max-w-xl"}
          [sut/prompt-input {:value @value
                             :on-value-change #(reset! value %)
@@ -94,16 +94,15 @@
            [sut/prompt-input-action {:tooltip "Send"}
             (button/button {:variant :outline
                             :size :icon}
-                           [:> Send {:class "size-4"}])]]]])))))
+                           [:> Send {:class "size-4"}])]]]]))))]))
 
 (defn ^:export PromptInputMultipleActions
   "Prompt input with multiple actions.
   Use prompt-input-action to wrap action buttons with tooltips."
   []
-  (r/as-element
-  (let [value (r/atom "")]
+  (r/as-element [(fn [] (let [value (r/atom "")]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body PromptInputMultipleActions) :filename "prompt_input_stories.cljs"}
         [:div {:class "p-6 max-w-xl"}
          [sut/prompt-input {:value @value
                             :on-value-change #(reset! value %)}
@@ -120,14 +119,14 @@
            [sut/prompt-input-action {:tooltip "Send"}
             (button/button {:variant :outline
                             :size :icon}
-                           [:> Send {:class "size-4"}])]]]])))))
+                           [:> Send {:class "size-4"}])]]]]))))]))
 
 (defn ^:export PromptInputDisabled
   "Disabled prompt input state.
   Use :disabled? or :is-loading? for disabled styling."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-xl"}
+  (helpers/wrap-component {:source (embed-body PromptInputDisabled) :filename "prompt_input_stories.cljs"} [:div {:class "p-6 max-w-xl"}
                                        [sut/prompt-input {:value "Saving..."
                                                           :disabled? true}
                                         [sut/prompt-input-textarea {:placeholder "Disabled"}]
@@ -141,10 +140,9 @@
   "Prompt input with loading state.
   Use :is-loading? when responses are pending."
   []
-  (r/as-element
-  (let [value (r/atom "Working on it...")]
+  (r/as-element [(fn [] (let [value (r/atom "Working on it...")]
      (fn []
-       (helpers/wrap-component [:div {:class "p-6 max-w-xl"}
+       (helpers/wrap-component {:source (embed-body PromptInputLoading) :filename "prompt_input_stories.cljs"} [:div {:class "p-6 max-w-xl"}
                                            [sut/prompt-input {:value @value
                                                               :is-loading? true
                                                               :on-value-change #(reset! value %)}
@@ -153,4 +151,4 @@
                                              [sut/prompt-input-action {:tooltip "Send"}
                                               (button/button {:variant :outline
                                                               :size :icon}
-                                                             [:> Send {:class "size-4"}])]]]])))))
+                                                             [:> Send {:class "size-4"}])]]]]))))]))

@@ -9,6 +9,7 @@ Last updated: 2026-02-06
 
 Custom component implementation."
   (:require
+   [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
 (defn textarea
@@ -27,6 +28,7 @@ Custom component implementation."
   - `:on-focus`       - Focus handler function
   - `:class`          - Additional Tailwind classes
   - All other standard HTML textarea attributes
+  Both kebab-case and camelCase prop spellings are accepted.
   
   Features:
   - Field-sizing-content for automatic height adjustment
@@ -77,21 +79,23 @@ Custom component implementation."
              :aria-invalid (not (valid? @comment))
              :placeholder \"Required field\"}]
   ```"
-  [{:keys [class auto-size?]
-    :or {auto-size? true}
-    :as props}]
-  [:textarea
-   (-> props
-       (assoc :data-slot "textarea"
-              :class (merge-classes
-                      (str "border-input placeholder:text-muted-foreground "
-                           "focus-visible:border-ring focus-visible:ring-ring/50 "
-                           "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 "
-                           "aria-invalid:border-destructive dark:bg-input/30 "
-                           "flex min-h-16 w-full rounded-md border "
-                           "bg-transparent px-3 py-2 text-base shadow-xs "
-                           "transition-[color,box-shadow] outline-none focus-visible:ring-[3px] "
-                           "disabled:cursor-not-allowed disabled:opacity-50 md:text-sm "
-                           (if auto-size? "field-sizing-content" "overflow-y-auto resize-y"))
-                      class))
-       (dissoc :class-name :auto-size?))])
+  [{:as raw-props}]
+  (let [{:keys [class auto-size?]
+         :or {auto-size? true}
+         :as props}
+        (normalize-props raw-props)]
+    [:textarea
+     (-> props
+         (assoc :data-slot "textarea"
+                :class (merge-classes
+                        (str "border-input placeholder:text-muted-foreground "
+                             "focus-visible:border-ring focus-visible:ring-ring/50 "
+                             "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 "
+                             "aria-invalid:border-destructive dark:bg-input/30 "
+                             "flex min-h-16 w-full rounded-md border "
+                             "bg-transparent px-3 py-2 text-base shadow-xs "
+                             "transition-[color,box-shadow] outline-none focus-visible:ring-[3px] "
+                             "disabled:cursor-not-allowed disabled:opacity-50 md:text-sm "
+                             (if auto-size? "field-sizing-content" "overflow-y-auto resize-y"))
+                        class))
+         (dissoc :class-name :auto-size?))]))

@@ -9,7 +9,8 @@
    [clojure-shadcn.ui.components.popover :as sut]
    [reagent.core                           :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Popover"
@@ -29,7 +30,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "popover_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -84,7 +85,7 @@
   Useful for lightweight edits or inline settings."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body PopoverDemo) :filename "popover_stories.cljs"}
     [:div {:class "p-6"}
      [sut/popover {}
       [sut/popover-trigger {:as-child true}
@@ -129,8 +130,7 @@
 
   Use popover + command for searchable selections."
   []
-  (r/as-element
-  (let [open? (r/atom false)
+  (r/as-element [(fn [] (let [open? (r/atom false)
          selected (r/atom nil)
          statuses [{:value "backlog"
                     :label "Backlog"}
@@ -143,7 +143,7 @@
                    {:value "canceled"
                     :label "Canceled"}]]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body ComboboxPopover) :filename "popover_stories.cljs"}
         [:div {:class "p-6 flex items-center gap-4"}
          [:p {:class "text-muted-foreground text-sm"}
           "Status"]
@@ -169,7 +169,7 @@
                                                     (reset! selected {:value value
                                                                       :label label})
                                                     (reset! open? false))}
-                 label])]]]]]])))))
+                 label])]]]]]]))))]))
 
 (defn ^:export PopoverTextOnly
   "Simple popover with text content.
@@ -179,7 +179,7 @@
   Good for quick hints or short explanations."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body PopoverTextOnly) :filename "popover_stories.cljs"}
     [:div {:class "p-6"}
      [sut/popover {}
       [sut/popover-trigger {:as-child true}

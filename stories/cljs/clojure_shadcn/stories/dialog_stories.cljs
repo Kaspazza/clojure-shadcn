@@ -11,7 +11,8 @@
    [clojure-shadcn.ui.components.label   :as label]
    [reagent.core                           :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Dialog"
@@ -44,7 +45,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "dialog_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -122,7 +123,7 @@
   Use dialogs for focused, interruptive workflows such as profile edits."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body DialogDemo) :filename "dialog_stories.cljs"}
     [:div {:class "p-6"}
      [sut/dialog {}
       [sut/dialog-trigger {:as-child true}
@@ -147,7 +148,7 @@
   Useful for share sheets or info dialogs."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body DialogCloseButton) :filename "dialog_stories.cljs"}
     [:div {:class "p-6"}
      [sut/dialog {}
       [sut/dialog-trigger {:as-child true}
@@ -180,10 +181,9 @@
   Props are idiomatic kebab-case; Reagent converts to camelCase for Radix.
   Use this for global search or quick actions."
   []
-  (r/as-element
-  (let [open? (r/atom false)]
+  (r/as-element [(fn [] (let [open? (r/atom false)]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body CommandDialog) :filename "dialog_stories.cljs"}
         [:div {:class "p-6 space-y-3"}
          [:p {:class "text-muted-foreground text-sm"}
           "Press the button to open the command palette."]
@@ -214,7 +214,7 @@
                [:span "Profile"]]
               [command/command-item {}
                [:> Settings]
-               [:span "Settings"]]]]]]]])))))
+               [:span "Settings"]]]]]]]]))))]))
 
 (defn ^:export DrawerDialog
   "Dialog and drawer pair for responsive workflows.
@@ -223,11 +223,10 @@
 
   Here we show both variants side by side (instead of media query)."
   []
-  (r/as-element
-  (let [dialog-open? (r/atom false)
+  (r/as-element [(fn [] (let [dialog-open? (r/atom false)
          drawer-open? (r/atom false)]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body DrawerDialog) :filename "dialog_stories.cljs"}
         [:div {:class "p-6 flex flex-wrap gap-4"}
          [sut/dialog {:open @dialog-open?
                       :on-open-change #(reset! dialog-open? %)}
@@ -255,4 +254,4 @@
            [drawer/drawer-footer {}
             (button/button {:variant :outline
                             :on-click #(reset! drawer-open? false)}
-                           "Cancel")]]]])))))
+                           "Cancel")]]]]))))]))

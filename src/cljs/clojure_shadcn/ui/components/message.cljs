@@ -10,6 +10,7 @@ Custom component implementation."
    [clojure-shadcn.ui.components.avatar   :as mateuszmazurczak-avatar]
    [clojure-shadcn.ui.components.markdown :as mateuszmazurczak-markdown]
    [clojure-shadcn.ui.components.tooltip  :as mateuszmazurczak-tooltip]
+   [clojure-shadcn.utils.props            :refer [normalize-props]]
    [clojure-shadcn.utils.styles           :refer [merge-classes]]
    [reagent.core                            :as r]))
 
@@ -43,18 +44,21 @@ Custom component implementation."
   - `:fallback` - Fallback text (typically initials) when image fails to load
   - `:delay-ms` - Delay in milliseconds before showing fallback
   - `:class` - Additional Tailwind classes to merge with defaults
+  Both kebab-case and camelCase prop spellings are accepted.
   
   Example:
   [message-avatar {:src \"https://github.com/user.png\" 
                    :alt \"John Doe\"
                    :fallback \"JD\"}]"
-  [{:keys [src alt fallback delay-ms class]}]
-  [mateuszmazurczak-avatar/avatar {:class (merge-classes "h-8 w-8 shrink-0" class)}
-   [mateuszmazurczak-avatar/avatar-image {:src src
-                                          :alt alt}]
-   (when fallback
-     [mateuszmazurczak-avatar/avatar-fallback {:delayMs delay-ms}
-      fallback])])
+  [{:as raw-props}]
+  (let [{:keys [src alt fallback delay-ms class]}
+        (normalize-props raw-props)]
+    [mateuszmazurczak-avatar/avatar {:class (merge-classes "h-8 w-8 shrink-0" class)}
+     [mateuszmazurczak-avatar/avatar-image {:src src
+                                            :alt alt}]
+     (when fallback
+       [mateuszmazurczak-avatar/avatar-fallback {:delayMs delay-ms}
+        fallback])]))
 
 (defn message-content
   "Message content component. Displays message text with optional markdown rendering.

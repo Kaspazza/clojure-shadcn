@@ -7,7 +7,8 @@
    [clojure-shadcn.ui.components.separator  :as sut]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Separator"
@@ -27,7 +28,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "separator_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -57,7 +58,7 @@
   Use separators to divide sections or inline items."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 space-y-4"}
+  (helpers/wrap-component {:source (embed-body SeparatorDemo) :filename "separator_stories.cljs"} [:div {:class "p-6 space-y-4"}
                                        [:div {:class "space-y-1"}
                                         [:h4 {:class "text-sm font-medium"}
                                          "Radix Primitives"]
@@ -79,7 +80,7 @@
   Custom separators can be inserted between breadcrumb items."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body BreadcrumbSeparator) :filename "separator_stories.cljs"} [:div {:class "p-6"}
                                        [breadcrumb/breadcrumb {}
                                         [breadcrumb/breadcrumb-list {}
                                          [breadcrumb/breadcrumb-item {}
@@ -104,7 +105,7 @@
   Add classes to adjust thickness or color."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 space-y-3"}
+  (helpers/wrap-component {:source (embed-body SeparatorCustom) :filename "separator_stories.cljs"} [:div {:class "p-6 space-y-3"}
                                        [:p {:class "text-sm"}
                                         "Primary accent"]
                                        [sut/separator {:class "bg-primary h-[2px]"}]

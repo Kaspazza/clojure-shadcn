@@ -7,7 +7,8 @@
    [clojure-shadcn.ui.components.textarea :as sut]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Textarea"
@@ -27,7 +28,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "textarea_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -66,7 +67,7 @@
   Uses Tailwind styling and supports auto-sizing via :auto-size?."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-sm"}
+  (helpers/wrap-component {:source (embed-body TextareaDemo) :filename "textarea_stories.cljs"} [:div {:class "p-6 max-w-sm"}
                                        [sut/textarea {:placeholder "Type your message here."}]])))
 
 (defn ^:export TextareaDisabled
@@ -77,7 +78,7 @@
   Disabled state applies muted styling and blocks input."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-sm"}
+  (helpers/wrap-component {:source (embed-body TextareaDisabled) :filename "textarea_stories.cljs"} [:div {:class "p-6 max-w-sm"}
                                        [sut/textarea {:placeholder "Type your message here."
                                                       :disabled true}]])))
 
@@ -89,7 +90,7 @@
   Use labels for longer form inputs and clarity."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component {:source (embed-body TextareaWithLabel) :filename "textarea_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
                                        [label/label {:html-for "message"}
                                         "Your message"]
                                        [sut/textarea {:id "message"
@@ -103,7 +104,7 @@
   Pair :aria-invalid with error messaging for clear validation feedback."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component {:source (embed-body TextareaInvalid) :filename "textarea_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
                                        [label/label {:html-for "feedback-invalid"}
                                         "Feedback"]
                                        [sut/textarea {:id "feedback-invalid"
@@ -121,7 +122,7 @@
   Useful for support forms or quick feedback widgets."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component {:source (embed-body TextareaWithButton) :filename "textarea_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
                                        [sut/textarea {:placeholder "Type your message here."}]
                                        (button/button {} "Send message")])))
 
@@ -133,7 +134,7 @@
   Helper text clarifies what happens after submission."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component {:source (embed-body TextareaWithText) :filename "textarea_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
                                        [label/label {:html-for "message-2"}
                                         "Your message"]
                                        [sut/textarea {:id "message-2"

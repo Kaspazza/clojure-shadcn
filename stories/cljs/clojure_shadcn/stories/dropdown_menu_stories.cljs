@@ -12,7 +12,8 @@
    [clojure-shadcn.ui.components.textarea      :as textarea]
    [reagent.core                                 :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Dropdown Menu"
@@ -32,7 +33,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "dropdown_menu_stories.cljs"}
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -156,7 +157,7 @@
   Use groups, separators, and submenus for structured menus."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body DropdownMenuDemo) :filename "dropdown_menu_stories.cljs"}
     [:div {:class "p-6"}
      [sut/dropdown-menu {}
       [sut/dropdown-menu-trigger {:as-child true}
@@ -221,12 +222,11 @@
 
   Checkbox items allow toggling view preferences."
   []
-  (r/as-element
-  (let [show-status? (r/atom true)
+  (r/as-element [(fn [] (let [show-status? (r/atom true)
          show-activity? (r/atom false)
          show-panel? (r/atom false)]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body DropdownMenuCheckboxes) :filename "dropdown_menu_stories.cljs"}
         [:div {:class "p-6"}
          [sut/dropdown-menu {}
           [sut/dropdown-menu-trigger {:as-child true}
@@ -244,7 +244,7 @@
             "Activity Bar"]
            [sut/dropdown-menu-checkbox-item {:checked @show-panel?
                                              :on-checked-change #(reset! show-panel? %)}
-            "Panel"]]]])))))
+            "Panel"]]]]))))]))
 
 (defn ^:export DropdownMenuRadioGroup
   "Dropdown menu with radio group selection.
@@ -253,10 +253,9 @@
 
   Radio groups enforce a single selection within the menu."
   []
-  (r/as-element
-  (let [position (r/atom "bottom")]
+  (r/as-element [(fn [] (let [position (r/atom "bottom")]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body DropdownMenuRadioGroup) :filename "dropdown_menu_stories.cljs"}
         [:div {:class "p-6"}
          [sut/dropdown-menu {}
           [sut/dropdown-menu-trigger {:as-child true}
@@ -272,7 +271,7 @@
             [sut/dropdown-menu-radio-item {:value "bottom"}
              "Bottom"]
             [sut/dropdown-menu-radio-item {:value "right"}
-             "Right"]]]]])))))
+             "Right"]]]]]))))]))
 
 (defn ^:export DropdownMenuDialog
   "Dropdown menu launching dialogs.
@@ -281,11 +280,10 @@
 
   Useful for contextual actions that open richer modals."
   []
-  (r/as-element
-  (let [show-new? (r/atom false)
+  (r/as-element [(fn [] (let [show-new? (r/atom false)
          show-share? (r/atom false)]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body DropdownMenuDialog) :filename "dropdown_menu_stories.cljs"}
         [:div {:class "p-6"}
          [sut/dropdown-menu {:modal false}
           [sut/dropdown-menu-trigger {:as-child true}
@@ -345,4 +343,4 @@
            [dialog/dialog-footer {}
             [dialog/dialog-close {:as-child true}
              (button/button {:variant :outline} "Cancel")]
-            (button/button {:type "submit"} "Send Invite")]]]])))))
+            (button/button {:type "submit"} "Send Invite")]]]]))))]))

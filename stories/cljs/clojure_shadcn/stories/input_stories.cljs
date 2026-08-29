@@ -7,7 +7,8 @@
    [clojure-shadcn.ui.components.label  :as label]
    [reagent.core                          :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Input"
@@ -27,7 +28,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "input_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -64,7 +65,7 @@
   Our wrapper accepts all standard input props with Tailwind defaults."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-sm"}
+  (helpers/wrap-component {:source (embed-body InputDemo) :filename "input_stories.cljs"} [:div {:class "p-6 max-w-sm"}
                                        [sut/input {:type "email"
                                                    :placeholder "Email"}]])))
 
@@ -76,7 +77,7 @@
   File inputs retain the same base styling for consistency."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component {:source (embed-body InputFile) :filename "input_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
                                        [label/label {:html-for "resume"}
                                         "Resume"]
                                        [sut/input {:id "resume"
@@ -90,7 +91,7 @@
   Disabled inputs are visually muted and non-interactive."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-sm"}
+  (helpers/wrap-component {:source (embed-body InputDisabled) :filename "input_stories.cljs"} [:div {:class "p-6 max-w-sm"}
                                        [sut/input {:disabled true
                                                    :type "email"
                                                    :placeholder "Email"}]])))
@@ -103,7 +104,7 @@
   Use :aria-invalid true and helper/error text for validation feedback."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component {:source (embed-body InputInvalid) :filename "input_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
                                        [label/label {:html-for "email-invalid"}
                                         "Email"]
                                        [sut/input {:id "email-invalid"
@@ -121,7 +122,7 @@
   Use labels for accessible form controls."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component {:source (embed-body InputWithLabel) :filename "input_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
                                        [label/label {:html-for "contact-email"}
                                         "Email"]
                                        [sut/input {:id "contact-email"
@@ -136,7 +137,7 @@
   Useful for newsletter signups or quick actions."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body InputWithButton) :filename "input_stories.cljs"} [:div {:class "p-6"}
                                        [:div {:class "flex w-full max-w-sm items-center gap-2"}
                                         [sut/input {:type "email"
                                                     :placeholder "Email"}]
@@ -152,7 +153,7 @@
   Helper text clarifies validation or intent."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component {:source (embed-body InputWithText) :filename "input_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
                                        [label/label {:html-for "support-email"}
                                         "Email"]
                                        [sut/input {:id "support-email"
@@ -168,10 +169,9 @@
 
   Use controlled inputs when you need validation or formatting."
   []
-  (r/as-element
-  (let [value (r/atom "hello@company.com")]
+  (r/as-element [(fn [] (let [value (r/atom "hello@company.com")]
      (fn []
-       (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
+       (helpers/wrap-component {:source (embed-body InputControlled) :filename "input_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
                                            [label/label {:html-for "controlled-email"}
                                             "Contact"]
                                            [sut/input {:id "controlled-email"
@@ -180,4 +180,4 @@
                                                        :on-change
                                                        #(reset! value (.. % -target -value))}]
                                            [:p {:class "text-muted-foreground text-sm"}
-                                            (str "Current value: " @value)]])))))
+                                            (str "Current value: " @value)]]))))]))

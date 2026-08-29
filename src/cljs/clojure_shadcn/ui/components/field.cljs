@@ -11,8 +11,7 @@ Custom component implementation."
   (:require
    [clojure-shadcn.ui.components.label     :as label-comp]
    [clojure-shadcn.ui.components.separator :as separator-comp]
-   [clojure-shadcn.utils.styles            :refer [merge-classes]]
-   [reagent.core                             :as r]))
+   [clojure-shadcn.utils.styles            :refer [merge-classes]]))
 
 (defn field-set
   "Container for grouping multiple related fields.
@@ -329,36 +328,31 @@ Custom component implementation."
     :as props}
    &
    children]
-  (let [content (r/atom nil)]
-    (r/create-class
-     {:display-name "field-error"
-      :reagent-render
-      (fn [_props & _children]
-        (reset! content (cond
-                          ;; If children provided, use them
-                          (seq children) children
-                          ;; No errors, return nil
-                          (empty? errors) nil
-                          ;; Single error, display as text
-                          (= 1 (count errors)) (get-in (first errors) [:message])
-                          ;; Multiple errors
-                          :else (let [unique-errors (->> errors
-                                                         (filter :message)
-                                                         (map (fn [error] [(:message error) error]))
-                                                         (into {})
-                                                         vals)]
-                                  (when (seq unique-errors)
-                                    (if (= 1 (count unique-errors))
-                                      (:message (first unique-errors))
-                                      [:ul {:class "ml-4 flex list-disc flex-col gap-1"}
-                                       (for [[idx error] (map-indexed vector unique-errors)]
-                                         (when-let [msg (:message error)]
-                                           ^{:key idx} [:li msg]))])))))
-        (when @content
-          [:div
-           (-> props
-               (assoc :role "alert"
-                      :data-slot "field-error"
-                      :class (merge-classes "text-destructive text-sm font-normal" class))
-               (dissoc :class-name :errors))
-           @content]))})))
+  (let [content (cond
+                  ;; If children provided, use them
+                  (seq children) children
+                  ;; No errors, return nil
+                  (empty? errors) nil
+                  ;; Single error, display as text
+                  (= 1 (count errors)) (:message (first errors))
+                  ;; Multiple errors
+                  :else (let [unique-errors (->> errors
+                                                 (filter :message)
+                                                 (map (fn [error] [(:message error) error]))
+                                                 (into {})
+                                                 vals)]
+                          (when (seq unique-errors)
+                            (if (= 1 (count unique-errors))
+                              (:message (first unique-errors))
+                              [:ul {:class "ml-4 flex list-disc flex-col gap-1"}
+                               (for [[idx error] (map-indexed vector unique-errors)]
+                                 (when-let [msg (:message error)]
+                                   ^{:key idx} [:li msg]))]))))]
+    (when content
+      [:div
+       (-> props
+           (assoc :role "alert"
+                  :data-slot "field-error"
+                  :class (merge-classes "text-destructive text-sm font-normal" class))
+           (dissoc :class-name :errors))
+       content])))

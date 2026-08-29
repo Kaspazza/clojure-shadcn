@@ -9,7 +9,8 @@
    [clojure.string                               :as str]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Table"
@@ -29,7 +30,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "table_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -121,7 +122,7 @@
                     :status "Unpaid"
                     :method "Credit Card"
                     :amount "$300.00"}]]
-     (helpers/wrap-component
+     (helpers/wrap-component {:source (embed-body TableDemo) :filename "table_stories.cljs"}
       [:div {:class "p-6"}
        [sut/table {}
         [sut/table-caption {}
@@ -163,7 +164,7 @@
   This example mirrors the typography docs table layout."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body TypographyTable) :filename "table_stories.cljs"}
     [:div {:class "p-6"}
      [:div {:class "my-6 w-full overflow-y-auto"}
       [:table {:class "w-full"}
@@ -234,7 +235,7 @@
                                               "Edit"]
                                              [dropdown-menu/dropdown-menu-item {}
                                               "Archive"]]]]])]
-     (helpers/wrap-component [:div {:class "p-6"}
+     (helpers/wrap-component {:source (embed-body TableWithActions) :filename "table_stories.cljs"} [:div {:class "p-6"}
                                          [sut/table {}
                                           [sut/table-header {}
                                            [sut/table-row {}

@@ -7,7 +7,8 @@
    [clojure-shadcn.ui.components.stepper :as sut]
    [reagent.core                           :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Stepper"
@@ -38,7 +39,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "stepper_stories.cljs"}
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -96,15 +97,14 @@
 
   Best for linear multi-step flows."
   []
-  (r/as-element
-  (let [steps (step-data)
+  (r/as-element [(fn [] (let [steps (step-data)
          step-ids (mapv :id steps)
          current-step (r/atom (first step-ids))]
      (fn []
        (let [current-index (.indexOf step-ids @current-step)
              prev-id (get step-ids (dec current-index))
              next-id (get step-ids (inc current-index))]
-         (helpers/wrap-component
+         (helpers/wrap-component {:source (embed-body StepperHorizontal) :filename "stepper_stories.cljs"}
           [:div {:class "p-6 max-w-xl space-y-6"}
            [sut/stepper {:current-step @current-step
                          :on-step-change #(reset! current-step %)}
@@ -132,17 +132,16 @@
                             "Back")
              (button/button {:disabled (nil? next-id)
                              :on-click #(when next-id (reset! current-step next-id))}
-                            "Next")]]]))))))
+                            "Next")]]])))))]))
 
 (defn ^:export StepperVertical
   "Vertical stepper layout.
   Use :variant :vertical for stacked steps and panels."
   []
-  (r/as-element
-  (let [steps (step-data)
+  (r/as-element [(fn [] (let [steps (step-data)
          current-step (r/atom :billing)]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body StepperVertical) :filename "stepper_stories.cljs"}
         [:div {:class "p-6 max-w-xl"}
          [sut/stepper {:current-step @current-step
                        :variant :vertical
@@ -163,17 +162,16 @@
             "Billing preferences."]]
           [sut/stepper-panel {:id :confirm}
            [:div {:class "text-sm text-muted-foreground"}
-            "Confirmation step."]]]])))))
+            "Confirmation step."]]]]))))]))
 
 (defn ^:export StepperCircle
   "Circle stepper variant.
   Use :variant :circle to show step count and progress ring."
   []
-  (r/as-element
-  (let [steps (step-data)
+  (r/as-element [(fn [] (let [steps (step-data)
          current-step (r/atom :details)]
      (fn []
-       (helpers/wrap-component [:div {:class "p-6"}
+       (helpers/wrap-component {:source (embed-body StepperCircle) :filename "stepper_stories.cljs"} [:div {:class "p-6"}
                                            [sut/stepper {:current-step @current-step
                                                          :variant :circle
                                                          :on-step-change #(reset! current-step %)}
@@ -184,17 +182,16 @@
                                                 [sut/stepper-title {}
                                                  title]
                                                 [sut/stepper-description {}
-                                                 description]])]]])))))
+                                                 description]])]]]))))]))
 
 (defn ^:export StepperReverseProgress
   "Reverse progress for newest-first lists.
   Use :reverse-progress? to mark later steps as completed."
   []
-  (r/as-element
-  (let [steps (step-data)
+  (r/as-element [(fn [] (let [steps (step-data)
          current-step (r/atom :billing)]
      (fn []
-       (helpers/wrap-component [:div {:class "p-6"}
+       (helpers/wrap-component {:source (embed-body StepperReverseProgress) :filename "stepper_stories.cljs"} [:div {:class "p-6"}
                                            [sut/stepper {:current-step @current-step
                                                          :reverse-progress? true
                                                          :on-step-change #(reset! current-step %)}
@@ -205,17 +202,16 @@
                                                 [sut/stepper-title {}
                                                  title]
                                                 [sut/stepper-description {}
-                                                 description]])]]])))))
+                                                 description]])]]]))))]))
 
 (defn ^:export StepperDisabledSteps
   "Stepper with disabled steps.
   Disabled steps are not interactive and appear muted."
   []
-  (r/as-element
-  (let [steps (step-data)
+  (r/as-element [(fn [] (let [steps (step-data)
          current-step (r/atom :details)]
      (fn []
-       (helpers/wrap-component [:div {:class "p-6"}
+       (helpers/wrap-component {:source (embed-body StepperDisabledSteps) :filename "stepper_stories.cljs"} [:div {:class "p-6"}
                                            [sut/stepper {:current-step @current-step
                                                          :on-step-change #(reset! current-step %)}
                                             [sut/stepper-navigation {}
@@ -226,17 +222,16 @@
                                                 [sut/stepper-title {}
                                                  title]
                                                 [sut/stepper-description {}
-                                                 description]])]]])))))
+                                                 description]])]]]))))]))
 
 (defn ^:export StepperLabelOrientation
   "Vertical label orientation.
   Use :label-orientation :vertical for compact headers."
   []
-  (r/as-element
-  (let [steps (step-data)
+  (r/as-element [(fn [] (let [steps (step-data)
          current-step (r/atom :details)]
      (fn []
-       (helpers/wrap-component [:div {:class "p-6"}
+       (helpers/wrap-component {:source (embed-body StepperLabelOrientation) :filename "stepper_stories.cljs"} [:div {:class "p-6"}
                                            [sut/stepper {:current-step @current-step
                                                          :label-orientation :vertical
                                                          :on-step-change #(reset! current-step %)}
@@ -247,14 +242,13 @@
                                                 [sut/stepper-title {}
                                                  title]
                                                 [sut/stepper-description {}
-                                                 description]])]]])))))
+                                                 description]])]]]))))]))
 
 (defn ^:export StepperCustomIcons
   "Stepper with custom icons per step.
   Provide an :icon to override the step number."
   []
-  (r/as-element
-  (let [steps [{:id :account
+  (r/as-element [(fn [] (let [steps [{:id :account
                  :title "Account"
                  :icon [:> User]}
                 {:id :billing
@@ -265,7 +259,7 @@
                  :icon [:> Check]}]
          current-step (r/atom :billing)]
      (fn []
-       (helpers/wrap-component [:div {:class "p-6"}
+       (helpers/wrap-component {:source (embed-body StepperCustomIcons) :filename "stepper_stories.cljs"} [:div {:class "p-6"}
                                            [sut/stepper {:current-step @current-step
                                                          :on-step-change #(reset! current-step %)}
                                             [sut/stepper-navigation {}
@@ -274,16 +268,15 @@
                                                [sut/stepper-step {:id id
                                                                   :icon icon}
                                                 [sut/stepper-title {}
-                                                 title]])]]])))))
+                                                 title]])]]]))))]))
 
 (defn ^:export StepperFormContent
   "Stepper panels with form-like content.
   Panels can host any content, including forms or summaries."
   []
-  (r/as-element
-  (let [current-step (r/atom :details)]
+  (r/as-element [(fn [] (let [current-step (r/atom :details)]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body StepperFormContent) :filename "stepper_stories.cljs"}
         [:div {:class "p-6 max-w-xl space-y-4"}
          [sut/stepper {:current-step @current-step
                        :on-step-change #(reset! current-step %)}
@@ -305,4 +298,4 @@
             "Billing preferences and card form fields."]]
           [sut/stepper-panel {:id :confirm}
            [:div {:class "rounded-md border p-4 text-sm"}
-            "Review summary and confirm action."]]]])))))
+            "Review summary and confirm action."]]]]))))]))

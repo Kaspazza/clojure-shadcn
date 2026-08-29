@@ -5,7 +5,8 @@
    [clojure-shadcn.ui.components.tag-combobox :as sut]
    [reagent.core                                :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Tag Combobox"
@@ -25,7 +26,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "tag_combobox_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -57,11 +58,10 @@
    Select from existing tags or create new ones.
    Responsive: uses popover on desktop, sheet on mobile."
   []
-  (r/as-element
-  (let [available-tags (r/atom #{"urgent" "important" "review" "blocked" "in-progress"})
+  (r/as-element [(fn [] (let [available-tags (r/atom #{"urgent" "important" "review" "blocked" "in-progress"})
          selected-tag (r/atom nil)]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body BasicTagSelection) :filename "tag_combobox_stories.cljs"}
         [:div {:class "p-8 space-y-4"}
          [:div
           [:h3 {:class "text-lg font-semibold mb-2"}
@@ -82,16 +82,15 @@
                 (pr-str @selected-tag)
                 "\n"
                 "Available: "
-                (pr-str @available-tags))]]])))))
+                (pr-str @available-tags))]]]))))]))
 
 (defn ^:export TagWithCustomPlaceholder
   "Tag combobox with custom placeholder text."
   []
-  (r/as-element
-  (let [tags (r/atom #{"feature" "bug" "enhancement" "documentation"})
+  (r/as-element [(fn [] (let [tags (r/atom #{"feature" "bug" "enhancement" "documentation"})
                   selected (r/atom nil)]
               (fn []
-                (helpers/wrap-component [:div {:class "p-8"}
+                (helpers/wrap-component {:source (embed-body TagWithCustomPlaceholder) :filename "tag_combobox_stories.cljs"} [:div {:class "p-8"}
                                                     [:h3 {:class "text-lg font-semibold mb-4"}
                                                      "Issue Type"]
                                                     [sut/tag-combobox
@@ -101,16 +100,15 @@
                                                       :on-select #(reset! selected %)
                                                       :on-create (fn [new-tag]
                                                                    (swap! tags conj new-tag)
-                                                                   (reset! selected new-tag))}]])))))
+                                                                   (reset! selected new-tag))}]]))))]))
 
 (defn ^:export TagWithCustomWidth
   "Tag combobox with custom width styling."
   []
-  (r/as-element
-  (let [tags (r/atom #{"red" "green" "blue" "yellow" "purple"})
+  (r/as-element [(fn [] (let [tags (r/atom #{"red" "green" "blue" "yellow" "purple"})
                   selected (r/atom nil)]
               (fn []
-                (helpers/wrap-component [:div {:class "p-8"}
+                (helpers/wrap-component {:source (embed-body TagWithCustomWidth) :filename "tag_combobox_stories.cljs"} [:div {:class "p-8"}
                                                     [:h3 {:class "text-lg font-semibold mb-4"}
                                                      "Color Tag"]
                                                     [sut/tag-combobox
@@ -121,20 +119,19 @@
                                                       :on-select #(reset! selected %)
                                                       :on-create (fn [new-tag]
                                                                    (swap! tags conj new-tag)
-                                                                   (reset! selected new-tag))}]])))))
+                                                                   (reset! selected new-tag))}]]))))]))
 
 (defn ^:export MultipleTagComboboxes
   "Multiple independent tag comboboxes.
    
    Shows how to use multiple tag comboboxes with different tag sets."
   []
-  (r/as-element
-  (let [priority-tags (r/atom #{"low" "medium" "high" "critical"})
+  (r/as-element [(fn [] (let [priority-tags (r/atom #{"low" "medium" "high" "critical"})
          status-tags (r/atom #{"todo" "doing" "done" "archived"})
          selected-priority (r/atom nil)
          selected-status (r/atom nil)]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body MultipleTagComboboxes) :filename "tag_combobox_stories.cljs"}
         [:div {:class "p-8 space-y-6"}
          [:div
           [:h3 {:class "text-lg font-semibold mb-2"}
@@ -166,19 +163,18 @@
           [:p {:class "text-xs mt-2"}
            (str "Priority: " @selected-priority)]
           [:p {:class "text-xs"}
-           (str "Status: " @selected-status)]]])))))
+           (str "Status: " @selected-status)]]]))))]))
 
 (defn ^:export TagCreationWorkflow
   "Demonstrates the tag creation workflow.
    
    Type a tag name that doesn't exist and see the 'Create' option appear."
   []
-  (r/as-element
-  (let [tags (r/atom #{"existing-tag-1" "existing-tag-2"})
+  (r/as-element [(fn [] (let [tags (r/atom #{"existing-tag-1" "existing-tag-2"})
          selected (r/atom nil)
          creation-log (r/atom [])]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body TagCreationWorkflow) :filename "tag_combobox_stories.cljs"}
         [:div {:class "p-8 space-y-4"}
          [:div
           [:h3 {:class "text-lg font-semibold mb-2"}
@@ -210,4 +206,4 @@
               (for [[idx entry] (map-indexed vector @creation-log)]
                 ^{:key idx}
                 [:p {:class "text-xs"}
-                 (str "Created: " (:tag entry))])]])]])))))
+                 (str "Created: " (:tag entry))])]])]]))))]))

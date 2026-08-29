@@ -6,7 +6,8 @@
    [clojure-shadcn.ui.components.collapsible :as sut]
    [reagent.core                               :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Collapsible"
@@ -26,7 +27,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "collapsible_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -56,13 +57,14 @@
                  [:h4 {:class "text-sm font-semibold mb-2"} "⚠️ Important Notes"]
                  [:ul {:class "text-xs text-muted-foreground space-y-1 list-disc pl-4"}
                   [:li "Use either controlled (:open + :on-open-change) or uncontrolled (:default-open) mode, not both."]
+                  [:li "Use :as-child on the trigger when its child is a Button — otherwise Radix renders nested <button> elements (invalid HTML)."]
                   [:li "When using :as-child on trigger, ensure your child element is interactive and keyboard-accessible."]
                   [:li "Style animations using data-state attributes: data-[state=open] and data-[state=closed]."]]]
                 [:div {:class "border rounded-lg p-4 bg-muted/50"}
                  [:h4 {:class "text-sm font-semibold mb-2"}
                   "Usage Example"]
                  [:pre {:class "text-xs overflow-x-auto"}
-                  [:code "(let [open? (r/atom false)]\n  [collapsible {:open @open?\n                :on-open-change #(reset! open? %)}\n   [collapsible-trigger {} [button {:variant :outline} \"Toggle details\"]]\n   [collapsible-content {:class \"mt-3\"}\n    [:div {:class \"rounded-md border p-3\"} \"Collapsible content\"]]])"]]]]])))
+                  [:code "(let [open? (r/atom false)]\n  [collapsible {:open @open?\n                :on-open-change #(reset! open? %)}\n   [collapsible-trigger {:as-child true}\n    (button {:variant :outline} \"Toggle details\")]\n   [collapsible-content {:class \"mt-3\"}\n    [:div {:class \"rounded-md border p-3\"} \"Collapsible content\"]]])"]]]]])))
 
 (defn ^:export CollapsibleBasic
   "Collapsible content with toggle.
@@ -71,18 +73,26 @@
 
   Use to reveal secondary details without leaving the page."
   []
+  ;; NOTE: Storybook renders the story's return value directly, so the story
+  ;; must return a React element — not a bare render fn. Wrapping the Form-2
+  ;; component in a vector lets Reagent own the component (atom created once
+  ;; per mount, reactive re-renders). `(r/as-element (let [...] (fn [] ...)))`
+  ;; would return a bare fn, which React rejects as a child.
   (r/as-element
-  (let [open? (r/atom false)]
-     (fn []
-       (helpers/wrap-component
-        [:div {:class "p-6"}
-         [sut/collapsible {:open @open?
-                           :on-open-change #(reset! open? %)}
-          [sut/collapsible-trigger {}
-           (button/button {:variant :outline} (if @open? "Hide details" "Show details"))]
-          [sut/collapsible-content {:class "mt-4"}
-           [:div {:class "rounded-md border bg-muted p-4 text-sm"}
-            "This content expands and collapses."]]]])))))
+   [(fn []
+      (let [open? (r/atom false)]
+        (fn []
+          (helpers/wrap-component {:source (embed-body CollapsibleBasic) :filename "collapsible_stories.cljs"}
+            [:div {:class "p-6"}
+             [sut/collapsible {:open @open?
+                               :on-open-change #(reset! open? %)}
+              ;; :as-child avoids nested <button>: trigger behavior is merged
+              ;; onto the child button via Radix Slot.
+              [sut/collapsible-trigger {:as-child true}
+               (button/button {:variant :outline} (if @open? "Hide details" "Show details"))]
+              [sut/collapsible-content {:class "mt-4"}
+               [:div {:class "rounded-md border bg-muted p-4 text-sm"}
+                "This content expands and collapses."]]]]))))]))
 
 (defn ^:export CollapsibleDefaultOpen
   "Collapsible starting in the open state.
@@ -92,9 +102,9 @@
   Use :default-open for uncontrolled open state."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body CollapsibleDefaultOpen) :filename "collapsible_stories.cljs"} [:div {:class "p-6"}
                                        [sut/collapsible {:default-open true}
-                                        [sut/collapsible-trigger {}
+                                        [sut/collapsible-trigger {:as-child true}
                                          (button/button {:variant :outline} "Toggle details")]
                                         [sut/collapsible-content {:class "mt-4"}
                                          [:div {:class "rounded-md border bg-muted p-4 text-sm"}
@@ -108,11 +118,11 @@
   Use :disabled to lock the collapsible state."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body CollapsibleDisabled) :filename "collapsible_stories.cljs"}
     [:div {:class "p-6"}
      [sut/collapsible {:open true
                        :disabled true}
-      [sut/collapsible-trigger {}
+      [sut/collapsible-trigger {:as-child true}
        (button/button {:variant :outline
                        :disabled true}
                       "Locked")]
@@ -127,30 +137,35 @@
 
   Useful for FAQ sections or grouped settings."
   []
+  ;; See CollapsibleBasic for why the Form-2 component is wrapped in a vector.
   (r/as-element
-  (let [open-ids (r/atom #{:one})
-         set-open! (fn [id next-open?]
-                     (swap! open-ids (fn [current]
-                                       (if next-open? (conj current id) (disj current id)))))]
-     (fn []
-       (helpers/wrap-component
-        [:div {:class "p-6 space-y-4"}
-         (for [{:keys [id title body]} [{:id :one
-                                         :title "Shipping"
-                                         :body "Shipping details and estimated delivery windows."}
-                                        {:id :two
-                                         :title "Returns"
-                                         :body "Return policy and refund timeline."}
-                                        {:id :three
-                                         :title "Support"
-                                         :body "Contact information and support hours."}]]
-           ^{:key id}
-           [sut/collapsible {:open (contains? @open-ids id)
-                             :on-open-change (fn [next-open?] (set-open! id next-open?))}
-            [sut/collapsible-trigger {}
-             (button/button {:variant :outline
-                             :class "w-full justify-between"}
-                            title)]
-            [sut/collapsible-content {:class "mt-2"}
-             [:div {:class "rounded-md border bg-muted p-4 text-sm"}
-              body]]])])))))
+   [(fn []
+      (let [open-ids (r/atom #{:one})
+            set-open! (fn [id next-open?]
+                        (swap! open-ids (fn [current]
+                                          (if next-open? (conj current id) (disj current id)))))]
+        (fn []
+          (helpers/wrap-component {:source (embed-body CollapsibleMultiple) :filename "collapsible_stories.cljs"}
+            [:div {:class "p-6 space-y-4"}
+             ;; doall: @open-ids is derefed while realizing the seq; a lazy seq
+             ;; would realize outside the reactive context and not re-render.
+             (doall
+              (for [{:keys [id title body]} [{:id :one
+                                              :title "Shipping"
+                                              :body "Shipping details and estimated delivery windows."}
+                                             {:id :two
+                                              :title "Returns"
+                                              :body "Return policy and refund timeline."}
+                                             {:id :three
+                                              :title "Support"
+                                              :body "Contact information and support hours."}]]
+                ^{:key id}
+                [sut/collapsible {:open (contains? @open-ids id)
+                                  :on-open-change (fn [next-open?] (set-open! id next-open?))}
+                 [sut/collapsible-trigger {:as-child true}
+                  (button/button {:variant :outline
+                                  :class "w-full justify-between"}
+                                 title)]
+                 [sut/collapsible-content {:class "mt-2"}
+                  [:div {:class "rounded-md border bg-muted p-4 text-sm"}
+                   body]]]))]))))]))

@@ -10,6 +10,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   (:require
    ["@radix-ui/react-slot"        :refer [Slot]]
    ["lucide-react"                :refer [ChevronRight MoreHorizontal]]
+   [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]
    [reagent.core                  :as r]))
 
@@ -87,23 +88,26 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   - `:href` - Link URL
   - `:as-child` - When true, uses Radix Slot for polymorphic rendering
   - `:class` - Additional Tailwind classes to merge with defaults
+  Both kebab-case and camelCase prop spellings are accepted.
   
   Example:
   [breadcrumb-link {:href \"/docs\"} \"Documentation\"]
   [breadcrumb-link {:href \"/\" :as-child true}
     [:a {} \"Home\"]]"
-  [{:keys [class as-child]
-    :as props}
+  [{:as raw-props}
    &
    children]
-  (let [component (if as-child Slot "a")]
-    (into [:>
-           component
-           (-> props
-               (assoc :data-slot "breadcrumb-link"
-                      :class (merge-classes "transition-colors hover:text-foreground" class))
-               (dissoc :class-name :as-child))]
-          children)))
+  (let [{:keys [class as-child]
+         :as props}
+        (normalize-props raw-props)]
+    (let [component (if as-child Slot "a")]
+      (into [:>
+             component
+             (-> props
+                 (assoc :data-slot "breadcrumb-link"
+                        :class (merge-classes "transition-colors hover:text-foreground" class))
+                 (dissoc :class-name :as-child))]
+            children))))
 
 (defn breadcrumb-page
   "Breadcrumb page component (span element). Represents the current page.

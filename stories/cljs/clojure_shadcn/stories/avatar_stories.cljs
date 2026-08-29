@@ -6,7 +6,8 @@
    [clojure-shadcn.ui.components.avatar :as sut]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Avatar"
@@ -26,7 +27,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "avatar_stories.cljs"}
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
        [helpers/api-component-card
@@ -76,7 +77,7 @@
   Use fallbacks for initials or offline states."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body AvatarDemo) :filename "avatar_stories.cljs"}
     [:div {:class "p-6 flex flex-wrap items-center gap-12"}
      [sut/avatar {}
       [sut/avatar-image {:src "https://github.com/shadcn.png"
@@ -113,7 +114,7 @@
   Use a grayscale avatar as the empty media."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body EmptyAvatar) :filename "avatar_stories.cljs"} [:div {:class "p-6"}
                                        [sut/avatar {:size :lg}
                                         [sut/avatar-image {:src "https://github.com/shadcn.png"
                                                            :alt "@shadcn"
@@ -129,7 +130,7 @@
   Use stacked avatars to represent teams or groups."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body EmptyAvatarGroup) :filename "avatar_stories.cljs"}
     [:div {:class "p-6 flex -space-x-2"}
      [sut/avatar {:size :lg
                   :class "ring-2 ring-background grayscale"}
@@ -158,7 +159,7 @@
   Use the :size prop for consistent sizing."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 flex items-center gap-4"}
+  (helpers/wrap-component {:source (embed-body AvatarCustomSizes) :filename "avatar_stories.cljs"} [:div {:class "p-6 flex items-center gap-4"}
                                        [sut/avatar {:size :sm}
                                         [sut/avatar-fallback {}
                                          "SM"]]
@@ -177,7 +178,7 @@
   Use badge to indicate online/offline status or other states."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body AvatarWithBadge) :filename "avatar_stories.cljs"} [:div {:class "p-6"}
                                        [sut/avatar {}
                                         [sut/avatar-image {:src "https://github.com/shadcn.png"
                                                            :alt "@shadcn"}]
@@ -194,7 +195,7 @@
   Use icon inside badge for actions or enhanced status indicators."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body AvatarBadgeWithIcon) :filename "avatar_stories.cljs"} [:div {:class "p-6"}
                                        [sut/avatar {:class "grayscale"}
                                         [sut/avatar-image {:src "https://github.com/pranathip.png"
                                                            :alt "@pranathip"}]

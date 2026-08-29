@@ -7,7 +7,8 @@
    [clojure-shadcn.ui.components.spinner :as sut]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Spinner"
@@ -27,7 +28,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "spinner_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -56,7 +57,7 @@
   Use for lightweight loading indicators."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body SpinnerBasic) :filename "spinner_stories.cljs"} [:div {:class "p-6"}
                                        [sut/spinner {}]])))
 
 (defn ^:export SpinnerSize
@@ -67,7 +68,7 @@
   Adjust size via Tailwind size classes."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 flex items-center gap-6"}
+  (helpers/wrap-component {:source (embed-body SpinnerSize) :filename "spinner_stories.cljs"} [:div {:class "p-6 flex items-center gap-6"}
                                        [sut/spinner {:class "size-3"}]
                                        [sut/spinner {:class "size-4"}]
                                        [sut/spinner {:class "size-6"}]
@@ -81,7 +82,7 @@
   Combine with buttons to show in-progress actions."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 flex flex-col items-start gap-4"}
+  (helpers/wrap-component {:source (embed-body SpinnerButton) :filename "spinner_stories.cljs"} [:div {:class "p-6 flex flex-col items-start gap-4"}
                                        (button/button {:disabled true
                                                        :size :sm}
                                                       [sut/spinner {}]
@@ -105,7 +106,7 @@
   Useful for background status updates."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 flex items-center gap-4"}
+  (helpers/wrap-component {:source (embed-body SpinnerBadge) :filename "spinner_stories.cljs"} [:div {:class "p-6 flex items-center gap-4"}
                                        [badge/badge {}
                                         [sut/spinner {}]
                                         "Syncing"]
@@ -124,7 +125,7 @@
   Color via text utility classes."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 flex items-center gap-6"}
+  (helpers/wrap-component {:source (embed-body SpinnerColor) :filename "spinner_stories.cljs"} [:div {:class "p-6 flex items-center gap-6"}
                                        [sut/spinner {:class "size-6 text-red-500"}]
                                        [sut/spinner {:class "size-6 text-green-500"}]
                                        [sut/spinner {:class "size-6 text-blue-500"}]
@@ -139,7 +140,7 @@
   Demonstrates inline usage in a row layout."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body SpinnerDemo) :filename "spinner_stories.cljs"}
     [:div {:class "p-6"}
      [:div {:class
             "flex w-full max-w-xs items-center justify-between rounded-lg border bg-muted/50 p-4"}

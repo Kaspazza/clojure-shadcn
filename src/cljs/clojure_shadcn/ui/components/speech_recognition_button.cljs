@@ -12,6 +12,7 @@ Custom component implementation."
    [clojure-shadcn.ui.components.button       :as mateuszmazurczak-button]
    [clojure-shadcn.ui.components.loader       :as loader]
    [clojure-shadcn.ui.components.prompt-input :as prompt-input]
+   [clojure-shadcn.utils.props                :refer [normalize-props]]
    [reagent.core                                :as    r
                                                 :refer [defc]]
    [reagent.hooks                               :as rhooks]))
@@ -24,44 +25,47 @@ Custom component implementation."
   - `:language` - Language code for speech recognition (default: \"en-US\")
                   Examples: \"en-US\", \"pl-PL\", \"es-ES\", \"fr-FR\", \"de-DE\"
   - `:continuous` - Whether to continue listening after speech stops (default: true)
-  - `:class` - Additional CSS classes for the button wrapper"
- [{:keys [on-transcript-change language continuous class]
-   :or {language "en-US"
-        continuous true}}]
- (let [;; Speech recognition hook
-       speech-recognition (useSpeechRecognition)
-       transcript (.-transcript speech-recognition)
-       listening? (.-listening speech-recognition)
-       browser-supports? (.-browserSupportsSpeechRecognition speech-recognition)
-       reset-transcript! (.-resetTranscript speech-recognition)
-       _ (rhooks/use-effect (fn []
-                              (when (and (seq transcript) on-transcript-change)
-                                (on-transcript-change transcript))
-                              js/undefined)
-                            [transcript on-transcript-change])
-       handle-mic-toggle (rhooks/use-callback (fn []
-                                                (if listening?
-                                                  (.stopListening SpeechRecognition)
-                                                  (do (reset-transcript!)
-                                                      (.startListening SpeechRecognition
-                                                                       #js {:continuous continuous
-                                                                            :language language}))))
-                                              [listening? reset-transcript! continuous language])]
-   (if browser-supports?
-     [prompt-input/prompt-input-action {:tooltip (if listening? "Stop recording" "Voice input")
-                                        :class class}
-      [mateuszmazurczak-button/button {:variant :outline
-                                       :size :icon
-                                       :class "size-9 rounded-full"
-                                       :on-click handle-mic-toggle}
-       (if listening?
-         [loader/loader {:variant :wave
-                         :size :sm}]
-         [:> Mic {:size 18}])]]
-     [prompt-input/prompt-input-action {:tooltip "Speech recognition not supported in this browser"
-                                        :class class}
-      [mateuszmazurczak-button/button {:variant :outline
-                                       :size :icon
-                                       :disabled true
-                                       :class "size-9 rounded-full"}
-       [:> Mic {:size 18}]]])))
+  - `:class` - Additional CSS classes for the button wrapper
+  Both kebab-case and camelCase prop spellings are accepted."
+ [{:as raw-props}]
+ (let [{:keys [on-transcript-change language continuous class]
+        :or {language "en-US"
+             continuous true}}
+       (normalize-props raw-props)]
+   (let [;; Speech recognition hook
+         speech-recognition (useSpeechRecognition)
+         transcript (.-transcript speech-recognition)
+         listening? (.-listening speech-recognition)
+         browser-supports? (.-browserSupportsSpeechRecognition speech-recognition)
+         reset-transcript! (.-resetTranscript speech-recognition)
+         _ (rhooks/use-effect (fn []
+                                (when (and (seq transcript) on-transcript-change)
+                                  (on-transcript-change transcript))
+                                js/undefined)
+                              [transcript on-transcript-change])
+         handle-mic-toggle (rhooks/use-callback (fn []
+                                                  (if listening?
+                                                    (.stopListening SpeechRecognition)
+                                                    (do (reset-transcript!)
+                                                        (.startListening SpeechRecognition
+                                                                         #js {:continuous continuous
+                                                                              :language language}))))
+                                                [listening? reset-transcript! continuous language])]
+     (if browser-supports?
+       [prompt-input/prompt-input-action {:tooltip (if listening? "Stop recording" "Voice input")
+                                          :class class}
+        [mateuszmazurczak-button/button {:variant :outline
+                                         :size :icon
+                                         :class "size-9 rounded-full"
+                                         :on-click handle-mic-toggle}
+         (if listening?
+           [loader/loader {:variant :wave
+                           :size :sm}]
+           [:> Mic {:size 18}])]]
+       [prompt-input/prompt-input-action {:tooltip "Speech recognition not supported in this browser"
+                                          :class class}
+        [mateuszmazurczak-button/button {:variant :outline
+                                         :size :icon
+                                         :disabled true
+                                         :class "size-9 rounded-full"}
+         [:> Mic {:size 18}]]]))))

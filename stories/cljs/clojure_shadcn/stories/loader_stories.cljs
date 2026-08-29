@@ -5,7 +5,8 @@
    [clojure-shadcn.ui.components.loader :as sut]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Loader"
@@ -25,7 +26,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "loader_stories.cljs"}
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
        [helpers/api-component-card
@@ -129,7 +130,7 @@
                    :text-blink
                    :text-shimmer
                    :loading-dots]]
-     (helpers/wrap-component
+     (helpers/wrap-component {:source (embed-body LoaderAllVariants) :filename "loader_stories.cljs"}
       [:div {:class "p-6 grid gap-4 sm:grid-cols-3"}
        (for [variant variants]
          ^{:key variant}
@@ -144,7 +145,7 @@
   All loaders support :sm, :md, :lg sizes."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 flex items-center gap-6"}
+  (helpers/wrap-component {:source (embed-body LoaderSizes) :filename "loader_stories.cljs"} [:div {:class "p-6 flex items-center gap-6"}
                                        [sut/loader {:variant :circular
                                                     :size :sm}]
                                        [sut/loader {:variant :circular
@@ -157,7 +158,7 @@
   Text variants: :text-blink, :text-shimmer, :loading-dots."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 space-y-3"}
+  (helpers/wrap-component {:source (embed-body LoaderTextVariants) :filename "loader_stories.cljs"} [:div {:class "p-6 space-y-3"}
                                        [sut/loader {:variant :text-blink
                                                     :text "Thinking"
                                                     :size :md}]
@@ -173,7 +174,7 @@
   Use the single `loader` function to switch animations per state."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 flex items-center gap-6"}
+  (helpers/wrap-component {:source (embed-body LoaderComponent) :filename "loader_stories.cljs"} [:div {:class "p-6 flex items-center gap-6"}
                                        [sut/loader {:variant :pulse}]
                                        [sut/loader {:variant :typing}]
                                        [sut/loader {:variant :terminal}]])))

@@ -9,7 +9,8 @@
    [clojure-shadcn.ui.components.empty  :as sut]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Empty State"
@@ -29,7 +30,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "empty_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -83,7 +84,7 @@
   Use primary + outline actions for next steps."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body EmptyDemo) :filename "empty_stories.cljs"}
     [:div {:class "p-6"}
      [sut/empty {}
       [sut/empty-header {}
@@ -113,7 +114,7 @@
   Useful for showcasing multiple empty modules."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body EmptyIcon) :filename "empty_stories.cljs"}
     [:div {:class "p-6 grid gap-8 md:grid-cols-2"}
      [sut/empty {}
       [sut/empty-header {}
@@ -156,7 +157,7 @@
   Use a dashed border to emphasize the empty container."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body EmptyOutline) :filename "empty_stories.cljs"}
     [:div {:class "p-6"}
      [sut/empty {:class "border border-dashed"}
       [sut/empty-header {}
@@ -179,7 +180,7 @@
   Use avatar media for user-centric empty states."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body EmptyAvatar) :filename "empty_stories.cljs"}
     [:div {:class "p-6"}
      [sut/empty {}
       [sut/empty-header {}
@@ -204,7 +205,7 @@
   Gradient backgrounds help differentiate the empty section."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body EmptyBackground) :filename "empty_stories.cljs"}
     [:div {:class "p-6"}
      [sut/empty {:class "from-muted/50 to-background bg-gradient-to-b from-30%"}
       [sut/empty-header {}
@@ -228,7 +229,7 @@
   Use grouped avatars for team invites or collaboration prompts."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body EmptyAvatarGroup) :filename "empty_stories.cljs"}
     [:div {:class "p-6"}
      [sut/empty {}
       [sut/empty-header {}

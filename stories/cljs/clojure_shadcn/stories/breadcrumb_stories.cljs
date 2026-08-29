@@ -8,7 +8,8 @@
    [clojure-shadcn.ui.components.dropdown-menu :as dropdown-menu]
    [reagent.core                                 :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Breadcrumb"
@@ -29,7 +30,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "breadcrumb_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                 [helpers/api-component-card
@@ -84,7 +85,7 @@
   Useful for long navigation paths."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body BreadcrumbDemo) :filename "breadcrumb_stories.cljs"}
     [:div {:class "p-6"}
      [sut/breadcrumb {}
       [sut/breadcrumb-list {}
@@ -122,7 +123,7 @@
   Use breadcrumb-link for navigable segments and breadcrumb-page for current."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body BreadcrumbSimple) :filename "breadcrumb_stories.cljs"} [:div {:class "p-6"}
                                        [sut/breadcrumb {}
                                         [sut/breadcrumb-list {}
                                          [sut/breadcrumb-item {}
@@ -145,7 +146,7 @@
   Use the ellipsis when intermediate items are hidden."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body BreadcrumbEllipsis) :filename "breadcrumb_stories.cljs"}
     [:div {:class "p-6"}
      [sut/breadcrumb {}
       [sut/breadcrumb-list {}
@@ -172,7 +173,7 @@
   Custom separators can be inserted per segment."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body BreadcrumbSeparator) :filename "breadcrumb_stories.cljs"} [:div {:class "p-6"}
                                        [sut/breadcrumb {}
                                         [sut/breadcrumb-list {}
                                          [sut/breadcrumb-item {}
@@ -197,7 +198,7 @@
   Dropdowns can replace intermediate links."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body BreadcrumbDropdown) :filename "breadcrumb_stories.cljs"}
     [:div {:class "p-6"}
      [sut/breadcrumb {}
       [sut/breadcrumb-list {}
@@ -232,8 +233,7 @@
 
   This example shows both desktop (dropdown) and mobile (drawer) patterns."
   []
-  (r/as-element
-  (let [dropdown-open? (r/atom false)
+  (r/as-element [(fn [] (let [dropdown-open? (r/atom false)
          drawer-open? (r/atom false)
          items [{:href "#"
                  :label "Home"}
@@ -245,7 +245,7 @@
                  :label "Data Fetching"}
                 {:label "Caching and Revalidating"}]]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body BreadcrumbResponsive) :filename "breadcrumb_stories.cljs"}
         [:div {:class "p-6 space-y-6"}
          [:div {:class "hidden md:block"}
           [sut/breadcrumb {}
@@ -305,4 +305,4 @@
                 [drawer/drawer-close
                  {:class
                   "inline-flex h-10 w-full items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"}
-                 "Close"]]]]]]]]])))))
+                 "Close"]]]]]]]]]))))]))

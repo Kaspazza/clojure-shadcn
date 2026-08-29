@@ -6,7 +6,8 @@
    [clojure-shadcn.ui.components.scroll-button  :as scroll-button]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Chat Container"
@@ -26,7 +27,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "chat_container_stories.cljs"}
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -63,7 +64,7 @@
   Use chat-container-scroll-anchor for auto-scroll behavior."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body ChatContainerBasic) :filename "chat_container_stories.cljs"} [:div {:class "p-6"}
                                        [sut/chat-container-root {:class
                                                                  "h-64 w-full rounded-md border"}
                                         [sut/chat-container-content {:class "p-4 space-y-3"}
@@ -78,7 +79,7 @@
   Demonstrates overflow, stick-to-bottom behavior, and interactive recovery when scrolled up."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body ChatContainerLong) :filename "chat_container_stories.cljs"} [:div {:class "p-6"}
                                        [sut/chat-container-root {:class
                                                                  "relative h-64 w-full rounded-md border"}
                                         [sut/chat-container-content {:class "p-4 space-y-3"}
@@ -94,7 +95,7 @@
   Use additional elements around the scroll region for composition."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body ChatContainerComposition) :filename "chat_container_stories.cljs"} [:div {:class "p-6"}
                                        [:div {:class "rounded-md border"}
                                         [:div {:class "border-b px-4 py-2 text-sm font-medium"}
                                          "Team Chat"]

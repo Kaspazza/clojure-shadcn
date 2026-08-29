@@ -3,7 +3,8 @@
   (:require
    [clojure-shadcn.stories.helpers     :as helpers]
    [clojure-shadcn.ui.components.badge :as badge]
-   [reagent.core                       :as r]))
+   [reagent.core                       :as r])
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Docs/Introduction"
@@ -37,7 +38,7 @@
   "What clojure-shadcn is and when to use it."
   []
   (r/as-element
-   (helpers/wrap-component
+   (helpers/wrap-component {:source (embed-body Overview) :filename "intro_stories.cljs"}
     [:div {:class "max-w-3xl p-6 space-y-2"}
      [badge/badge {:variant :secondary
                    :class "mb-4"}
@@ -63,7 +64,7 @@
   "How to bring a component into your project."
   []
   (r/as-element
-   (helpers/wrap-component
+   (helpers/wrap-component {:source (embed-body Installation) :filename "intro_stories.cljs"}
     [:div {:class "max-w-3xl p-6 space-y-2"}
      [:h1 {:class "text-2xl font-bold mb-4"}
       "Installation"]
@@ -90,7 +91,7 @@
   "Common patterns for using clojure-shadcn components."
   []
   (r/as-element
-   (helpers/wrap-component
+   (helpers/wrap-component {:source (embed-body UsageExamples) :filename "intro_stories.cljs"}
     [:div {:class "max-w-3xl p-6 space-y-2"}
      [:h1 {:class "text-2xl font-bold mb-4"}
       "Usage"]

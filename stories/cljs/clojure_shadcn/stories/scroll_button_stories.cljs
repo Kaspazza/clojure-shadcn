@@ -6,7 +6,8 @@
    [clojure-shadcn.ui.components.scroll-button  :as sut]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Scroll Button"
@@ -27,7 +28,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "scroll_button_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -58,7 +59,7 @@
   Appears when user scrolls away from bottom."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ScrollButtonChat) :filename "scroll_button_stories.cljs"}
     [:div {:class "p-6"}
      [chat-container/chat-container-root {:class "relative h-64 w-full rounded-md border"}
       [chat-container/chat-container-content {:class "p-4 space-y-3"}
@@ -74,7 +75,7 @@
   Use class overrides for position or style changes."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ScrollButtonCustom) :filename "scroll_button_stories.cljs"}
     [:div {:class "p-6"}
      [chat-container/chat-container-root {:class "relative h-64 w-full rounded-md border"}
       [chat-container/chat-container-content {:class "p-4 space-y-3"}
@@ -90,7 +91,7 @@
   Place inside any stick-to-bottom container."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ScrollButtonStandalone) :filename "scroll_button_stories.cljs"}
     [:div {:class "p-6"}
      [chat-container/chat-container-root {:class "relative h-40 w-full rounded-md border"}
       [chat-container/chat-container-content {:class "p-4 space-y-3"}

@@ -10,6 +10,7 @@ Custom component implementation."
    ["react"                                 :as react]
    [clojure-shadcn.ui.components.textarea :as mateuszmazurczak-textarea]
    [clojure-shadcn.ui.components.tooltip  :as mateuszmazurczak-tooltip]
+   [clojure-shadcn.utils.props            :refer [normalize-props]]
    [clojure-shadcn.utils.styles           :refer [merge-classes]]
    [reagent.core                            :as    r
                                             :refer [defc]]
@@ -58,54 +59,56 @@ Custom component implementation."
     [prompt-input-actions
       [prompt-input-action {:tooltip \"Send\"}
         [button {:on-click send-message} \"Send\"]]]]"
- [{:keys [is-loading? value on-value-change max-height on-submit disabled? on-click class]
-   :or {is-loading? false
-        max-height 240
-        disabled? false}
-   :as props}
+ [{:as raw-props}
   &
   children]
- (let [[internal-value set-internal-value] (rhooks/use-state (or value ""))
-       textarea-ref (rhooks/use-ref nil)
-       handle-change (rhooks/use-callback (fn [new-value]
-                                            (set-internal-value new-value)
-                                            (when on-value-change (on-value-change new-value)))
-                                          [on-value-change])
-       handle-click (rhooks/use-callback (fn [e]
-                                           (when-not disabled?
-                                             (when-let [textarea (.-current textarea-ref)]
-                                               (.focus textarea)))
-                                           (when on-click (on-click e)))
-                                         [disabled? on-click])
-       context-value (clj->js {:isLoading is-loading?
-                               :value (or value internal-value)
-                               :setValue (or on-value-change handle-change)
-                               :maxHeight max-height
-                               :onSubmit on-submit
-                               :disabled disabled?
-                               :textareaRef textarea-ref})]
-   [:>
-    mateuszmazurczak-tooltip/tooltip-provider-component
-    {}
-    [:>
-     (.-Provider prompt-input-context)
-     {:value context-value}
-     (into [:div
-            (-> props
-                (assoc :on-click handle-click
-                       :class
-                       (merge-classes
-                        "border-input bg-background cursor-text rounded-3xl border p-2 shadow-xs"
-                        (when disabled? "cursor-not-allowed opacity-60")
-                        class))
-                (dissoc :is-loading?
-                        :value
-                        :on-value-change
-                        :max-height
-                        :on-submit
-                        :disabled?
-                        :class-name))]
-           children)]]))
+ (let [{:keys [is-loading? value on-value-change max-height on-submit disabled? on-click class]
+        :or {is-loading? false
+             max-height 240
+             disabled? false}
+        :as props}
+       (normalize-props raw-props)]
+   (let [[internal-value set-internal-value] (rhooks/use-state (or value ""))
+         textarea-ref (rhooks/use-ref nil)
+         handle-change (rhooks/use-callback (fn [new-value]
+                                              (set-internal-value new-value)
+                                              (when on-value-change (on-value-change new-value)))
+                                            [on-value-change])
+         handle-click (rhooks/use-callback (fn [e]
+                                             (when-not disabled?
+                                               (when-let [textarea (.-current textarea-ref)]
+                                                 (.focus textarea)))
+                                             (when on-click (on-click e)))
+                                           [disabled? on-click])
+         context-value (clj->js {:isLoading is-loading?
+                                 :value (or value internal-value)
+                                 :setValue (or on-value-change handle-change)
+                                 :maxHeight max-height
+                                 :onSubmit on-submit
+                                 :disabled disabled?
+                                 :textareaRef textarea-ref})]
+     [:>
+      mateuszmazurczak-tooltip/tooltip-provider-component
+      {}
+      [:>
+       (.-Provider prompt-input-context)
+       {:value context-value}
+       (into [:div
+              (-> props
+                  (assoc :on-click handle-click
+                         :class
+                         (merge-classes
+                          "border-input bg-background cursor-text rounded-3xl border p-2 shadow-xs"
+                          (when disabled? "cursor-not-allowed opacity-60")
+                          class))
+                  (dissoc :is-loading?
+                          :value
+                          :on-value-change
+                          :max-height
+                          :on-submit
+                          :disabled?
+                          :class-name))]
+             children)]])))
 
 (defc prompt-input-textarea
  "Auto-resizing textarea for prompt input.
@@ -117,6 +120,7 @@ Custom component implementation."
   - `:on-key-down` - Additional key down handler
   - `:class` - Additional Tailwind classes
   - All other props passed to textarea component
+  Both kebab-case and camelCase prop spellings are accepted.
   
   Features:
   - Auto-resizes based on content
@@ -130,54 +134,56 @@ Custom component implementation."
   Example with custom handler:
   [prompt-input-textarea {:placeholder \"Enter text\"
                           :on-key-down #(js/console.log \"key pressed\")}]"
- [{:keys [disable-autosize? on-key-down class]
-   :or {disable-autosize? false}
-   :as props}]
- (let [context (use-prompt-input)
-       {:keys [value set-value max-height on-submit disabled? textarea-ref]} context
-       adjust-height
-       (fn [el]
-         (when (and el (not disable-autosize?))
-           (set! (.. el -style -height) "auto")
-           (if (number? max-height)
-             (set! (.. el -style -height) (str (min (.-scrollHeight el) max-height) "px"))
-             (set! (.. el -style -height) (str "min(" (.-scrollHeight el) "px, " max-height ")")))))
-       handle-ref (fn [el] (set! (.-current textarea-ref) el) (adjust-height el))
-       handle-change (rhooks/use-callback
-                      (fn [e] (adjust-height (.-target e)) (set-value (.. e -target -value)))
-                      [set-value disable-autosize?])
-       handle-key-down (rhooks/use-callback (fn [e]
-                                              (when (and (= (.-key e) "Enter") (not (.-shiftKey e)))
-                                                (.preventDefault e)
-                                                (when on-submit (on-submit)))
-                                              (when on-key-down (on-key-down e)))
-                                            [on-submit on-key-down])]
-   ;; Layout effect to adjust height when value changes
-   (rhooks/use-layout-effect
-    (fn []
-      (when-let [el (.-current textarea-ref)]
-        (when-not disable-autosize?
-          (set! (.. el -style -height) "auto")
-          (if (number? max-height)
-            (set! (.. el -style -height) (str (min (.-scrollHeight el) max-height) "px"))
-            (set! (.. el -style -height) (str "min(" (.-scrollHeight el) "px, " max-height ")")))))
-      js/undefined)
-    [value max-height disable-autosize?])
-   [mateuszmazurczak-textarea/textarea
-    (->
-      props
-      (assoc
-       :ref handle-ref
-       :value value
-       :on-change handle-change
-       :on-key-down handle-key-down
-       :rows 1
-       :disabled disabled?
-       :class
-       (merge-classes
-        "text-base min-h-[44px] w-full resize-none border-none bg-transparent shadow-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
-        class))
-      (dissoc :disable-autosize? :class-name))]))
+ [{:as raw-props}]
+ (let [{:keys [disable-autosize? on-key-down class]
+        :or {disable-autosize? false}
+        :as props}
+       (normalize-props raw-props)]
+   (let [context (use-prompt-input)
+         {:keys [value set-value max-height on-submit disabled? textarea-ref]} context
+         adjust-height
+         (fn [el]
+           (when (and el (not disable-autosize?))
+             (set! (.. el -style -height) "auto")
+             (if (number? max-height)
+               (set! (.. el -style -height) (str (min (.-scrollHeight el) max-height) "px"))
+               (set! (.. el -style -height) (str "min(" (.-scrollHeight el) "px, " max-height ")")))))
+         handle-ref (fn [el] (set! (.-current textarea-ref) el) (adjust-height el))
+         handle-change (rhooks/use-callback
+                        (fn [e] (adjust-height (.-target e)) (set-value (.. e -target -value)))
+                        [set-value disable-autosize?])
+         handle-key-down (rhooks/use-callback (fn [e]
+                                                (when (and (= (.-key e) "Enter") (not (.-shiftKey e)))
+                                                  (.preventDefault e)
+                                                  (when on-submit (on-submit)))
+                                                (when on-key-down (on-key-down e)))
+                                              [on-submit on-key-down])]
+     ;; Layout effect to adjust height when value changes
+     (rhooks/use-layout-effect
+      (fn []
+        (when-let [el (.-current textarea-ref)]
+          (when-not disable-autosize?
+            (set! (.. el -style -height) "auto")
+            (if (number? max-height)
+              (set! (.. el -style -height) (str (min (.-scrollHeight el) max-height) "px"))
+              (set! (.. el -style -height) (str "min(" (.-scrollHeight el) "px, " max-height ")")))))
+        js/undefined)
+      [value max-height disable-autosize?])
+     [mateuszmazurczak-textarea/textarea
+      (->
+        props
+        (assoc
+         :ref handle-ref
+         :value value
+         :on-change handle-change
+         :on-key-down handle-key-down
+         :rows 1
+         :disabled disabled?
+         :class
+         (merge-classes
+          "text-base min-h-[44px] w-full resize-none border-none bg-transparent shadow-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          class))
+        (dissoc :disable-autosize? :class-name))])))
 
 (defn prompt-input-actions
   "Container for prompt input action buttons.

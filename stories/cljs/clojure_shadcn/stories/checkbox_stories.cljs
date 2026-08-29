@@ -60,8 +60,7 @@
 
   Use labels and helper text for clarity. Always pair :checked with :on-checked-change for controlled usage."
   []
-  (r/as-element
-  (let [checked? (r/atom false)]
+  (r/as-element [(fn [] (let [checked? (r/atom false)]
       (fn []
         (helpers/wrap-component
          [:div {:class "p-6 space-y-6"}
@@ -88,7 +87,7 @@
             [label/label {:html-for "controlled"}
              "Enable feature"]]
            [:p {:class "text-sm text-muted-foreground"}
-            (str "State: " (if @checked? "checked" "unchecked"))]]])))))
+            (str "State: " (if @checked? "checked" "unchecked"))]]]))))]))
 
 (defn ^:export CheckboxWithFieldLabel
   "Checkbox inside Field wrapped by FieldLabel with title and description.
@@ -197,8 +196,7 @@
 
   Use :checked :indeterminate for partial selection states."
   []
-  (r/as-element
-  (let [checked (r/atom :indeterminate)]
+  (r/as-element [(fn [] (let [checked (r/atom :indeterminate)]
       (fn []
         (helpers/wrap-component [:div {:class "p-6 space-y-2"}
                                             [:div {:class "flex items-center gap-2"}
@@ -207,7 +205,7 @@
                                              [:span {:class "text-sm"}
                                               "Select all projects"]]
                                             [:p {:class "text-muted-foreground text-sm"}
-                                             (str "Current state: " @checked)]])))))
+                                             (str "Current state: " @checked)]]))))]))
 
 (defn ^:export CheckboxInvalid
   "Checkbox with invalid/error state for form validation.
@@ -287,8 +285,7 @@
 
   Common pattern for bulk actions in admin dashboards and data management UIs."
   []
-  (r/as-element
-  (let [all-tasks [{:id "TASK-001" :title "Update documentation" :status "Done" :priority "Low"}
+  (r/as-element [(fn [] (let [all-tasks [{:id "TASK-001" :title "Update documentation" :status "Done" :priority "Low"}
                      {:id "TASK-002" :title "Fix login redirect" :status "In Progress" :priority "High"}
                      {:id "TASK-003" :title "Add dark mode" :status "Todo" :priority "Medium"}
                      {:id "TASK-004" :title "Optimize bundle size" :status "In Progress" :priority "High"}
@@ -318,15 +315,18 @@
                [table/table-head {} "Status"]
                [table/table-head {:class "text-right"} "Priority"]]]
              [table/table-body {}
-              (for [{:keys [id title status priority]} all-tasks]
-                ^{:key id}
-                [table/table-row {:class (when (contains? @selected id)
-                                           "bg-muted/50")}
-                 [table/table-cell {}
-                  [sut/checkbox {:checked (contains? @selected id)
-                                 :on-checked-change (partial toggle-row! id)
-                                 :aria-label (str "Select " id)}]]
-                 [table/table-cell {:class "font-medium"} id]
-                 [table/table-cell {} title]
-                 [table/table-cell {} status]
-                 [table/table-cell {:class "text-right"} priority]])]]]))))))
+              ;; doall: @selected is derefed while realizing the seq; a lazy
+              ;; seq would realize outside the reactive context and not re-render.
+              (doall
+               (for [{:keys [id title status priority]} all-tasks]
+                 ^{:key id}
+                 [table/table-row {:class (when (contains? @selected id)
+                                            "bg-muted/50")}
+                  [table/table-cell {}
+                   [sut/checkbox {:checked (contains? @selected id)
+                                  :on-checked-change (partial toggle-row! id)
+                                  :aria-label (str "Select " id)}]]
+                  [table/table-cell {:class "font-medium"} id]
+                  [table/table-cell {} title]
+                  [table/table-cell {} status]
+                  [table/table-cell {:class "text-right"} priority]]))]]])))))]))

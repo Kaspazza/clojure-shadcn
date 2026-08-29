@@ -9,6 +9,7 @@ Based on Radix UI primitives.
 Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   (:require
    ["@radix-ui/react-slot"        :refer [Slot]]
+   [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
 (defn- variant-classes
@@ -60,19 +61,21 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   ;; As child (polymorphic)
   [badge {:as-child true}
     [:a {:href \"/status\"} \"Active\"]]"
-  [{:keys [variant class as-child]
-    :or {variant :default}
-    :as props}
+  [{:as raw-props}
    &
    children]
-  (let
-    [component (if as-child Slot "span")
-     base-classes
-     "h-5 gap-1 rounded-4xl border border-transparent px-2 py-0.5 text-xs font-medium transition-all has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&>svg]:size-3! inline-flex items-center justify-center w-fit whitespace-nowrap shrink-0 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive overflow-hidden group/badge"
-     combined-classes (merge-classes base-classes (variant-classes variant) class)]
-    (into [:>
-           component
-           (-> props
-               (assoc :data-slot "badge" :data-variant (name variant) :class combined-classes)
-               (dissoc :class-name :variant :as-child))]
-          children)))
+  (let [{:keys [variant class as-child]
+         :or {variant :default}
+         :as props}
+        (normalize-props raw-props)]
+    (let
+      [component (if as-child Slot "span")
+       base-classes
+       "h-5 gap-1 rounded-4xl border border-transparent px-2 py-0.5 text-xs font-medium transition-all has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&>svg]:size-3! inline-flex items-center justify-center w-fit whitespace-nowrap shrink-0 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive overflow-hidden group/badge"
+       combined-classes (merge-classes base-classes (variant-classes variant) class)]
+      (into [:>
+             component
+             (-> props
+                 (assoc :data-slot "badge" :data-variant (name variant) :class combined-classes)
+                 (dissoc :class-name :variant :as-child))]
+            children))))

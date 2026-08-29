@@ -10,6 +10,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dropdown-menu
   (:require
    ["@radix-ui/react-dropdown-menu" :as DropdownMenuPrimitive]
    ["lucide-react"                  :refer [Check ChevronRight Circle]]
+   [clojure-shadcn.utils.props    :refer [normalize-props]]
    [clojure-shadcn.utils.styles   :refer [merge-classes]]
    [reagent.core                    :as r]))
 
@@ -227,6 +228,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dropdown-menu
   - `:side-offset` - Distance from trigger (default: 4)
   - `:align` - Alignment relative to trigger (:start, :center, :end)
   - `:class` - Additional Tailwind classes to merge with defaults
+  Both kebab-case and camelCase prop spellings are accepted.
   
   Example:
   [dropdown-menu-content {}
@@ -234,27 +236,29 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dropdown-menu
     [dropdown-menu-separator {}]
     [dropdown-menu-item {} \"Profile\"]
     [dropdown-menu-item {} \"Settings\"]]"
-  [{:keys [class side-offset]
-    :or {side-offset 4}
-    :as props}
+  [{:as raw-props}
    &
    children]
-  [:>
-   (.-Portal DropdownMenuPrimitive)
-   (into
+  (let [{:keys [class side-offset]
+         :or {side-offset 4}
+         :as props}
+        (normalize-props raw-props)]
     [:>
-     (.-Content DropdownMenuPrimitive)
-     (->
-       props
-       (assoc
-        :side-offset side-offset
-        :data-slot "dropdown-menu-content"
-        :class
-        (merge-classes
-         "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 max-h-(--radix-dropdown-menu-content-available-height) min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md"
-         class))
-       (dissoc :class-name :side-offset))]
-    children)])
+     (.-Portal DropdownMenuPrimitive)
+     (into
+      [:>
+       (.-Content DropdownMenuPrimitive)
+       (->
+         props
+         (assoc
+          :side-offset side-offset
+          :data-slot "dropdown-menu-content"
+          :class
+          (merge-classes
+           "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 max-h-(--radix-dropdown-menu-content-available-height) min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md"
+           class))
+         (dissoc :class-name :side-offset))]
+      children)]))
 
 (defn dropdown-menu-item
   "Dropdown menu item component. A selectable menu item.

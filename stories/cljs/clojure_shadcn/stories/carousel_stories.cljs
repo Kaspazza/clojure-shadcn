@@ -6,7 +6,8 @@
    [reagent.core                            :as r :refer [defc]]
    [reagent.hooks :as rhooks])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Carousel"
@@ -81,7 +82,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "carousel_stories.cljs"}
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -137,7 +138,7 @@
   Use for showcasing images or featured content."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body CarouselDemo) :filename "carousel_stories.cljs"} [:div {:class "p-6"}
                                        [sut/carousel {:class "w-full max-w-xs"}
                                         (into [sut/carousel-content {}]
                                               (for [idx (range 1 6)]
@@ -154,7 +155,7 @@
   Use basis-1/3 to show 3 items at once. Adjust with responsive classes as needed."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body CarouselSize) :filename "carousel_stories.cljs"} [:div {:class "p-6"}
                                        [sut/carousel {:opts {:align "start"}
                                                       :class "w-full max-w-sm"}
                                         (into [sut/carousel-content {}]
@@ -173,7 +174,7 @@
   Use :orientation :vertical for stacked slides. Container height determines visible area."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body CarouselOrientation) :filename "carousel_stories.cljs"} [:div {:class "p-6"}
                                        [sut/carousel {:opts {:align "start"}
                                                       :orientation :vertical
                                                       :class "w-full max-w-xs"}
@@ -192,7 +193,7 @@
   Use pl-* on items with -ml-* on content to create gaps. Shows 3 items to demonstrate spacing."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body CarouselSpacing) :filename "carousel_stories.cljs"} [:div {:class "p-6"}
                                        [sut/carousel {:opts {:align "start"}
                                                       :class "w-full max-w-sm"}
                                         (into [sut/carousel-content {:class "-ml-4"}]
@@ -211,7 +212,7 @@
   Use :loop true in opts for seamless infinite scrolling. Embla auto-adjusts positions."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body CarouselLoop) :filename "carousel_stories.cljs"} [:div {:class "p-6"}
                                        [sut/carousel {:opts {:loop true}
                                                       :class "w-full max-w-xs"}
                                         (into [sut/carousel-content {}]
@@ -229,7 +230,7 @@
   Use :dragFree true for momentum-based scrolling without snap constraints."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body CarouselDragFree) :filename "carousel_stories.cljs"} [:div {:class "p-6"}
                                        [sut/carousel {:opts {:dragFree true :loop true}
                                                       :class "w-full max-w-sm"}
                                         (into [sut/carousel-content {}]
@@ -248,7 +249,7 @@
   Use :slidesToScroll in opts to advance multiple slides per navigation action."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body CarouselSlidesToScroll) :filename "carousel_stories.cljs"} [:div {:class "p-6"}
                                        [sut/carousel {:opts {:align "start" :slidesToScroll 2}
                                                       :class "w-full max-w-sm"}
                                         (into [sut/carousel-content {}]

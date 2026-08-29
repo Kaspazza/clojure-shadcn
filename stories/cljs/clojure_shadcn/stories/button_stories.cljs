@@ -7,7 +7,8 @@
    [clojure-shadcn.ui.components.spinner :as spinner]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Button"
@@ -27,7 +28,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "button_stories.cljs"}
      [:div {:class "p-6 max-w-4xl"}
       [:div {:class "space-y-6"}
        [:div {:class "space-y-4"}
@@ -66,7 +67,7 @@
   string variants. The default variant is :default."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body ButtonDefault) :filename "button_stories.cljs"} [:div {:class "p-6"}
                                         (button/button {} "Continue")])))
 
 (defn ^:export ButtonDestructive
@@ -77,7 +78,7 @@
   Use :destructive for irreversible actions (delete, remove, etc.)."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body ButtonDestructive) :filename "button_stories.cljs"} [:div {:class "p-6"}
                                         (button/button {:variant :destructive} "Delete project")])))
 
 (defn ^:export ButtonOutline
@@ -88,7 +89,7 @@
   Outline buttons are visually lighter but still prominent."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body ButtonOutline) :filename "button_stories.cljs"} [:div {:class "p-6"}
                                         (button/button {:variant :outline} "View details")])))
 
 (defn ^:export ButtonSecondary
@@ -99,7 +100,7 @@
   Use :secondary to de-emphasize a primary action."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body ButtonSecondary) :filename "button_stories.cljs"} [:div {:class "p-6"}
                                         (button/button {:variant :secondary} "Secondary action")])))
 
 (defn ^:export ButtonGhost
@@ -110,7 +111,7 @@
   Ghost buttons are useful in dense toolbars."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body ButtonGhost) :filename "button_stories.cljs"} [:div {:class "p-6"}
                                         (button/button {:variant :ghost} "Dismiss")])))
 
 (defn ^:export ButtonLink
@@ -121,7 +122,7 @@
   Use :link when you want a textual action that still behaves like a button."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body ButtonLink) :filename "button_stories.cljs"} [:div {:class "p-6"}
                                         (button/button {:variant :link} "Learn more")])))
 
 (defn ^:export ButtonIcon
@@ -133,7 +134,7 @@
   Note: shadcn uses size=icon; our wrapper uses :icon."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body ButtonIcon) :filename "button_stories.cljs"} [:div {:class "p-6"}
                                         (button/button {:variant :outline
                                                         :size :icon
                                                         :aria-label "Open"}
@@ -147,7 +148,7 @@
   Icons should be placed before text for consistent alignment."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body ButtonWithIcon) :filename "button_stories.cljs"} [:div {:class "p-6"}
                                         (button/button {:variant :outline
                                                         :size :sm}
                                                        [:> GitBranch]
@@ -161,7 +162,7 @@
   Use a spinner + disabled to communicate in-progress actions."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body ButtonLoading) :filename "button_stories.cljs"} [:div {:class "p-6"}
                                         (button/button {:variant :outline
                                                         :size :sm
                                                         :disabled true}
@@ -176,7 +177,7 @@
   Use :as-child to render as an anchor while preserving button styles."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body ButtonAsChild) :filename "button_stories.cljs"} [:div {:class "p-6"}
                                         (button/button {:as-child true}
                                                        [:a {:href "#"}
                                                         "Go to login"])])))
@@ -189,7 +190,7 @@
   Our wrapper supports :xs, :sm, :default, :lg, and icon sizes (:icon, :icon-xs, :icon-sm, :icon-lg)."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 flex flex-wrap items-center gap-3"}
+  (helpers/wrap-component {:source (embed-body ButtonSize) :filename "button_stories.cljs"} [:div {:class "p-6 flex flex-wrap items-center gap-3"}
                                         (button/button {:variant :outline
                                                         :size :xs}
                                                        "XS")
@@ -213,7 +214,7 @@
   Add a custom :class to achieve rounded-full styling."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body ButtonRounded) :filename "button_stories.cljs"} [:div {:class "p-6"}
                                         (button/button {:variant :outline
                                                         :size :icon
                                                         :class "rounded-full"
@@ -227,7 +228,7 @@
   Use :size :xs for compact toolbars or inline actions."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body ButtonXsSize) :filename "button_stories.cljs"} [:div {:class "p-6"}
                                         (button/button {:size :xs
                                                         :variant :secondary}
                                                        "Compact action")])))

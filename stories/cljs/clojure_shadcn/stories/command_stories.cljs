@@ -6,7 +6,8 @@
    [clojure-shadcn.ui.components.command :as sut]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Command"
@@ -26,7 +27,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "command_stories.cljs"}
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -114,7 +115,7 @@
   Use Command for searchable lists and quick actions."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body CommandDemo) :filename "command_stories.cljs"}
     [:div {:class "p-6"}
      [sut/command {:class "rounded-lg border shadow-md md:min-w-[450px]"}
       [sut/command-input {:placeholder "Type a command or search..."}]
@@ -148,7 +149,7 @@
   Useful for global search triggered from a button or shortcut."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body CommandDialog) :filename "command_stories.cljs"}
     [:div {:class "p-6 space-y-3"}
      [:p {:class "text-muted-foreground text-sm"}
       "Command dialog rendered in an open state for showcase."]
@@ -185,7 +186,7 @@
   Demonstrates how Command can be styled to match surrounding UI."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-md"}
+  (helpers/wrap-component {:source (embed-body CommandComposition) :filename "command_stories.cljs"} [:div {:class "p-6 max-w-md"}
                                        [:div {:class "rounded-lg border bg-card p-4 shadow-sm"}
                                         [:p {:class "text-sm font-medium mb-2"}
                                          "Quick Actions"]

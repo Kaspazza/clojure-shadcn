@@ -6,7 +6,8 @@
    [clojure-shadcn.ui.components.speech-recognition-button :as sut]
    [reagent.core                                             :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Speech Recognition Button"
@@ -26,7 +27,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "speech_recognition_button_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -56,10 +57,9 @@
 
   Use inside prompt-input actions for best UX."
   []
-  (r/as-element
-  (let [value (r/atom "")]
+  (r/as-element [(fn [] (let [value (r/atom "")]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body SpeechRecognitionStandalone) :filename "speech_recognition_button_stories.cljs"}
         [:div {:class "p-6 space-y-2"}
          [:div {:class "text-sm text-muted-foreground"}
           "Transcript: "
@@ -68,31 +68,29 @@
                                      :on-value-change #(reset! value %)}
           [prompt-input/prompt-input-textarea {:placeholder "Try voice input..."}]
           [prompt-input/prompt-input-actions {}
-           [sut/speech-recognition-button {:on-transcript-change #(reset! value %)}]]]])))))
+           [sut/speech-recognition-button {:on-transcript-change #(reset! value %)}]]]]))))]))
 
 (defn ^:export SpeechRecognitionInPrompt
   "Speech recognition inside prompt input.
   Demonstrates composition with prompt-input."
   []
-  (r/as-element
-  (let [value (r/atom "")]
+  (r/as-element [(fn [] (let [value (r/atom "")]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body SpeechRecognitionInPrompt) :filename "speech_recognition_button_stories.cljs"}
         [:div {:class "p-6 max-w-xl"}
          [prompt-input/prompt-input {:value @value
                                      :on-value-change #(reset! value %)}
           [prompt-input/prompt-input-textarea {:placeholder "Speak or type a message..."}]
           [prompt-input/prompt-input-actions {}
-           [sut/speech-recognition-button {:on-transcript-change #(reset! value %)}]]]])))))
+           [sut/speech-recognition-button {:on-transcript-change #(reset! value %)}]]]]))))]))
 
 (defn ^:export SpeechRecognitionTranscript
   "Transcript display with live updates.
   Shows how to mirror transcript into the UI."
   []
-  (r/as-element
-  (let [value (r/atom "")]
+  (r/as-element [(fn [] (let [value (r/atom "")]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body SpeechRecognitionTranscript) :filename "speech_recognition_button_stories.cljs"}
         [:div {:class "p-6 space-y-3"}
          [:div {:class "rounded-md border bg-muted/50 p-3 text-sm"}
           "Current transcript: "
@@ -101,4 +99,4 @@
                                      :on-value-change #(reset! value %)}
           [prompt-input/prompt-input-textarea {:placeholder "Start talking..."}]
           [prompt-input/prompt-input-actions {}
-           [sut/speech-recognition-button {:on-transcript-change #(reset! value %)}]]]])))))
+           [sut/speech-recognition-button {:on-transcript-change #(reset! value %)}]]]]))))]))

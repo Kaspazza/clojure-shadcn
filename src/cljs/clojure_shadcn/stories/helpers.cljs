@@ -11,12 +11,6 @@
    [clojure-shadcn.ui.components.code-block :as code-block]
    [reagent.core                        :as r]))
 
-(defn wrap-component
-  "A simple wrapper to enable additional code to be added for each story.
-   Right now it's empty"
-  [& cmps]
-  (into [:<>] cmps))
-
 (defn copy-to-clipboard!
   "Copy text to clipboard with feedback.
 
@@ -77,6 +71,28 @@
          (if @expanded?
            [:<> [:> ChevronUp {:class "size-4"}] [:span "Show less"]]
            [:<> [:> ChevronDown {:class "size-4"}] [:span "Show more"]])]]])))
+
+(defn wrap-component
+  "Wraps story children and, when given an options map with :source, renders
+   an expandable code block below the demo.
+
+  Usage:
+  (wrap-component {:source (embed-body AvatarDemo)
+                   :filename \"avatar_stories.cljs\"}
+    child1
+    child2)
+
+  The options map is optional; without it wrap-component just groups children
+  into a fragment."
+  [& args]
+  (let [has-opts?  (and (seq args) (map? (first args)))
+        opts       (when has-opts? (first args))
+        cmps       (if has-opts? (rest args) args)
+        {:keys [source filename]} opts]
+    (if source
+      [:<> (into [:<>] cmps) [expandable-code-block {:source-code source
+                                                     :filename    filename}]]
+      (into [:<>] cmps))))
 
 (defn installation-scene
   "Standard installation story for library components.

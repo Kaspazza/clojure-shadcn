@@ -7,6 +7,7 @@ Last updated: 2026-02-06
 Custom component implementation."
   (:require
    ["vaul"                        :refer [Drawer]]
+   [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :as styles]))
 
 (def drawer-root (.-Root Drawer))
@@ -19,20 +20,22 @@ Custom component implementation."
 (def drawer-description-primitive (.-Description Drawer))
 
 (defn drawer
-  [{:keys [open on-open-change direction should-scale-background modal]
-    :or {direction :bottom
-         modal true}}
+  [{:as raw-props}
    &
    children]
-  (into [:>
-         drawer-root
-         (cond-> {:data-slot "drawer"}
-           open (assoc :open open)
-           on-open-change (assoc :onOpenChange on-open-change)
-           direction (assoc :direction (name direction))
-           (some? should-scale-background) (assoc :shouldScaleBackground should-scale-background)
-           (some? modal) (assoc :modal modal))]
-        children))
+  (let [{:keys [open on-open-change direction should-scale-background modal]
+         :or {direction :bottom
+              modal true}}
+        (normalize-props raw-props)]
+    (into [:>
+           drawer-root
+           (cond-> {:data-slot "drawer"}
+             open (assoc :open open)
+             on-open-change (assoc :onOpenChange on-open-change)
+             direction (assoc :direction (name direction))
+             (some? should-scale-background) (assoc :shouldScaleBackground should-scale-background)
+             (some? modal) (assoc :modal modal))]
+          children)))
 
 (defn drawer-trigger
   [{:keys [class]} & children]

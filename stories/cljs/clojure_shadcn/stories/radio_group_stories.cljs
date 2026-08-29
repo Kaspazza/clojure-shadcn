@@ -7,7 +7,8 @@
    [clojure-shadcn.ui.components.radio-group :as sut]
    [reagent.core                               :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Radio Group"
@@ -27,7 +28,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "radio_group_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -72,10 +73,9 @@
 
   Use for exclusive choices like density or layout."
   []
-  (r/as-element
-  (let [value (r/atom "comfortable")]
+  (r/as-element [(fn [] (let [value (r/atom "comfortable")]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body RadioGroupDemo) :filename "radio_group_stories.cljs"}
         [:div {:class "p-6"}
          [sut/radio-group {:value @value
                            :on-value-change #(reset! value %)}
@@ -93,7 +93,7 @@
            [sut/radio-group-item {:value "compact"
                                   :id "density-compact"}]
            [label/label {:html-for "density-compact"}
-            "Compact"]]]])))))
+            "Compact"]]]]))))]))
 
 (defn ^:export FieldRadio
   "Radio group embedded in Field layout.
@@ -102,10 +102,9 @@
 
   Ideal for pricing or plan selection with supporting copy."
   []
-  (r/as-element
-  (let [value (r/atom "monthly")]
+  (r/as-element [(fn [] (let [value (r/atom "monthly")]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body FieldRadio) :filename "radio_group_stories.cljs"}
         [:div {:class "p-6 max-w-md"}
          [field/field-set {}
           [field/field-label {}
@@ -131,7 +130,7 @@
                                    :id "plan-lifetime"}]
             [field/field-label {:html-for "plan-lifetime"
                                 :class "font-normal"}
-             "Lifetime ($299.99)"]]]]])))))
+             "Lifetime ($299.99)"]]]]]))))]))
 
 (defn ^:export RadioGroupDisabled
   "Disabled radio items in a group.
@@ -141,7 +140,7 @@
   Use disabled options for unavailable choices."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body RadioGroupDisabled) :filename "radio_group_stories.cljs"} [:div {:class "p-6"}
                                        [sut/radio-group {:default-value "standard"}
                                         [:div {:class "flex items-center gap-3"}
                                          [sut/radio-group-item {:value "standard"
@@ -164,7 +163,7 @@
   Apply :aria-invalid on items and show an explicit error message."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 space-y-2"}
+  (helpers/wrap-component {:source (embed-body RadioGroupInvalid) :filename "radio_group_stories.cljs"} [:div {:class "p-6 space-y-2"}
                                        [sut/radio-group {:default-value nil}
                                         [:div {:class "flex items-center gap-3"}
                                          [sut/radio-group-item {:value "free"
@@ -188,10 +187,9 @@
 
   Use :orientation :horizontal for inline radio groups."
   []
-  (r/as-element
-  (let [value (r/atom "monthly")]
+  (r/as-element [(fn [] (let [value (r/atom "monthly")]
      (fn []
-       (helpers/wrap-component [:div {:class "p-6"}
+       (helpers/wrap-component {:source (embed-body RadioGroupHorizontal) :filename "radio_group_stories.cljs"} [:div {:class "p-6"}
                                            [sut/radio-group {:value @value
                                                              :orientation :horizontal
                                                              :class "flex items-center gap-6"
@@ -205,4 +203,4 @@
                                              [sut/radio-group-item {:value "yearly"
                                                                     :id "cycle-yearly"}]
                                              [label/label {:html-for "cycle-yearly"}
-                                              "Yearly"]]]])))))
+                                              "Yearly"]]]]))))]))

@@ -8,7 +8,8 @@
    [clojure-shadcn.ui.components.sheet  :as sut]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Sheet"
@@ -29,7 +30,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "sheet_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -106,7 +107,7 @@
   Sheets slide in from an edge to reveal secondary content."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body SheetDemo) :filename "sheet_stories.cljs"}
     [:div {:class "p-6"}
      [:>
       sut/sheet
@@ -141,7 +142,7 @@
   Use :side to control where the sheet appears."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body SheetSide) :filename "sheet_stories.cljs"}
     [:div {:class "p-6 grid grid-cols-2 gap-2"}
      (for [side [:top :right :bottom :left]]
        ^{:key side}
@@ -181,7 +182,7 @@
   Use overflow classes to handle long content in sheets."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body SheetScrollable) :filename "sheet_stories.cljs"}
     [:div {:class "p-6"}
      [:>
       sut/sheet

@@ -8,7 +8,8 @@
    [clojure-shadcn.ui.components.textarea :as textarea]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Label"
@@ -28,7 +29,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "label_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -56,7 +57,7 @@
   Labels improve accessibility and click targets."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body LabelDemo) :filename "label_stories.cljs"} [:div {:class "p-6"}
                                        [:div {:class "flex items-center gap-2"}
                                         [checkbox/checkbox {:id "terms"}]
                                         [sut/label {:html-for "terms"}
@@ -70,7 +71,7 @@
   Keep labels close to inputs for clarity."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component {:source (embed-body InputWithLabel) :filename "label_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
                                        [sut/label {:html-for "email"}
                                         "Email"]
                                        [input/input {:id "email"
@@ -85,7 +86,7 @@
   Use labels to describe longer-form fields."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component {:source (embed-body TextareaWithLabel) :filename "label_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
                                        [sut/label {:html-for "message"}
                                         "Your message"]
                                        [textarea/textarea {:id "message"

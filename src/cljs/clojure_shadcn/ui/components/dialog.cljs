@@ -10,6 +10,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
   (:require
    ["@radix-ui/react-dialog"      :as RadixDialog]
    ["lucide-react"                :refer [XIcon]]
+   [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
 (defn dialog
@@ -82,7 +83,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
   
   Props:
   - `:class` - Additional Tailwind classes
-  - `:showCloseButton` - Show X close button in top-right (default: true)
+  - `:show-close-button` - Show X close button in top-right (default: true)
+  Both kebab-case and camelCase prop spellings are accepted.
   
   Features:
   - Centered modal with backdrop overlay
@@ -101,45 +103,47 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
    [dialog-footer {}
     [button {:variant :outline} \"Cancel\"]
     [button {} \"Confirm\"]]]"
-  [{:keys [class showCloseButton]
-    :or {showCloseButton true}
-    :as props}
+  [{:as raw-props}
    &
    children]
-  [dialog-portal {}
-   (dialog-overlay {})
-   (into
-    [:>
-     RadixDialog/Content
-     (-> props
-         (assoc :data-slot "dialog-content"
-                :class
-                (merge-classes
-                 ["bg-background data-[state=open]:animate-in data-[state=closed]:animate-out"
-                  "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
-                  "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
-                  "fixed top-[50%] left-[50%] z-50 grid w-full"
-                  "max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%]"
-                  "gap-4 rounded-lg border p-6 shadow-lg duration-200"
-                  "sm:max-w-lg"]
-                 class))
-         (dissoc :class-name :showCloseButton))]
-    (concat
-     children
-     (when showCloseButton
-       [[:>
-         RadixDialog/Close
-         {:data-slot "dialog-close"
-          :class
-          (merge-classes
-           "ring-offset-background focus:ring-ring"
-           "data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
-           "absolute top-4 right-4 rounded-xs opacity-70" "transition-opacity hover:opacity-100"
-           "focus:ring-2 focus:ring-offset-2 focus:outline-hidden" "disabled:pointer-events-none"
-           "[&_svg]:pointer-events-none [&_svg]:shrink-0" "[&_svg:not([class*='size-'])]:size-4")}
-         [:> XIcon]
-         [:span {:class "sr-only"}
-          "Close"]]])))])
+  (let [{:keys [class show-close-button]
+         :or {show-close-button true}
+         :as props}
+        (normalize-props raw-props)]
+    [dialog-portal {}
+     (dialog-overlay {})
+     (into
+      [:>
+       RadixDialog/Content
+       (-> props
+           (assoc :data-slot "dialog-content"
+                  :class
+                  (merge-classes
+                   ["bg-background data-[state=open]:animate-in data-[state=closed]:animate-out"
+                    "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+                    "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+                    "fixed top-[50%] left-[50%] z-50 grid w-full"
+                    "max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%]"
+                    "gap-4 rounded-lg border p-6 shadow-lg duration-200"
+                    "sm:max-w-lg"]
+                   class))
+           (dissoc :class-name :show-close-button))]
+      (concat
+       children
+       (when show-close-button
+         [[:>
+           RadixDialog/Close
+           {:data-slot "dialog-close"
+            :class
+            (merge-classes
+             "ring-offset-background focus:ring-ring"
+             "data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+             "absolute top-4 right-4 rounded-xs opacity-70" "transition-opacity hover:opacity-100"
+             "focus:ring-2 focus:ring-offset-2 focus:outline-hidden" "disabled:pointer-events-none"
+             "[&_svg]:pointer-events-none [&_svg]:shrink-0" "[&_svg:not([class*='size-'])]:size-4")}
+           [:> XIcon]
+           [:span {:class "sr-only"}
+            "Close"]]])))]))
 
 (defn dialog-header
   "Header section for dialog (title + description).

@@ -9,6 +9,7 @@ Based on Radix UI primitives.
 Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   (:require
    ["@radix-ui/react-slot"        :refer [Slot]]
+   [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
 (defn- variant-classes
@@ -87,6 +88,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   - `:disabled` - Boolean to disable the button
   - `:type` - Button type (\"button\", \"submit\", \"reset\")
   - `:on-click` - Click handler function
+  Both kebab-case and camelCase prop spellings are accepted.
   
   Examples:
   ;; Primary button
@@ -105,24 +107,26 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   ;; As child (polymorphic)
   [button {:as-child true}
     [:a {:href \"/login\"} \"Login\"]]"
-  [{:keys [variant size class as-child]
-    :or {variant :default
-         size :default}
-    :as props}
+  [{:as raw-props}
    &
    children]
-  (let
-    [component (if as-child Slot "button")
-     base-classes
-     "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 rounded-lg border border-transparent bg-clip-padding text-sm font-medium focus-visible:ring-3 aria-invalid:ring-3 [&_svg:not([class*='size-'])]:size-4 inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none shrink-0 [&_svg]:shrink-0 outline-none group/button select-none"
-     combined-classes
-     (merge-classes base-classes (variant-classes variant) (size-classes size) class)]
-    (into [:>
-           component
-           (-> props
-               (assoc :data-slot "button"
-                      :data-variant (name variant)
-                      :data-size (name size)
-                      :class combined-classes)
-               (dissoc :class-name :variant :size :as-child))]
-          children)))
+  (let [{:keys [variant size class as-child]
+         :or {variant :default
+              size :default}
+         :as props}
+        (normalize-props raw-props)]
+    (let
+      [component (if as-child Slot "button")
+       base-classes
+       "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 rounded-lg border border-transparent bg-clip-padding text-sm font-medium focus-visible:ring-3 aria-invalid:ring-3 [&_svg:not([class*='size-'])]:size-4 inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none shrink-0 [&_svg]:shrink-0 outline-none group/button select-none"
+       combined-classes
+       (merge-classes base-classes (variant-classes variant) (size-classes size) class)]
+      (into [:>
+             component
+             (-> props
+                 (assoc :data-slot "button"
+                        :data-variant (name variant)
+                        :data-size (name size)
+                        :class combined-classes)
+                 (dissoc :class-name :variant :size :as-child))]
+            children))))

@@ -6,7 +6,8 @@
    [clojure-shadcn.ui.components.sidebar :as sut]
    [reagent.core                           :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Sidebar"
@@ -26,7 +27,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "sidebar_stories.cljs"}
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -161,7 +162,7 @@
   Use sidebar-content and sidebar-menu to structure navigation."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body SidebarDemo) :filename "sidebar_stories.cljs"}
     [:div {:class "p-6"}
      [sut/sidebar {:open? true
                    :is-mobile false
@@ -200,7 +201,7 @@
   Use menu-action and menu-badge for per-item utilities."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body SidebarMenu) :filename "sidebar_stories.cljs"}
     [:div {:class "p-6"}
      [sut/sidebar {:open? true
                    :is-mobile false
@@ -231,7 +232,7 @@
   Use menu-sub for secondary navigation."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body SidebarMenuSub) :filename "sidebar_stories.cljs"}
     [:div {:class "p-6"}
      [sut/sidebar {:open? true
                    :is-mobile false
@@ -263,7 +264,7 @@
   When collapsed, icons remain visible while labels hide."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body SidebarMenuCollapsible) :filename "sidebar_stories.cljs"}
     [:div {:class "p-6"}
      [sut/sidebar {:open? false
                    :is-mobile false
@@ -290,10 +291,9 @@
 
   Use controlled state for responsive layouts."
   []
-  (r/as-element
-  (let [open? (r/atom true)]
+  (r/as-element [(fn [] (let [open? (r/atom true)]
      (fn []
-       (helpers/wrap-component [:div {:class "p-6"}
+       (helpers/wrap-component {:source (embed-body SidebarControlled) :filename "sidebar_stories.cljs"} [:div {:class "p-6"}
                                            [:button {:class "mb-4 text-sm underline"
                                                      :on-click #(swap! open? not)}
                                             (if @open? "Collapse" "Expand")]
@@ -307,7 +307,7 @@
                                                 "Overview"]]
                                               [sut/sidebar-menu-item {}
                                                [sut/sidebar-menu-button {}
-                                                "Reports"]]]]]])))))
+                                                "Reports"]]]]]]))))]))
 
 (defn ^:export SidebarMobile
   "Mobile sidebar rendered as a sheet.
@@ -317,7 +317,7 @@
   Use for off-canvas mobile navigation."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body SidebarMobile) :filename "sidebar_stories.cljs"} [:div {:class "p-6"}
                                        [sut/sidebar {:open? true
                                                      :is-mobile true
                                                      :collapsible "offcanvas"}

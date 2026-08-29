@@ -6,7 +6,8 @@
    [clojure-shadcn.ui.components.select :as sut]
    [reagent.core                          :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Select"
@@ -26,7 +27,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "select_stories.cljs"}
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -95,10 +96,9 @@
 
   Our wrapper exposes select, trigger, content, and items as components."
   []
-  (r/as-element
-  (let [value (r/atom "banana")]
+  (r/as-element [(fn [] (let [value (r/atom "banana")]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body SelectDemo) :filename "select_stories.cljs"}
         [:div {:class "p-6"}
          [sut/select {:value @value
                       :on-value-change #(reset! value %)}
@@ -117,7 +117,7 @@
             [sut/select-item {:value "grapes"}
              "Grapes"]
             [sut/select-item {:value "pineapple"}
-             "Pineapple"]]]]])))))
+             "Pineapple"]]]]]))))]))
 
 (defn ^:export SelectScrollable
   "Scrollable select content with multiple groups.
@@ -126,10 +126,9 @@
 
   Long lists automatically scroll within the content panel."
   []
-  (r/as-element
-  (let [value (r/atom "cet")]
+  (r/as-element [(fn [] (let [value (r/atom "cet")]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body SelectScrollable) :filename "select_stories.cljs"}
         [:div {:class "p-6"}
          [sut/select {:value @value
                       :on-value-change #(reset! value %)}
@@ -165,7 +164,7 @@
             [sut/select-item {:value "cat"}
              "Central Africa Time (CAT)"]
             [sut/select-item {:value "eat"}
-             "East Africa Time (EAT)"]]]]])))))
+             "East Africa Time (EAT)"]]]]]))))]))
 
 (defn ^:export FieldSelect
   "Select inside Field layout with helper copy.
@@ -175,7 +174,7 @@
   Useful for richer forms with descriptions."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body FieldSelect) :filename "select_stories.cljs"}
     [:div {:class "p-6 max-w-md"}
      [field/field {}
       [field/field-label {}
@@ -207,7 +206,7 @@
   Pass :aria-invalid on select-trigger and show error copy beneath field."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
+  (helpers/wrap-component {:source (embed-body SelectInvalid) :filename "select_stories.cljs"} [:div {:class "p-6 max-w-sm space-y-2"}
                                        [field/field {}
                                         [field/field-label {}
                                          "Department"]
@@ -230,7 +229,7 @@
   Use :disabled on items that are not selectable."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body SelectDisabledItems) :filename "select_stories.cljs"} [:div {:class "p-6"}
                                        [sut/select {:default-value "pro"}
                                         [sut/select-trigger {:class "w-[200px]"}
                                          [sut/select-value {:placeholder "Choose a plan"}]]

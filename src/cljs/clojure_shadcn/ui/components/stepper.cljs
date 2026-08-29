@@ -15,6 +15,7 @@ Documentation: https://ui.shadcn.com/docs/components"
   (:require
    ["react"                               :as react]
    [clojure-shadcn.ui.components.button :as mateuszmazurczak-button]
+   [clojure-shadcn.utils.props         :refer [normalize-props]]
    [clojure-shadcn.utils.styles         :refer [merge-classes]]
    [reagent.core                          :as    r
                                           :refer [defc]]
@@ -48,27 +49,30 @@ Documentation: https://ui.shadcn.com/docs/components"
   - :label-orientation - :horizontal | :vertical (default: :horizontal)
   - :reverse-progress? - When true, steps after current are 'completed' (for newest-first lists)
   - :class - Additional CSS classes
+  Both kebab-case and camelCase prop spellings are accepted.
   
   Children: stepper-navigation, stepper-panel, stepper-controls, etc."
-  [{:keys [current-step on-step-change variant label-orientation reverse-progress? class]
-    :or {variant :horizontal
-         label-orientation :horizontal
-         reverse-progress? false}}
+  [{:as raw-props}
    &
    children]
-  (let [context (clj->js {:currentStep current-step
-                          :onStepChange on-step-change
-                          :variant (name variant)
-                          :labelOrientation (name label-orientation)
-                          :reverseProgress reverse-progress?})]
-    (into [:>
-           (.-Provider stepper-context)
-           {:value context}
-           [:div {:data-component "stepper"
-                  :data-variant (name variant)
-                  :data-label-orientation (name label-orientation)
-                  :class (merge-classes "w-full" class)}]]
-          children)))
+  (let [{:keys [current-step on-step-change variant label-orientation reverse-progress? class]
+         :or {variant :horizontal
+              label-orientation :horizontal
+              reverse-progress? false}}
+        (normalize-props raw-props)]
+    (let [context (clj->js {:currentStep current-step
+                            :onStepChange on-step-change
+                            :variant (name variant)
+                            :labelOrientation (name label-orientation)
+                            :reverseProgress reverse-progress?})]
+      (into [:>
+             (.-Provider stepper-context)
+             {:value context}
+             [:div {:data-component "stepper"
+                    :data-variant (name variant)
+                    :data-label-orientation (name label-orientation)
+                    :class (merge-classes "w-full" class)}]]
+            children))))
 
 (defn stepper-title
   "Title component for step labels.
@@ -112,70 +116,74 @@ Documentation: https://ui.shadcn.com/docs/components"
 
 (defn- circle-step-indicator
   "SVG-based circular progress indicator for circle variant."
-  [{:keys [current-step total-steps size stroke-width]
-    :or {size 80
-         stroke-width 6}}]
-  (let [radius (/ (- size stroke-width) 2)
-        circumference (* radius 2 js/Math.PI)
-        fill-perc (* (/ current-step total-steps) 100)
-        dash-offset (- circumference (/ (* circumference fill-perc) 100))]
-    [:div {:data-component "stepper-step-indicator"
-           :role "progressbar"
-           :aria-valuenow current-step
-           :aria-valuemin 1
-           :aria-valuemax total-steps
-           :tab-index -1
-           :class "relative inline-flex items-center justify-center"}
-     [:svg {:width size
-            :height size}
-      [:title "Step Indicator"]
-      [:circle {:cx (/ size 2)
-                :cy (/ size 2)
-                :r radius
-                :fill "none"
-                :stroke "currentColor"
-                :stroke-width stroke-width
-                :class "text-muted-foreground"}]
-      [:circle {:cx (/ size 2)
-                :cy (/ size 2)
-                :r radius
-                :fill "none"
-                :stroke "currentColor"
-                :stroke-width stroke-width
-                :stroke-dasharray circumference
-                :stroke-dashoffset dash-offset
-                :class "text-primary transition-all duration-500 ease-in-out"
-                :transform (str "rotate(-90 " (/ size 2) " " (/ size 2) ")")}]]
-     [:div {:class "absolute inset-0 flex items-center justify-center"}
-      [:span {:class "text-sm font-medium"
-              :aria-live "polite"}
-       current-step
-       " of "
-       total-steps]]]))
+  [{:as raw-props}]
+  (let [{:keys [current-step total-steps size stroke-width]
+         :or {size 80
+              stroke-width 6}}
+        (normalize-props raw-props)]
+    (let [radius (/ (- size stroke-width) 2)
+          circumference (* radius 2 js/Math.PI)
+          fill-perc (* (/ current-step total-steps) 100)
+          dash-offset (- circumference (/ (* circumference fill-perc) 100))]
+      [:div {:data-component "stepper-step-indicator"
+             :role "progressbar"
+             :aria-valuenow current-step
+             :aria-valuemin 1
+             :aria-valuemax total-steps
+             :tab-index -1
+             :class "relative inline-flex items-center justify-center"}
+       [:svg {:width size
+              :height size}
+        [:title "Step Indicator"]
+        [:circle {:cx (/ size 2)
+                  :cy (/ size 2)
+                  :r radius
+                  :fill "none"
+                  :stroke "currentColor"
+                  :stroke-width stroke-width
+                  :class "text-muted-foreground"}]
+        [:circle {:cx (/ size 2)
+                  :cy (/ size 2)
+                  :r radius
+                  :fill "none"
+                  :stroke "currentColor"
+                  :stroke-width stroke-width
+                  :stroke-dasharray circumference
+                  :stroke-dashoffset dash-offset
+                  :class "text-primary transition-all duration-500 ease-in-out"
+                  :transform (str "rotate(-90 " (/ size 2) " " (/ size 2) ")")}]]
+       [:div {:class "absolute inset-0 flex items-center justify-center"}
+        [:span {:class "text-sm font-medium"
+                :aria-live "polite"}
+         current-step
+         " of "
+         total-steps]]])))
 
 (defn- stepper-separator
   "Visual separator line between steps."
-  [{:keys [orientation label-orientation state disabled? is-last?]}]
-  (when-not is-last?
-    [:div
-     (cond-> {:data-component "stepper-separator"
-              :data-orientation orientation
-              :data-state state
-              :role "separator"
-              :tab-index -1
-              :class
-              (merge-classes
-               "bg-muted"
-               "data-[state=completed]:bg-primary"
-               "data-[disabled]:opacity-50"
-               "transition-all duration-300 ease-in-out"
-               (case (keyword orientation)
-                 :horizontal "h-0.5 flex-1"
-                 :vertical "h-full w-0.5"
-                 "h-0.5 flex-1")
-               (when (= label-orientation "vertical")
-                 "absolute left-[calc(50%+30px)] right-[calc(-50%+20px)] top-5 block shrink-0"))}
-       disabled? (assoc :data-disabled true))]))
+  [{:as raw-props}]
+  (let [{:keys [orientation label-orientation state disabled? is-last?]}
+        (normalize-props raw-props)]
+    (when-not is-last?
+      [:div
+       (cond-> {:data-component "stepper-separator"
+                :data-orientation orientation
+                :data-state state
+                :role "separator"
+                :tab-index -1
+                :class
+                (merge-classes
+                 "bg-muted"
+                 "data-[state=completed]:bg-primary"
+                 "data-[disabled]:opacity-50"
+                 "transition-all duration-300 ease-in-out"
+                 (case (keyword orientation)
+                   :horizontal "h-0.5 flex-1"
+                   :vertical "h-full w-0.5"
+                   "h-0.5 flex-1")
+                 (when (= label-orientation "vertical")
+                   "absolute left-[calc(50%+30px)] right-[calc(-50%+20px)] top-5 block shrink-0"))}
+         disabled? (assoc :data-disabled true))])))
 
 (defc stepper-step
  "Individual step button/indicator. Receives index/total from navigation.
@@ -188,90 +196,93 @@ Documentation: https://ui.shadcn.com/docs/components"
   - :disabled? - Disable this step
   - :icon - Custom icon (overrides number)
   - :class - Additional CSS classes
+  Both kebab-case and camelCase prop spellings are accepted.
   
   Children: stepper-title, stepper-description, or other content"
- [{:keys [id index total current-idx disabled? icon class]} & children]
- (let [ctx (rhooks/use-context stepper-context)
-       variant (.-variant ctx)
-       label-orientation (.-labelOrientation ctx)
-       current-step (.-currentStep ctx)
-       on-step-change (.-onStepChange ctx)
-       reverse-progress? (.-reverseProgress ctx)
-       active? (= id current-step)
-       is-last? (= index (dec total))
-       state (step-state current-idx index reverse-progress?)]
-   (if (= variant "circle")
-     ;; Circle variant: render all steps, but only show active one
-     [:li {:data-component "stepper-step"
-           :class (merge-classes "flex shrink-0 items-center gap-4 rounded-md"
-                                 "transition-opacity duration-100 ease-in-out"
-                                 (if active? "opacity-100" "opacity-0 absolute")
-                                 class)}
-      [circle-step-indicator {:current-step (inc current-idx)
-                              :total-steps total}]
-      (into [:div {:data-component "stepper-step-content"
-                   :class "flex flex-col items-start gap-1"}]
-            children)]
-     ;; Horizontal/vertical variants
-     [:<>
-      [:li
-       (cond-> {:data-component "stepper-step"
-                :class (merge-classes "group peer relative flex items-center gap-2 cursor-pointer"
-                                      "data-[variant=vertical]:flex-row"
-                                      "data-[label-orientation=vertical]:w-full"
-                                      "data-[label-orientation=vertical]:flex-col"
-                                      "data-[label-orientation=vertical]:justify-center" class)
-                :data-variant variant
-                :data-label-orientation label-orientation
-                :data-state state
-                :on-click #(when (and (not disabled?) on-step-change) (on-step-change id))}
-         disabled? (assoc :data-disabled true))
-       (mateuszmazurczak-button/button {:id (str "step-" id)
-                                        :data-component "stepper-step-indicator"
-                                        :type "button"
-                                        :role "tab"
-                                        :tab-index (if (not= state "inactive") 0 -1)
-                                        :class "rounded-full"
-                                        :variant (if (not= state "inactive") :default :secondary)
-                                        :size :icon
-                                        :disabled disabled?
-                                        :aria-controls (str "step-panel-" id)
-                                        :aria-current (when active? "step")
-                                        :aria-posinset (inc index)
-                                        :aria-setsize total
-                                        :aria-selected active?
-                                        :on-click #(when (and (not disabled?) on-step-change)
-                                                     (on-step-change id))}
-                                       (or icon (inc index)))
-       (when (and (= variant "horizontal") (= label-orientation "vertical"))
-         [stepper-separator {:orientation "horizontal"
-                             :label-orientation label-orientation
-                             :state state
-                             :disabled? disabled?
-                             :is-last? is-last?}])
-       (into [:div {:data-component "stepper-step-content"
-                    :class "flex flex-col items-start"}]
-             children)]
-      ;; Horizontal separator (outside li)
-      (when (and (= variant "horizontal") (= label-orientation "horizontal"))
-        [stepper-separator {:orientation "horizontal"
-                            :label-orientation label-orientation
-                            :state state
-                            :disabled? disabled?
-                            :is-last? is-last?}])
-      ;; Vertical variant: separator and panel wrapper structure
-      (when (= variant "vertical")
-        (let [;; For reverse progress, separator should be colored if next step is completed
-              sep-state
-              (if reverse-progress? (step-state current-idx (inc index) reverse-progress?) state)]
-          [:div {:class "flex gap-4"}
-           (when-not is-last?
-             [:div {:class "flex justify-center ps-[calc(var(--spacing)_*_4.5_-_1px)]"}
-              [stepper-separator {:orientation "vertical"
-                                  :state sep-state
-                                  :disabled? disabled?
-                                  :is-last? is-last?}]])
-           [:div {:class "my-3 flex-1 ps-4"}]]))])))
+ [{:as raw-props} & children]
+ (let [{:keys [id index total current-idx disabled? icon class]}
+       (normalize-props raw-props)]
+   (let [ctx (rhooks/use-context stepper-context)
+         variant (.-variant ctx)
+         label-orientation (.-labelOrientation ctx)
+         current-step (.-currentStep ctx)
+         on-step-change (.-onStepChange ctx)
+         reverse-progress? (.-reverseProgress ctx)
+         active? (= id current-step)
+         is-last? (= index (dec total))
+         state (step-state current-idx index reverse-progress?)]
+     (if (= variant "circle")
+       ;; Circle variant: render all steps, but only show active one
+       [:li {:data-component "stepper-step"
+             :class (merge-classes "flex shrink-0 items-center gap-4 rounded-md"
+                                   "transition-opacity duration-100 ease-in-out"
+                                   (if active? "opacity-100" "opacity-0 absolute")
+                                   class)}
+        [circle-step-indicator {:current-step (inc current-idx)
+                                :total-steps total}]
+        (into [:div {:data-component "stepper-step-content"
+                     :class "flex flex-col items-start gap-1"}]
+              children)]
+       ;; Horizontal/vertical variants
+       [:<>
+        [:li
+         (cond-> {:data-component "stepper-step"
+                  :class (merge-classes "group peer relative flex items-center gap-2 cursor-pointer"
+                                        "data-[variant=vertical]:flex-row"
+                                        "data-[label-orientation=vertical]:w-full"
+                                        "data-[label-orientation=vertical]:flex-col"
+                                        "data-[label-orientation=vertical]:justify-center" class)
+                  :data-variant variant
+                  :data-label-orientation label-orientation
+                  :data-state state
+                  :on-click #(when (and (not disabled?) on-step-change) (on-step-change id))}
+           disabled? (assoc :data-disabled true))
+         (mateuszmazurczak-button/button {:id (str "step-" id)
+                                          :data-component "stepper-step-indicator"
+                                          :type "button"
+                                          :role "tab"
+                                          :tab-index (if (not= state "inactive") 0 -1)
+                                          :class "rounded-full"
+                                          :variant (if (not= state "inactive") :default :secondary)
+                                          :size :icon
+                                          :disabled disabled?
+                                          :aria-controls (str "step-panel-" id)
+                                          :aria-current (when active? "step")
+                                          :aria-posinset (inc index)
+                                          :aria-setsize total
+                                          :aria-selected active?
+                                          :on-click #(when (and (not disabled?) on-step-change)
+                                                       (on-step-change id))}
+                                         (or icon (inc index)))
+         (when (and (= variant "horizontal") (= label-orientation "vertical"))
+           [stepper-separator {:orientation "horizontal"
+                               :label-orientation label-orientation
+                               :state state
+                               :disabled? disabled?
+                               :is-last? is-last?}])
+         (into [:div {:data-component "stepper-step-content"
+                      :class "flex flex-col items-start"}]
+               children)]
+        ;; Horizontal separator (outside li)
+        (when (and (= variant "horizontal") (= label-orientation "horizontal"))
+          [stepper-separator {:orientation "horizontal"
+                              :label-orientation label-orientation
+                              :state state
+                              :disabled? disabled?
+                              :is-last? is-last?}])
+        ;; Vertical variant: separator and panel wrapper structure
+        (when (= variant "vertical")
+          (let [;; For reverse progress, separator should be colored if next step is completed
+                sep-state
+                (if reverse-progress? (step-state current-idx (inc index) reverse-progress?) state)]
+            [:div {:class "flex gap-4"}
+             (when-not is-last?
+               [:div {:class "flex justify-center ps-[calc(var(--spacing)_*_4.5_-_1px)]"}
+                [stepper-separator {:orientation "vertical"
+                                    :state sep-state
+                                    :disabled? disabled?
+                                    :is-last? is-last?}]])
+             [:div {:class "my-3 flex-1 ps-4"}]]))]))))
 
 (defn- flatten-children
   "Flatten children to handle both direct children and sequences from for/map."

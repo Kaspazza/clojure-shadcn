@@ -3,7 +3,8 @@
   (:require
    [clojure-shadcn.stories.helpers      :as helpers]
    [clojure-shadcn.ui.components.badge :as badge]
-   [reagent.core                        :as r]))
+   [reagent.core                        :as r])
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Docs/Theming"
@@ -30,7 +31,7 @@
   "Reference of the OKLCH design tokens the components depend on."
   []
   (r/as-element
-   (helpers/wrap-component
+   (helpers/wrap-component {:source (embed-body ThemeTokens) :filename "theming_stories.cljs"}
     [:div {:class "max-w-3xl p-6 space-y-2"}
      [badge/badge {:variant :secondary
                    :class "mb-4"}
@@ -61,7 +62,7 @@
   "How dark mode is wired via the Tailwind `dark` class strategy."
   []
   (r/as-element
-   (helpers/wrap-component
+   (helpers/wrap-component {:source (embed-body DarkMode) :filename "theming_stories.cljs"}
     [:div {:class "max-w-3xl p-6 space-y-2"}
      [:h1 {:class "text-2xl font-bold mb-1"}
       "Dark Mode"]
@@ -83,7 +84,7 @@
   "When to use clojure-shadcn.utils.styles/merge-classes to override classes."
   []
   (r/as-element
-   (helpers/wrap-component
+   (helpers/wrap-component {:source (embed-body MergeClasses) :filename "theming_stories.cljs"}
     [:div {:class "max-w-3xl p-6 space-y-2"}
      [:h1 {:class "text-2xl font-bold mb-1"}
       "Merging classes"]

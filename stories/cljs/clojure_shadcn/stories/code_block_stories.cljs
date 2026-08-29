@@ -6,7 +6,8 @@
    [clojure-shadcn.ui.components.code-block :as sut]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Code Block"
@@ -26,7 +27,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "code_block_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -67,7 +68,7 @@
   Use for inline documentation and examples."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body CodeBlockSingle) :filename "code_block_stories.cljs"}
     [:div {:class "p-6 max-w-xl"}
      [sut/code-block {}
       [sut/code-block-code {:language "clojure"
@@ -78,7 +79,7 @@
   Use code-block-group to build headers or actions."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body CodeBlockWithHeader) :filename "code_block_stories.cljs"}
     [:div {:class "p-6 max-w-xl"}
      [sut/code-block {}
       [sut/code-block-group {:class "px-4 py-2 border-b text-xs text-muted-foreground"}
@@ -94,7 +95,7 @@
   Shows how to switch language prop for highlighting."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body CodeBlockMultipleLanguages) :filename "code_block_stories.cljs"}
     [:div {:class "p-6 grid gap-4"}
      [sut/code-block {}
       [sut/code-block-code {:language "javascript"
@@ -108,7 +109,7 @@
   Demonstrates how to build simple copy UI."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body CodeBlockCopyAction) :filename "code_block_stories.cljs"}
     [:div {:class "p-6 max-w-xl"}
      [sut/code-block {}
       [sut/code-block-group {:class "px-4 py-2 border-b flex items-center justify-between"}

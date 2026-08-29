@@ -9,6 +9,7 @@ Based on Radix UI primitives.
 Documentation: https://www.radix-ui.com/primitives/docs/components/popover"
   (:require
    ["@radix-ui/react-popover"     :as RadixPopover]
+   [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
 (defn popover
@@ -64,6 +65,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/popover"
   - `:alignOffset` - Offset along the align axis
   - `:collisionPadding` - Padding from viewport edges when positioning
   - `:avoidCollisions` - Whether to avoid collisions with viewport (default: true)
+  Both kebab-case and camelCase prop spellings are accepted.
   
   Features:
   - Automatically portaled to document body
@@ -78,32 +80,35 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/popover"
     [:h4 {:class \"font-medium\"} \"Popover Title\"]
     [:p {:class \"text-sm text-muted-foreground\"}
      \"Additional information here.\"]]]"
-  [{:keys [class align sideOffset]
-    :or {align "center"
-         sideOffset 4}
-    :as props}
+  [{:as raw-props}
    &
    children]
-  [:>
-   RadixPopover/Portal
-   (into [:>
-          RadixPopover/Content
-          (-> props
-              (assoc :data-slot "popover-content"
-                     :align align
-                     :sideOffset sideOffset
-                     :class (merge-classes
-                             ["bg-popover text-popover-foreground"
-                              "data-[state=open]:animate-in data-[state=closed]:animate-out"
-                              "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
-                              "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
-                              "data-[side=bottom]:slide-in-from-top-2"
-                              "data-[side=left]:slide-in-from-right-2"
-                              "data-[side=right]:slide-in-from-left-2"
-                              "data-[side=top]:slide-in-from-bottom-2"
-                              "z-50 w-72"
-                              "origin-(--radix-popover-content-transform-origin)"
-                              "rounded-md border p-4 shadow-md outline-hidden"]
-                             class))
-              (dissoc :class-name))]
-         children)])
+  (let [{:keys [class align side-offset]
+         :or {align "center"
+              side-offset 4}
+         :as props}
+        (normalize-props raw-props)]
+    [:>
+     RadixPopover/Portal
+     (into [:>
+            RadixPopover/Content
+            (-> props
+                (assoc :data-slot "popover-content"
+                       :align align
+                       :sideOffset side-offset
+                       :class (merge-classes
+                               ["bg-popover text-popover-foreground"
+                                "data-[state=open]:animate-in data-[state=closed]:animate-out"
+                                "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+                                "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+                                "data-[side=bottom]:slide-in-from-top-2"
+                                "data-[side=left]:slide-in-from-right-2"
+                                "data-[side=right]:slide-in-from-left-2"
+                                "data-[side=top]:slide-in-from-bottom-2"
+                                "z-50 w-72"
+                                "origin-(--radix-popover-content-transform-origin)"
+                                "rounded-md border p-4 shadow-md outline-hidden"]
+                               class))
+                (dissoc :class-name))]
+           children)]))
+

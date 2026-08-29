@@ -5,7 +5,8 @@
    [clojure-shadcn.ui.components.skeleton :as sut]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Skeleton"
@@ -25,7 +26,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "skeleton_stories.cljs"}
              [:div {:class "p-6 max-w-4xl"}
               [:div {:class "space-y-4"}
                [helpers/api-component-card
@@ -55,7 +56,7 @@
   Use for loading placeholders while data is fetched."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body SkeletonDemo) :filename "skeleton_stories.cljs"} [:div {:class "p-6"}
                                        [:div {:class "flex items-center space-x-4"}
                                         [sut/skeleton {:class "h-12 w-12 rounded-full"}]
                                         [:div {:class "space-y-2"}
@@ -70,7 +71,7 @@
   Use for cards, previews, or media blocks."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body SkeletonCard) :filename "skeleton_stories.cljs"} [:div {:class "p-6"}
                                        [:div {:class "flex flex-col space-y-3"}
                                         [sut/skeleton {:class "h-[125px] w-[250px] rounded-xl"}]
                                         [:div {:class "space-y-2"}
@@ -85,7 +86,7 @@
   Useful for list or gallery loading states."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 grid gap-4 sm:grid-cols-3"}
+  (helpers/wrap-component {:source (embed-body SkeletonGrid) :filename "skeleton_stories.cljs"} [:div {:class "p-6 grid gap-4 sm:grid-cols-3"}
                                        (for [idx (range 6)]
                                          ^{:key idx}
                                          [sut/skeleton {:class "h-24 w-full rounded-lg"}])])))

@@ -4,6 +4,7 @@
 .clj-kondo/.cache/
 target/
 classes/
+.clj-kondo/.cache/
 
 # Shadow-CLJS
 .shadow-cljs/

@@ -6,7 +6,8 @@
    [clojure-shadcn.ui.components.tooltip :as sut]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Tooltip"
@@ -27,7 +28,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "tooltip_stories.cljs"}
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -72,7 +73,7 @@
   Use tooltips for concise, contextual hints."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body TooltipDemo) :filename "tooltip_stories.cljs"} [:div {:class "p-6"}
                                        [sut/tooltip {:trigger [button/button {:variant :outline}
                                                                "Hover"]
                                                      :content "Add to library"}]])))
@@ -85,7 +86,7 @@
   Use inline <kbd> tags to show shortcuts."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body KbdTooltip) :filename "tooltip_stories.cljs"}
     [:div {:class "p-6 flex flex-wrap gap-4"}
      [sut/tooltip
       {:trigger [button/button {:size :sm
@@ -123,7 +124,7 @@
   Rich content works well for onboarding hints."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body TooltipCustomContent) :filename "tooltip_stories.cljs"} [:div {:class "p-6"}
                                        [sut/tooltip {:trigger [button/button {:variant :ghost}
                                                                "Hover for info"]
                                                      :content [:div {:class "space-y-1"}

@@ -7,7 +7,8 @@
    [clojure-shadcn.ui.components.spinner :as spinner]
    [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Badge"
@@ -27,7 +28,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "badge_stories.cljs"}
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
        [helpers/api-component-card
@@ -58,7 +59,7 @@
   Use badges for statuses, labels, and small counters."
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body BadgeDemo) :filename "badge_stories.cljs"}
     [:div {:class "p-6 space-y-3"}
      [:div {:class "flex flex-wrap gap-2"}
       [sut/badge {}
@@ -99,7 +100,7 @@
   Outline badges work well for metadata or filters."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body BadgeOutline) :filename "badge_stories.cljs"} [:div {:class "p-6"}
                                        [sut/badge {:variant :outline}
                                         "Outline"]])))
 
@@ -111,7 +112,7 @@
   Use :secondary for de-emphasized categories."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body BadgeSecondary) :filename "badge_stories.cljs"} [:div {:class "p-6"}
                                        [sut/badge {:variant :secondary}
                                         "Secondary"]])))
 
@@ -123,7 +124,7 @@
   Use :destructive for failed or blocked statuses."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body BadgeDestructive) :filename "badge_stories.cljs"} [:div {:class "p-6"}
                                        [sut/badge {:variant :destructive}
                                         "Destructive"]])))
 
@@ -135,7 +136,7 @@
   Use :ghost for minimal emphasis badges."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body BadgeGhost) :filename "badge_stories.cljs"} [:div {:class "p-6"}
                                        [sut/badge {:variant :ghost}
                                         "Ghost"]])))
 
@@ -147,7 +148,7 @@
   Use :link for clickable text-style badges."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body BadgeLink) :filename "badge_stories.cljs"} [:div {:class "p-6"}
                                        [sut/badge {:variant :link}
                                         [:a {:href "#"}
                                          "Link"]]])))
@@ -160,7 +161,7 @@
   Combine spinners with badges to show background activity."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 flex flex-wrap items-center gap-4"}
+  (helpers/wrap-component {:source (embed-body SpinnerBadge) :filename "badge_stories.cljs"} [:div {:class "p-6 flex flex-wrap items-center gap-4"}
                                        [sut/badge {}
                                         [spinner/spinner {:class "size-4"
                                                           :data-icon "inline-start"}]
@@ -182,7 +183,7 @@
   Our wrapper supports :as-child to render anchors or buttons with badge styles."
   []
   (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
+  (helpers/wrap-component {:source (embed-body BadgeAsChild) :filename "badge_stories.cljs"} [:div {:class "p-6"}
                                        [sut/badge {:as-child true}
                                         [:a {:href "#"
                                              :class "inline-flex items-center gap-1"}

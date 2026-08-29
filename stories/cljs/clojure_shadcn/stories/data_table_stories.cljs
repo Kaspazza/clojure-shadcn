@@ -10,7 +10,8 @@
    [clojure-shadcn.ui.components.dropdown-menu :as dropdown-menu]
    [reagent.core                                 :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source]])
-)
+
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-body]]))
 
 (def ^:export default
   #js {:title      "Components/Data Table"
@@ -152,7 +153,7 @@
 (defn ^:export ApiReference
   []
   (r/as-element
-  (helpers/wrap-component
+  (helpers/wrap-component {:source (embed-body ApiReference) :filename "data_table_stories.cljs"}
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
@@ -235,16 +236,15 @@
    
    Click column headers to sort, use pagination controls at the bottom."
   []
-  (r/as-element
-  (let [data (r/atom (clj->js (make-task-data)))
+  (r/as-element [(fn [] (let [data (r/atom (clj->js (make-task-data)))
          columns (r/atom (make-columns))]
      (fn []
-       (helpers/wrap-component [:div {:class "p-8"}
+       (helpers/wrap-component {:source (embed-body BasicDataTable) :filename "data_table_stories.cljs"} [:div {:class "p-8"}
                                            [:h3 {:class "text-lg font-semibold mb-4"}
                                             "Tasks"]
                                            [sut/data-table {:columns @columns
                                                             :data @data
-                                                            :initial-page-size 5}]])))))
+                                                            :initial-page-size 5}]]))))]))
 
 (defn ^:export TableWithToolbar
   "Data table with search and filters.
@@ -252,8 +252,7 @@
    Use the search box to filter by title, or use the faceted filters
    for status and priority."
   []
-  (r/as-element
-  (let [data (r/atom (clj->js (make-task-data)))
+  (r/as-element [(fn [] (let [data (r/atom (clj->js (make-task-data)))
          columns (r/atom (make-columns))
          toolbar-config {:text-filter {:column-id "title"
                                        :placeholder "Search tasks..."}
@@ -274,21 +273,20 @@
                                                       {:label "Low"
                                                        :value "low"}]}]}]
      (fn []
-       (helpers/wrap-component [:div {:class "p-8"}
+       (helpers/wrap-component {:source (embed-body TableWithToolbar) :filename "data_table_stories.cljs"} [:div {:class "p-8"}
                                            [:h3 {:class "text-lg font-semibold mb-4"}
                                             "Tasks with Filters"]
                                            [sut/data-table {:columns @columns
                                                             :data @data
                                                             :toolbar-config toolbar-config
-                                                            :initial-page-size 5}]])))))
+                                                            :initial-page-size 5}]]))))]))
 
 (defn ^:export TableWithExpandableRows
   "Data table with expandable rows.
    
    NEW FEATURE: Click the chevron to expand rows and see additional details."
   []
-  (r/as-element
-  (let [data (r/atom (clj->js (make-task-data)))
+  (r/as-element [(fn [] (let [data (r/atom (clj->js (make-task-data)))
          expand-column #js {:id "expand"
                             :header ""
                             :cell (fn [^js ctx]
@@ -319,7 +317,7 @@
                                     [:p [:strong "Created: "] "2024-01-15"]
                                     [:p [:strong "Due date: "] "2024-02-01"]]]))]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body TableWithExpandableRows) :filename "data_table_stories.cljs"}
         [:div {:class "p-8"}
          [:h3 {:class "text-lg font-semibold mb-4"}
           "Expandable Rows"]
@@ -328,15 +326,14 @@
          [sut/data-table {:columns @columns
                           :data @data
                           :render-sub-component render-sub-component
-                          :initial-page-size 5}]])))))
+                          :initial-page-size 5}]]))))]))
 
 (defn ^:export TableWithDragAndDrop
   "Data table with drag-and-drop reordering.
    
    NEW FEATURE: Drag rows by the handle on the left to reorder them."
   []
-  (r/as-element
-  (let [data (r/atom (make-task-data))
+  (r/as-element [(fn [] (let [data (r/atom (make-task-data))
          drag-handle-column (fn []
                               #js {:id "drag-handle"
                                    :header ""
@@ -365,7 +362,7 @@
                      (vec
                       (concat (subvec without 0 new-index) [item] (subvec without new-index)))))))))]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body TableWithDragAndDrop) :filename "data_table_stories.cljs"}
         [:div {:class "p-8"}
          [:h3 {:class "text-lg font-semibold mb-4"}
           "Drag-and-Drop Reordering"]
@@ -375,15 +372,14 @@
                           :data (clj->js @data)
                           :dnd-config {:get-row-id (fn [row] (.-id (.-original row)))
                                        :on-drag-end move-row}
-                          :initial-page-size 10}]])))))
+                          :initial-page-size 10}]]))))]))
 
 (defn ^:export TableWithDndAndExpandable
   "Data table with BOTH drag-and-drop AND expandable rows.
    
    Demonstrates using both new features together."
   []
-  (r/as-element
-  (let [data (r/atom (make-task-data))
+  (r/as-element [(fn [] (let [data (r/atom (make-task-data))
          drag-handle-column (fn []
                               #js {:id "drag-handle"
                                    :header ""
@@ -440,7 +436,7 @@
                      (vec
                       (concat (subvec without 0 new-index) [item] (subvec without new-index)))))))))]
      (fn []
-       (helpers/wrap-component
+       (helpers/wrap-component {:source (embed-body TableWithDndAndExpandable) :filename "data_table_stories.cljs"}
         [:div {:class "p-8"}
          [:h3 {:class "text-lg font-semibold mb-4"}
           "Full-Featured Table"]
@@ -451,20 +447,19 @@
                           :render-sub-component render-sub-component
                           :dnd-config {:get-row-id (fn [row] (.-id (.-original row)))
                                        :on-drag-end move-row}
-                          :initial-page-size 10}]])))))
+                          :initial-page-size 10}]]))))]))
 
 (defn ^:export TableEmptyState
   "Data table with custom empty state."
   []
-  (r/as-element
-  (let [columns (r/atom (make-columns))
+  (r/as-element [(fn [] (let [columns (r/atom (make-columns))
                   empty-state [:div {:class "py-12 text-center"}
                                [:p {:class "text-muted-foreground"}
                                 "No tasks found. Create your first task to get started."]]]
               (fn []
-                (helpers/wrap-component [:div {:class "p-8"}
+                (helpers/wrap-component {:source (embed-body TableEmptyState) :filename "data_table_stories.cljs"} [:div {:class "p-8"}
                                                     [:h3 {:class "text-lg font-semibold mb-4"}
                                                      "Empty State"]
                                                     [sut/data-table {:columns @columns
                                                                      :data #js []
-                                                                     :empty-state empty-state}]])))))
+                                                                     :empty-state empty-state}]]))))]))
