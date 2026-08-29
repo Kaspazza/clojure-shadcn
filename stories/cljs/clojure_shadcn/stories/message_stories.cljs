@@ -30,11 +30,17 @@
     [:div {:class "p-6 max-w-4xl"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
-       {:component-name "message"
-        :link {:href "https://www.prompt-kit.com/docs/message" :label "Prompt Kit Message Docs"}
-        :description "Root chat message row container. Additional props are forwarded to the wrapper element."
-         :props [{:name ":class"           :type "string"      :default nil :description "Additional Tailwind classes."}
-                 {:name "additional props" :type "map entries" :default nil :description "Forwarded to wrapper element."}]}]
+       {:component-name "message-group / message"
+        :link {:href "https://ui.shadcn.com/docs/components/message" :label "shadcn/ui Message"}
+        :description "Canonical group and message-row primitives. Message controls sender alignment; both merge :class and forward DOM props."
+        :props [{:name ":align (message)" :type ":start | :end" :default ":start" :description "Places avatar/content at the start or end."}
+                {:name ":class" :type "string" :default nil :description "Additional Tailwind classes."}
+                {:name "additional props" :type "map entries" :default nil :description "Forwarded to the underlying div."}]}]
+      [helpers/api-component-card
+       {:component-name "message-header / message-footer"
+        :description "Canonical metadata rows. Footer follows message alignment; both merge :class and forward DOM props."
+        :props [{:name ":class" :type "string" :default nil :description "Additional Tailwind classes."}
+                {:name "additional props" :type "map entries" :default nil :description "Forwarded to the underlying div."}]}]
        [helpers/api-component-card
         {:component-name "message-avatar"
          :description "Avatar renderer for message sender identity."

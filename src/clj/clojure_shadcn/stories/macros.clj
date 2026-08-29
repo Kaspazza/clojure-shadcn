@@ -82,6 +82,34 @@
                       {:wrap-component-calls @injections})))
     expanded))
 
+(defmacro defdoc
+  "Defines an exported, zero-argument Storybook documentation story without
+  embedding its implementation as display source.
+
+  Use this for library documentation pages. Component examples should use
+  `defstory`, which injects their source into `wrap-component`."
+  [story-name & declaration]
+  (let [[docstring declaration] (if (string? (first declaration))
+                                  [(first declaration) (next declaration)]
+                                  [nil declaration])
+        [params & body]         declaration]
+    (when-not (symbol? story-name)
+      (throw (ex-info "defdoc expects a symbol name"
+                      {:story-name story-name})))
+    (when-not (= [] params)
+      (throw (ex-info "defdoc expects an empty argument vector"
+                      {:story-name story-name
+                       :params params})))
+    (when-not (seq body)
+      (throw (ex-info "defdoc expects at least one body form"
+                      {:story-name story-name})))
+    (let [exported-name (with-meta story-name
+                          (assoc (meta story-name) :export true))]
+      `(defn ~exported-name
+         ~@(when docstring [docstring])
+         []
+         ~@body))))
+
 (defmacro defstory
   "Defines an exported, zero-argument Storybook story and embeds its body as
   display source in the story's single `wrap-component` call.

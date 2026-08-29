@@ -4,7 +4,7 @@
    [clojure-shadcn.stories.helpers     :as helpers]
    [clojure-shadcn.ui.components.badge :as badge]
    [reagent.core                       :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [defdoc]]))
 
 (def ^:export default
   #js {:title      "Docs/Introduction"
@@ -34,7 +34,7 @@
    [:code {}
     code]])
 
-(defstory Overview
+(defdoc Overview
   "What clojure-shadcn is and when to use it."
   []
   (r/as-element
@@ -60,7 +60,7 @@
       [feature-card "Controlled" "State stays in your app; components are pure."]
       [feature-card "Radix under the hood" "Accessible primitives where needed."]]])))
 
-(defstory Installation
+(defdoc Installation
   "How to bring a component into your project."
   []
   (r/as-element
@@ -87,7 +87,7 @@
       [:p {}
        "Because you copy the source, there's no npm package to depend on.  Your build compiles the .cljs directly; the only upstreams are npm primitives and the Tailwind tokens."]]])))
 
-(defstory UsageExamples
+(defdoc UsageExamples
   "Common patterns for using clojure-shadcn components."
   []
   (r/as-element

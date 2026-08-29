@@ -71,6 +71,7 @@ Custom component implementation."
  (let [{:keys [row row-id render-sub-component]}
        (normalize-props raw-props)]
    (let [sortable (useSortable #js {:id row-id})
+         ^js row row
          transform (.-transform sortable)
          transition (.-transition sortable)
          set-node-ref (.-setNodeRef sortable)
@@ -90,14 +91,14 @@ Custom component implementation."
      [:<>
       [mateuszmazurczak-table/table-row {:ref set-node-ref
                                          :style style
-                                         :data-state (when (.getIsSelected row) "selected")}
-       (for [cell (.getVisibleCells row)]
+                                         :data-state (when (.getIsSelected ^js row) "selected")}
+       (for [^js cell (.getVisibleCells ^js row)]
          ^{:key (.-id cell)}
          [mateuszmazurczak-table/table-cell {}
-          (flexRender (.. cell -column -columnDef -cell) (.getContext cell))])]
-      (when (and render-sub-component (.getIsExpanded row))
+          (flexRender (.. cell -column -columnDef -cell) (.getContext ^js cell))])]
+      (when (and render-sub-component (.getIsExpanded ^js row))
         [mateuszmazurczak-table/table-row {}
-         [mateuszmazurczak-table/table-cell {:col-span (.-length (.getVisibleCells row))
+         [mateuszmazurczak-table/table-cell {:col-span (.-length (.getVisibleCells ^js row))
                                              :class "p-0"}
           (render-sub-component row)]])])))
 
@@ -113,20 +114,20 @@ Custom component implementation."
 
   Returns:
   Map with extracted state for toolbar-ui component."
-  [toolbar-config table-instance]
+  [toolbar-config ^js table-instance]
   (let [text-filter-config (:text-filter toolbar-config)
         text-column-id (:column-id text-filter-config)
-        text-column (when text-column-id (.getColumn table-instance text-column-id))
+        ^js text-column (when text-column-id (.getColumn table-instance text-column-id))
         text-filter-value (when text-column (or (.getFilterValue text-column) ""))
         text-placeholder (:placeholder text-filter-config "Filter items...")
-        table-state (.getState table-instance)
+        ^js table-state (.getState ^js table-instance)
         column-filters-state (.-columnFilters table-state)
         is-filtered? (pos? (.-length column-filters-state))
         faceted-filters-with-state
         (vec
          (for [filter-config (:faceted-filters toolbar-config)]
            (let [column-id (:column-id filter-config)
-                 column (.getColumn table-instance column-id)
+                 ^js column (.getColumn table-instance column-id)
                  filter-value (when column (or (.getFilterValue column) #js []))
                  selected-values (set (js->clj filter-value))
                  facets (when column (.getFacetedUniqueValues column))
@@ -142,9 +143,9 @@ Custom component implementation."
                            (when column
                              (let [filter-values (vec new-selected-set)]
                                (.setFilterValue column
-                                                (if (seq filter-values)
-                                                  (clj->js filter-values)
-                                                  js/undefined)))))})))]
+                                                 (if (seq filter-values)
+                                                   (clj->js filter-values)
+                                                   js/undefined)))))})))]
     {:text-filter-value text-filter-value
      :on-text-filter-change (fn [value] (when text-column (.setFilterValue text-column value)))
      :text-placeholder text-placeholder
@@ -157,15 +158,15 @@ Custom component implementation."
 (defn- extract-pagination-data
   "Extracts pure data and callbacks from table instance for pagination.
   This ensures the pagination component receives reactive data."
-  [table-instance]
-  (let [pagination-state (.. table-instance getState -pagination)
+  [^js table-instance]
+  (let [^js pagination-state (.-pagination ^js (.getState ^js table-instance))
         page-size (.-pageSize pagination-state)
         page-index (.-pageIndex pagination-state)
-        selected-rows (.. table-instance getFilteredSelectedRowModel -rows)
-        total-rows (.. table-instance getFilteredRowModel -rows)
-        can-previous? (.getCanPreviousPage table-instance)
-        can-next? (.getCanNextPage table-instance)
-        page-count (.getPageCount table-instance)]
+        ^js selected-rows (.-rows ^js (.getFilteredSelectedRowModel ^js table-instance))
+        ^js total-rows (.-rows ^js (.getFilteredRowModel ^js table-instance))
+        can-previous? (.getCanPreviousPage ^js table-instance)
+        can-next? (.getCanNextPage ^js table-instance)
+        page-count (.getPageCount ^js table-instance)]
     {:page-size page-size
      :page-index page-index
      :page-count page-count
@@ -442,10 +443,10 @@ Custom component implementation."
           [mateuszmazurczak-table/table-header
            {:class
             "sticky top-0 z-10 bg-background after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-border"}
-           (for [header-group header-groups]
+           (for [^js header-group header-groups]
              ^{:key (.-id header-group)}
              [mateuszmazurczak-table/table-row {}
-              (for [header (.-headers header-group)]
+              (for [^js header (.-headers header-group)]
                 ^{:key (.-id header)}
                 [mateuszmazurczak-table/table-head {:col-span (.-colSpan header)}
                  (when-not (.-isPlaceholder header)
@@ -457,25 +458,25 @@ Custom component implementation."
               SortableContext
               {:items dnd-row-ids
                :strategy verticalListSortingStrategy}
-              (for [row rows]
+              (for [^js row rows]
                 (let [row-id (get-row-id row)]
                   ^{:key (.-id row)}
                   [draggable-row {:row row
                                   :row-id row-id
                                   :render-sub-component render-sub-component}]))]
              ;; Standard table rows (no drag-and-drop)
-             (for [row rows]
+             (for [^js row rows]
                [:<> {:key (.-id row)}
                 ;; First row - normal row with cells
-                [mateuszmazurczak-table/table-row {:data-state (when (.getIsSelected row) "selected")}
-                 (for [cell (.getVisibleCells row)]
+                [mateuszmazurczak-table/table-row {:data-state (when (.getIsSelected ^js row) "selected")}
+                 (for [^js cell (.getVisibleCells ^js row)]
                    [mateuszmazurczak-table/table-cell {:key (.-id cell)}
-                    (flexRender (.. cell -column -columnDef -cell) (.getContext cell))])]
+                    (flexRender (.. cell -column -columnDef -cell) (.getContext ^js cell))])]
                 ;; Second row - expanded subcomponent (only if expanded)
-                (when (and render-sub-component (.getIsExpanded row))
+                (when (and render-sub-component (.getIsExpanded ^js row))
                   [mateuszmazurczak-table/table-row {}
                    ;; Single cell spanning all visible columns
-                   [mateuszmazurczak-table/table-cell {:col-span (.-length (.getVisibleCells row))
+                   [mateuszmazurczak-table/table-cell {:col-span (.-length (.getVisibleCells ^js row))
                                                        :class "p-0"}
                     (render-sub-component row)]])]))]]]
         ;; Empty state - render outside table structure
@@ -484,10 +485,10 @@ Custom component implementation."
           [mateuszmazurczak-table/table-header
            {:class
             "sticky top-0 z-10 bg-background after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-border"}
-           (for [header-group header-groups]
+           (for [^js header-group header-groups]
              ^{:key (.-id header-group)}
              [mateuszmazurczak-table/table-row {}
-              (for [header (.-headers header-group)]
+              (for [^js header (.-headers header-group)]
                 ^{:key (.-id header)}
                 [mateuszmazurczak-table/table-head {:col-span (.-colSpan header)}
                  (when-not (.-isPlaceholder header)
@@ -736,9 +737,9 @@ Custom component implementation."
                handle-drag-end (when dnd-enabled?
                                  (let [on-drag-end (:on-drag-end dnd-config)]
                                    (rhooks/use-callback
-                                    (fn [event]
-                                      (let [active (.-active event)
-                                            over (.-over event)]
+                                    (fn [^js event]
+                                      (let [^js active (.-active event)
+                                            ^js over (.-over event)]
                                         (when (and active over (not= (.-id active) (.-id over)))
                                           (when-let [handler on-drag-end]
                                             (handler (.-id active) (.-id over))))))

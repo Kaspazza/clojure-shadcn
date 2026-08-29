@@ -98,7 +98,7 @@
                                             "todo" :outline
                                             :default)}
                     status]))
-         :filterFn (fn [row _column-id filter-value]
+         :filterFn (fn [^js row _column-id filter-value]
                      (some #(= % (aget (.-original row) "status")) (js->clj filter-value)))}
     #js {:accessorKey "priority"
          :header (fn [^js ctx] [sut/column-header-ui
@@ -115,7 +115,7 @@
                                     "low" "text-green-600"
                                     "")}
                     priority]))
-         :filterFn (fn [row _column-id filter-value]
+         :filterFn (fn [^js row _column-id filter-value]
                      (some #(= % (aget (.-original row) "priority")) (js->clj filter-value)))}
     #js {:accessorKey "assignee"
          :header "Assignee"
@@ -302,7 +302,7 @@
                             :enableSorting false
                             :enableHiding false}
          columns (r/atom (into-array (cons expand-column (make-columns))))
-         render-sub-component (fn [row]
+         render-sub-component (fn [^js row]
                                 (let [task (js->clj (.-original row) :keywordize-keys true)]
                                   [:div {:class "p-4 bg-muted"}
                                    [:h4 {:class "font-semibold mb-2"}
@@ -409,7 +409,7 @@
                             :enableHiding false}
          columns (r/atom (into-array (concat [(drag-handle-column) expand-column] (make-columns))))
          render-sub-component
-         (fn [row]
+         (fn [^js row]
            (let [task (js->clj (.-original row) :keywordize-keys true)]
              [:div {:class "p-4 bg-muted"}
               [:h4 {:class "font-semibold mb-2"}

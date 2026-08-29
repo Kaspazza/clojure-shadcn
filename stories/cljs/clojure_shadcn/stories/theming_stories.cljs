@@ -4,7 +4,7 @@
    [clojure-shadcn.stories.helpers      :as helpers]
    [clojure-shadcn.ui.components.badge :as badge]
    [reagent.core                        :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [defdoc]]))
 
 (def ^:export default
   #js {:title      "Docs/Theming"
@@ -27,7 +27,7 @@
   [name desc]
   [:li [:code name] (str ": " desc)])
 
-(defstory ThemeTokens
+(defdoc ThemeTokens
   "Reference of the OKLCH design tokens the components depend on."
   []
   (r/as-element
@@ -58,7 +58,7 @@
        [scanner-item ":input / :ring" "form elements"]
        [scanner-item ":radius" "border-radius scale"]]]])))
 
-(defstory DarkMode
+(defdoc DarkMode
   "How dark mode is wired via the Tailwind `dark` class strategy."
   []
   (r/as-element
@@ -80,7 +80,7 @@
       [:p {}
        "The toolbar in the Storybook UI flips the `dark` class live — components respond immediately to the class because they use the semantic tokens."]]])))
 
-(defstory MergeClasses
+(defdoc MergeClasses
   "When to use clojure-shadcn.utils.styles/merge-classes to override classes."
   []
   (r/as-element

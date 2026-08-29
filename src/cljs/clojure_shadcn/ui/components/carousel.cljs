@@ -58,13 +58,13 @@ Custom component implementation."
          [carousel-ref api] (use-embla-carousel embla-opts embla-plugins)
          [can-scroll-prev set-can-scroll-prev] (rhooks/use-state false)
          [can-scroll-next set-can-scroll-next] (rhooks/use-state false)
-         on-select (rhooks/use-callback (fn [embla-api]
+         on-select (rhooks/use-callback (fn [^js embla-api]
                                           (when embla-api
                                             (set-can-scroll-prev (.canScrollPrev embla-api))
                                             (set-can-scroll-next (.canScrollNext embla-api))))
                                         [])
-         scroll-prev (rhooks/use-callback (fn [] (when api (.scrollPrev api))) [api])
-         scroll-next (rhooks/use-callback (fn [] (when api (.scrollNext api))) [api])
+         scroll-prev (rhooks/use-callback (fn [] (when api (.scrollPrev ^js api))) [api])
+         scroll-next (rhooks/use-callback (fn [] (when api (.scrollNext ^js api))) [api])
          handle-key-down
          (rhooks/use-callback
           (fn [event]
@@ -77,10 +77,10 @@ Custom component implementation."
      (rhooks/use-effect (fn []
                           (when api
                             (on-select api)
-                            (.on api "reInit" on-select)
-                            (.on api "select" on-select)
+                            (.on ^js api "reInit" on-select)
+                            (.on ^js api "select" on-select)
                             ;; Cleanup function
-                            (fn [] (.off api "select" on-select))))
+                            (fn [] (.off ^js api "select" on-select))))
                         [api on-select])
      (let [ctx-value (rhooks/use-memo (fn []
                                         #js {:carousel-ref carousel-ref

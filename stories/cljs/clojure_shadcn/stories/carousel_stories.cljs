@@ -23,10 +23,10 @@
    (fn []
      (let [on-select (rhooks/use-callback
                       (fn []
-                        (when @api
+                        (when-let [^js current-api @api]
                           (swap! event-log conj
                                  (str "select → snap "
-                                      (.selectedScrollSnap @api)))))
+                                      (.selectedScrollSnap current-api)))))
                       [])
            on-settle (rhooks/use-callback
                       (fn []
@@ -38,14 +38,14 @@
                             [])]
        (rhooks/use-effect
         (fn []
-          (when @api
-            (.on @api "select" on-select)
-            (.on @api "settle" on-settle)
-            (.on @api "pointerDown" on-pointer-down)
+          (when-let [^js current-api @api]
+            (.on current-api "select" on-select)
+            (.on current-api "settle" on-settle)
+            (.on current-api "pointerDown" on-pointer-down)
             (fn []
-              (.off @api "select" on-select)
-              (.off @api "settle" on-settle)
-              (.off @api "pointerDown" on-pointer-down))))
+              (.off current-api "select" on-select)
+              (.off current-api "settle" on-settle)
+              (.off current-api "pointerDown" on-pointer-down))))
         [@api])
        
        (helpers/wrap-component

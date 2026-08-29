@@ -14,6 +14,7 @@
 (def stories-dir "stories/cljs/clojure_shadcn/stories")
 (def output-file "target/story-modules.edn")
 (def preferred-default-ns 'clojure-shadcn.stories.intro-stories)
+(def aggregate-ns 'clojure-shadcn.stories.all-components-stories)
 
 (defn- story-namespaces
   []
@@ -25,7 +26,7 @@
               (let [content (slurp file)
                     ns-match (re-find #"(?m)^\(ns\s+([^\s\)]+)" content)
                     ns-sym (some-> ns-match second symbol)
-                    exports (->> (re-seq #"(?m)^\((?:defn?\s+\^:export\s+|defstory\s+)([A-Za-z0-9_$-]+)" content)
+                    exports (->> (re-seq #"(?m)^\((?:defn?\s+\^:export\s+|def(?:story|doc)\s+)([A-Za-z0-9_$-]+)" content)
                                  (mapv #(symbol (second %))))]
                 (when-not ns-sym
                   (throw (ex-info "Story source has no namespace declaration"
@@ -46,10 +47,12 @@
 
 (defn- module-config
   [stories]
-  (let [default-ns (if (some #(= preferred-default-ns (:ns %)) stories)
-                     preferred-default-ns
-                     (:ns (first stories)))
-        default-key (module-key default-ns)]
+  (let [default-ns    (if (some #(= preferred-default-ns (:ns %)) stories)
+                        preferred-default-ns
+                        (:ns (first stories)))
+        default-key   (module-key default-ns)
+        aggregate-key (module-key aggregate-ns)
+        story-keys    (into #{} (map (comp module-key :ns)) stories)]
     {:modules
      (into (sorted-map)
            (map (fn [{:keys [ns exports]}]
@@ -59,8 +62,11 @@
                                                  (map (fn [export]
                                                         [export (symbol (str ns "/" export))])
                                                       exports))}
-                           (= key default-key) (assoc :default true)
-                           (not= key default-key) (assoc :depends-on #{default-key}))]))
+                           (= key default-key)   (assoc :default true)
+                           (= key aggregate-key) (assoc :depends-on (disj story-keys aggregate-key))
+                           (and (not= key default-key)
+                                (not= key aggregate-key))
+                           (assoc :depends-on #{default-key}))]))
                 stories))}))
 
 (let [stories (vec (story-namespaces))
