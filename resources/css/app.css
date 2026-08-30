@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Source+Serif+4:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @custom-variant dark (&:is(.dark *));
@@ -435,4 +436,12 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+}
+
+.showcase-fonts {
+  font-family: var(--showcase-body-font);
+}
+
+.showcase-fonts :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--showcase-heading-font);
 }

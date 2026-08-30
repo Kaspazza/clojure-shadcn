@@ -76,6 +76,7 @@
    [clojure-shadcn.stories.toggle-stories                    :as toggle]
    [clojure-shadcn.stories.tooltip-stories                   :as tooltip]
    [clojure-shadcn.stories.typography-stories                :as typography]
+   [clojure-shadcn.ui.components.select                      :as ui-select]
    [clojure.string                                           :as str]
    [reagent.core                                             :as r]))
 
@@ -279,6 +280,18 @@
    {:label "0.75" :value "0.75rem"}
    {:label "1.0" :value "1rem"}])
 
+(def ^:private heading-fonts
+  [{:id :figtree :label "Figtree" :family "'Figtree', sans-serif"}
+   {:id :inter :label "Inter" :family "'Inter', sans-serif"}
+   {:id :manrope :label "Manrope" :family "'Manrope', sans-serif"}
+   {:id :playfair :label "Playfair Display" :family "'Playfair Display', serif"}])
+
+(def ^:private body-fonts
+  [{:id :inter :label "Inter" :family "'Inter', sans-serif"}
+   {:id :figtree :label "Figtree" :family "'Figtree', sans-serif"}
+   {:id :manrope :label "Manrope" :family "'Manrope', sans-serif"}
+   {:id :source-serif :label "Source Serif 4" :family "'Source Serif 4', serif"}])
+
 (defonce ^:private showcase-base
   (r/atom (or (some-> (.getAttribute js/document.documentElement "data-base") keyword)
               :taupe)))
@@ -293,6 +306,8 @@
             :light)))
 
 (defonce ^:private showcase-radius (r/atom "0.75rem"))
+(defonce ^:private showcase-heading-font (r/atom :figtree))
+(defonce ^:private showcase-body-font (r/atom :inter))
 
 (.setAttribute js/document.documentElement "data-base" (name @showcase-base))
 (.setAttribute js/document.documentElement "data-theme" (name @showcase-preset))
@@ -312,26 +327,59 @@
   (.toggle (.-classList js/document.documentElement) "dark" (= mode :dark))
   (reset! showcase-mode mode))
 
+(defn- font-by-id
+  [fonts id]
+  (some #(when (= id (:id %)) %) fonts))
+
 (defn- shuffle-theme!
   []
   (let [base (:id (rand-nth base-presets))
         preset (:id (rand-nth theme-presets))
         mode (rand-nth [:light :dark])
-        radius (:value (rand-nth radii))]
+        radius (:value (rand-nth radii))
+        heading-font (:id (rand-nth heading-fonts))
+        body-font (:id (rand-nth body-fonts))]
     (select-showcase-base! base)
     (select-showcase-preset! preset)
     (select-showcase-mode! mode)
-    (reset! showcase-radius radius)))
+    (reset! showcase-radius radius)
+    (reset! showcase-heading-font heading-font)
+    (reset! showcase-body-font body-font)))
 
 (defn- reset-theme!
   []
   (select-showcase-base! :taupe)
   (select-showcase-preset! :ocean)
   (select-showcase-mode! :light)
-  (reset! showcase-radius "0.75rem"))
+  (reset! showcase-radius "0.75rem")
+  (reset! showcase-heading-font :figtree)
+  (reset! showcase-body-font :inter))
 
 (def ^:private choice-classes
   "flex w-full items-center justify-between rounded-md border border-transparent px-3 py-2 text-left text-sm transition-colors hover:border-border hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring")
+
+(defn- font-option
+  [label fonts selected-font]
+  (let [selected (font-by-id fonts @selected-font)]
+    [:fieldset
+     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500"} label]
+     [ui-select/select {:value (name @selected-font)
+                        :on-value-change #(reset! selected-font (keyword %))}
+      [ui-select/select-trigger
+       {:aria-label (str "Select " (str/lower-case label) " font")
+        :class "w-full border-white/10 bg-transparent text-white shadow-none hover:bg-white/10 focus-visible:border-white/30 focus-visible:ring-white/20"}
+       [ui-select/select-value {}]
+       [:span {:aria-hidden true
+               :class "ml-auto text-xl leading-none text-zinc-400"
+               :style {:font-family (:family selected)}}
+        "Aa"]]
+      [ui-select/select-content {:align "start"
+                                 :class "border-white/10 bg-zinc-950 text-zinc-50"}
+       (for [{:keys [id label family]} fonts]
+         ^{:key id}
+         [ui-select/select-item {:value (name id)
+                                 :class "focus:bg-white/10 focus:text-white"}
+          [:span {:style {:font-family family}} label]])]]]))
 
 (defn- theme-configurator
   []
@@ -400,6 +448,8 @@
                                 "border-white/30 bg-white/10 text-white"
                                 "border-white/10 text-zinc-400"))}
          label])]]
+    [font-option "Heading" heading-fonts showcase-heading-font]
+    [font-option "Font" body-fonts showcase-body-font]
     [:div {:class "rounded-lg border border-white/10 bg-white/[0.04] p-3"}
      [:p {:class "text-[10px] uppercase tracking-wider text-zinc-500"} "Current preset"]
      [:p {:class "mt-1 truncate font-mono text-xs text-zinc-300"}
@@ -417,10 +467,15 @@
 
 (defn- overview
   []
-  [:main {:data-base (name @showcase-base)
+  (let [heading-font (font-by-id heading-fonts @showcase-heading-font)
+        body-font (font-by-id body-fonts @showcase-body-font)]
+    [:main {:data-base (name @showcase-base)
           :data-theme (name @showcase-preset)
-          :style {"--radius" @showcase-radius}
-          :class (str "min-h-screen bg-background text-foreground transition-colors"
+          :style {"--radius" @showcase-radius
+                  "--font-sans" (:family body-font)
+                  "--showcase-heading-font" (:family heading-font)
+                  "--showcase-body-font" (:family body-font)}
+          :class (str "showcase-fonts min-h-screen bg-background text-foreground transition-colors"
                       (when (= @showcase-mode :dark) " dark"))}
    [:div {:class "mx-auto max-w-[1800px] px-4 py-5 sm:px-6 lg:px-8"}
     [:header {:class "mb-6 flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-end"}
@@ -441,7 +496,7 @@
            (map (fn [{:keys [name]
                       :as component}]
                   ^{:key name} [component-card component])
-                components))]]])
+                components))]]]))
 
 (defn ^:export Overview
   "Every available component rendered in one continuous, scannable page."
