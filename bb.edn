@@ -26,7 +26,7 @@
   {:doc "Full dev environment: prepare stories, then start watcher + Storybook"
    :depends [prepare-stories]
    :task (let [futures [(future (shell "npx shadow-cljs watch stories --config-merge target/story-modules.edn"))
-                        (future (shell "npx storybook dev -p 6010"))]]
+                        (future (shell "npx storybook dev -p 6010 --initial-path /story/home--overview"))]]
            (doseq [f futures] (deref f)))}
 
   watch-stories
@@ -42,7 +42,7 @@
   storybook
   {:doc "Prepare stories, then run Storybook dev server on port 6010"
    :depends [prepare-stories]
-   :task (shell "npx storybook dev -p 6010")}
+   :task (shell "npx storybook dev -p 6010 --initial-path /story/home--overview")}
 
   build-storybook
   {:doc "Build static Storybook site into storybook-static/"

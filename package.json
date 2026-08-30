@@ -9,7 +9,7 @@
   "scripts": {
     "watch-stories": "shadow-cljs watch stories",
     "compile-stories": "shadow-cljs compile stories",
-    "storybook": "storybook dev -p 6010",
+    "storybook": "storybook dev -p 6010 --initial-path /story/home--overview",
     "build-storybook": "storybook build",
     "dev": "bb dev"
   },

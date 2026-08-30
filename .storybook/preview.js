@@ -63,6 +63,11 @@ const preview = {
     docs: {
       page: docsPage,
     },
+    options: {
+      storySort: {
+        order: ['Home', 'Docs', 'Components', 'Chat'],
+      },
+    },
   },
 
   // Toolbar dark/light toggle — toggles the `dark` class on the preview

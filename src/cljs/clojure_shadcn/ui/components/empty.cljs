@@ -93,12 +93,19 @@
    &
    children]
   (let
-    [base-classes
+    [variant (case variant
+               (:icon "icon") :icon
+               (:default "default") :default
+               :default)
+     variant-name (case variant
+                    :icon "icon"
+                    "default")
+     base-classes
      "flex shrink-0 items-center justify-center mb-2 [&_svg]:pointer-events-none [&_svg]:shrink-0"
      combined-classes (merge-classes base-classes (media-variant-classes variant) class)]
     (into [:div
            (-> props
-               (assoc :data-slot "empty-icon" :data-variant (name variant) :class combined-classes)
+               (assoc :data-slot "empty-icon" :data-variant variant-name :class combined-classes)
                (dissoc :class-name :variant))]
           children)))
 

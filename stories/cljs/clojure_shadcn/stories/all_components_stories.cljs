@@ -80,7 +80,7 @@
    [reagent.core                                             :as r]))
 
 (def ^:export default
-  #js {:title "Docs/All Components"
+  #js {:title "Home"
        :parameters #js {:layout "fullscreen"}})
 
 (def components
@@ -141,6 +141,7 @@
    {:name "Dropdown Menu"
     :preview dropdown-menu/DropdownMenuDemo}
    {:name "Empty"
+    :docs-id "empty-state"
     :preview empty/EmptyDemo}
    {:name "Field"
     :preview field/FieldWithInput}
@@ -225,6 +226,7 @@
    {:name "Textarea"
     :preview textarea/TextareaDemo}
    {:name "Theme Toggle"
+    :docs-id "themetoggle"
     :preview theme-toggle/ThemeToggleInHeader}
    {:name "Toggle"
     :preview toggle/ToggleBasic}
@@ -235,34 +237,43 @@
    {:name "Typography"
     :preview typography/TypeScale}])
 
-(defn- component-card
-  [{:keys [name preview]}]
-  [:section {:id (-> name
-                     str/lower-case
-                     (str/replace #"\s+" "-"))
-             :class "scroll-mt-6 overflow-hidden rounded-xl border bg-card shadow-sm"}
-   [:header {:class "border-b bg-muted/30 px-5 py-4"}
-    [:h2 {:class "text-lg font-semibold tracking-tight"}
-     name]]
-   [:div {:class "[&>.relative]:hidden"}
-    [:> preview]]])
+(defn- component-id
+  [name]
+  (-> name
+      str/lower-case
+      (str/replace #"\s+" "-")))
 
-(defn ^:export Catalogue
+(defn- component-card
+  [{:keys [docs-id name preview]}]
+  (let [id (component-id name)]
+    [:section {:id id
+               :class "min-w-0 scroll-mt-6 overflow-hidden rounded-lg border bg-card shadow-sm"}
+     [:header {:class "border-b bg-muted/30 px-4 py-2.5"}
+      [:h2 {:class "text-sm font-semibold tracking-tight"}
+       [:a {:href (str "./?path=/docs/components-" (or docs-id id) "--docs")
+            :target "_top"
+            :class "underline-offset-4 hover:text-primary hover:underline"}
+        name]]]
+     [:div {:class "min-w-0 overflow-x-auto [&>.relative]:hidden"}
+      [:> preview]]]))
+
+(defn ^:export Overview
   "Every available component rendered in one continuous, scannable page."
   []
   (r/as-element
-   [:main {:class "min-h-screen bg-background px-4 py-10 text-foreground sm:px-6 lg:px-8"}
-    [:div {:class "mx-auto max-w-6xl"}
-     [:header {:class "mb-10 max-w-3xl"}
-      [:p {:class "mb-2 text-sm font-medium text-primary"}
-       "Component catalogue"]
-      [:h1 {:class "text-3xl font-bold tracking-tight sm:text-4xl"}
-       "All components"]
-      [:p {:class "mt-3 text-base leading-7 text-muted-foreground"}
-       "Browse every component in the library without leaving the page. Scroll through the live examples, then use the Components section in the sidebar for installation details and API references."]
-      [:p {:class "mt-4 text-sm text-muted-foreground"}
-       (str (count components) " components")]]
-     (into [:div {:class "grid gap-6"}]
+   [:main {:class "min-h-screen bg-background px-4 py-5 text-foreground sm:px-6 lg:px-8"}
+    [:div {:class "mx-auto max-w-screen-2xl"}
+     [:header {:class "mb-5 flex flex-col justify-between gap-4 border-b pb-4 sm:flex-row sm:items-end"}
+      [:div {}
+       [:h1 {:class "text-2xl font-bold tracking-tight"}
+        "clojure-shadcn"]
+       [:p {:class "mt-1 text-sm text-muted-foreground"}
+        (str (count components) " live ClojureScript components")]]
+      [:a {:href "./?path=/story/docs-introduction--overview"
+           :target "_top"
+           :class "text-sm font-medium text-primary underline-offset-4 hover:underline"}
+       "Read the docs →"]]
+     (into [:div {:class "grid items-start gap-4 md:grid-cols-2 xl:grid-cols-3"}]
            (map (fn [{:keys [name]
                       :as component}]
                   ^{:key name} [component-card component])
