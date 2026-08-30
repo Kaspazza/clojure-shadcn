@@ -10,7 +10,7 @@
    [clojure-shadcn.ui.components.input   :as input]
    [clojure-shadcn.ui.components.label   :as label]
    [reagent.core                           :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
   #js {:title      "Components/Dialog"
@@ -29,7 +29,7 @@
      "Username"]
     [input/input {:id "dialog-username"
                   :default-value "@peduarte"}]]])
-(defn ^:export Installation
+(defdoc Installation
   "Install dependencies and copy the component code into your project."
   []
   (r/as-element

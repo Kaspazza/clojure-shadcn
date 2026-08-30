@@ -6,13 +6,13 @@
    [clojure-shadcn.ui.components.drawer :as sut]
    [clojure-shadcn.ui.components.input  :as input]
    [reagent.core                          :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
   #js {:title      "Components/Drawer"
        :parameters #js {:layout "padded"}})
 
-(defn ^:export Installation
+(defdoc Installation
   "Install dependencies and copy the component code into your project."
   []
   (r/as-element

@@ -3,11 +3,11 @@
    [clojure-shadcn.stories.helpers :as helpers]
    [clojure-shadcn.ui.components.hover-card :as sut]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default #js {:title "Components/Hover Card" :parameters #js {:layout "padded"}})
 
-(defn ^:export Installation []
+(defdoc Installation []
   (r/as-element [helpers/installation-scene {:description "Preview content revealed on hover or keyboard focus." :npm-install "npm install @radix-ui/react-hover-card" :source-code (embed-source "clojure-shadcn.ui.components.hover-card") :namespace-path "src/cljs/clojure_shadcn/ui/components/hover_card.cljs" :filename "hover_card.cljs"}]))
 
 (defstory ApiReference []

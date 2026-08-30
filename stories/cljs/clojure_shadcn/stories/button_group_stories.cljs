@@ -4,9 +4,9 @@
             [clojure-shadcn.ui.components.button :as button]
             [clojure-shadcn.ui.components.button-group :as sut]
             [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 (def ^:export default #js {:title "Components/Button Group" :parameters #js {:layout "padded"}})
-(defn ^:export Installation [] (r/as-element [helpers/installation-scene {:description "Groups related controls with shared borders and orientation-aware corners." :npm-install "npm install @radix-ui/react-slot @radix-ui/react-separator" :source-code (embed-source "clojure-shadcn.ui.components.button_group") :namespace-path "src/cljs/clojure_shadcn/ui/components/button_group.cljs" :filename "button_group.cljs"}]))
+(defdoc Installation [] (r/as-element [helpers/installation-scene {:description "Groups related controls with shared borders and orientation-aware corners." :npm-install "npm install @radix-ui/react-slot @radix-ui/react-separator" :source-code (embed-source "clojure-shadcn.ui.components.button_group") :namespace-path "src/cljs/clojure_shadcn/ui/components/button_group.cljs" :filename "button_group.cljs"}]))
 (defstory ApiReference []
   (r/as-element (helpers/wrap-component
     [:div {:class "space-y-4 p-6 max-w-4xl"}

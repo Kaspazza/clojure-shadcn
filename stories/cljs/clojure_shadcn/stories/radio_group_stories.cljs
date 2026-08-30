@@ -6,13 +6,13 @@
    [clojure-shadcn.ui.components.label       :as label]
    [clojure-shadcn.ui.components.radio-group :as sut]
    [reagent.core                               :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
   #js {:title      "Components/Radio Group"
        :parameters #js {:layout "padded"}})
 
-(defn ^:export Installation
+(defdoc Installation
   "Install dependencies and copy the component code into your project."
   []
   (r/as-element

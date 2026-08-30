@@ -4,13 +4,13 @@
    [clojure-shadcn.ui.components.resizable :as sut]
    [reagent.core :as r])
   (:require-macros
-   [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+   [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
   #js {:title "Components/Resizable"
        :parameters #js {:layout "centered"}})
 
-(defn ^:export Installation []
+(defdoc Installation []
   (r/as-element
    [helpers/installation-scene
     {:description "Keyboard-accessible resizable panel layouts."

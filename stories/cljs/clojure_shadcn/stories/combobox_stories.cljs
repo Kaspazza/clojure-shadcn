@@ -4,13 +4,13 @@
    [clojure-shadcn.ui.components.combobox :as sut]
    [reagent.core :as r])
   (:require-macros
-   [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+   [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
   #js {:title "Components/Combobox"
        :parameters #js {:layout "centered"}})
 
-(defn ^:export Installation []
+(defdoc Installation []
   (r/as-element
    [helpers/installation-scene
     {:description "Controlled, data-oriented single-select combobox."

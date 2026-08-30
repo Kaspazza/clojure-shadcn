@@ -11,13 +11,13 @@
    [clojure-shadcn.ui.components.label         :as label]
    [clojure-shadcn.ui.components.textarea      :as textarea]
    [reagent.core                                 :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
   #js {:title      "Components/Dropdown Menu"
        :parameters #js {:layout "padded"}})
 
-(defn ^:export Installation
+(defdoc Installation
   "Install dependencies and copy the component code into your project."
   []
   (r/as-element

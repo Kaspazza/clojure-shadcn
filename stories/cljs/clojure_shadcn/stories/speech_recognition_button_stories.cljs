@@ -5,13 +5,13 @@
    [clojure-shadcn.ui.components.prompt-input              :as prompt-input]
    [clojure-shadcn.ui.components.speech-recognition-button :as sut]
    [reagent.core                                             :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
   #js {:title      "Components/Speech Recognition Button"
        :parameters #js {:layout "padded"}})
 
-(defn ^:export Installation
+(defdoc Installation
   "Install dependencies and copy the component code into your project."
   []
   (r/as-element

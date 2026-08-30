@@ -4,11 +4,11 @@
    [clojure-shadcn.stories.helpers :as helpers]
    [clojure-shadcn.ui.components.toggle-group :as sut]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default #js {:title "Components/Toggle Group" :parameters #js {:layout "padded"}})
 
-(defn ^:export Installation []
+(defdoc Installation []
   (r/as-element
    [helpers/installation-scene
     {:description "Related two-state controls with single or multiple selection and roving focus."

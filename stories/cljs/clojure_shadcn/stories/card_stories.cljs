@@ -4,9 +4,9 @@
             [clojure-shadcn.ui.components.card :as sut]
             [clojure-shadcn.ui.components.input :as input]
             [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 (def ^:export default #js {:title "Components/Card" :parameters #js {:layout "padded"}})
-(defn ^:export Installation [] (r/as-element [helpers/installation-scene {:description "Composable content container with header, action, content, and footer regions." :npm-install nil :source-code (embed-source "clojure-shadcn.ui.components.card") :namespace-path "src/cljs/clojure_shadcn/ui/components/card.cljs" :filename "card.cljs"}]))
+(defdoc Installation [] (r/as-element [helpers/installation-scene {:description "Composable content container with header, action, content, and footer regions." :npm-install nil :source-code (embed-source "clojure-shadcn.ui.components.card") :namespace-path "src/cljs/clojure_shadcn/ui/components/card.cljs" :filename "card.cljs"}]))
 (defstory ApiReference []
   (r/as-element (helpers/wrap-component
     [:div {:class "space-y-4 p-6 max-w-4xl"}

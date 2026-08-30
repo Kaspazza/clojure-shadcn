@@ -2,9 +2,9 @@
   (:require [clojure-shadcn.stories.helpers :as helpers]
             [clojure-shadcn.ui.components.menubar :as sut]
             [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 (def ^:export default #js {:title "Components/Menubar" :parameters #js {:layout "padded"}})
-(defn ^:export Installation [] (r/as-element [helpers/installation-scene {:description "Accessible application menubar with nested and selectable items." :npm-install "npm install @radix-ui/react-menubar lucide-react" :source-code (embed-source "clojure-shadcn.ui.components.menubar") :namespace-path "src/cljs/clojure_shadcn/ui/components/menubar.cljs" :filename "menubar.cljs"}]))
+(defdoc Installation [] (r/as-element [helpers/installation-scene {:description "Accessible application menubar with nested and selectable items." :npm-install "npm install @radix-ui/react-menubar lucide-react" :source-code (embed-source "clojure-shadcn.ui.components.menubar") :namespace-path "src/cljs/clojure_shadcn/ui/components/menubar.cljs" :filename "menubar.cljs"}]))
 (defstory ApiReference []
   (r/as-element (helpers/wrap-component
     [:div {:class "space-y-4 p-6 max-w-4xl"}

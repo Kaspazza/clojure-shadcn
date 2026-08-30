@@ -5,13 +5,13 @@
    [clojure-shadcn.ui.components.field  :as field]
    [clojure-shadcn.ui.components.select :as sut]
    [reagent.core                          :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
   #js {:title      "Components/Select"
        :parameters #js {:layout "padded"}})
 
-(defn ^:export Installation
+(defdoc Installation
   "Install dependencies and copy the component code into your project."
   []
   (r/as-element

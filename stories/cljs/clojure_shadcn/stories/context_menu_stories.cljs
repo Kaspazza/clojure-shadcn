@@ -2,10 +2,10 @@
   (:require [clojure-shadcn.stories.helpers :as helpers]
             [clojure-shadcn.ui.components.context-menu :as sut]
             [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default #js {:title "Components/Context Menu" :parameters #js {:layout "padded"}})
-(defn ^:export Installation []
+(defdoc Installation []
   (r/as-element [helpers/installation-scene {:description "Right-click menu with items, submenus, checkbox, and radio choices." :npm-install "npm install @radix-ui/react-context-menu lucide-react" :source-code (embed-source "clojure-shadcn.ui.components.context_menu") :namespace-path "src/cljs/clojure_shadcn/ui/components/context_menu.cljs" :filename "context_menu.cljs"}]))
 
 (defstory ApiReference []

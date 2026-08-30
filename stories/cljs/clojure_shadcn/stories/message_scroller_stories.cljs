@@ -3,13 +3,13 @@
    [clojure-shadcn.stories.helpers :as helpers]
    [clojure-shadcn.ui.components.message-scroller :as sut]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
   #js {:title "Components/Message Scroller"
        :parameters #js {:layout "padded"}})
 
-(defn ^:export Installation []
+(defdoc Installation []
   (r/as-element
    [helpers/installation-scene
     {:description "Auto-following, virtualizable message viewport from the current shadcn/ui registry."

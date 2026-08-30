@@ -5,7 +5,7 @@
    [clojure-shadcn.ui.components.carousel :as sut]
    [reagent.core                            :as r :refer [defc]]
    [reagent.hooks :as rhooks])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
   #js {:title      "Components/Carousel"
@@ -66,7 +66,7 @@
              (into [:div {:class "space-y-1"}]
                    (for [[idx event] (map-indexed vector (take-last 5 @event-log))]
                      [:p {:key idx :class "text-xs font-mono"} event])))]]])))))
-(defn ^:export Installation
+(defdoc Installation
   "Install dependencies and copy the component code into your project."
   []
   (r/as-element

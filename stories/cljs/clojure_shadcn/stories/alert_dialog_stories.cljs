@@ -4,12 +4,12 @@
    [clojure-shadcn.ui.components.alert-dialog :as sut]
    [clojure-shadcn.ui.components.button :as button]
    [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
   #js {:title "Components/Alert Dialog" :parameters #js {:layout "padded"}})
 
-(defn ^:export Installation []
+(defdoc Installation []
   (r/as-element
    [helpers/installation-scene
     {:description "Modal confirmation dialog that interrupts users before a consequential action."

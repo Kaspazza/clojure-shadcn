@@ -2,9 +2,9 @@
   (:require [clojure-shadcn.stories.helpers :as helpers]
             [clojure-shadcn.ui.components.native-select :as sut]
             [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 (def ^:export default #js {:title "Components/Native Select" :parameters #js {:layout "padded"}})
-(defn ^:export Installation [] (r/as-element [helpers/installation-scene {:description "Styled native select preserving platform semantics and accessibility." :npm-install "npm install lucide-react" :source-code (embed-source "clojure-shadcn.ui.components.native_select") :namespace-path "src/cljs/clojure_shadcn/ui/components/native_select.cljs" :filename "native_select.cljs"}]))
+(defdoc Installation [] (r/as-element [helpers/installation-scene {:description "Styled native select preserving platform semantics and accessibility." :npm-install "npm install lucide-react" :source-code (embed-source "clojure-shadcn.ui.components.native_select") :namespace-path "src/cljs/clojure_shadcn/ui/components/native_select.cljs" :filename "native_select.cljs"}]))
 (defstory ApiReference []
   (r/as-element (helpers/wrap-component
     [:div {:class "space-y-4 p-6 max-w-4xl"}

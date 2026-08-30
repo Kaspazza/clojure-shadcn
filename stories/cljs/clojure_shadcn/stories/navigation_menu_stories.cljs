@@ -2,9 +2,9 @@
   (:require [clojure-shadcn.stories.helpers :as helpers]
             [clojure-shadcn.ui.components.navigation-menu :as sut]
             [reagent.core :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 (def ^:export default #js {:title "Components/Navigation Menu" :parameters #js {:layout "padded"}})
-(defn ^:export Installation [] (r/as-element [helpers/installation-scene {:description "Responsive navigation with portaled viewport content." :npm-install "npm install @radix-ui/react-navigation-menu lucide-react" :source-code (embed-source "clojure-shadcn.ui.components.navigation_menu") :namespace-path "src/cljs/clojure_shadcn/ui/components/navigation_menu.cljs" :filename "navigation_menu.cljs"}]))
+(defdoc Installation [] (r/as-element [helpers/installation-scene {:description "Responsive navigation with portaled viewport content." :npm-install "npm install @radix-ui/react-navigation-menu lucide-react" :source-code (embed-source "clojure-shadcn.ui.components.navigation_menu") :namespace-path "src/cljs/clojure_shadcn/ui/components/navigation_menu.cljs" :filename "navigation_menu.cljs"}]))
 (defstory ApiReference []
   (r/as-element (helpers/wrap-component
     [:div {:class "space-y-4 p-6 max-w-4xl"}

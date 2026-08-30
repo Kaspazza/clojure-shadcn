@@ -90,10 +90,14 @@
                       {:story-name story-name})))
     (let [exported-name (with-meta story-name
                           (assoc (meta story-name) :export true))]
-      `(defn ~exported-name
-         ~@(when docstring [docstring])
-         []
-         ~@body))))
+      `(do
+         (defn ~exported-name
+           ~@(when docstring [docstring])
+           []
+           ~@body)
+         (set! (.-parameters ~story-name)
+               (~'js-obj "docs" (~'js-obj "codePanel" false
+                                            "canvas" (~'js-obj "sourceState" "none"))))))))
 
 (defmacro defstory
   "Defines an exported, zero-argument Storybook story with consumer-ready
