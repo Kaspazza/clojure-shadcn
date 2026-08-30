@@ -8,7 +8,7 @@ Last updated: 2026-02-06
 Based on Radix UI primitives.
 Documentation: https://www.radix-ui.com/primitives/docs/components/label"
   (:require
-   ["@radix-ui/react-label"       :as RadixLabel]
+   ["@radix-ui/react-label"     :as RadixLabel]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
 (defn label

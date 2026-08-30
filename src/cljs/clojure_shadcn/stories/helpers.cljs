@@ -5,11 +5,11 @@
 
   Ported from mateuszmazurczak.portfolio.utils."
   (:require
-   ["lucide-react"                      :refer [Check ChevronDown ChevronUp Copy]]
-   [clojure.string                      :as str]
-   [clojure-shadcn.ui.components.button :as button]
+   ["lucide-react"                          :refer [Check ChevronDown ChevronUp Copy]]
+   [clojure-shadcn.ui.components.button     :as button]
    [clojure-shadcn.ui.components.code-block :as code-block]
-   [reagent.core                        :as r]))
+   [clojure.string                          :as str]
+   [reagent.core                            :as r]))
 
 (defn copy-to-clipboard!
   "Copy text to clipboard with feedback.
@@ -79,7 +79,7 @@
   Storybook Docs, so consumers copy only the component usage."
   [& args]
   (let [has-opts? (and (seq args) (map? (first args)))
-        cmps      (if has-opts? (rest args) args)]
+        cmps (if has-opts? (rest args) args)]
     (into [:<>] cmps)))
 
 (defn installation-scene
@@ -126,9 +126,11 @@
   [type-str]
   (let [parts (str/split (or type-str "—") #"\s*\|\s*")]
     (into [:<>]
-          (interpose [:span {:class "text-xs text-muted-foreground mx-0.5"} "|"]
-                     (for [p parts]
-                       [:code {:class "text-xs bg-muted px-1.5 py-0.5 rounded"} p])))))
+          (interpose [:span {:class "text-xs text-muted-foreground mx-0.5"}
+                      "|"]
+           (for [p parts]
+             [:code {:class "text-xs bg-muted px-1.5 py-0.5 rounded"}
+              p])))))
 
 (defn api-prop-row
   "Renders a single prop row in a table-based API documentation.
@@ -146,17 +148,22 @@
   [:<>
    [:tr {:class "border-b last:border-0"}
     [:td {:class "py-3 pr-4 align-top"}
-     [:code {:class "text-xs bg-blue-500/10 text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded font-medium"}
+     [:code
+      {:class
+       "text-xs bg-blue-500/10 text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded font-medium"}
       name]]
     [:td {:class "py-3 pr-4 align-top"}
      [prop-type-badges type]]
     [:td {:class "py-3 align-top"}
      (if default
-       [:code {:class "text-xs bg-muted px-1.5 py-0.5 rounded"} default]
-       [:span {:class "text-xs text-muted-foreground"} "—"])]]
+       [:code {:class "text-xs bg-muted px-1.5 py-0.5 rounded"}
+        default]
+       [:span {:class "text-xs text-muted-foreground"}
+        "—"])]]
    (when description
      [:tr {:class "border-b last:border-0"}
-      [:td {:col-span 3 :class "pb-3 pt-0 text-xs text-muted-foreground"}
+      [:td {:col-span 3
+            :class "pb-3 pt-0 text-xs text-muted-foreground"}
        description]])])
 
 (defn api-component-card
@@ -182,20 +189,25 @@
    [:h4 {:class "text-sm font-semibold mb-1"}
     component-name]
    (when link
-     [:a {:href   (:href link)
+     [:a {:href (:href link)
           :target "_blank"
-          :rel    "noopener noreferrer"
-          :class  "text-xs text-primary underline underline-offset-2 hover:opacity-80 mb-2 inline-block"}
+          :rel "noopener noreferrer"
+          :class
+          "text-xs text-primary underline underline-offset-2 hover:opacity-80 mb-2 inline-block"}
       (:label link)])
    [:p {:class "text-sm text-muted-foreground mb-3 mt-2"}
     description]
    [:table {:class "w-full text-sm"}
     [:thead {}
      [:tr {:class "border-b"}
-      [:th {:class "pb-2 text-left text-xs font-semibold"} "Prop"]
-      [:th {:class "pb-2 text-left text-xs font-semibold"} "Type"]
-      [:th {:class "pb-2 text-left text-xs font-semibold"} "Default"]]]
+      [:th {:class "pb-2 text-left text-xs font-semibold"}
+       "Prop"]
+      [:th {:class "pb-2 text-left text-xs font-semibold"}
+       "Type"]
+      [:th {:class "pb-2 text-left text-xs font-semibold"}
+       "Default"]]]
     [:tbody {}
-     (for [{:keys [name] :as prop} props]
-       ^{:key name}
-       [api-prop-row prop])]]])
+     (for [{:keys [name]
+            :as prop}
+           props]
+       ^{:key name} [api-prop-row prop])]]])

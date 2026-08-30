@@ -13,13 +13,13 @@ Last updated: 2026-02-06
 Based on shadcn/ui component patterns.
 Documentation: https://ui.shadcn.com/docs/components"
   (:require
-   ["react"                               :as react]
+   ["react"                             :as react]
    [clojure-shadcn.ui.components.button :as mateuszmazurczak-button]
-   [clojure-shadcn.utils.props         :refer [normalize-props]]
+   [clojure-shadcn.utils.props          :refer [normalize-props]]
    [clojure-shadcn.utils.styles         :refer [merge-classes]]
-   [reagent.core                          :as    r
-                                          :refer [defc]]
-   [reagent.hooks                         :as rhooks]))
+   [reagent.core                        :as    r
+                                        :refer [defc]]
+   [reagent.hooks                       :as rhooks]))
 
 (def ^:private stepper-context (react/createContext nil))
 
@@ -52,9 +52,7 @@ Documentation: https://ui.shadcn.com/docs/components"
   Both kebab-case and camelCase prop spellings are accepted.
   
   Children: stepper-navigation, stepper-panel, stepper-controls, etc."
-  [{:as raw-props}
-   &
-   children]
+  [{:as raw-props} & children]
   (let [{:keys [current-step on-step-change variant label-orientation reverse-progress? class]
          :or {variant :horizontal
               label-orientation :horizontal
@@ -162,8 +160,8 @@ Documentation: https://ui.shadcn.com/docs/components"
 (defn- stepper-separator
   "Visual separator line between steps."
   [{:as raw-props}]
-  (let [{:keys [orientation label-orientation state disabled? is-last?]}
-        (normalize-props raw-props)]
+  (let [{:keys [orientation label-orientation state disabled? is-last?]} (normalize-props
+                                                                          raw-props)]
     (when-not is-last?
       [:div
        (cond-> {:data-component "stepper-separator"
@@ -200,8 +198,7 @@ Documentation: https://ui.shadcn.com/docs/components"
   
   Children: stepper-title, stepper-description, or other content"
  [{:as raw-props} & children]
- (let [{:keys [id index total current-idx disabled? icon class]}
-       (normalize-props raw-props)]
+ (let [{:keys [id index total current-idx disabled? icon class]} (normalize-props raw-props)]
    (let [ctx (rhooks/use-context stepper-context)
          variant (.-variant ctx)
          label-orientation (.-labelOrientation ctx)
@@ -272,7 +269,8 @@ Documentation: https://ui.shadcn.com/docs/components"
                               :is-last? is-last?}])
         ;; Vertical variant: separator and panel wrapper structure
         (when (= variant "vertical")
-          (let [;; For reverse progress, separator should be colored if next step is completed
+          (let [;; For reverse progress, separator should be colored if
+                ;; next step is completed
                 sep-state
                 (if reverse-progress? (step-state current-idx (inc index) reverse-progress?) state)]
             [:div {:class "flex gap-4"}

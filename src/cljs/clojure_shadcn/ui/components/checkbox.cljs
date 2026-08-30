@@ -8,11 +8,11 @@
   Based on Radix UI primitives.
   Documentation: https://www.radix-ui.com/primitives/docs/components/checkbox"
   (:require
-   ["@radix-ui/react-checkbox"    :as CheckboxPrimitive]
-   ["lucide-react"                :refer [Check]]
+   ["@radix-ui/react-checkbox"  :as CheckboxPrimitive]
+   ["lucide-react"              :refer [Check]]
    [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]
-   [reagent.core                  :as r]))
+   [reagent.core                :as r]))
 
 (defn- checked->radix
   "Coerces :indeterminate keyword to the \"indeterminate\" string expected by
@@ -68,17 +68,16 @@
     [:>
      (.-Root CheckboxPrimitive)
      (->
-      props
-      (assoc
-       :checked (checked->radix checked)
-       :on-checked-change (when on-checked-change
-                            (comp on-checked-change radix->checked))
-       :data-slot "checkbox"
-       :class
-       (merge-classes
-        "peer border-input dark:bg-input/30 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary data-[state=checked]:border-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive size-4 shrink-0 rounded-[4px] border shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
-        class))
-      (dissoc :class-name))
+       props
+       (assoc
+        :checked (checked->radix checked)
+        :on-checked-change (when on-checked-change (comp on-checked-change radix->checked))
+        :data-slot "checkbox"
+        :class
+        (merge-classes
+         "peer border-input dark:bg-input/30 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary data-[state=checked]:border-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive size-4 shrink-0 rounded-[4px] border shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
+         class))
+       (dissoc :class-name))
      [:>
       (.-Indicator CheckboxPrimitive)
       {:data-slot "checkbox-indicator"

@@ -7,7 +7,7 @@
   Based on Radix UI Avatar primitive.
   Documentation: https://www.radix-ui.com/primitives/docs/components/avatar"
   (:require
-   ["@radix-ui/react-avatar"      :as RadixAvatar]
+   ["@radix-ui/react-avatar"    :as RadixAvatar]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
 (defn avatar

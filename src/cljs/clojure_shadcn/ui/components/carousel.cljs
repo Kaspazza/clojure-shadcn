@@ -7,16 +7,16 @@ Last updated: 2026-02-06
 
 Custom component implementation."
   (:require
-   ["embla-carousel-react"                :as embla-carousel]
-   ["lucide-react"                        :refer [ArrowLeft ArrowRight]]
-   ["react"                               :as react]
-   [goog.object                           :as gobj]
+   ["embla-carousel-react"              :as embla-carousel]
+   ["lucide-react"                      :refer [ArrowLeft ArrowRight]]
+   ["react"                             :as react]
    [clojure-shadcn.ui.components.button :as mateuszmazurczak-button]
    [clojure-shadcn.utils.props          :refer [normalize-props]]
    [clojure-shadcn.utils.styles         :refer [merge-classes]]
-   [reagent.core                          :as    r
-                                          :refer [defc]]
-   [reagent.hooks                         :as rhooks]))
+   [goog.object                         :as gobj]
+   [reagent.core                        :as    r
+                                        :refer [defc]]
+   [reagent.hooks                       :as rhooks]))
 
 (def ^:private CarouselContext (react/createContext nil))
 
@@ -46,9 +46,7 @@ Custom component implementation."
       [carousel-item {} \"Slide 3\"]]
     [carousel-previous {}]
     [carousel-next {}]]"
- [{:as raw-props}
-  &
-  children]
+ [{:as raw-props} & children]
  (let [{:keys [orientation opts set-api plugins class]
         :or {orientation :horizontal}}
        (normalize-props raw-props)]
@@ -112,7 +110,7 @@ Custom component implementation."
               children)]))))
 
 (defc carousel-content
-  "Carousel content wrapper. Contains the carousel items.
+ "Carousel content wrapper. Contains the carousel items.
   
   Props:
   - `:class` - Additional Tailwind classes
@@ -121,24 +119,24 @@ Custom component implementation."
   [carousel-content {}
     [carousel-item {} \"Slide 1\"]
     [carousel-item {} \"Slide 2\"]]"
-  [{:keys [class]
-    :as props}
-   &
-   children]
-  (let [ctx (use-carousel)
-        carousel-ref (gobj/get ctx "carousel-ref")
-        orientation (gobj/get ctx "orientation")]
-    [:div {:ref carousel-ref
-           :class "overflow-hidden"
-           :data-slot "carousel-content"}
-     (into [:div
-            (-> (dissoc props :class)
-                (assoc :class (merge-classes
-                               "flex"
-                               (if (= orientation :horizontal) "-ml-4" "-mt-4 flex-col")
-                               class)
-                       :data-slot "carousel-content-inner"))]
-           children)]))
+ [{:keys [class]
+   :as props}
+  &
+  children]
+ (let [ctx (use-carousel)
+       carousel-ref (gobj/get ctx "carousel-ref")
+       orientation (gobj/get ctx "orientation")]
+   [:div {:ref carousel-ref
+          :class "overflow-hidden"
+          :data-slot "carousel-content"}
+    (into [:div
+           (-> (dissoc props :class)
+               (assoc :class (merge-classes
+                              "flex"
+                              (if (= orientation :horizontal) "-ml-4" "-mt-4 flex-col")
+                              class)
+                      :data-slot "carousel-content-inner"))]
+          children)]))
 
 (defc carousel-item
  "Carousel item. Individual slide in the carousel.

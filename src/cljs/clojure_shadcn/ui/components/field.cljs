@@ -346,8 +346,7 @@ Custom component implementation."
                               (:message (first unique-errors))
                               [:ul {:class "ml-4 flex list-disc flex-col gap-1"}
                                (for [[idx error] (map-indexed vector unique-errors)]
-                                 (when-let [msg (:message error)]
-                                   ^{:key idx} [:li msg]))]))))]
+                                 (when-let [msg (:message error)] ^{:key idx} [:li msg]))]))))]
     (when content
       [:div
        (-> props

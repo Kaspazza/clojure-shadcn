@@ -7,14 +7,14 @@ Last updated: 2026-02-06
 
 Custom component implementation."
   (:require
-   ["react"                                 :as react]
+   ["react"                               :as react]
    [clojure-shadcn.ui.components.textarea :as mateuszmazurczak-textarea]
    [clojure-shadcn.ui.components.tooltip  :as mateuszmazurczak-tooltip]
    [clojure-shadcn.utils.props            :refer [normalize-props]]
    [clojure-shadcn.utils.styles           :refer [merge-classes]]
-   [reagent.core                            :as    r
-                                            :refer [defc]]
-   [reagent.hooks                           :as rhooks]))
+   [reagent.core                          :as    r
+                                          :refer [defc]]
+   [reagent.hooks                         :as rhooks]))
 
 ;; Context for sharing state between prompt input components
 (def ^:private prompt-input-context (react/createContext nil))
@@ -59,9 +59,7 @@ Custom component implementation."
     [prompt-input-actions
       [prompt-input-action {:tooltip \"Send\"}
         [button {:on-click send-message} \"Send\"]]]]"
- [{:as raw-props}
-  &
-  children]
+ [{:as raw-props} & children]
  (let [{:keys [is-loading? value on-value-change max-height on-submit disabled? on-click class]
         :or {is-loading? false
              max-height 240
@@ -141,19 +139,21 @@ Custom component implementation."
        (normalize-props raw-props)]
    (let [context (use-prompt-input)
          {:keys [value set-value max-height on-submit disabled? textarea-ref]} context
-         adjust-height
-         (fn [el]
-           (when (and el (not disable-autosize?))
-             (set! (.. el -style -height) "auto")
-             (if (number? max-height)
-               (set! (.. el -style -height) (str (min (.-scrollHeight el) max-height) "px"))
-               (set! (.. el -style -height) (str "min(" (.-scrollHeight el) "px, " max-height ")")))))
+         adjust-height (fn [el]
+                         (when (and el (not disable-autosize?))
+                           (set! (.. el -style -height) "auto")
+                           (if (number? max-height)
+                             (set! (.. el -style -height)
+                                   (str (min (.-scrollHeight el) max-height) "px"))
+                             (set! (.. el -style -height)
+                                   (str "min(" (.-scrollHeight el) "px, " max-height ")")))))
          handle-ref (fn [el] (set! (.-current textarea-ref) el) (adjust-height el))
          handle-change (rhooks/use-callback
                         (fn [e] (adjust-height (.-target e)) (set-value (.. e -target -value)))
                         [set-value disable-autosize?])
          handle-key-down (rhooks/use-callback (fn [e]
-                                                (when (and (= (.-key e) "Enter") (not (.-shiftKey e)))
+                                                (when (and (= (.-key e) "Enter")
+                                                           (not (.-shiftKey e)))
                                                   (.preventDefault e)
                                                   (when on-submit (on-submit)))
                                                 (when on-key-down (on-key-down e)))
@@ -166,7 +166,8 @@ Custom component implementation."
             (set! (.. el -style -height) "auto")
             (if (number? max-height)
               (set! (.. el -style -height) (str (min (.-scrollHeight el) max-height) "px"))
-              (set! (.. el -style -height) (str "min(" (.-scrollHeight el) "px, " max-height ")")))))
+              (set! (.. el -style -height)
+                    (str "min(" (.-scrollHeight el) "px, " max-height ")")))))
         js/undefined)
       [value max-height disable-autosize?])
      [mateuszmazurczak-textarea/textarea

@@ -7,12 +7,12 @@ Last updated: 2026-02-06
 
 Custom component implementation."
   (:require
-   ["lucide-react"                        :refer [ChevronDown]]
-   ["use-stick-to-bottom"                 :refer [useStickToBottomContext]]
+   ["lucide-react"                      :refer [ChevronDown]]
+   ["use-stick-to-bottom"               :refer [useStickToBottomContext]]
    [clojure-shadcn.ui.components.button :as mateuszmazurczak-button]
    [clojure-shadcn.utils.styles         :refer [merge-classes]]
-   [reagent.core                          :as    r
-                                          :refer [defc]]))
+   [reagent.core                        :as    r
+                                        :refer [defc]]))
 
 (defc scroll-button
  "Scroll-to-bottom button that appears when user scrolls up in a chat container.

@@ -1,188 +1,207 @@
 (ns clojure-shadcn.stories.badge-stories
   "Storybook stories for the Badge component. Ported from mateuszmazurczak.portfolio.ui-components.badge."
   (:require
-   ["lucide-react"                         :refer [BadgeCheck Bookmark]]
+   ["lucide-react"                       :refer [BadgeCheck Bookmark]]
    [clojure-shadcn.stories.helpers       :as helpers]
    [clojure-shadcn.ui.components.badge   :as sut]
    [clojure-shadcn.ui.components.spinner :as spinner]
-   [reagent.core :as r])
+   [reagent.core                         :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
-  #js {:title      "Components/Badge"
+  #js {:title "Components/Badge"
        :parameters #js {:layout "padded"}})
 
 (defdoc Installation
-  "Install dependencies and copy the component code into your project."
-  []
-  (r/as-element
-  [helpers/installation-scene
-             {:description "Badge component with support for multiple variants."
-              :npm-install "npm install @radix-ui/react-slot"
-              :source-code (embed-source "clojure-shadcn.ui.components.badge")
-              :namespace-path "src/cljs/clojure_shadcn/ui/components/badge.cljs"
-              :filename "badge.cljs"}]))
+        "Install dependencies and copy the component code into your project."
+        []
+        (r/as-element [helpers/installation-scene
+                       {:description "Badge component with support for multiple variants."
+                        :npm-install "npm install @radix-ui/react-slot"
+                        :source-code (embed-source "clojure-shadcn.ui.components.badge")
+                        :namespace-path "src/cljs/clojure_shadcn/ui/components/badge.cljs"
+                        :filename "badge.cljs"}]))
 
-(defstory ApiReference
-  []
-  (r/as-element
+(defstory
+ ApiReference
+ []
+ (r/as-element
   (helpers/wrap-component
-    [:div {:class "p-6 max-w-4xl"}
-     [:div {:class "space-y-4"}
-       [helpers/api-component-card
-        {:component-name "badge"
-         :description "Compact status/metadata pill with variant styling and optional slot polymorphism."
-         :props
-         [{:name ":variant"      :type "keyword"      :default ":default" :description "One of: :default | :secondary | :destructive | :outline | :ghost | :link"}
-          {:name ":class"        :type "string"       :default nil        :description "Additional Tailwind classes"}
-          {:name ":as-child"     :type "boolean"      :default "false"    :description "Use Radix Slot polymorphism"}
-          {:name ":on-click"     :type "fn"           :default nil        :description "Click handler"}
-          {:name ":...dom-props" :type "map entries"  :default nil        :description "Forwarded to the rendered element"}]}]
-       [:div {:class "border rounded-lg p-4 bg-amber-500/10 border-amber-500/30 mb-4"}
-        [:h4 {:class "text-sm font-semibold mb-2"} "⚠️ Important Notes"]
-        [:ul {:class "text-xs text-muted-foreground space-y-1 list-disc pl-4"}
-         [:li "Use semantic variants (:destructive, :secondary) for meaning—not only color differences."]
-         [:li "For link-like badges, either use :variant :link or :as-child true with an anchor."]]]
-       [:div {:class "border rounded-lg p-4 bg-muted/50"}
-        [:h4 {:class "text-sm font-semibold mb-2"}
-         "Usage Example"]
-        [:pre {:class "text-xs overflow-x-auto"}
-         [:code "[badge {:variant :outline} \"Outline\"]"]]]]])))
+   [:div {:class "p-6 max-w-4xl"}
+    [:div {:class "space-y-4"}
+     [helpers/api-component-card
+      {:component-name "badge"
+       :description
+       "Compact status/metadata pill with variant styling and optional slot polymorphism."
+       :props [{:name ":variant"
+                :type "keyword"
+                :default ":default"
+                :description
+                "One of: :default | :secondary | :destructive | :outline | :ghost | :link"}
+               {:name ":class"
+                :type "string"
+                :default nil
+                :description "Additional Tailwind classes"}
+               {:name ":as-child"
+                :type "boolean"
+                :default "false"
+                :description "Use Radix Slot polymorphism"}
+               {:name ":on-click"
+                :type "fn"
+                :default nil
+                :description "Click handler"}
+               {:name ":...dom-props"
+                :type "map entries"
+                :default nil
+                :description "Forwarded to the rendered element"}]}]
+     [:div {:class "border rounded-lg p-4 bg-amber-500/10 border-amber-500/30 mb-4"}
+      [:h4 {:class "text-sm font-semibold mb-2"}
+       "⚠️ Important Notes"]
+      [:ul {:class "text-xs text-muted-foreground space-y-1 list-disc pl-4"}
+       [:li
+        "Use semantic variants (:destructive, :secondary) for meaning—not only color differences."]
+       [:li "For link-like badges, either use :variant :link or :as-child true with an anchor."]]]
+     [:div {:class "border rounded-lg p-4 bg-muted/50"}
+      [:h4 {:class "text-sm font-semibold mb-2"}
+       "Usage Example"]
+      [:pre {:class "text-xs overflow-x-auto"}
+       [:code "[badge {:variant :outline} \"Outline\"]"]]]]])))
 
-(defstory BadgeDemo
-  "Badge variants and numeric indicators.
+(defstory
+ BadgeDemo
+ "Badge variants and numeric indicators.
 
   Radix primitive: @radix-ui/react-slot (for :as-child polymorphism)
 
   Use badges for statuses, labels, and small counters."
-  []
-  (r/as-element
+ []
+ (r/as-element
   (helpers/wrap-component
-    [:div {:class "p-6 space-y-3"}
-     [:div {:class "flex flex-wrap gap-2"}
-      [sut/badge {}
-       "Badge"]
-      [sut/badge {:variant :secondary}
-       "Secondary"]
-      [sut/badge {:variant :destructive}
-       "Destructive"]
-      [sut/badge {:variant :outline}
-       "Outline"]
-      [sut/badge {:variant :ghost}
-       "Ghost"]
-      [sut/badge {:variant :link}
-       [:a {:href "#"}
-        "Link"]]]
-     [:div {:class "flex flex-wrap gap-2"}
-      [sut/badge {:variant :secondary
-                  :class "bg-blue-500 text-white"}
-       [:> BadgeCheck {:data-icon "inline-start"}]
-       "Verified"]
-      [sut/badge {:variant :outline}
-       "Bookmark"
-       [:> Bookmark {:data-icon "inline-end"}]]
-      [sut/badge {:class "h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"}
-       "8"]
-      [sut/badge {:variant :destructive
-                  :class "h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"}
-       "99"]
-      [sut/badge {:variant :outline
-                  :class "h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"}
-       "20+"]]])))
+   [:div {:class "p-6 space-y-3"}
+    [:div {:class "flex flex-wrap gap-2"}
+     [sut/badge {}
+      "Badge"]
+     [sut/badge {:variant :secondary}
+      "Secondary"]
+     [sut/badge {:variant :destructive}
+      "Destructive"]
+     [sut/badge {:variant :outline}
+      "Outline"]
+     [sut/badge {:variant :ghost}
+      "Ghost"]
+     [sut/badge {:variant :link}
+      [:a {:href "#"}
+       "Link"]]]
+    [:div {:class "flex flex-wrap gap-2"}
+     [sut/badge {:variant :secondary
+                 :class "bg-blue-500 text-white"}
+      [:> BadgeCheck {:data-icon "inline-start"}]
+      "Verified"]
+     [sut/badge {:variant :outline}
+      "Bookmark"
+      [:> Bookmark {:data-icon "inline-end"}]]
+     [sut/badge {:class "h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"}
+      "8"]
+     [sut/badge {:variant :destructive
+                 :class "h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"}
+      "99"]
+     [sut/badge {:variant :outline
+                 :class "h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"}
+      "20+"]]])))
 
-(defstory BadgeOutline
-  "Outlined badge for neutral tags.
+(defstory
+ BadgeOutline
+ "Outlined badge for neutral tags.
 
   Radix primitive: @radix-ui/react-slot
 
   Outline badges work well for metadata or filters."
-  []
-  (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
-                                       [sut/badge {:variant :outline}
-                                        "Outline"]])))
+ []
+ (r/as-element (helpers/wrap-component [:div {:class "p-6"}
+                                        [sut/badge {:variant :outline}
+                                         "Outline"]])))
 
-(defstory BadgeSecondary
-  "Secondary badge for low-emphasis labels.
+(defstory
+ BadgeSecondary
+ "Secondary badge for low-emphasis labels.
 
   Radix primitive: @radix-ui/react-slot
 
   Use :secondary for de-emphasized categories."
-  []
-  (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
-                                       [sut/badge {:variant :secondary}
-                                        "Secondary"]])))
+ []
+ (r/as-element (helpers/wrap-component [:div {:class "p-6"}
+                                        [sut/badge {:variant :secondary}
+                                         "Secondary"]])))
 
-(defstory BadgeDestructive
-  "Destructive badge for error states.
+(defstory
+ BadgeDestructive
+ "Destructive badge for error states.
 
   Radix primitive: @radix-ui/react-slot
 
   Use :destructive for failed or blocked statuses."
-  []
-  (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
-                                       [sut/badge {:variant :destructive}
-                                        "Destructive"]])))
+ []
+ (r/as-element (helpers/wrap-component [:div {:class "p-6"}
+                                        [sut/badge {:variant :destructive}
+                                         "Destructive"]])))
 
-(defstory BadgeGhost
-  "Ghost badge with no background.
+(defstory
+ BadgeGhost
+ "Ghost badge with no background.
 
   Radix primitive: @radix-ui/react-slot
 
   Use :ghost for minimal emphasis badges."
-  []
-  (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
-                                       [sut/badge {:variant :ghost}
-                                        "Ghost"]])))
+ []
+ (r/as-element (helpers/wrap-component [:div {:class "p-6"}
+                                        [sut/badge {:variant :ghost}
+                                         "Ghost"]])))
 
-(defstory BadgeLink
-  "Link-styled badge with underline on hover.
+(defstory
+ BadgeLink
+ "Link-styled badge with underline on hover.
 
   Radix primitive: @radix-ui/react-slot
 
   Use :link for clickable text-style badges."
-  []
-  (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
-                                       [sut/badge {:variant :link}
-                                        [:a {:href "#"}
-                                         "Link"]]])))
+ []
+ (r/as-element (helpers/wrap-component [:div {:class "p-6"}
+                                        [sut/badge {:variant :link}
+                                         [:a {:href "#"}
+                                          "Link"]]])))
 
-(defstory SpinnerBadge
-  "Badges paired with inline spinners.
+(defstory
+ SpinnerBadge
+ "Badges paired with inline spinners.
 
   Radix primitive: @radix-ui/react-slot
 
   Combine spinners with badges to show background activity."
-  []
-  (r/as-element
-  (helpers/wrap-component [:div {:class "p-6 flex flex-wrap items-center gap-4"}
-                                       [sut/badge {}
-                                        [spinner/spinner {:class "size-4"
-                                                          :data-icon "inline-start"}]
-                                        "Syncing"]
-                                       [sut/badge {:variant :secondary}
-                                        [spinner/spinner {:class "size-4"
-                                                          :data-icon "inline-start"}]
-                                        "Updating"]
-                                       [sut/badge {:variant :outline}
-                                        "Processing"
-                                        [spinner/spinner {:class "size-4"
-                                                          :data-icon "inline-end"}]]])))
+ []
+ (r/as-element (helpers/wrap-component [:div {:class "p-6 flex flex-wrap items-center gap-4"}
+                                        [sut/badge {}
+                                         [spinner/spinner {:class "size-4"
+                                                           :data-icon "inline-start"}]
+                                         "Syncing"]
+                                        [sut/badge {:variant :secondary}
+                                         [spinner/spinner {:class "size-4"
+                                                           :data-icon "inline-start"}]
+                                         "Updating"]
+                                        [sut/badge {:variant :outline}
+                                         "Processing"
+                                         [spinner/spinner {:class "size-4"
+                                                           :data-icon "inline-end"}]]])))
 
-(defstory BadgeAsChild
-  "Badge rendered as a link via :as-child.
+(defstory
+ BadgeAsChild
+ "Badge rendered as a link via :as-child.
 
   Radix primitive: @radix-ui/react-slot
 
   Our wrapper supports :as-child to render anchors or buttons with badge styles."
-  []
-  (r/as-element
-  (helpers/wrap-component [:div {:class "p-6"}
-                                       [sut/badge {:as-child true}
-                                        [:a {:href "#"
-                                             :class "inline-flex items-center gap-1"}
-                                         "View status"]]])))
+ []
+ (r/as-element (helpers/wrap-component [:div {:class "p-6"}
+                                        [sut/badge {:as-child true}
+                                         [:a {:href "#"
+                                              :class "inline-flex items-center gap-1"}
+                                          "View status"]]])))

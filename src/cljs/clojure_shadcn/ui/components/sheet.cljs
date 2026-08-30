@@ -13,8 +13,8 @@ Last updated: 2026-02-06
 Based on Radix UI primitives.
 Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
   (:require
-   ["@radix-ui/react-dialog"      :as DialogPrimitive]
-   ["lucide-react"                :refer [X]]
+   ["@radix-ui/react-dialog"    :as DialogPrimitive]
+   ["lucide-react"              :refer [X]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
 ;; ============================================================================

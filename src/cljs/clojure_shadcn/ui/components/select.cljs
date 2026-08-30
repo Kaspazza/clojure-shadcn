@@ -7,9 +7,9 @@ Last updated: 2026-02-06
 Based on Radix UI primitives.
 Documentation: https://www.radix-ui.com/primitives/docs/components/select"
   (:require
-   ["@radix-ui/react-select"      :as RadixSelect]
+   ["@radix-ui/react-select"    :as RadixSelect]
    [clojure-shadcn.utils.styles :refer [merge-classes]]
-   [reagent.core                  :as r]))
+   [reagent.core                :as r]))
 
 (defn- chevron-down-icon
   []

@@ -8,11 +8,11 @@ Last updated: 2026-02-06
 Based on Radix UI primitives.
 Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   (:require
-   ["@radix-ui/react-slot"        :refer [Slot]]
-   ["lucide-react"                :refer [ChevronRight MoreHorizontal]]
+   ["@radix-ui/react-slot"      :refer [Slot]]
+   ["lucide-react"              :refer [ChevronRight MoreHorizontal]]
    [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]
-   [reagent.core                  :as r]))
+   [reagent.core                :as r]))
 
 (defn breadcrumb
   "Breadcrumb root component (nav element).
@@ -94,9 +94,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   [breadcrumb-link {:href \"/docs\"} \"Documentation\"]
   [breadcrumb-link {:href \"/\" :as-child true}
     [:a {} \"Home\"]]"
-  [{:as raw-props}
-   &
-   children]
+  [{:as raw-props} & children]
   (let [{:keys [class as-child]
          :as props}
         (normalize-props raw-props)]

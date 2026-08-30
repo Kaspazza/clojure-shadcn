@@ -12,29 +12,42 @@ Custom component implementation."
    [clojure-shadcn.ui.components.tooltip  :as mateuszmazurczak-tooltip]
    [clojure-shadcn.utils.props            :refer [normalize-props]]
    [clojure-shadcn.utils.styles           :refer [merge-classes]]
-   [reagent.core                            :as r]))
+   [reagent.core                          :as r]))
 
 (defn message-group
   "Groups adjacent messages with canonical spacing."
-  [{:keys [class] :as props} & children]
-  (into [:div (-> props
-                   (assoc :data-slot "message-group"
-                          :class (merge-classes "flex min-w-0 flex-col gap-2" class))
-                   (dissoc :class-name))]
+  [{:keys [class]
+    :as props}
+   &
+   children]
+  (into [:div
+         (-> props
+             (assoc :data-slot "message-group"
+                    :class (merge-classes "flex min-w-0 flex-col gap-2" class))
+             (dissoc :class-name))]
         children))
 
 (defn message
   "Root message row. `:align` accepts `:start` or `:end` (default `:start`).
   Existing class-based alignment remains supported and additional props are forwarded."
-  [{:keys [class align] :or {align :start} :as props} & children]
-  (into [:div
-         (-> props
-             (assoc :data-slot "message" :data-align (name align)
-                    :class (merge-classes
-                            "group/message relative flex w-full min-w-0 gap-2 text-sm data-[align=end]:flex-row-reverse"
-                            class))
-             (dissoc :class-name :align))]
-        children))
+  [{:keys [class align]
+    :or {align :start}
+    :as props}
+   &
+   children]
+  (into
+   [:div
+    (->
+      props
+      (assoc
+       :data-slot "message"
+       :data-align (name align)
+       :class
+       (merge-classes
+        "group/message relative flex w-full min-w-0 gap-2 text-sm data-[align=end]:flex-row-reverse"
+        class))
+      (dissoc :class-name :align))]
+   children))
 
 (defn message-avatar
   "Message avatar component. Displays user avatar with optional fallback.
@@ -52,18 +65,26 @@ Custom component implementation."
                    :alt \"John Doe\"
                    :fallback \"JD\"}]"
   [{:as raw-props} & children]
-  (let [{:keys [src alt fallback delay-ms class] :as props}
-        (normalize-props raw-props)
-        wrapper-props (-> props
-                          (assoc :data-slot "message-avatar"
-                                 :class (merge-classes
-                                         "flex w-fit min-w-8 shrink-0 items-center justify-center self-end overflow-hidden rounded-full bg-muted group-has-data-[slot=message-footer]/message:-translate-y-8"
-                                         class))
-                          (dissoc :src :alt :fallback :delay-ms :class-name))]
+  (let
+    [{:keys [src alt fallback delay-ms class]
+      :as props}
+     (normalize-props raw-props)
+     wrapper-props
+     (->
+       props
+       (assoc
+        :data-slot "message-avatar"
+        :class
+        (merge-classes
+         "flex w-fit min-w-8 shrink-0 items-center justify-center self-end overflow-hidden rounded-full bg-muted group-has-data-[slot=message-footer]/message:-translate-y-8"
+         class))
+       (dissoc :src :alt :fallback :delay-ms :class-name))]
     (if (seq children)
       (into [:div wrapper-props] children)
-      [mateuszmazurczak-avatar/avatar wrapper-props
-       [mateuszmazurczak-avatar/avatar-image {:src src :alt alt}]
+      [mateuszmazurczak-avatar/avatar
+       wrapper-props
+       [mateuszmazurczak-avatar/avatar-image {:src src
+                                              :alt alt}]
        (when fallback
          [mateuszmazurczak-avatar/avatar-fallback {:delayMs delay-ms}
           fallback])])))
@@ -87,9 +108,11 @@ Custom component implementation."
     :as props}
    &
    children]
-  (let [base-classes "flex w-full min-w-0 flex-col gap-2.5 rounded-lg bg-secondary text-foreground prose break-words whitespace-normal group-data-[align=end]/message:*:data-slot:self-end"
-        combined-classes (merge-classes base-classes class)
-        content (first children)]
+  (let
+    [base-classes
+     "flex w-full min-w-0 flex-col gap-2.5 rounded-lg bg-secondary text-foreground prose break-words whitespace-normal group-data-[align=end]/message:*:data-slot:self-end"
+     combined-classes (merge-classes base-classes class)
+     content (first children)]
     (if markdown?
       [mateuszmazurczak-markdown/markdown
        (-> props
@@ -103,21 +126,41 @@ Custom component implementation."
 
 (defn message-header
   "Metadata/header row for a message."
-  [{:keys [class] :as props} & children]
-  (into [:div (-> props
-                   (assoc :data-slot "message-header"
-                          :class (merge-classes "flex max-w-full min-w-0 items-center px-3 text-xs font-medium text-muted-foreground group-has-data-[variant=ghost]/message:px-0" class))
-                   (dissoc :class-name))]
-        children))
+  [{:keys [class]
+    :as props}
+   &
+   children]
+  (into
+   [:div
+    (->
+      props
+      (assoc
+       :data-slot "message-header"
+       :class
+       (merge-classes
+        "flex max-w-full min-w-0 items-center px-3 text-xs font-medium text-muted-foreground group-has-data-[variant=ghost]/message:px-0"
+        class))
+      (dissoc :class-name))]
+   children))
 
 (defn message-footer
   "Metadata/footer row for a message."
-  [{:keys [class] :as props} & children]
-  (into [:div (-> props
-                   (assoc :data-slot "message-footer"
-                          :class (merge-classes "flex max-w-full min-w-0 items-center px-3 text-xs font-medium text-muted-foreground group-has-data-[variant=ghost]/message:px-0 group-data-[align=end]/message:justify-end" class))
-                   (dissoc :class-name))]
-        children))
+  [{:keys [class]
+    :as props}
+   &
+   children]
+  (into
+   [:div
+    (->
+      props
+      (assoc
+       :data-slot "message-footer"
+       :class
+       (merge-classes
+        "flex max-w-full min-w-0 items-center px-3 text-xs font-medium text-muted-foreground group-has-data-[variant=ghost]/message:px-0 group-data-[align=end]/message:justify-end"
+        class))
+      (dissoc :class-name))]
+   children))
 
 (defn message-actions
   "Message actions container. Groups action buttons/links for a message.

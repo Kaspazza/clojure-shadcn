@@ -7,10 +7,10 @@ Last updated: 2026-02-06
 
 Custom component implementation."
   (:require
-   ["cmdk"                                :refer [Command]]
-   ["lucide-react"                        :refer [SearchIcon]]
+   ["cmdk"                              :refer [Command]]
+   ["lucide-react"                      :refer [SearchIcon]]
    [clojure-shadcn.ui.components.dialog :as dialog]
-   [clojure-shadcn.utils.props         :refer [normalize-props]]
+   [clojure-shadcn.utils.props          :refer [normalize-props]]
    [clojure-shadcn.utils.styles         :refer [merge-classes]]))
 
 (defn command
@@ -68,9 +68,7 @@ Custom component implementation."
     [command-group {:heading \"Actions\"}
      [command-item {:onSelect #(js/console.log \"save\")} \"Save\"]
      [command-item {:onSelect #(js/console.log \"delete\")} \"Delete\"]]]]"
-  [{:as raw-props}
-   &
-   children]
+  [{:as raw-props} & children]
   (let [{:keys [title description class show-close-button]
          :or {title "Command Palette"
               description "Search for a command to run..."
@@ -88,16 +86,16 @@ Custom component implementation."
        description]]
      (into [dialog/dialog-content {:class (merge-classes "overflow-hidden p-0" class)
                                    :show-close-button show-close-button}
-            [command {:class (merge-classes "[&_[cmdk-group-heading]]:text-muted-foreground"
-                                            "[&_[data-slot=command-input-wrapper]]:h-12"
-                                            "[&_[cmdk-group-heading]]:px-2"
-                                            "[&_[cmdk-group-heading]]:font-medium"
-                                            "[&_[cmdk-group]]:px-2"
-                                            "[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0"
-                                            "[&_[cmdk-input-wrapper]_svg]:h-5"
-                                            "[&_[cmdk-input-wrapper]_svg]:w-5" "[&_[cmdk-input]]:h-12"
-                                            "[&_[cmdk-item]]:px-2" "[&_[cmdk-item]]:py-3"
-                                            "[&_[cmdk-item]_svg]:h-5" "[&_[cmdk-item]_svg]:w-5")}]]
+            [command {:class
+                      (merge-classes "[&_[cmdk-group-heading]]:text-muted-foreground"
+                                     "[&_[data-slot=command-input-wrapper]]:h-12"
+                                     "[&_[cmdk-group-heading]]:px-2"
+                                     "[&_[cmdk-group-heading]]:font-medium" "[&_[cmdk-group]]:px-2"
+                                     "[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0"
+                                     "[&_[cmdk-input-wrapper]_svg]:h-5"
+                                     "[&_[cmdk-input-wrapper]_svg]:w-5" "[&_[cmdk-input]]:h-12"
+                                     "[&_[cmdk-item]]:px-2" "[&_[cmdk-item]]:py-3"
+                                     "[&_[cmdk-item]_svg]:h-5" "[&_[cmdk-item]_svg]:w-5")}]]
            children)]))
 
 (defn command-input

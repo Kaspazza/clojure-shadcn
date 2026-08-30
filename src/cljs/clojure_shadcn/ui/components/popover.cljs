@@ -8,7 +8,7 @@ Last updated: 2026-02-06
 Based on Radix UI primitives.
 Documentation: https://www.radix-ui.com/primitives/docs/components/popover"
   (:require
-   ["@radix-ui/react-popover"     :as RadixPopover]
+   ["@radix-ui/react-popover"   :as RadixPopover]
    [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
@@ -80,9 +80,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/popover"
     [:h4 {:class \"font-medium\"} \"Popover Title\"]
     [:p {:class \"text-sm text-muted-foreground\"}
      \"Additional information here.\"]]]"
-  [{:as raw-props}
-   &
-   children]
+  [{:as raw-props} & children]
   (let [{:keys [class align side-offset]
          :or {align "center"
               side-offset 4}
@@ -111,4 +109,3 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/popover"
                                class))
                 (dissoc :class-name))]
            children)]))
-

@@ -11,39 +11,39 @@ Last updated: 2026-02-06
 
 Custom component implementation."
   (:require
-   ["@dnd-kit/core"                              :refer [DndContext
-                                                         KeyboardSensor
-                                                         MouseSensor
-                                                         TouchSensor
-                                                         closestCenter
-                                                         useSensor
-                                                         useSensors]]
-   ["@dnd-kit/modifiers"                         :refer [restrictToVerticalAxis]]
-   ["@dnd-kit/sortable"                          :refer [SortableContext
-                                                         useSortable
-                                                         verticalListSortingStrategy]]
-   ["@dnd-kit/utilities"                         :refer [CSS]]
-   ["@tanstack/react-table"                      :refer [flexRender
-                                                         getCoreRowModel
-                                                         getExpandedRowModel
-                                                         getFacetedRowModel
-                                                         getFacetedUniqueValues
-                                                         getFilteredRowModel
-                                                         getPaginationRowModel
-                                                         getSortedRowModel
-                                                         useReactTable]]
-   ["lucide-react"                               :refer [ArrowDown
-                                                         ArrowUp
-                                                         Check
-                                                         ChevronLeft
-                                                         ChevronRight
-                                                         ChevronsLeft
-                                                         ChevronsRight
-                                                         ChevronsUpDown
-                                                         EyeOff
-                                                         GripVertical
-                                                         PlusCircle
-                                                         X]]
+   ["@dnd-kit/core"                            :refer [DndContext
+                                                       KeyboardSensor
+                                                       MouseSensor
+                                                       TouchSensor
+                                                       closestCenter
+                                                       useSensor
+                                                       useSensors]]
+   ["@dnd-kit/modifiers"                       :refer [restrictToVerticalAxis]]
+   ["@dnd-kit/sortable"                        :refer [SortableContext
+                                                       useSortable
+                                                       verticalListSortingStrategy]]
+   ["@dnd-kit/utilities"                       :refer [CSS]]
+   ["@tanstack/react-table"                    :refer [flexRender
+                                                       getCoreRowModel
+                                                       getExpandedRowModel
+                                                       getFacetedRowModel
+                                                       getFacetedUniqueValues
+                                                       getFilteredRowModel
+                                                       getPaginationRowModel
+                                                       getSortedRowModel
+                                                       useReactTable]]
+   ["lucide-react"                             :refer [ArrowDown
+                                                       ArrowUp
+                                                       Check
+                                                       ChevronLeft
+                                                       ChevronRight
+                                                       ChevronsLeft
+                                                       ChevronsRight
+                                                       ChevronsUpDown
+                                                       EyeOff
+                                                       GripVertical
+                                                       PlusCircle
+                                                       X]]
    [clojure-shadcn.ui.components.badge         :as mateuszmazurczak-badge]
    [clojure-shadcn.ui.components.button        :as mateuszmazurczak-button]
    [clojure-shadcn.ui.components.command       :as mateuszmazurczak-command]
@@ -55,9 +55,9 @@ Custom component implementation."
    [clojure-shadcn.ui.components.table         :as mateuszmazurczak-table]
    [clojure-shadcn.utils.props                 :refer [normalize-props]]
    [clojure-shadcn.utils.styles                :refer [merge-classes]]
-   [reagent.core                                 :as    r
-                                                 :refer [defc]]
-   [reagent.hooks                                :as rhooks]))
+   [reagent.core                               :as    r
+                                               :refer [defc]]
+   [reagent.hooks                              :as rhooks]))
 
 (defn drag-handle-cell-ui
   [{:keys [listeners attributes]}]
@@ -68,8 +68,7 @@ Custom component implementation."
 
 (defc draggable-row
  [{:as raw-props}]
- (let [{:keys [row row-id render-sub-component]}
-       (normalize-props raw-props)]
+ (let [{:keys [row row-id render-sub-component]} (normalize-props raw-props)]
    (let [sortable (useSortable #js {:id row-id})
          ^js row row
          transform (.-transform sortable)
@@ -143,9 +142,9 @@ Custom component implementation."
                            (when column
                              (let [filter-values (vec new-selected-set)]
                                (.setFilterValue column
-                                                 (if (seq filter-values)
-                                                   (clj->js filter-values)
-                                                   js/undefined)))))})))]
+                                                (if (seq filter-values)
+                                                  (clj->js filter-values)
+                                                  js/undefined)))))})))]
     {:text-filter-value text-filter-value
      :on-text-filter-change (fn [value] (when text-column (.setFilterValue text-column value)))
      :text-placeholder text-placeholder
@@ -375,7 +374,8 @@ Custom component implementation."
                                              [:> ChevronsUpDown]))]
           [mateuszmazurczak-dropdown-menu/dropdown-menu-content {:align :start}
            [mateuszmazurczak-dropdown-menu/dropdown-menu-item {:on-select #(when on-toggle-sort
-                                                                             (on-toggle-sort false))}
+                                                                             (on-toggle-sort
+                                                                              false))}
             [:> ArrowUp]
             "Asc"]
            [mateuszmazurczak-dropdown-menu/dropdown-menu-item {:on-select #(when on-toggle-sort
@@ -468,7 +468,8 @@ Custom component implementation."
              (for [^js row rows]
                [:<> {:key (.-id row)}
                 ;; First row - normal row with cells
-                [mateuszmazurczak-table/table-row {:data-state (when (.getIsSelected ^js row) "selected")}
+                [mateuszmazurczak-table/table-row {:data-state (when (.getIsSelected ^js row)
+                                                                 "selected")}
                  (for [^js cell (.getVisibleCells ^js row)]
                    [mateuszmazurczak-table/table-cell {:key (.-id cell)}
                     (flexRender (.. cell -column -columnDef -cell) (.getContext ^js cell))])]
@@ -476,7 +477,8 @@ Custom component implementation."
                 (when (and render-sub-component (.getIsExpanded ^js row))
                   [mateuszmazurczak-table/table-row {}
                    ;; Single cell spanning all visible columns
-                   [mateuszmazurczak-table/table-cell {:col-span (.-length (.getVisibleCells ^js row))
+                   [mateuszmazurczak-table/table-cell {:col-span (.-length (.getVisibleCells ^js
+                                                                                             row))
                                                        :class "p-0"}
                     (render-sub-component row)]])]))]]]
         ;; Empty state - render outside table structure
@@ -495,14 +497,14 @@ Custom component implementation."
                    (flexRender (.. header -column -columnDef -header) (.getContext header)))])])]]
          [:div {:class "flex flex-1 items-center justify-center"}
           (cond
-            ;; If no-results-state is provided and is a function, call it with reset callback
+            ;; If no-results-state is provided and is a function, call it
+            ;; with reset callback
             (and no-results-state (fn? no-results-state)) (no-results-state on-reset-filters)
-            ;; If no-results-state is provided and is a component, render it
+            ;; If no-results-state is provided and is a component, render
+            ;; it
             no-results-state no-results-state
             ;; Otherwise, show empty-state or default text
             :else (or empty-state "No results."))]]))))
-
-
 
 (defn pagination-ui
   "Pagination controls for data table.
@@ -560,7 +562,8 @@ Custom component implementation."
        [mateuszmazurczak-select/select {:value (str page-size)
                                         :onValueChange (fn [value]
                                                          (when on-page-size-change
-                                                           (on-page-size-change (js/Number value))))}
+                                                           (on-page-size-change (js/Number
+                                                                                 value))))}
         [mateuszmazurczak-select/select-trigger {:class "h-8 w-[70px]"}
          [mateuszmazurczak-select/select-value {:placeholder page-size}]]
         [mateuszmazurczak-select/select-content {:side "top"}
@@ -669,17 +672,17 @@ Custom component implementation."
          [column-filters set-column-filters] (rhooks/use-state #js [])
          [sorting set-sorting] (rhooks/use-state #js [])
          [expanded set-expanded] (rhooks/use-state #js {})
-         ;; Normalize data rows to plain JS objects. TanStack reads cells via
-         ;; property access (e.g. `(.-original row)` returns the row object and
-         ;; accessors read `(.-id row)`); CLJS maps don't expose keyword keys
-         ;; as JS properties, so `(.-id nil)` crashes and map values render as
-         ;; opaque objects. Accept both CLJS vectors-of-maps and JS arrays.
-         data (rhooks/use-memo
-               (fn []
-                 (cond
-                   (and (array? data) (every? #(not (map? %)) data)) data
-                   :else (clj->js (vec data))))
-               #js [data])
+         ;; Normalize data rows to plain JS objects. TanStack reads cells
+         ;; via property access (e.g. `(.-original row)` returns the row
+         ;; object and accessors read `(.-id row)`); CLJS maps don't
+         ;; expose keyword keys as JS properties, so `(.-id nil)` crashes
+         ;; and map values render as opaque objects. Accept both CLJS
+         ;; vectors-of-maps and JS arrays.
+         data (rhooks/use-memo (fn []
+                                 (cond
+                                   (and (array? data) (every? #(not (map? %)) data)) data
+                                   :else (clj->js (vec data))))
+                               #js [data])
          ;; Drag-and-drop setup - must be defined before table-config
          dnd-enabled? (some? dnd-config)
          get-row-id-fn (when dnd-enabled? (:get-row-id dnd-config))
@@ -710,10 +713,11 @@ Custom component implementation."
                                    :getFacetedRowModel (getFacetedRowModel)
                                    :getFacetedUniqueValues (getFacetedUniqueValues)
                                    :getExpandedRowModel (getExpandedRowModel)}]
-              ;; Add getRowId when drag-and-drop is enabled. TanStack calls
-              ;; getRowId with the *original data row*, and our other two call
-              ;; sites (dnd-row-ids, get-row-id below) also pass the raw data
-              ;; row — so get-row-id uniformly receives a plain JS data row.
+              ;; Add getRowId when drag-and-drop is enabled. TanStack
+              ;; calls getRowId with the *original data row*, and our
+              ;; other two call sites (dnd-row-ids, get-row-id below)
+              ;; also pass the raw data row — so get-row-id uniformly
+              ;; receives a plain JS data row.
               (when (and dnd-enabled? get-row-id-fn) (aset base-config "getRowId" get-row-id-fn))
               base-config))
           #js [data
@@ -734,19 +738,19 @@ Custom component implementation."
          touch-sensor (when dnd-enabled? (useSensor TouchSensor #js {}))
          keyboard-sensor (when dnd-enabled? (useSensor KeyboardSensor #js {}))
          sensors (when dnd-enabled? (useSensors mouse-sensor touch-sensor keyboard-sensor))
-               handle-drag-end (when dnd-enabled?
-                                 (let [on-drag-end (:on-drag-end dnd-config)]
-                                   (rhooks/use-callback
-                                    (fn [^js event]
-                                      (let [^js active (.-active event)
-                                            ^js over (.-over event)]
-                                        (when (and active over (not= (.-id active) (.-id over)))
-                                          (when-let [handler on-drag-end]
-                                            (handler (.-id active) (.-id over))))))
-                                    ;; Depend on the fn by identity — (pr-str dnd-config) would
-                                    ;; fail to invalidate when the parent passes a fresh closure,
-                                    ;; leaving a stale handler cached.
-                                    #js [on-drag-end])))
+         handle-drag-end (when dnd-enabled?
+                           (let [on-drag-end (:on-drag-end dnd-config)]
+                             (rhooks/use-callback
+                              (fn [^js event]
+                                (let [^js active (.-active event)
+                                      ^js over (.-over event)]
+                                  (when (and active over (not= (.-id active) (.-id over)))
+                                    (when-let [handler on-drag-end]
+                                      (handler (.-id active) (.-id over))))))
+                              ;; Depend on the fn by identity — (pr-str dnd-config)
+                              ;; would fail to invalidate when the parent passes a
+                              ;; fresh closure, leaving a stale handler cached.
+                              #js [on-drag-end])))
          toolbar-data (when toolbar-config (extract-toolbar-data toolbar-config table-instance))
          pagination-data (extract-pagination-data table-instance)
          has-data? (pos? (.-length data))

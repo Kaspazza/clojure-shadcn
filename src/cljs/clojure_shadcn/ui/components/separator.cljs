@@ -12,7 +12,7 @@ Last updated: 2026-02-06
 Based on Radix UI primitives.
 Documentation: https://www.radix-ui.com/primitives/docs/components/separator"
   (:require
-   ["@radix-ui/react-separator"   :as SeparatorPrimitive]
+   ["@radix-ui/react-separator" :as SeparatorPrimitive]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
 (defn separator
@@ -79,6 +79,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/separator"
                                     (case orientation
                                       :horizontal "h-[1px] w-full"
                                       :vertical "h-full w-px"
-                                      "h-[1px] w-full") ; fallback to horizontal
+                                      "h-[1px] w-full") ; fallback to
+                                                        ; horizontal
                                     class))
        (dissoc :class-name))])

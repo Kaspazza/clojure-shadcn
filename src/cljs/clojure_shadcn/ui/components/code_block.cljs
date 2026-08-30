@@ -7,11 +7,11 @@ Last updated: 2026-02-06
 
 Custom component implementation."
   (:require
-   ["shiki"                       :refer [codeToHtml]]
+   ["shiki"                     :refer [codeToHtml]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]
-   [reagent.core                  :as    r
-                                  :refer [defc]]
-   [reagent.hooks                 :as rhooks]))
+   [reagent.core                :as    r
+                                :refer [defc]]
+   [reagent.hooks               :as rhooks]))
 
 (defn code-block
   "Root container for code blocks with styling.
@@ -39,7 +39,6 @@ Custom component implementation."
      props-without-class (dissoc props :class :class-name)
      div-props (assoc props-without-class :class combined-classes)]
     (into [:div div-props] children)))
-
 
 (defn highlight
   [code language theme set-highlighted-html]

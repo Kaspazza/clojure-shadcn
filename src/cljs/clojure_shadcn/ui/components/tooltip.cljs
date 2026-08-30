@@ -94,7 +94,7 @@ Last updated: 2026-02-06
 Based on Radix UI primitives.
 Documentation: https://www.radix-ui.com/primitives/docs/components/tooltip"
   (:require
-   ["@radix-ui/react-tooltip"     :as TooltipPrimitive]
+   ["@radix-ui/react-tooltip"   :as TooltipPrimitive]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
 ;;
@@ -102,8 +102,11 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/tooltip"
 ;;
 
 (def ^:private tooltip-provider (.-Provider TooltipPrimitive))
+
 (def ^:private tooltip-root (.-Root TooltipPrimitive))
+
 (def ^:private tooltip-trigger (.-Trigger TooltipPrimitive))
+
 (def ^:private tooltip-content-primitive (.-Content TooltipPrimitive))
 
 ;;

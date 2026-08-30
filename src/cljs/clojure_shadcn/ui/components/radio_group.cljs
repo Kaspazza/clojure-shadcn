@@ -10,7 +10,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/radio-group"
   (:require
    ["@radix-ui/react-radio-group" :as RadioGroupPrimitive]
    ["lucide-react"                :refer [CircleIcon]]
-   [clojure-shadcn.utils.styles :refer [merge-classes]]
+   [clojure-shadcn.utils.styles   :refer [merge-classes]]
    [reagent.core                  :as r]))
 
 (defn radio-group

@@ -10,8 +10,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dropdown-menu
   (:require
    ["@radix-ui/react-dropdown-menu" :as DropdownMenuPrimitive]
    ["lucide-react"                  :refer [Check ChevronRight Circle]]
-   [clojure-shadcn.utils.props    :refer [normalize-props]]
-   [clojure-shadcn.utils.styles   :refer [merge-classes]]
+   [clojure-shadcn.utils.props      :refer [normalize-props]]
+   [clojure-shadcn.utils.styles     :refer [merge-classes]]
    [reagent.core                    :as r]))
 
 ;; ============================================================================
@@ -236,9 +236,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dropdown-menu
     [dropdown-menu-separator {}]
     [dropdown-menu-item {} \"Profile\"]
     [dropdown-menu-item {} \"Settings\"]]"
-  [{:as raw-props}
-   &
-   children]
+  [{:as raw-props} & children]
   (let [{:keys [class side-offset]
          :or {side-offset 4}
          :as props}

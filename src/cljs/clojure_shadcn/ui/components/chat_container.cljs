@@ -7,7 +7,7 @@ Last updated: 2026-02-06
 
 Custom component implementation."
   (:require
-   ["use-stick-to-bottom"         :refer [StickToBottom]]
+   ["use-stick-to-bottom"       :refer [StickToBottom]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
 (defn chat-container-root

@@ -8,7 +8,7 @@
 Version: 2.0.0
 Last updated: 2026-02-11"
   (:require
-   ["lucide-react"               :refer [Moon Sun]]
+   ["lucide-react"              :refer [Moon Sun]]
    [clojure-shadcn.utils.styles :as styles]
    [clojure.string              :as str]))
 

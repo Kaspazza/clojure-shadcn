@@ -1,7 +1,6 @@
 (ns clojure-shadcn.stories.all-components-stories
   "A single scrollable catalogue of every clojure-shadcn component."
   (:require
-   [clojure.string                                            :as str]
    [clojure-shadcn.stories.accordion-stories                 :as accordion]
    [clojure-shadcn.stories.alert-dialog-stories              :as alert-dialog]
    [clojure-shadcn.stories.alert-stories                     :as alert]
@@ -77,95 +76,174 @@
    [clojure-shadcn.stories.toggle-stories                    :as toggle]
    [clojure-shadcn.stories.tooltip-stories                   :as tooltip]
    [clojure-shadcn.stories.typography-stories                :as typography]
+   [clojure.string                                           :as str]
    [reagent.core                                             :as r]))
 
 (def ^:export default
-  #js {:title      "Docs/All Components"
+  #js {:title "Docs/All Components"
        :parameters #js {:layout "fullscreen"}})
 
 (def components
-  [{:name "Accordion"                 :preview accordion/AccordionBasic}
-   {:name "Alert"                     :preview alert/AlertBasic}
-   {:name "Alert Dialog"              :preview alert-dialog/AlertDialogBasic}
-   {:name "Aspect Ratio"              :preview aspect-ratio/AspectRatioBasic}
-   {:name "Attachment"                :preview attachment/AttachmentStates}
-   {:name "Avatar"                    :preview avatar/AvatarDemo}
-   {:name "Badge"                     :preview badge/BadgeDemo}
-   {:name "Breadcrumb"                :preview breadcrumb/BreadcrumbDemo}
-   {:name "Bubble"                    :preview bubble/BubbleConversation}
-   {:name "Button"                    :preview button/ButtonSize}
-   {:name "Button Group"              :preview button-group/ButtonGroupDemo}
-   {:name "Calendar"                  :preview calendar/SingleDate}
-   {:name "Card"                      :preview card/CardDemo}
-   {:name "Carousel"                  :preview carousel/CarouselDemo}
-   {:name "Chart"                     :preview chart/BarChart}
-   {:name "Chat Container"            :preview chat-container/ChatContainerComposition}
-   {:name "Checkbox"                  :preview checkbox/CheckboxDemo}
-   {:name "Code Block"                :preview code-block/CodeBlockWithHeader}
-   {:name "Collapsible"               :preview collapsible/CollapsibleBasic}
-   {:name "Combobox"                  :preview combobox/Basic}
-   {:name "Command"                   :preview command/CommandDemo}
-   {:name "Context Menu"              :preview context-menu/ContextMenuDemo}
-   {:name "Data Table"                :preview data-table/BasicDataTable}
-   {:name "Date Picker"               :preview date-picker/DatePickerStates}
-   {:name "Dialog"                    :preview dialog/DialogDemo}
-   {:name "Direction"                 :preview direction/RightToLeft}
-   {:name "Drawer"                    :preview drawer/BottomDrawer}
-   {:name "Dropdown Menu"             :preview dropdown-menu/DropdownMenuDemo}
-   {:name "Empty"                     :preview empty/EmptyDemo}
-   {:name "Field"                     :preview field/FieldWithInput}
-   {:name "Form"                      :preview form/Validation}
-   {:name "Hover Card"                :preview hover-card/HoverCardBasic}
-   {:name "Input"                     :preview input/InputDemo}
-   {:name "Input Group"               :preview input-group/WithAddon}
-   {:name "Input OTP"                 :preview input-otp/SixDigits}
-   {:name "Item"                      :preview item/ItemVariants}
-   {:name "Kbd"                       :preview kbd/KbdDemo}
-   {:name "Label"                     :preview label/LabelDemo}
-   {:name "Loader"                    :preview loader/LoaderAllVariants}
-   {:name "Markdown"                  :preview markdown/MarkdownCombined}
-   {:name "Marker"                    :preview marker/MarkerVariants}
-   {:name "Menubar"                   :preview menubar/MenubarDemo}
-   {:name "Message"                   :preview message/MessageUserVsAssistant}
-   {:name "Message Scroller"          :preview message-scroller/Conversation}
-   {:name "Native Select"             :preview native-select/NativeSelectDemo}
-   {:name "Navigation Menu"           :preview navigation-menu/NavigationMenuDemo}
-   {:name "Notification"              :preview notification/ToastWithDescription}
-   {:name "Pagination"                :preview pagination/PaginationDemo}
-   {:name "Popover"                   :preview popover/PopoverDemo}
-   {:name "Progress"                  :preview progress/ProgressBasic}
-   {:name "Prompt Input"              :preview prompt-input/PromptInputMultipleActions}
-   {:name "Radio Group"               :preview radio-group/RadioGroupDemo}
-   {:name "Resizable"                 :preview resizable/Horizontal}
-   {:name "Scroll Area"               :preview scroll-area/ScrollAreaBasic}
-   {:name "Scroll Button"             :preview scroll-button/ScrollButtonStandalone}
-   {:name "Select"                    :preview select/SelectDemo}
-   {:name "Separator"                 :preview separator/SeparatorDemo}
-   {:name "Sheet"                     :preview sheet/SheetDemo}
-   {:name "Sidebar"                   :preview sidebar/SidebarDemo}
-   {:name "Skeleton"                  :preview skeleton/SkeletonCard}
-   {:name "Slider"                    :preview slider/SliderBasic}
-   {:name "Speech Recognition Button" :preview speech-recognition/SpeechRecognitionStandalone}
-   {:name "Spinner"                   :preview spinner/SpinnerDemo}
-   {:name "Stepper"                   :preview stepper/StepperHorizontal}
-   {:name "Switch"                    :preview switch/SwitchDemo}
-   {:name "System Message"            :preview system-message/SystemMessageDefault}
-   {:name "Table"                     :preview table/TableDemo}
-   {:name "Tabs"                      :preview tabs/TabsBasic}
-   {:name "Tag Combobox"              :preview tag-combobox/BasicTagSelection}
-   {:name "Textarea"                  :preview textarea/TextareaDemo}
-   {:name "Theme Toggle"              :preview theme-toggle/ThemeToggleInHeader}
-   {:name "Toggle"                    :preview toggle/ToggleBasic}
-   {:name "Toggle Group"              :preview toggle-group/ToggleGroupSingle}
-   {:name "Tooltip"                   :preview tooltip/TooltipDemo}
-   {:name "Typography"                :preview typography/TypeScale}])
+  [{:name "Accordion"
+    :preview accordion/AccordionBasic}
+   {:name "Alert"
+    :preview alert/AlertBasic}
+   {:name "Alert Dialog"
+    :preview alert-dialog/AlertDialogBasic}
+   {:name "Aspect Ratio"
+    :preview aspect-ratio/AspectRatioBasic}
+   {:name "Attachment"
+    :preview attachment/AttachmentStates}
+   {:name "Avatar"
+    :preview avatar/AvatarDemo}
+   {:name "Badge"
+    :preview badge/BadgeDemo}
+   {:name "Breadcrumb"
+    :preview breadcrumb/BreadcrumbDemo}
+   {:name "Bubble"
+    :preview bubble/BubbleConversation}
+   {:name "Button"
+    :preview button/ButtonSize}
+   {:name "Button Group"
+    :preview button-group/ButtonGroupDemo}
+   {:name "Calendar"
+    :preview calendar/SingleDate}
+   {:name "Card"
+    :preview card/CardDemo}
+   {:name "Carousel"
+    :preview carousel/CarouselDemo}
+   {:name "Chart"
+    :preview chart/BarChart}
+   {:name "Chat Container"
+    :preview chat-container/ChatContainerComposition}
+   {:name "Checkbox"
+    :preview checkbox/CheckboxDemo}
+   {:name "Code Block"
+    :preview code-block/CodeBlockWithHeader}
+   {:name "Collapsible"
+    :preview collapsible/CollapsibleBasic}
+   {:name "Combobox"
+    :preview combobox/Basic}
+   {:name "Command"
+    :preview command/CommandDemo}
+   {:name "Context Menu"
+    :preview context-menu/ContextMenuDemo}
+   {:name "Data Table"
+    :preview data-table/BasicDataTable}
+   {:name "Date Picker"
+    :preview date-picker/DatePickerStates}
+   {:name "Dialog"
+    :preview dialog/DialogDemo}
+   {:name "Direction"
+    :preview direction/RightToLeft}
+   {:name "Drawer"
+    :preview drawer/BottomDrawer}
+   {:name "Dropdown Menu"
+    :preview dropdown-menu/DropdownMenuDemo}
+   {:name "Empty"
+    :preview empty/EmptyDemo}
+   {:name "Field"
+    :preview field/FieldWithInput}
+   {:name "Form"
+    :preview form/Validation}
+   {:name "Hover Card"
+    :preview hover-card/HoverCardBasic}
+   {:name "Input"
+    :preview input/InputDemo}
+   {:name "Input Group"
+    :preview input-group/WithAddon}
+   {:name "Input OTP"
+    :preview input-otp/SixDigits}
+   {:name "Item"
+    :preview item/ItemVariants}
+   {:name "Kbd"
+    :preview kbd/KbdDemo}
+   {:name "Label"
+    :preview label/LabelDemo}
+   {:name "Loader"
+    :preview loader/LoaderAllVariants}
+   {:name "Markdown"
+    :preview markdown/MarkdownCombined}
+   {:name "Marker"
+    :preview marker/MarkerVariants}
+   {:name "Menubar"
+    :preview menubar/MenubarDemo}
+   {:name "Message"
+    :preview message/MessageUserVsAssistant}
+   {:name "Message Scroller"
+    :preview message-scroller/Conversation}
+   {:name "Native Select"
+    :preview native-select/NativeSelectDemo}
+   {:name "Navigation Menu"
+    :preview navigation-menu/NavigationMenuDemo}
+   {:name "Notification"
+    :preview notification/ToastWithDescription}
+   {:name "Pagination"
+    :preview pagination/PaginationDemo}
+   {:name "Popover"
+    :preview popover/PopoverDemo}
+   {:name "Progress"
+    :preview progress/ProgressBasic}
+   {:name "Prompt Input"
+    :preview prompt-input/PromptInputMultipleActions}
+   {:name "Radio Group"
+    :preview radio-group/RadioGroupDemo}
+   {:name "Resizable"
+    :preview resizable/Horizontal}
+   {:name "Scroll Area"
+    :preview scroll-area/ScrollAreaBasic}
+   {:name "Scroll Button"
+    :preview scroll-button/ScrollButtonStandalone}
+   {:name "Select"
+    :preview select/SelectDemo}
+   {:name "Separator"
+    :preview separator/SeparatorDemo}
+   {:name "Sheet"
+    :preview sheet/SheetDemo}
+   {:name "Sidebar"
+    :preview sidebar/SidebarDemo}
+   {:name "Skeleton"
+    :preview skeleton/SkeletonCard}
+   {:name "Slider"
+    :preview slider/SliderBasic}
+   {:name "Speech Recognition Button"
+    :preview speech-recognition/SpeechRecognitionStandalone}
+   {:name "Spinner"
+    :preview spinner/SpinnerDemo}
+   {:name "Stepper"
+    :preview stepper/StepperHorizontal}
+   {:name "Switch"
+    :preview switch/SwitchDemo}
+   {:name "System Message"
+    :preview system-message/SystemMessageDefault}
+   {:name "Table"
+    :preview table/TableDemo}
+   {:name "Tabs"
+    :preview tabs/TabsBasic}
+   {:name "Tag Combobox"
+    :preview tag-combobox/BasicTagSelection}
+   {:name "Textarea"
+    :preview textarea/TextareaDemo}
+   {:name "Theme Toggle"
+    :preview theme-toggle/ThemeToggleInHeader}
+   {:name "Toggle"
+    :preview toggle/ToggleBasic}
+   {:name "Toggle Group"
+    :preview toggle-group/ToggleGroupSingle}
+   {:name "Tooltip"
+    :preview tooltip/TooltipDemo}
+   {:name "Typography"
+    :preview typography/TypeScale}])
 
 (defn- component-card
   [{:keys [name preview]}]
-  [:section {:id    (-> name str/lower-case (str/replace #"\s+" "-"))
+  [:section {:id (-> name
+                     str/lower-case
+                     (str/replace #"\s+" "-"))
              :class "scroll-mt-6 overflow-hidden rounded-xl border bg-card shadow-sm"}
    [:header {:class "border-b bg-muted/30 px-5 py-4"}
-    [:h2 {:class "text-lg font-semibold tracking-tight"} name]]
+    [:h2 {:class "text-lg font-semibold tracking-tight"}
+     name]]
    [:div {:class "[&>.relative]:hidden"}
     [preview]]])
 
@@ -176,14 +254,16 @@
    [:main {:class "min-h-screen bg-background px-4 py-10 text-foreground sm:px-6 lg:px-8"}
     [:div {:class "mx-auto max-w-6xl"}
      [:header {:class "mb-10 max-w-3xl"}
-      [:p {:class "mb-2 text-sm font-medium text-primary"} "Component catalogue"]
-      [:h1 {:class "text-3xl font-bold tracking-tight sm:text-4xl"} "All components"]
+      [:p {:class "mb-2 text-sm font-medium text-primary"}
+       "Component catalogue"]
+      [:h1 {:class "text-3xl font-bold tracking-tight sm:text-4xl"}
+       "All components"]
       [:p {:class "mt-3 text-base leading-7 text-muted-foreground"}
        "Browse every component in the library without leaving the page. Scroll through the live examples, then use the Components section in the sidebar for installation details and API references."]
       [:p {:class "mt-4 text-sm text-muted-foreground"}
        (str (count components) " components")]]
      (into [:div {:class "grid gap-6"}]
-           (map (fn [{:keys [name] :as component}]
-                  ^{:key name}
-                  [component-card component])
+           (map (fn [{:keys [name]
+                      :as component}]
+                  ^{:key name} [component-card component])
                 components))]]))

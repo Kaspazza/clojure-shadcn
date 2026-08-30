@@ -6,16 +6,16 @@ Last updated: 2026-02-06
 
 Custom component implementation."
   (:require
-   ["lucide-react"                              :refer [Mic]]
-   ["react-speech-recognition"                  :default SpeechRecognition
-                                                :refer   [useSpeechRecognition]]
+   ["lucide-react"                            :refer [Mic]]
+   ["react-speech-recognition"                :default SpeechRecognition
+                                              :refer   [useSpeechRecognition]]
    [clojure-shadcn.ui.components.button       :as mateuszmazurczak-button]
    [clojure-shadcn.ui.components.loader       :as loader]
    [clojure-shadcn.ui.components.prompt-input :as prompt-input]
    [clojure-shadcn.utils.props                :refer [normalize-props]]
-   [reagent.core                                :as    r
-                                                :refer [defc]]
-   [reagent.hooks                               :as rhooks]))
+   [reagent.core                              :as    r
+                                              :refer [defc]]
+   [reagent.hooks                             :as rhooks]))
 
 (defc speech-recognition-button
  "Microphone button with speech recognition that updates text on change.
@@ -49,7 +49,8 @@ Custom component implementation."
                                                     (do (reset-transcript!)
                                                         (.startListening SpeechRecognition
                                                                          #js {:continuous continuous
-                                                                              :language language}))))
+                                                                              :language
+                                                                              language}))))
                                                 [listening? reset-transcript! continuous language])]
      (if browser-supports?
        [prompt-input/prompt-input-action {:tooltip (if listening? "Stop recording" "Voice input")
@@ -62,7 +63,8 @@ Custom component implementation."
            [loader/loader {:variant :wave
                            :size :sm}]
            [:> Mic {:size 18}])]]
-       [prompt-input/prompt-input-action {:tooltip "Speech recognition not supported in this browser"
+       [prompt-input/prompt-input-action {:tooltip
+                                          "Speech recognition not supported in this browser"
                                           :class class}
         [mateuszmazurczak-button/button {:variant :outline
                                          :size :icon

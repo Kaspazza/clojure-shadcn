@@ -14,8 +14,7 @@
   "True for keyword keys whose name contains an uppercase letter,
   e.g. :onCheckedChange, :asChild, :showCloseButton."
   [k]
-  (and (keyword? k)
-       (boolean (re-find #"[A-Z]" (name k)))))
+  (and (keyword? k) (boolean (re-find #"[A-Z]" (name k)))))
 
 (defn camel->kebab-key
   "Converts a camelCase keyword into a kebab-case keyword.
@@ -37,13 +36,9 @@
   If the same map contains both spellings, the explicit kebab-case entry wins
   and the camelCase duplicate is dropped (deterministic conflict resolution)."
   [props]
-  (reduce-kv
-   (fn [m k v]
-     (if (camel-case-key? k)
-       (let [kn (camel->kebab-key k)]
-         (if (contains? props kn)
-           m
-           (assoc m kn v)))
-       (assoc m k v)))
-   {}
-   props))
+  (reduce-kv (fn [m k v]
+               (if (camel-case-key? k)
+                 (let [kn (camel->kebab-key k)] (if (contains? props kn) m (assoc m kn v)))
+                 (assoc m k v)))
+             {}
+             props))

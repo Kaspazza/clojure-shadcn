@@ -8,7 +8,7 @@ Last updated: 2026-02-06
 Based on Radix UI primitives.
 Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   (:require
-   ["@radix-ui/react-slot"        :refer [Slot]]
+   ["@radix-ui/react-slot"      :refer [Slot]]
    [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
@@ -107,9 +107,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   ;; As child (polymorphic)
   [button {:as-child true}
     [:a {:href \"/login\"} \"Login\"]]"
-  [{:as raw-props}
-   &
-   children]
+  [{:as raw-props} & children]
   (let [{:keys [variant size class as-child]
          :or {variant :default
               size :default}

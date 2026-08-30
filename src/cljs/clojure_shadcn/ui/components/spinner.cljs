@@ -6,7 +6,7 @@ Last updated: 2026-02-06
 
 Custom component implementation."
   (:require
-   ["lucide-react"                :refer [Loader2]]
+   ["lucide-react"              :refer [Loader2]]
    [clojure-shadcn.utils.styles :as styles]))
 
 (defn spinner

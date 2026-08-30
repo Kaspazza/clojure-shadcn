@@ -9,8 +9,7 @@ Last updated: 2026-02-06
 
 Custom component implementation."
   (:require
-   ["lucide-react"                          :refer [Check Plus]]
-   [clojure.string                          :as str]
+   ["lucide-react"                        :refer [Check Plus]]
    [clojure-shadcn.ui.components.button   :as mateuszmazurczak-button]
    [clojure-shadcn.ui.components.command  :as command]
    [clojure-shadcn.ui.components.popover  :as popover]
@@ -18,9 +17,10 @@ Custom component implementation."
    [clojure-shadcn.ui.hooks.use-is-mobile :as use-mobile]
    [clojure-shadcn.utils.props            :refer [normalize-props]]
    [clojure-shadcn.utils.styles           :refer [merge-classes]]
-   [reagent.core                            :as    r
-                                            :refer [defc]]
-   [reagent.hooks                           :as hooks]))
+   [clojure.string                        :as str]
+   [reagent.core                          :as    r
+                                          :refer [defc]]
+   [reagent.hooks                         :as hooks]))
 
 (defc tag-list
  "Command list component for tag selection.
@@ -33,8 +33,7 @@ Custom component implementation."
   - `:set-open` - Callback to close the popover/sheet (fn [open?])
   Both kebab-case and camelCase prop spellings are accepted."
  [{:as raw-props}]
- (let [{:keys [tags selected-tag on-select on-create set-open]}
-       (normalize-props raw-props)]
+ (let [{:keys [tags selected-tag on-select on-create set-open]} (normalize-props raw-props)]
    (let [[search-value set-search-value] (hooks/use-state "")
          filtered-tags (if (and search-value (not= search-value ""))
                          (filter #(re-find (re-pattern (str "(?i)" search-value)) %) tags)
@@ -64,8 +63,9 @@ Custom component implementation."
           (when (seq filtered-tags)
             [command/command-separator {}])
           [command/command-group {:forceMount true}
-           [command/command-item {:on-select
-                                  (fn [_] (when on-create (on-create search-value)) (set-open false))
+           [command/command-item {:on-select (fn [_]
+                                               (when on-create (on-create search-value))
+                                               (set-open false))
                                   :forceMount true}
             [:> Plus {:class "size-4"}]
             [:span (str "Create \"" search-value "\"")]]]])]])))

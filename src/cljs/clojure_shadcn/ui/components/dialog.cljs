@@ -8,8 +8,8 @@ Last updated: 2026-02-06
 Based on Radix UI primitives.
 Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
   (:require
-   ["@radix-ui/react-dialog"      :as RadixDialog]
-   ["lucide-react"                :refer [XIcon]]
+   ["@radix-ui/react-dialog"    :as RadixDialog]
+   ["lucide-react"              :refer [XIcon]]
    [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
@@ -103,9 +103,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
    [dialog-footer {}
     [button {:variant :outline} \"Cancel\"]
     [button {} \"Confirm\"]]]"
-  [{:as raw-props}
-   &
-   children]
+  [{:as raw-props} & children]
   (let [{:keys [class show-close-button]
          :or {show-close-button true}
          :as props}

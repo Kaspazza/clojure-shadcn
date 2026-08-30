@@ -7,7 +7,7 @@ Last updated: 2026-02-06
 
 Custom component implementation."
   (:require
-   ["lucide-react"                        :refer [AlertCircle AlertTriangle Info]]
+   ["lucide-react"                      :refer [AlertCircle AlertTriangle Info]]
    [clojure-shadcn.ui.components.button :as mateuszmazurczak-button]
    [clojure-shadcn.utils.styles         :refer [merge-classes]]))
 

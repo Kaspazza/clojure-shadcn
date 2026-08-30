@@ -24,10 +24,14 @@ Last updated: 2026-02-06
 
 Custom component implementation."
   (:require
-   ["lucide-react" :refer [CircleCheckIcon InfoIcon Loader2Icon OctagonXIcon TriangleAlertIcon]]
-   ["sonner"       :refer [Toaster toast]]
+   ["lucide-react"             :refer [CircleCheckIcon
+                                       InfoIcon
+                                       Loader2Icon
+                                       OctagonXIcon
+                                       TriangleAlertIcon]]
+   ["sonner"                   :refer [Toaster toast]]
    [clojure-shadcn.utils.props :refer [normalize-props]]
-   [reagent.core   :as r]))
+   [reagent.core               :as r]))
 
 (defn toaster
   "Toast notification provider component.
@@ -109,8 +113,7 @@ Custom component implementation."
               {:duration 5000
                :position \"top-center\"})"
   ([message] (show-toast message nil))
-  ([message
-    {:as raw-props}]
+  ([message {:as raw-props}]
    (let [{:keys [description action duration position cancel id important on-dismiss on-auto-close]
           :or {position "top-right"}
           :as _options}
