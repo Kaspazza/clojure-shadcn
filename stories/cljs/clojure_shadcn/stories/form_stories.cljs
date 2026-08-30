@@ -111,3 +111,12 @@
        "Submit"]]]))
 
 (defstory Validation [] (r/as-element (helpers/wrap-component [:f> example-form])))
+
+
+(defstory FormPlayground
+  "Interactive form validation playground."
+  {:args {:email "" :submit-label "Submit"}
+   :arg-types {:email {:control {:type "text"}} :submit-label {:control {:type "text"}}}
+   :parameters {:controls {:exclude ["on-submit" "methods" "class"]}}}
+  [args]
+  (r/as-element (helpers/wrap-component [:form {:class "w-80 space-y-4" :on-submit #(.preventDefault %)} [input/input {:type "email" :default-value (:email args) :placeholder "you@example.com" :required true}] (button/button {:type "submit"} (:submit-label args))])))

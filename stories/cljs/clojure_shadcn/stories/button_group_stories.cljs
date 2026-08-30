@@ -69,13 +69,7 @@
                :default nil
                :description "Merged/forwarded to the Separator component."}]}]])))
 
-(defstory ButtonGroupDemo
-          []
-          (r/as-element (helpers/wrap-component [sut/button-group {}
-                                                 [button/button {:variant :outline}
-                                                  "Back"]
-                                                 [button/button {:variant :outline}
-                                                  "Next"]])))
+(defstory ButtonGroupDemo "Interactive button-group playground." {:args {:orientation "horizontal" :first-label "Back" :second-label "Next"} :arg-types {:orientation {:control {:type "select"} :options ["horizontal" "vertical"]} :first-label {:control {:type "text"}} :second-label {:control {:type "text"}}} :parameters {:controls {:exclude ["class" "role"]}} :decode-args (fn [{:keys [orientation] :as args}] (cond-> args orientation (update :orientation keyword)))} [args] (r/as-element (helpers/wrap-component [sut/button-group (select-keys args [:orientation]) [button/button {:variant :outline} (:first-label args)] [button/button {:variant :outline} (:second-label args)]])))
 
 (defstory ButtonGroupWithText
           []

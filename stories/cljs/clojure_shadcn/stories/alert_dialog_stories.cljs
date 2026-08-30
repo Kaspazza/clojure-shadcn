@@ -105,3 +105,21 @@
                         "Not yet"]
                        [sut/alert-dialog-action {}
                         "Publish"]]]]]))))]))
+
+
+(defstory
+ AlertDialogPlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:default-open false}
+  :arg-types {:default-open {:control {:type "boolean"}}}
+  :parameters {:controls {:exclude ["children" "open" "on-open-change" "on-click"]}}
+ }
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "p-6"}
+    [sut/alert-dialog (select-keys args [:default-open])
+     [sut/alert-dialog-trigger {:as-child true} [button/button {:variant :outline} "Delete account"]]
+     [sut/alert-dialog-content {}
+      [sut/alert-dialog-header {} [sut/alert-dialog-title {} "Delete account?"] [sut/alert-dialog-description {} "This action cannot be undone."]]
+      [sut/alert-dialog-footer {} [sut/alert-dialog-cancel {} "Cancel"] [sut/alert-dialog-action {} "Continue"]]]]])))

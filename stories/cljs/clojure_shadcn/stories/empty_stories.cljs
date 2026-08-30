@@ -110,36 +110,7 @@
        [:code
         "[empty {}\n [empty-header {}\n  [empty-media {:variant :icon} [:> Inbox]]\n  [empty-title {} \"No invoices yet\"]\n  [empty-description {} \"Create your first invoice to get started.\"]]\n [empty-content {}\n  [button {} \"Create invoice\"]]]"]]]]])))
 
-(defstory
- EmptyDemo
- "Primary empty state with actions.
-
-  Custom component built for empty or zero states.
-
-  Use primary + outline actions for next steps."
- []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/empty {}
-     [sut/empty-header {}
-      [sut/empty-media {:variant :icon}
-       [:> Inbox]]
-      [sut/empty-title {}
-       "No Projects Yet"]
-      [sut/empty-description {}
-       "You haven't created any projects yet. Get started by creating your first project."]]
-     [sut/empty-content {}
-      [:div {:class "flex gap-2"}
-       (button/button {} "Create Project")
-       (button/button {:variant :outline} "Import Project")]]
-     (button/button {:variant :link
-                     :as-child true
-                     :class "text-muted-foreground"
-                     :size :sm}
-                    [:a {:href "#"}
-                     "Learn More "
-                     [:> ArrowUpRight]])]])))
+(defstory EmptyDemo "Interactive empty-state playground." {:args {:media-variant "icon" :title "No Projects Yet" :description "You haven't created any projects yet." :action-label "Create Project"} :arg-types {:media-variant {:control {:type "select"} :options ["default" "icon"]} :title {:control {:type "text"}} :description {:control {:type "text"}} :action-label {:control {:type "text"}}} :parameters {:controls {:exclude ["class" "on-click"]}} :decode-args (fn [{:keys [media-variant] :as args}] (cond-> args media-variant (update :media-variant keyword)))} [args] (r/as-element (helpers/wrap-component [:div {:class "p-6"} [sut/empty {} [sut/empty-header {} [sut/empty-media {:variant (:media-variant args)} [:> Inbox]] [sut/empty-title {} (:title args)] [sut/empty-description {} (:description args)]] [sut/empty-content {} [button/button {} (:action-label args)]]]])))
 
 (defstory
  EmptyIcon

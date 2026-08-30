@@ -196,3 +196,20 @@
                                                        [:p {:class "text-xs text-muted-foreground"}
                                                         "Use ⌘K to search across projects."]]
                                                       :content-class "max-w-xs"}]])))
+
+
+(defstory
+ TooltipPlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:side "top"}
+  :arg-types {:side {:control {:type "select"} :options ["top" "right" "bottom" "left"]}}
+  :parameters {:controls {:exclude ["trigger" "content" "open" "default-open" "on-open-change"]}}
+  :decode-args (fn [{:keys [side] :as args}]
+                 (cond-> args side (update :side keyword)))}
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [sut/tooltip (merge (select-keys args [:side])
+                       {:trigger (button/button {:variant :outline} "Hover me")
+                        :content "Helpful context"
+                        :trigger-as-child? true})])))

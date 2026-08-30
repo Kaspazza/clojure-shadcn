@@ -85,3 +85,20 @@
                            [sut/panel {:defaultSize 65}
                             [:div {:class "grid h-full place-items-center"}
                              "Content"]]]])))
+
+
+(defstory
+ ResizablePlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:orientation "horizontal"}
+  :arg-types {:orientation {:control {:type "select"} :options ["horizontal" "vertical"]}}
+  :parameters {:controls {:exclude ["children" "on-layout"]}}
+  :decode-args (fn [{:keys [orientation] :as args}] (cond-> args orientation (update :orientation keyword)))}
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "h-48 w-[600px] overflow-hidden rounded-lg border"}
+    [sut/panel-group (select-keys args [:orientation])
+     [sut/panel {:defaultSize 40} [:div {:class "grid h-full place-items-center"} "Navigation"]]
+     [sut/handle {:with-handle? true}]
+     [sut/panel {:defaultSize 60} [:div {:class "grid h-full place-items-center"} "Content"]]]])))

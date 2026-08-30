@@ -308,3 +308,12 @@
                                           [sut/select-item {:value "enterprise"
                                                             :disabled true}
                                            "Enterprise (contact us)"]]]])))
+
+
+(defstory SelectPlayground
+  "Interactive select playground."
+  {:args {:default-value "banana" :disabled false :trigger-size "default"}
+   :arg-types {:default-value {:control {:type "select"} :options ["apple" "banana" "blueberry"]} :disabled {:control {:type "boolean"}} :trigger-size {:control {:type "select"} :options ["default" "sm"]}}
+   :parameters {:controls {:exclude ["value" "on-value-change" "class"]}}}
+  [args]
+  (r/as-element (helpers/wrap-component [:div {:class "p-6"} [sut/select (select-keys args [:default-value :disabled]) [sut/select-trigger {:class "w-[180px]" :size (:trigger-size args)} [sut/select-value {:placeholder "Select a fruit"}]] [sut/select-content {} [sut/select-item {:value "apple"} "Apple"] [sut/select-item {:value "banana"} "Banana"] [sut/select-item {:value "blueberry"} "Blueberry"]]]])))

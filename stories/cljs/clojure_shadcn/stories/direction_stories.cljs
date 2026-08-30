@@ -60,3 +60,16 @@
                             "واجهة من اليمين إلى اليسار"]
                            [:p {:class "text-muted-foreground"}
                             "يحافظ المزود على اتجاه مكونات Radix المتداخلة."]]])))
+
+
+(defstory
+ DirectionPlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:dir "ltr"}
+  :arg-types {:dir {:control {:type "select"} :options ["ltr" "rtl"]}}
+  :parameters {:controls {:exclude ["children"]}}
+ }
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [sut/direction-provider (select-keys args [:dir]) [:div {:class "rounded-md border p-4"} "Direction-aware content"] ])))

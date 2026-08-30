@@ -347,3 +347,20 @@
                    {:class
                     "inline-flex h-10 w-full items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"}
                    "Close"]]]]]]]]]))))]))
+
+
+(defstory
+ BreadcrumbPlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:class ""}
+  :arg-types {:class {:control {:type "text"}}}
+  :parameters {:controls {:exclude ["children"]}}
+ }
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [sut/breadcrumb (select-keys args [:class])
+    [sut/breadcrumb-list {}
+     [sut/breadcrumb-item {} [sut/breadcrumb-link {:href "#"} "Home"]]
+     [sut/breadcrumb-separator {}]
+     [sut/breadcrumb-item {} [sut/breadcrumb-page {} "Components"]]]])))

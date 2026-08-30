@@ -284,3 +284,18 @@
                                                       (sut/show-toast "Auto closes in 10 seconds"
                                                                       {:duration 10000}))}
                                          "Show Long Toast")])))
+
+
+(defstory
+ NotificationPlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:message "Changes saved"}
+  :arg-types {:message {:control {:type "text"}}}
+  :parameters {:controls {:exclude ["options" "on-dismiss" "on-auto-close" "on-click"]}}
+ }
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "p-6"}
+    [sut/toaster {}]
+    [button/button {:on-click #(sut/show-success (:message args))} "Show success toast"]])))

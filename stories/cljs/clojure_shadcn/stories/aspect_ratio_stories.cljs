@@ -36,19 +36,7 @@
                                     :default nil
                                     :description "Merged classes."}]}])))
 
-(defstory
- AspectRatioBasic
- []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "w-[450px] p-6"}
-    [sut/aspect-ratio {:ratio (/ 16 9)
-                       :class "overflow-hidden rounded-lg bg-muted"}
-     [:img
-      {:src
-       "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=900&q=80"
-       :alt "Green landscape"
-       :class "size-full object-cover"}]]])))
+(defstory AspectRatioBasic "Interactive aspect-ratio playground." {:args {:ratio 1.7778} :arg-types {:ratio {:control {:type "number"} :min 0.5 :max 3 :step 0.1}} :parameters {:controls {:exclude ["class"]}}} [args] (r/as-element (helpers/wrap-component [:div {:class "w-[450px] p-6"} [sut/aspect-ratio {:ratio (:ratio args) :class "overflow-hidden rounded-lg bg-muted"} [:img {:src "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=900&q=80" :alt "Green landscape" :class "size-full object-cover"}]]])))
 
 (defstory AspectRatioSquare
           []

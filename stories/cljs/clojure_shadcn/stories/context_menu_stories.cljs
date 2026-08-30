@@ -148,3 +148,18 @@
                        "Top"]
                       [sut/context-menu-radio-item {:value "bottom"}
                        "Bottom"]]]]))))]))
+
+
+(defstory
+ ContextMenuPlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:class ""}
+  :arg-types {:class {:control {:type "text"}}}
+  :parameters {:controls {:exclude ["children" "on-select" "on-value-change" "on-checked-change"]}}
+ }
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [sut/context-menu {}
+    [sut/context-menu-trigger {:class (str "flex h-32 w-64 items-center justify-center rounded-md border " (:class args))} "Right click here"]
+    [sut/context-menu-content {} [sut/context-menu-item {} "Back"] [sut/context-menu-item {:disabled true} "Forward"]]])))

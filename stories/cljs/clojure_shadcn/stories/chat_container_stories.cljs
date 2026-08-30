@@ -76,22 +76,7 @@
        [:code
         "[chat-container-root {:class \"h-64 border rounded-md\"}\n [chat-container-content {:class \"p-4 space-y-2\"}\n  [:div \"Message 1\"]\n  [:div \"Message 2\"]\n  [chat-container-scroll-anchor {}]]\n [scroll-button {:class \"absolute bottom-4 right-4\"}]]"]]]]])))
 
-(defstory
- ChatContainerBasic
- "Chat container with scroll anchor.
-  Built on use-stick-to-bottom for smooth scrolling.
-
-  Use chat-container-scroll-anchor for auto-scroll behavior."
- []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/chat-container-root {:class
-                                                                  "h-64 w-full rounded-md border"}
-                                         [sut/chat-container-content {:class "p-4 space-y-3"}
-                                          (for [idx (range 1 8)]
-                                            ^{:key idx}
-                                            [:div {:class "rounded-lg bg-muted px-3 py-2 text-sm"}
-                                             (str "Message " idx)])
-                                          [sut/chat-container-scroll-anchor {}]]]])))
+(defstory ChatContainerBasic "Interactive chat-container playground." {:args {:resize "smooth" :initial "instant"} :arg-types {:resize {:control {:type "select"} :options ["smooth" "instant"]} :initial {:control {:type "select"} :options ["instant" "smooth"]}} :parameters {:controls {:exclude ["class"]}}} [args] (r/as-element (helpers/wrap-component [:div {:class "p-6"} [sut/chat-container-root (assoc (select-keys args [:resize :initial]) :class "h-64 w-full rounded-md border") [sut/chat-container-content {:class "p-4 space-y-3"} (for [idx (range 1 8)] ^{:key idx} [:div {:class "rounded-lg bg-muted px-3 py-2 text-sm"} (str "Message " idx)]) [sut/chat-container-scroll-anchor {}]]]])))
 
 (defstory
  ChatContainerLong

@@ -90,3 +90,18 @@
                              :clearable? true}]))
 
 (defstory Basic [] (r/as-element (helpers/wrap-component [combobox-example])))
+
+
+(defstory ComboboxPlayground
+  "Interactive combobox playground."
+  {:args {:placeholder "Select runtime…" :search-placeholder "Search runtimes…" :clearable true}
+   :arg-types {:placeholder {:control {:type "text"}}
+               :search-placeholder {:control {:type "text"}}
+               :clearable {:control {:type "boolean"}}}
+   :parameters {:controls {:exclude ["items" "value" "on-value-change" "class" "content-class"]}}
+   :decode-args (fn [{:keys [clearable] :as args}] (assoc (dissoc args :clearable) :clearable? clearable))}
+  [args]
+  (r/as-element
+   (r/with-let [value (r/atom nil)]
+     (helpers/wrap-component
+      [sut/combobox (assoc args :items options :value @value :on-value-change #(reset! value %))]))))\n

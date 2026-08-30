@@ -269,3 +269,13 @@
        [sut/field-content {}
         [input/input {:id "zip"
                       :placeholder "94105"}]]]]]])))
+
+
+(defstory FieldPlayground
+  "Interactive field-layout playground."
+  {:args {:orientation "vertical" :placeholder "Jane Doe" :disabled false}
+   :arg-types {:orientation {:control {:type "select"} :options ["vertical" "horizontal" "responsive"]} :placeholder {:control {:type "text"}} :disabled {:control {:type "boolean"}}}
+   :parameters {:controls {:exclude ["class"]}}
+   :decode-args (fn [{:keys [orientation] :as args}] (update args :orientation keyword))}
+  [args]
+  (r/as-element (helpers/wrap-component [:div {:class "max-w-md p-6"} [sut/field {:orientation (:orientation args)} [sut/field-label {:html-for "field-playground"} "Name"] [input/input {:id "field-playground" :placeholder (:placeholder args) :disabled (:disabled args)}]]])))

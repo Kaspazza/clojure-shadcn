@@ -269,3 +269,20 @@
           (str "Release item " idx ": Updated feature details and fixes.")])]
       [sut/sheet-footer {}
        [:> sut/sheet-close {:as-child true} (button/button {:variant :outline} "Close")]]]]])))
+
+
+(defstory
+ SheetPlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:side "right"}
+  :arg-types {:side {:control {:type "select"} :options ["top" "right" "bottom" "left"]}}
+  :parameters {:controls {:exclude ["children" "open" "default-open" "on-open-change"]}}
+  :decode-args (fn [{:keys [side] :as args}]
+                 (cond-> args side (update :side keyword)))}
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "p-6"}
+    [sut/sheet {}
+     [sut/sheet-trigger {:as-child true} [button/button {:variant :outline} "Open sheet"]]
+     [sut/sheet-content (select-keys args [:side]) [sut/sheet-header {} [sut/sheet-title {} "Edit profile"] [sut/sheet-description {} "Make changes to your profile here."]]]]])))

@@ -66,3 +66,18 @@
                                                    "Focus or hover immediately"]
                                                   [sut/hover-card-content {}
                                                    "No opening delay."]]])))
+
+
+(defstory
+ HoverCardPlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:open-delay 700}
+  :arg-types {:open-delay {:control {:type "number"} :min 0 :max 2000 :step 100}}
+  :parameters {:controls {:exclude ["children" "open" "default-open" "on-open-change"]}}
+ }
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [sut/hover-card (select-keys args [:open-delay])
+    [sut/hover-card-trigger {:as-child true} [:a {:href "#" :class "underline"} "@shadcn"]]
+    [sut/hover-card-content {} "A reusable component library."]])))

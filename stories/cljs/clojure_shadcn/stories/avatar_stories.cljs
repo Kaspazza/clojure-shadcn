@@ -91,43 +91,7 @@
         "   \"UN\"]\n"
         "  [avatar-badge {:class \"bg-green-600\"}]]"]]]]])))
 
-(defstory
- AvatarDemo
- "Avatar with image, fallback, and grouped stack.
-
-  Radix primitive: @radix-ui/react-avatar
-
-  Use fallbacks for initials or offline states."
- []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6 flex flex-wrap items-center gap-12"}
-    [sut/avatar {}
-     [sut/avatar-image {:src "https://github.com/shadcn.png"
-                        :alt "@shadcn"}]
-     [sut/avatar-fallback {}
-      "CN"]]
-    [sut/avatar {:class "rounded-lg"}
-     [sut/avatar-image {:src "https://github.com/evilrabbit.png"
-                        :alt "@evilrabbit"}]
-     [sut/avatar-fallback {}
-      "ER"]]
-    [:div {:class "flex -space-x-2"}
-     [sut/avatar {:class "ring-2 ring-background grayscale"}
-      [sut/avatar-image {:src "https://github.com/shadcn.png"
-                         :alt "@shadcn"}]
-      [sut/avatar-fallback {}
-       "CN"]]
-     [sut/avatar {:class "ring-2 ring-background grayscale"}
-      [sut/avatar-image {:src "https://github.com/maxleiter.png"
-                         :alt "@maxleiter"}]
-      [sut/avatar-fallback {}
-       "LR"]]
-     [sut/avatar {:class "ring-2 ring-background grayscale"}
-      [sut/avatar-image {:src "https://github.com/evilrabbit.png"
-                         :alt "@evilrabbit"}]
-      [sut/avatar-fallback {}
-       "ER"]]]])))
+(defstory AvatarDemo "Interactive avatar playground." {:args {:size "default" :alt "Shadcn" :fallback "CN"} :arg-types {:size {:control {:type "select"} :options ["sm" "default" "lg"]} :alt {:control {:type "text"}} :fallback {:control {:type "text"}}} :parameters {:controls {:exclude ["class" "src"]}} :decode-args (fn [{:keys [size] :as args}] (cond-> args size (update :size keyword)))} [args] (r/as-element (helpers/wrap-component [:div {:class "p-6"} [sut/avatar (select-keys args [:size]) [sut/avatar-image {:src "https://github.com/shadcn.png" :alt (:alt args)}] [sut/avatar-fallback {} (:fallback args)]]])))
 
 (defstory
  EmptyAvatar

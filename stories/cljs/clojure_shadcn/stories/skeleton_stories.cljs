@@ -65,20 +65,7 @@
        [:code
         "[:div {:class \"space-y-2 w-64\"}\n [skeleton {:class \"h-4 w-40\"}]\n [skeleton {:class \"h-4 w-full\"}]\n [skeleton {:class \"h-4 w-5/6\" :role \"status\" :aria-label \"Loading profile\"}]]"]]]]])))
 
-(defstory
- SkeletonDemo
- "Avatar + text skeleton layout.
-
-  Native element: <div>
-
-  Use for loading placeholders while data is fetched."
- []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [:div {:class "flex items-center space-x-4"}
-                                         [sut/skeleton {:class "h-12 w-12 rounded-full"}]
-                                         [:div {:class "space-y-2"}
-                                          [sut/skeleton {:class "h-4 w-[250px]"}]
-                                          [sut/skeleton {:class "h-4 w-[200px]"}]]]])))
+(defstory SkeletonDemo "Interactive skeleton playground." {:args {:class "h-4 w-[250px] rounded-md"} :arg-types {:class {:control {:type "select"} :options ["h-4 w-[250px] rounded-md" "h-12 w-12 rounded-full" "h-24 w-full rounded-lg"]}} :parameters {:controls {:exclude ["role" "aria-label" "aria-live"]}}} [args] (r/as-element (helpers/wrap-component [:div {:class "p-6"} [sut/skeleton (select-keys args [:class])]])))
 
 (defstory
  SkeletonCard

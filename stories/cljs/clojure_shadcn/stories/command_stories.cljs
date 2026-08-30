@@ -309,3 +309,12 @@
                                             "Invite teammate"]
                                            [sut/command-item {}
                                             "Open settings"]]]]])))
+
+
+(defstory CommandPlayground
+  "Interactive command playground."
+  {:args {:placeholder "Type a command…" :loop false}
+   :arg-types {:placeholder {:control {:type "text"}} :loop {:control {:type "boolean"}}}
+   :parameters {:controls {:exclude ["value" "onValueChange" "filter" "class"]}}}
+  [args]
+  (r/as-element (helpers/wrap-component [:div {:class "p-6"} [sut/command {:loop (:loop args) :class "rounded-lg border shadow-md md:min-w-[450px]"} [sut/command-input {:placeholder (:placeholder args)}] [sut/command-list {} [sut/command-empty {} "No results found."] [sut/command-group {:heading "Suggestions"} [sut/command-item {} "Calendar"] [sut/command-item {} "Settings"]]]]])))

@@ -107,3 +107,19 @@
                                                                           :aria-label
                                                                           "Underline unavailable"}
                                                    [:> Underline]]]])))
+
+
+(defstory
+ ToggleGroupPlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:disabled false}
+  :arg-types {:disabled {:control {:type "boolean"}}}
+  :parameters {:controls {:exclude ["children" "value" "default-value" "on-value-change"]}}
+ }
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [sut/toggle-group (assoc (select-keys args [:disabled]) :type "single" :default-value "left" :variant :outline)
+    [sut/toggle-group-item {:value "left"} "Left"]
+    [sut/toggle-group-item {:value "center"} "Center"]
+    [sut/toggle-group-item {:value "right"} "Right"]])))

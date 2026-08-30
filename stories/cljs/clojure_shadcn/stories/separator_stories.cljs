@@ -60,27 +60,7 @@
        [:code
         "[:div {:class \"space-y-3\"}\n [:p \"Section A\"]\n [separator {:orientation :horizontal}]\n [:p \"Section B\"]]"]]]]])))
 
-(defstory
- SeparatorDemo
- "Horizontal and vertical separators.
-
-  Radix primitive: @radix-ui/react-separator
-
-  Use separators to divide sections or inline items."
- []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 space-y-4"}
-                                        [:div {:class "space-y-1"}
-                                         [:h4 {:class "text-sm font-medium"}
-                                          "Radix Primitives"]
-                                         [:p {:class "text-muted-foreground text-sm"}
-                                          "An open-source UI component library."]]
-                                        [sut/separator {:class "my-4"}]
-                                        [:div {:class "flex h-5 items-center space-x-4 text-sm"}
-                                         [:div "Blog"]
-                                         [sut/separator {:orientation :vertical}]
-                                         [:div "Docs"]
-                                         [sut/separator {:orientation :vertical}]
-                                         [:div "Source"]]])))
+(defstory SeparatorDemo "Interactive separator playground." {:args {:orientation "horizontal" :decorative true} :arg-types {:orientation {:control {:type "select"} :options ["horizontal" "vertical"]} :decorative {:control {:type "boolean"}}} :parameters {:controls {:exclude ["class"]}} :decode-args (fn [{:keys [orientation] :as args}] (cond-> args orientation (update :orientation keyword)))} [args] (r/as-element (helpers/wrap-component [:div {:class "flex h-16 items-center gap-4"} [:span "First"] [sut/separator (assoc (select-keys args [:orientation :decorative]) :class "data-[orientation=vertical]:h-full")] [:span "Second"]])))
 
 (defstory
  BreadcrumbSeparator

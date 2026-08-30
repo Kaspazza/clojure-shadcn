@@ -300,3 +300,18 @@
                                  "Actions"]]]
                               (into [sut/table-body {}]
                                     (map row->view rows))]]))))
+
+
+(defstory
+ TablePlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:class ""}
+  :arg-types {:class {:control {:type "text"}}}
+  :parameters {:controls {:exclude ["children"]}}
+ }
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [sut/table (select-keys args [:class])
+    [sut/table-header {} [sut/table-row {} [sut/table-head {} "Name"] [sut/table-head {} "Status"]]]
+    [sut/table-body {} [sut/table-row {} [sut/table-cell {} "Acme Inc."] [sut/table-cell {} "Active"]]]])))

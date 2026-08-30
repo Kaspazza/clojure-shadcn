@@ -58,19 +58,7 @@
        [:code
         "[:div {:class \"space-y-2\"}\n [label {:html-for \"email\"} \"Email\"]\n [input {:id \"email\" :type \"email\" :placeholder \"you@example.com\"}]]"]]]]])))
 
-(defstory
- LabelDemo
- "Label paired with a checkbox.
-
-  Radix primitive: @radix-ui/react-label
-
-  Labels improve accessibility and click targets."
- []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [:div {:class "flex items-center gap-2"}
-                                         [checkbox/checkbox {:id "terms"}]
-                                         [sut/label {:html-for "terms"}
-                                          "Accept terms and conditions"]]])))
+(defstory LabelDemo "Interactive label playground." {:args {:label "Accept terms and conditions" :disabled false} :arg-types {:label {:control {:type "text"}} :disabled {:control {:type "boolean"}}} :parameters {:controls {:exclude ["class" "html-for" "id" "on-checked-change"]}}} [args] (r/as-element (helpers/wrap-component [:div {:class "p-6"} [:div {:class "flex items-center gap-2"} [checkbox/checkbox {:id "terms" :disabled (:disabled args)}] [sut/label {:html-for "terms"} (:label args)]]])))
 
 (defstory
  InputWithLabel

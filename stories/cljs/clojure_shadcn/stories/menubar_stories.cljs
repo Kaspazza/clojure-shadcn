@@ -162,3 +162,19 @@
                         "Andy"]
                        [sut/menubar-radio-item {:value "benoit"}
                         "Benoit"]]]]]))))]))
+
+
+(defstory
+ MenubarPlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:class ""}
+  :arg-types {:class {:control {:type "text"}}}
+  :parameters {:controls {:exclude ["children" "on-value-change" "on-checked-change"]}}
+ }
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [sut/menubar (select-keys args [:class])
+    [sut/menubar-menu {}
+     [sut/menubar-trigger {} "File"]
+     [sut/menubar-content {} [sut/menubar-item {} "New tab"] [sut/menubar-item {} "Close"]]]])))

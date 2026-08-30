@@ -77,3 +77,17 @@
                 "Compact item"]
                [sut/item-description {}
                 "Muted, small variant"]]]])))
+
+
+(defstory
+ ItemPlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:variant "outline" :size "default"}
+  :arg-types {:variant {:control {:type "select"} :options ["default" "outline" "muted"]}
+              :size {:control {:type "select"} :options ["default" "sm"]}}
+  :parameters {:controls {:exclude ["children" "as-child?"]}}
+  :decode-args (fn [{:keys [variant size] :as args}] (cond-> args variant (update :variant keyword) size (update :size keyword)))}
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [sut/item (select-keys args [:variant :size]) [sut/item-content {} [sut/item-title {} "Quarterly report"] [sut/item-description {} "PDF · 2.4 MB"]]])))

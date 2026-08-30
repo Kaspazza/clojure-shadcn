@@ -85,3 +85,17 @@
                                                  [sut/toggle {:size :lg
                                                               :variant :outline}
                                                   "Large"]])))
+
+
+(defstory
+ TogglePlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:variant "outline" :size "default"}
+  :arg-types {:variant {:control {:type "select"} :options ["default" "outline"]}
+              :size {:control {:type "select"} :options ["default" "sm" "lg"]}}
+  :parameters {:controls {:exclude ["children" "pressed" "default-pressed" "on-pressed-change"]}}
+  :decode-args (fn [{:keys [variant size] :as args}] (cond-> args variant (update :variant keyword) size (update :size keyword)))}
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [sut/toggle (select-keys args [:variant :size]) "Toggle"])))

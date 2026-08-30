@@ -126,3 +126,20 @@
                                   [prompt-input/prompt-input-actions {}
                                    [sut/speech-recognition-button {:on-transcript-change
                                                                    #(reset! value %)}]]]]))))]))
+
+
+(defstory SpeechRecognitionPlayground
+  "Speech-recognition playground."
+  {:args {:language "en-US" :continuous true}
+   :arg-types {:language {:control {:type "select"} :options ["en-US" "pl-PL"]}
+               :continuous {:control {:type "boolean"}}}
+   :parameters {:controls {:exclude ["on-transcript-change" "class"]}}}
+  [args]
+  (r/as-element
+   (r/with-let [value (r/atom "")]
+     (helpers/wrap-component
+      [:div {:class "max-w-xl p-6"}
+       [prompt-input/prompt-input {:value @value :on-value-change #(reset! value %)}
+        [prompt-input/prompt-input-textarea {:placeholder "Speak or type…"}]
+        [prompt-input/prompt-input-actions {}
+         [sut/speech-recognition-button (assoc args :on-transcript-change #(reset! value %))]]]]))))\n

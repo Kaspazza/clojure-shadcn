@@ -94,3 +94,20 @@
                [sut/pagination-ellipsis {}]]
               [sut/pagination-item {}
                [sut/pagination-next {:href "#"}]]]])))
+
+
+(defstory
+ PaginationPlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:class ""}
+  :arg-types {:class {:control {:type "text"}}}
+  :parameters {:controls {:exclude ["children" "on-click"]}}
+ }
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [sut/pagination (select-keys args [:class])
+    [sut/pagination-content {}
+     [sut/pagination-item {} [sut/pagination-previous {:href "#"}]]
+     [sut/pagination-item {} [sut/pagination-link {:href "#" :is-active true} "1"]]
+     [sut/pagination-item {} [sut/pagination-next {:href "#"}]]]])))

@@ -7,7 +7,7 @@
    [clojure-shadcn.ui.components.label    :as label]
    [clojure-shadcn.ui.components.table    :as table]
    [reagent.core                          :as r])
-  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defdoc]]))
+  (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
   #js {:title "Components/Checkbox"
@@ -398,3 +398,14 @@
                            status]
                           [table/table-cell {:class "text-right"}
                            priority]]))]]])))))]))
+
+
+(defstory CheckboxPlayground
+  "Interactive checkbox playground."
+  {:args {:default-checked false :disabled false :required false}
+   :arg-types {:default-checked {:control {:type "boolean"}}
+               :disabled {:control {:type "boolean"}}
+               :required {:control {:type "boolean"}}}
+   :parameters {:controls {:exclude ["checked" "on-checked-change" "class"]}}}
+  [args]
+  (r/as-element (helpers/wrap-component [:div {:class "p-6"} [sut/checkbox (assoc args :id "checkbox-playground")] ])))

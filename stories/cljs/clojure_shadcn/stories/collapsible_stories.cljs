@@ -225,3 +225,18 @@
                [sut/collapsible-content {:class "mt-2"}
                 [:div {:class "rounded-md border bg-muted p-4 text-sm"}
                  body]]]))]))))]))
+
+
+(defstory
+ CollapsiblePlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:default-open false}
+  :arg-types {:default-open {:control {:type "boolean"}}}
+  :parameters {:controls {:exclude ["children" "open" "on-open-change"]}}
+ }
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [sut/collapsible (select-keys args [:default-open])
+    [sut/collapsible-trigger {:class "rounded-md border px-3 py-2"} "Toggle details"]
+    [sut/collapsible-content {:class "pt-2 text-sm"} "This content can be expanded."]])))

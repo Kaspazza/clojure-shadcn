@@ -67,47 +67,7 @@
       [:pre {:class "text-xs overflow-x-auto"}
        [:code "[badge {:variant :outline} \"Outline\"]"]]]]])))
 
-(defstory
- BadgeDemo
- "Badge variants and numeric indicators.
-
-  Radix primitive: @radix-ui/react-slot (for :as-child polymorphism)
-
-  Use badges for statuses, labels, and small counters."
- []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6 space-y-3"}
-    [:div {:class "flex flex-wrap gap-2"}
-     [sut/badge {}
-      "Badge"]
-     [sut/badge {:variant :secondary}
-      "Secondary"]
-     [sut/badge {:variant :destructive}
-      "Destructive"]
-     [sut/badge {:variant :outline}
-      "Outline"]
-     [sut/badge {:variant :ghost}
-      "Ghost"]
-     [sut/badge {:variant :link}
-      [:a {:href "#"}
-       "Link"]]]
-    [:div {:class "flex flex-wrap gap-2"}
-     [sut/badge {:variant :secondary
-                 :class "bg-blue-500 text-white"}
-      [:> BadgeCheck {:data-icon "inline-start"}]
-      "Verified"]
-     [sut/badge {:variant :outline}
-      "Bookmark"
-      [:> Bookmark {:data-icon "inline-end"}]]
-     [sut/badge {:class "h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"}
-      "8"]
-     [sut/badge {:variant :destructive
-                 :class "h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"}
-      "99"]
-     [sut/badge {:variant :outline
-                 :class "h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"}
-      "20+"]]])))
+(defstory BadgeDemo "Interactive badge playground." {:args {:variant "default" :label "Badge"} :arg-types {:variant {:control {:type "select"} :options ["default" "secondary" "destructive" "outline" "ghost" "link"]} :label {:control {:type "text"}}} :parameters {:controls {:exclude ["class" "as-child" "on-click"]}} :decode-args (fn [{:keys [variant] :as args}] (cond-> args variant (update :variant keyword)))} [args] (r/as-element (helpers/wrap-component [:div {:class "p-6"} [sut/badge (select-keys args [:variant]) (:label args)]])))
 
 (defstory
  BadgeOutline

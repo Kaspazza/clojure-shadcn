@@ -71,3 +71,13 @@
                              :on-select #(reset! selected %)}]))
 
 (defstory DateRange [] (r/as-element (helpers/wrap-component [date-range-example])))
+
+
+(defstory CalendarPlayground
+  "Interactive calendar playground."
+  {:args {:show-outside-days true :caption-layout "label" :number-of-months 1}
+   :arg-types {:show-outside-days {:control {:type "boolean"}} :caption-layout {:control {:type "select"} :options ["label" "dropdown"]} :number-of-months {:control {:type "select"} :options [1 2]}}
+   :parameters {:controls {:exclude ["selected" "on-select" "class" "class-names"]}}
+   :decode-args (fn [{:keys [caption-layout] :as args}] (update args :caption-layout keyword))}
+  [args]
+  (r/as-element (helpers/wrap-component [sut/calendar (assoc args :mode "single")])) )

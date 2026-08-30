@@ -76,3 +76,12 @@
                                                   "Unavailable"
                                                   [sut/date-picker {:default-value "2026-03-01"
                                                                     :disabled true}]]])))
+
+
+(defstory DatePickerPlayground
+  "Interactive native date-picker playground."
+  {:args {:default-value "2026-03-01" :disabled false :required false :min "2026-01-01" :max "2026-12-31"}
+   :arg-types {:default-value {:control {:type "text"}} :disabled {:control {:type "boolean"}} :required {:control {:type "boolean"}} :min {:control {:type "text"}} :max {:control {:type "text"}}}
+   :parameters {:controls {:exclude ["value" "on-change" "class" "wrapper-class" "icon-class"]}}}
+  [args]
+  (r/as-element (helpers/wrap-component [:div {:class "max-w-sm p-6"} [sut/date-picker args]])))

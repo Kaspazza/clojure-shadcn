@@ -76,16 +76,7 @@
        [:code
         "[system-message {:variant :action\n                 :icon [:span \"ℹ️\"]\n                 :fill true}\n \"Your workspace sync is up to date.\"]"]]]]])))
 
-(defstory
- SystemMessageDefault
- "Default system message.
-  Used for informational or action messages.
-
-  Supports optional CTA buttons via :cta prop."
- []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/system-message {}
-                                         "This is an informational system message."]])))
+(defstory SystemMessageDefault "Interactive system-message playground." {:args {:variant "action" :fill false :icon-hidden? false :message "This is an informational system message."} :arg-types {:variant {:control {:type "select"} :options ["action" "error" "warning"]} :fill {:control {:type "boolean"}} :icon-hidden? {:control {:type "boolean"}} :message {:control {:type "text"}}} :parameters {:controls {:exclude ["class" "icon" "cta" "on-click"]}} :decode-args (fn [{:keys [variant] :as args}] (cond-> args variant (update :variant keyword)))} [args] (r/as-element (helpers/wrap-component [:div {:class "p-6"} [sut/system-message (select-keys args [:variant :fill :icon-hidden?]) (:message args)]])))
 
 (defstory SystemMessageWarning
           "Warning system message.

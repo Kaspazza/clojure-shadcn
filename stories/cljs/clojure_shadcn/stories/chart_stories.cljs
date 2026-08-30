@@ -145,3 +145,19 @@
        {:dataKey "mobile"
         :fill "var(--color-mobile)"
         :radius 4}]]]])))
+
+
+(defstory
+ ChartPlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:class "min-h-[260px] w-full"}
+  :arg-types {:class {:control {:type "text"}}}
+  :parameters {:controls {:exclude ["children" "config" "data" "content" "tick-formatter"]}}
+ }
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "w-[560px] rounded-xl border bg-card p-6"}
+    [sut/chart-container {:config chart-config :class (:class args)}
+     [:> recharts/BarChart {:data chart-data :accessibilityLayer true}
+      [:> recharts/Bar {:dataKey "desktop" :fill "var(--color-desktop)" :radius 4}]]]])))

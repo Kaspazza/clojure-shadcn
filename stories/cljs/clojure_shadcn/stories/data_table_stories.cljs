@@ -635,3 +635,21 @@
                                            [sut/data-table {:columns @columns
                                                             :data #js []
                                                             :empty-state empty-state}]]))))]))
+
+
+(defstory
+ DataTablePlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:initial-page-size 5}
+  :arg-types {:initial-page-size {:control {:type "number"} :min 1 :max 5 :step 1}}
+  :parameters {:controls {:exclude ["columns" "data" "renderers" "on-row-click"]}}
+ }
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [(fn []
+     (let [data (r/atom (clj->js (make-task-data)))
+           columns (r/atom (make-columns))]
+       (fn []
+         [:div {:class "p-6"}
+          [sut/data-table (assoc (select-keys args [:initial-page-size]) :columns @columns :data @data)]]))) ])))

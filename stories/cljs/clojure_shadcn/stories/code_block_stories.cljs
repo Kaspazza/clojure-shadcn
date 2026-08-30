@@ -94,19 +94,7 @@
        [:code
         ";; Basic code block\n[code-block\n  [code-block-code {:code \"(+ 1 2)\" :language \"clojure\"}]]\n\n;; With filename header and copy button\n[code-block {}\n  [code-block-group {:class \"px-4 py-2 border-b text-xs text-muted-foreground\"}\n    [:span \"core.cljs\"]\n    [button {:size :sm :variant :ghost} \"Copy\"]]\n  [code-block-code {:code \"(defn hello [] ...)\" \n                    :language \"clojure\"\n                    :theme \"github-dark\"}]]"]]]]])))
 
-(defstory
- CodeBlockSingle
- "Single code block with syntax highlighting.
-  Uses Shiki for syntax highlighting.
-
-  Use for inline documentation and examples."
- []
- (r/as-element (helpers/wrap-component
-                [:div {:class "p-6 max-w-xl"}
-                 [sut/code-block {}
-                  [sut/code-block-code {:language "clojure"
-                                        :code
-                                        "(defn greet [name]\n  (str \"Hello, \" name \"!\"))"}]]])))
+(defstory CodeBlockSingle "Interactive code-block playground." {:args {:language "clojure" :theme "github-light" :code "(defn greet [name]\n  (str \"Hello, \" name \"!\"))"} :arg-types {:language {:control {:type "select"} :options ["clojure" "javascript" "python"]} :theme {:control {:type "select"} :options ["github-light" "github-dark" "one-dark-pro"]} :code {:control {:type "text"}}} :parameters {:controls {:exclude ["class"]}}} [args] (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-xl"} [sut/code-block {} [sut/code-block-code (select-keys args [:language :theme :code])]]])))
 
 (defstory CodeBlockWithHeader
           "Code block with filename header.

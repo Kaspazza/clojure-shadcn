@@ -57,31 +57,7 @@
                :default nil
                :description "Merged and forwarded to each underlying div."}]}]])))
 
-(defstory CardDemo
-          []
-          (r/as-element
-           (helpers/wrap-component
-            [sut/card {:class "w-full max-w-sm"}
-             [sut/card-header {}
-              [sut/card-title {}
-               "Create project"]
-              [sut/card-description {}
-               "Deploy a new project in one click."]
-              [sut/card-action {}
-               [button/button {:variant :ghost
-                               :size :sm}
-                "Help"]]]
-             [sut/card-content {:class "space-y-2"}
-              [:label {:for "project-name"
-                       :class "text-sm font-medium"}
-               "Name"]
-              [input/input {:id "project-name"
-                            :placeholder "My project"}]]
-             [sut/card-footer {:class "justify-between border-t"}
-              [button/button {:variant :outline}
-               "Cancel"]
-              [button/button {}
-               "Deploy"]]])))
+(defstory CardDemo "Interactive card playground." {:args {:title "Create project" :description "Deploy a new project in one click." :action-label "Deploy"} :arg-types {:title {:control {:type "text"}} :description {:control {:type "text"}} :action-label {:control {:type "text"}}} :parameters {:controls {:exclude ["class" "on-click"]}}} [args] (r/as-element (helpers/wrap-component [sut/card {:class "w-full max-w-sm"} [sut/card-header {} [sut/card-title {} (:title args)] [sut/card-description {} (:description args)]] [sut/card-content {} "Configure your project settings."] [sut/card-footer {:class "justify-end border-t"} [button/button {} (:action-label args)]]])))
 
 (defstory CardSimple
           []

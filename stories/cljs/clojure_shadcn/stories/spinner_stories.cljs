@@ -61,16 +61,7 @@
        [:code
         "[:div {:class \"flex items-center gap-2\"}\n [spinner {:class \"size-4\"}]\n [:span \"Loading data...\"]]"]]]]])))
 
-(defstory
- SpinnerBasic
- "Basic spinner indicator.
-
-  Icon: lucide-react Loader2
-
-  Use for lightweight loading indicators."
- []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/spinner {}]])))
+(defstory SpinnerBasic "Interactive spinner playground." {:args {:class "size-4" :aria-label "Loading"} :arg-types {:class {:control {:type "select"} :options ["size-3" "size-4" "size-6" "size-8"]} :aria-label {:control {:type "text"}}} :parameters {:controls {:exclude ["role"]}}} [args] (r/as-element (helpers/wrap-component [:div {:class "p-6"} [sut/spinner (select-keys args [:class :aria-label])]])))
 
 (defstory
  SpinnerSize

@@ -461,3 +461,18 @@
                                            [sut/sidebar-menu-item {}
                                             [sut/sidebar-menu-button {}
                                              "Settings"]]]]]])))
+
+
+(defstory
+ SidebarPlayground
+ "Controlled Storybook playground using only safe scalar component props."
+ {:args {:variant "sidebar"}
+  :arg-types {:variant {:control {:type "select"} :options ["sidebar" "floating" "inset"]}}
+  :parameters {:controls {:exclude ["children" "open?" "on-open-change" "is-mobile"]}}
+ }
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [sut/sidebar (assoc (select-keys args [:variant]) :open? true :is-mobile false :collapsible "none")
+    [sut/sidebar-header {} [:div {:class "px-2 text-sm font-semibold"} "Workspace"]]
+    [sut/sidebar-content {} [sut/sidebar-menu {} [sut/sidebar-menu-item {} [sut/sidebar-menu-button {:is-active? true} "Dashboard"]]]]])))

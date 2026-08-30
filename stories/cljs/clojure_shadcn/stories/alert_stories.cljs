@@ -38,14 +38,15 @@
               :description "Merged Tailwind classes."}]}])))
 
 (defstory AlertBasic
-          []
-          (r/as-element (helpers/wrap-component [:div {:class "max-w-xl p-6"}
-                                                 [sut/alert {}
-                                                  [:> CheckCircle2]
-                                                  [sut/alert-title {}
-                                                   "Success"]
-                                                  [sut/alert-description {}
-                                                   "Your changes have been saved."]]])))
+ "Interactive alert playground."
+ {:args {:variant "default" :title "Success" :description "Your changes have been saved."}
+  :arg-types {:variant {:control {:type "select"} :options ["default" "destructive"]}
+              :title {:control {:type "text"}}
+              :description {:control {:type "text"}}}
+  :parameters {:controls {:exclude ["class" "role"]}}
+  :decode-args (fn [{:keys [variant] :as args}] (cond-> args variant (update :variant keyword)))}
+ [args]
+ (r/as-element (helpers/wrap-component [:div {:class "max-w-xl p-6"} [sut/alert (select-keys args [:variant]) [:> CheckCircle2] [sut/alert-title {} (:title args)] [sut/alert-description {} (:description args)]]])))
 
 (defstory AlertDestructive
           []
