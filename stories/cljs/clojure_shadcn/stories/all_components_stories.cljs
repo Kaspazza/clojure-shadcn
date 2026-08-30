@@ -264,30 +264,78 @@
 (def ^:private base-presets
   [{:id :neutral
     :label "Neutral"
-    :swatch "oklch(0.55 0 0)"}
-   {:id :slate
-    :label "Slate"
-    :swatch "oklch(0.55 0.05 260)"}
+    :swatch "oklch(0.556 0 0)"}
+   {:id :stone
+    :label "Stone"
+    :swatch "oklch(0.553 0.013 58.071)"}
+   {:id :zinc
+    :label "Zinc"
+    :swatch "oklch(0.552 0.016 285.938)"}
+   {:id :mauve
+    :label "Mauve"
+    :swatch "oklch(0.542 0.034 322.5)"}
+   {:id :olive
+    :label "Olive"
+    :swatch "oklch(0.58 0.031 107.3)"}
+   {:id :mist
+    :label "Mist"
+    :swatch "oklch(0.56 0.021 213.5)"}
    {:id :taupe
     :label "Taupe"
-    :swatch "oklch(0.55 0.03 65)"}])
+    :swatch "oklch(0.547 0.021 43.1)"}])
 
 (def ^:private theme-presets
-  [{:id :graphite
-    :label "Graphite"
-    :swatch "oklch(0.32 0.02 260)"}
-   {:id :ocean
+  [{:id :amber
+    :label "Amber"
+    :swatch "oklch(0.769 0.188 70.08)"}
+   {:id :blue
     :label "Blue"
-    :swatch "oklch(0.55 0.24 263)"}
-   {:id :violet
-    :label "Violet"
-    :swatch "oklch(0.58 0.26 293)"}
+    :swatch "oklch(0.623 0.214 259.815)"}
+   {:id :cyan
+    :label "Cyan"
+    :swatch "oklch(0.715 0.143 215.221)"}
+   {:id :emerald
+    :label "Emerald"
+    :swatch "oklch(0.696 0.17 162.48)"}
+   {:id :fuchsia
+    :label "Fuchsia"
+    :swatch "oklch(0.667 0.295 322.15)"}
+   {:id :green
+    :label "Green"
+    :swatch "oklch(0.723 0.192 149.579)"}
+   {:id :indigo
+    :label "Indigo"
+    :swatch "oklch(0.585 0.233 277.117)"}
+   {:id :lime
+    :label "Lime"
+    :swatch "oklch(0.768 0.233 130.85)"}
+   {:id :orange
+    :label "Orange"
+    :swatch "oklch(0.705 0.213 47.604)"}
+   {:id :pink
+    :label "Pink"
+    :swatch "oklch(0.656 0.241 354.308)"}
+   {:id :purple
+    :label "Purple"
+    :swatch "oklch(0.627 0.265 303.9)"}
+   {:id :red
+    :label "Red"
+    :swatch "oklch(0.637 0.237 25.331)"}
    {:id :rose
     :label "Rose"
-    :swatch "oklch(0.59 0.25 18)"}
-   {:id :forest
-    :label "Green"
-    :swatch "oklch(0.53 0.15 150)"}])
+    :swatch "oklch(0.645 0.246 16.439)"}
+   {:id :sky
+    :label "Sky"
+    :swatch "oklch(0.685 0.169 237.323)"}
+   {:id :teal
+    :label "Teal"
+    :swatch "oklch(0.704 0.14 182.503)"}
+   {:id :violet
+    :label "Violet"
+    :swatch "oklch(0.606 0.25 292.717)"}
+   {:id :yellow
+    :label "Yellow"
+    :swatch "oklch(0.795 0.184 86.047)"}])
 
 (def ^:private radii
   [{:label "0"
@@ -337,7 +385,7 @@
 (defonce ^:private showcase-preset
   (r/atom (or (some-> (.getAttribute js/document.documentElement "data-theme")
                       keyword)
-              :ocean)))
+              :blue)))
 
 (defonce ^:private showcase-mode
   (r/atom (if (.contains (.-classList js/document.documentElement) "dark") :dark :light)))
@@ -384,7 +432,7 @@
 (defn- reset-theme!
   []
   (select-showcase-base! :taupe)
-  (select-showcase-preset! :ocean)
+  (select-showcase-preset! :blue)
   (select-showcase-mode! :light)
   (reset! showcase-radius "0.75rem")
   (reset! showcase-heading-font :figtree)
