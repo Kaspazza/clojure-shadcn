@@ -96,18 +96,18 @@
       [sut/form-field {:control (.-control methods)
                        :name "email"
                        :rules #js {:required "Email is required"}
-                       :render (fn [{:keys [field]}] [sut/form-item {}
-                                                      [sut/form-label {}
+                       :render (fn [{:keys [field]}] [:f> sut/form-item {}
+                                                      [:f> sut/form-label {}
                                                        "Email"]
-                                                      [sut/form-control {}
+                                                      [:f> sut/form-control {}
                                                        [input/input
                                                         (merge field
                                                                {:type "email"
                                                                 :placeholder "you@example.com"})]]
-                                                      [sut/form-description {}
+                                                      [:f> sut/form-description {}
                                                        "We only use this for account messages."]
-                                                      [sut/form-message {}]])}]
+                                                      [:f> sut/form-message {}]])}]
       [button/button {:type "submit"}
        "Submit"]]]))
 
-(defstory Validation [] (r/as-element (helpers/wrap-component [example-form])))
+(defstory Validation [] (r/as-element (helpers/wrap-component [:f> example-form])))

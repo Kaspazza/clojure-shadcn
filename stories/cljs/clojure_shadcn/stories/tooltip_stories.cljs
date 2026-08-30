@@ -131,8 +131,9 @@
   Use tooltips for concise, contextual hints."
  []
  (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/tooltip {:trigger [button/button {:variant :outline}
-                                                                "Hover"]
+                                        [sut/tooltip {:trigger (button/button {:variant :outline}
+                                                                "Hover")
+                                                      :trigger-as-child? true
                                                       :content "Add to library"}]])))
 
 (defstory
@@ -147,9 +148,10 @@
   (helpers/wrap-component
    [:div {:class "p-6 flex flex-wrap gap-4"}
     [sut/tooltip
-     {:trigger [button/button {:size :sm
+     {:trigger (button/button {:size :sm
                                :variant :outline}
-                "Save"]
+                "Save")
+      :trigger-as-child? true
       :content
       [:div {:class "flex items-center gap-2"}
        "Save Changes"
@@ -158,9 +160,10 @@
          "bg-muted text-muted-foreground inline-flex h-5 items-center rounded border px-1.5 font-mono text-[10px]"}
         "S"]]}]
     [sut/tooltip
-     {:trigger [button/button {:size :sm
+     {:trigger (button/button {:size :sm
                                :variant :outline}
-                "Print"]
+                "Print")
+      :trigger-as-child? true
       :content
       [:div {:class "flex items-center gap-2"}
        "Print Document"
@@ -183,8 +186,9 @@
   Rich content works well for onboarding hints."
  []
  (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/tooltip {:trigger [button/button {:variant :ghost}
-                                                                "Hover for info"]
+                                        [sut/tooltip {:trigger (button/button {:variant :ghost}
+                                                                "Hover for info")
+                                                      :trigger-as-child? true
                                                       :content
                                                       [:div {:class "space-y-1"}
                                                        [:p {:class "font-semibold"}

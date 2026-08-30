@@ -5,7 +5,8 @@
    ["lucide-react"              :refer [MinusIcon]]
    ["react"                     :as react]
    [clojure-shadcn.utils.props  :refer [normalize-props]]
-   [clojure-shadcn.utils.styles :refer [merge-classes]]))
+   [clojure-shadcn.utils.styles :refer [merge-classes]]
+   [reagent.core                :as r]))
 
 (defn input-otp
   [{:keys [class container-class]
@@ -35,15 +36,17 @@
              (dissoc :class-name))]
         children))
 
-(defn input-otp-slot
-  [{:keys [index class]
-    :as props}]
-  (let [^js context (react/useContext OTPInputContext)
+(defn- input-otp-slot-root
+  [^js react-props]
+  (let [{:keys [index class]
+         :as props} (.-slotProps react-props)
+        ^js context (react/useContext OTPInputContext)
         ^js slot (some-> context
                          .-slots
                          (aget index))]
-    [:div
-     (->
+    (r/as-element
+     [:div
+      (->
        props
        (assoc
         :data-slot "input-otp-slot"
@@ -54,12 +57,16 @@
          "relative flex h-9 w-9 items-center justify-center border-y border-r border-input text-sm shadow-xs transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md aria-invalid:border-destructive data-[active=true]:z-10 data-[active=true]:border-ring data-[active=true]:ring-[3px] data-[active=true]:ring-ring/50 dark:bg-input/30"
          class))
        (dissoc :class-name :index))
-     (some-> slot
-             .-char)
-     (when (some-> slot
-                   .-hasFakeCaret)
-       [:div {:class "pointer-events-none absolute inset-0 flex items-center justify-center"}
-        [:div {:class "h-4 w-px animate-pulse bg-foreground"}]])]))
+      (some-> slot
+              .-char)
+      (when (some-> slot
+                    .-hasFakeCaret)
+        [:div {:class "pointer-events-none absolute inset-0 flex items-center justify-center"}
+         [:div {:class "h-4 w-px animate-pulse bg-foreground"}]])])))
+
+(defn input-otp-slot
+  [props]
+  (r/create-element input-otp-slot-root #js {:slotProps props}))
 
 (defn input-otp-separator
   [props]

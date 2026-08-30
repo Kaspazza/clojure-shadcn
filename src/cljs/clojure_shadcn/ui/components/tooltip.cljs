@@ -23,16 +23,16 @@
     :content \"Helpful information\"}]
   ```
 
-  With Reagent component as trigger:
+  With a button component as trigger:
   ```clojure
-  ;; When using Reagent components, set trigger-as-child? false (default)
+  ;; Invoke the pure renderer so Radix receives its native Hiccup element.
   [tooltip
-   {:trigger [button {:variant :outline} \"Delete\"]
+   {:trigger (button {:variant :outline} \"Delete\")
     :content \"This will permanently delete the item\"
     :side :top
     :side-offset 8
     :content-class \"max-w-xs\"
-    :trigger-as-child? false}]  ; Required for Reagent components!
+    :trigger-as-child? true}]
   ```
 
   With plain hiccup as trigger (can use asChild):
@@ -44,15 +44,15 @@
     :trigger-as-child? true}]  ; Works with plain hiccup
   ```
 
-  Rich content with Reagent component:
+  Rich content with a button:
   ```clojure
   [tooltip
-   {:trigger [button {:variant :ghost :size :icon}
-              [:> info-icon {:class \"h-4 w-4\"}]]
+   {:trigger (button {:variant :ghost :size :icon}
+                     [:> info-icon {:class \"h-4 w-4\"}])
     :content [:div
               [:p {:class \"font-semibold\"} \"Pro Tip\"]
               [:p {:class \"text-xs\"} \"Keyboard shortcuts available.\"]]
-    :trigger-as-child? false}]  ; Required for Reagent components
+    :trigger-as-child? true}]
   ```
 
   Controlled state (basic):
@@ -165,29 +165,33 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/tooltip"
 
   ### Styling
   - `:content-class` - Additional Tailwind classes for content
-  - `:trigger-as-child?` - Merge trigger props into child element (default: false)
-    - Set to `false` when using Reagent components as trigger (recommended)
-    - Set to `true` only when using plain hiccup elements (e.g., `[:button ...]`)
+  - `:trigger-as-child?` - Merge trigger props into one child element (default: false)
+    - Set to `true` for interactive triggers so Radix does not add a nested button
+    - Invoke pure Reagent renderers directly so Radix receives their native Hiccup element
+    - Keep `false` only when Radix should provide the trigger button
   - `:disable-hoverable-content?` - Prevent tooltip from staying open on hover (default: false)
 
   ## Examples
 
   ```clojure
-  ;; Simple tooltip with plain hiccup
+  ;; Simple tooltip with a native button
   [tooltip
    {:trigger [:button \"Hover me\"]
-    :content \"Helpful info\"}]
+    :content \"Helpful info\"
+    :trigger-as-child? true}]
 
-  ;; With Reagent component (most common)
+  ;; With a pure Reagent renderer invoked directly
   [tooltip
-   {:trigger [button {:variant :outline} \"Delete\"]
+   {:trigger (button {:variant :outline} \"Delete\")
     :content \"This will permanently delete the item\"
     :side :top
-    :side-offset 8}]  ; trigger-as-child? defaults to false, perfect for components
+    :side-offset 8
+    :trigger-as-child? true}]
 
   ;; Rich content with custom styling
   [tooltip
-   {:trigger [button {:variant :ghost} \"Info\"]
+   {:trigger (button {:variant :ghost} \"Info\")
+    :trigger-as-child? true
     :content [:div
               [:p {:class \"font-semibold\"} \"Pro Tip\"]
               [:p {:class \"text-xs\"} \"Use Ctrl+K for shortcuts.\"]]

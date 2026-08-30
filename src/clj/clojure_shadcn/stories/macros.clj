@@ -105,28 +105,52 @@
   (let [[docstring declaration] (if (string? (first declaration))
                                   [(first declaration) (next declaration)]
                                   [nil declaration])
-        [params & body] declaration]
+        [config declaration] (if (map? (first declaration))
+                               [(first declaration) (next declaration)]
+                               [nil declaration])
+        [params & body] declaration
+        controlled-story? (some? config)]
     (when-not (symbol? story-name)
       (throw (ex-info "defstory expects a symbol name" {:story-name story-name})))
-    (when-not (= [] params)
-      (throw (ex-info "defstory expects an empty argument vector"
+    (when-not (if controlled-story?
+                (and (= 1 (count params)) (symbol? (first params)))
+                (= [] params))
+      (throw (ex-info (if controlled-story?
+                        "A controlled defstory expects one args symbol"
+                        "defstory expects an empty argument vector")
                       {:story-name story-name
                        :params params})))
     (when-not (seq body)
       (throw (ex-info "defstory expects at least one body form" {:story-name story-name})))
     (let [source (story-source body)
           api-reference? (= 'ApiReference story-name)
-          exported-name (with-meta story-name (assoc (meta story-name) :export true))]
-      `(do (defn ~exported-name ~@(when docstring [docstring]) [] ~@body)
-           (set! (.-parameters ~story-name)
-                 ~(if api-reference?
-                    `(~'js-obj
-                      "docs"
-                      (~'js-obj "codePanel" false "canvas" (~'js-obj "sourceState" "none")))
-                    `(~'js-obj
-                      "docs"
-                      (~'js-obj
-                       "codePanel"
-                       true
-                       "source"
-                       (~'js-obj "code" ~source "language" "clojure")))))))))
+          exported-name (with-meta story-name (assoc (meta story-name) :export true))
+          story-object (with-meta story-name {:tag 'js})
+          args-symbol (first params)
+          decode-args (:decode-args config)
+          story-parameters (if api-reference?
+                             `(~'js-obj
+                               "docs"
+                               (~'js-obj "codePanel" false "canvas" (~'js-obj "sourceState" "none")))
+                             `(~'js-obj
+                               "docs"
+                               (~'js-obj
+                                "codePanel"
+                                true
+                                "source"
+                                (~'js-obj "code" ~source "language" "clojure"))))]
+      `(do
+         (defn ~exported-name ~@(when docstring [docstring]) ~params
+           ~@(if controlled-story?
+               `((let [~args-symbol ~(if decode-args
+                                       `(~decode-args (~'js->clj ~args-symbol :keywordize-keys true))
+                                       `(~'js->clj ~args-symbol :keywordize-keys true))]
+                   ~@body))
+               body))
+         (set! (.-parameters ~story-object)
+               (~'js/Object.assign (~'js-obj) ~story-parameters ~(if-let [parameters (:parameters config)]
+                                                                         `(~'clj->js ~parameters)
+                                                                         `(~'js-obj))))
+         ~@(when controlled-story?
+             `((set! (.-args ~story-object) (~'clj->js ~(:args config)))
+               (set! (.-argTypes ~story-object) (~'clj->js ~(:arg-types config)))))))))

@@ -43,20 +43,24 @@ Custom component implementation."
           children)))
 
 (defn drawer-trigger
-  [{:keys [class]} & children]
-  (into [:>
-         drawer-trigger-primitive
-         (cond-> {:data-slot "drawer-trigger"}
-           class (assoc :className class))]
-        children))
+  [raw-props & children]
+  (let [{:keys [class as-child]} (normalize-props raw-props)]
+    (into [:>
+           drawer-trigger-primitive
+           (cond-> {:data-slot "drawer-trigger"}
+             class (assoc :className class)
+             (some? as-child) (assoc :asChild as-child))]
+          children)))
 
 (defn drawer-close
-  [{:keys [class]} & children]
-  (into [:>
-         drawer-close-primitive
-         (cond-> {:data-slot "drawer-close"}
-           class (assoc :className class))]
-        children))
+  [raw-props & children]
+  (let [{:keys [class as-child]} (normalize-props raw-props)]
+    (into [:>
+           drawer-close-primitive
+           (cond-> {:data-slot "drawer-close"}
+             class (assoc :className class)
+             (some? as-child) (assoc :asChild as-child))]
+          children)))
 
 (defn drawer-overlay
   [{:keys [class]}]

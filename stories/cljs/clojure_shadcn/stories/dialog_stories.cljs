@@ -317,7 +317,7 @@
            [drawer/drawer {:open @drawer-open?
                            :on-open-change #(reset! drawer-open? %)
                            :direction :bottom}
-            [drawer/drawer-trigger {}
+            [drawer/drawer-trigger {:as-child true}
              (button/button {:variant :outline} "Edit Profile (Drawer)")]
             [drawer/drawer-content {}
              [drawer/drawer-header {:class "text-left"}

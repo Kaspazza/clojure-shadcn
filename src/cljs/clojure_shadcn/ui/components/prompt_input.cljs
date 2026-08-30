@@ -211,6 +211,28 @@ Custom component implementation."
              (dissoc :class-name))]
         children))
 
+(defn- enhance-action-child
+  "Adds prompt-input action behavior to a Hiccup child.
+  Handles both component vectors (`[button props ...]`) and rendered
+  React element vectors (`[:> \"button\" props ...]`)."
+  [child disabled?]
+  (if-not (vector? child)
+    child
+    (let [props-index (if (= :> (first child)) 2 1)
+          child-props (nth child props-index nil)
+          child-props (if (map? child-props) child-props {})
+          original-on-click (:on-click child-props)
+          enhanced-props (assoc child-props
+                                :disabled (or (:disabled child-props) disabled?)
+                                :on-click (fn [e]
+                                            (.stopPropagation e)
+                                            (when original-on-click
+                                              (original-on-click e))))]
+      (if (map? (nth child props-index nil))
+        (assoc child props-index enhanced-props)
+        (into (subvec child 0 props-index)
+              (cons enhanced-props (subvec child props-index)))))))
+
 (defc prompt-input-action
  "Individual action button with tooltip for prompt input.
   Must be used within a prompt-input component to respect disabled state.
@@ -240,19 +262,8 @@ Custom component implementation."
  (let [context (use-prompt-input)
        {:keys [disabled?]} context
        child (first children)
-       ;; Wrap child with stop propagation and disabled state
-       enhanced-child (if (vector? child)
-                        (update child
-                                1
-                                (fn [child-props]
-                                  (let [original-on-click (:on-click child-props)]
-                                    (assoc child-props
-                                           :disabled (or (:disabled child-props) disabled?)
-                                           :on-click (fn [e]
-                                                       (.stopPropagation e)
-                                                       (when original-on-click
-                                                         (original-on-click e)))))))
-                        child)]
+       ;; Wrap child with stop propagation and disabled state.
+       enhanced-child (enhance-action-child child disabled?)]
    [mateuszmazurczak-tooltip/tooltip
     (-> props
         (assoc :trigger (r/as-element enhanced-child)

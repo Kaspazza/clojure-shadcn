@@ -47,14 +47,14 @@
    [:>
     Controller
     (-> props
+        (dissoc :render)
         (assoc :name name
                :render (fn [^js state]
                          (r/as-element
                           (render {:field (js->clj (.-field state) :keywordize-keys true)
                                    :field-state (js->clj (.-fieldState state) :keywordize-keys true)
                                    :form-state
-                                   (js->clj (.-formState state) :keywordize-keys true)}))))
-        (dissoc :render))]])
+                                   (js->clj (.-formState state) :keywordize-keys true)})))))]])
 
 (defn use-form-field
   []

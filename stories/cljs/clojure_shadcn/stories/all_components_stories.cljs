@@ -245,7 +245,7 @@
     [:h2 {:class "text-lg font-semibold tracking-tight"}
      name]]
    [:div {:class "[&>.relative]:hidden"}
-    [preview]]])
+    [:> preview]]])
 
 (defn ^:export Catalogue
   "Every available component rendered in one continuous, scannable page."

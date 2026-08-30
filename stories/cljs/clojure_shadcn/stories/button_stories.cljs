@@ -89,15 +89,32 @@
 
 (defstory
  ButtonDefault
- "Default button style for primary actions.
+ "Interactive Button playground for primary actions.
 
   Radix primitive: @radix-ui/react-slot (for :as-child polymorphism)
 
   Our CLJS wrapper uses keyword props (:variant, :size) instead of
   string variants. The default variant is :default."
- []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        (button/button {} "Continue")])))
+ {:args {:label "Continue"
+         :variant "default"
+         :size "default"
+         :disabled false}
+  :arg-types {:label {:control {:type "text"}}
+              :variant {:control {:type "select"}
+                        :options ["default" "destructive" "outline" "secondary" "ghost" "link"]}
+              :size {:control {:type "select"}
+                     :options ["xs" "sm" "default" "lg" "icon" "icon-xs" "icon-sm" "icon-lg"]}
+              :disabled {:control {:type "boolean"}}}
+  :parameters {:controls {:exclude ["on-click" "as-child" "class"]}}
+  :decode-args (fn [{:keys [variant size] :as args}]
+                 (cond-> args
+                   variant (update :variant keyword)
+                   size (update :size keyword)))}
+ [args]
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "p-6"}
+    (button/button (select-keys args [:variant :size :disabled]) (:label args))])))
 
 (defstory
  ButtonDestructive

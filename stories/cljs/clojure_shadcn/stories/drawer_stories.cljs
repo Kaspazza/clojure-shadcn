@@ -132,7 +132,7 @@
            [sut/drawer {:open @open?
                         :on-open-change #(reset! open? %)
                         :direction :bottom}
-            [sut/drawer-trigger {}
+            [sut/drawer-trigger {:as-child true}
              (button/button {:variant :outline} "Open Bottom Drawer")]
             [sut/drawer-content {}
              [sut/drawer-header {}
@@ -172,7 +172,7 @@
            [sut/drawer {:open @open?
                         :on-open-change #(reset! open? %)
                         :direction :right}
-            [sut/drawer-trigger {}
+            [sut/drawer-trigger {:as-child true}
              (button/button {:variant :outline} "Open Right Drawer")]
             [sut/drawer-content {:class "w-80"}
              [sut/drawer-header {}
@@ -207,7 +207,7 @@
            [sut/drawer {:open @open?
                         :on-open-change #(reset! open? %)
                         :direction :bottom}
-            [sut/drawer-trigger {}
+            [sut/drawer-trigger {:as-child true}
              (button/button {:variant :outline} "Open Scrollable Drawer")]
             [sut/drawer-content {}
              [sut/drawer-header {}
@@ -247,7 +247,7 @@
                         :on-open-change #(reset! open? %)
                         :direction :bottom
                         :should-scale-background false}
-            [sut/drawer-trigger {}
+            [sut/drawer-trigger {:as-child true}
              (button/button {:variant :outline} "Open (No Scale)")]
             [sut/drawer-content {}
              [sut/drawer-header {}
@@ -275,7 +275,7 @@
                                   [sut/drawer {:open @open?
                                                :on-open-change #(reset! open? %)
                                                :direction :top}
-                                   [sut/drawer-trigger {}
+                                   [sut/drawer-trigger {:as-child true}
                                     (button/button {:variant :outline} "Open Top Drawer")]
                                    [sut/drawer-content {}
                                     [sut/drawer-header {}
@@ -303,7 +303,7 @@
                         :on-open-change #(reset! open? %)
                         :direction :left
                         :modal false}
-            [sut/drawer-trigger {}
+            [sut/drawer-trigger {:as-child true}
              (button/button {:variant :outline} "Open Left Non-Modal")]
             [sut/drawer-content {:class "w-80"}
              [sut/drawer-header {}

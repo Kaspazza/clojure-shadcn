@@ -62,10 +62,22 @@
        :enableSorting false
        :enableHiding false})
 
+(defn- adapt-reagent-renderers
+  "Converts Reagent Hiccup returned by TanStack column renderers to React elements."
+  [columns]
+  (doseq [^js column columns
+          property ["header" "cell"]]
+    (when-let [renderer (aget column property)]
+      (when (fn? renderer)
+        (aset column property (fn [context]
+                                (r/as-element (renderer context)))))))
+  columns)
+
 (defn make-columns
   []
-  #js
-   [(make-checkbox-column)
+  (adapt-reagent-renderers
+   #js
+    [(make-checkbox-column)
     #js {:accessorKey "id"
          :header (fn [^js ctx] [sut/column-header-ui
                                 {:title "ID"
@@ -137,7 +149,7 @@
                                 [dropdown-menu/dropdown-menu-item {}
                                  "Delete"]]])
          :enableSorting false
-         :enableHiding false}])
+         :enableHiding false}]))
 
 (defdoc
  Installation

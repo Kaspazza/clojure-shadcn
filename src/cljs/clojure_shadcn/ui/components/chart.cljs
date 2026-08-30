@@ -32,19 +32,21 @@
                                                     (apply str dark-rules)
                                                     "}")}}]))
 
-(defn chart-container
-  [{:keys [id config class initial-dimension]
-    :or {initial-dimension {:width 320
-                            :height 200}}
-    :as props}
-   child]
-  (let [generated (react/useId)
+(defn- chart-container-root
+  [^js react-props]
+  (let [{:keys [id config class initial-dimension]
+         :or {initial-dimension {:width 320
+                                 :height 200}}
+         :as props} (.-chartProps react-props)
+        child (.-child react-props)
+        generated (react/useId)
         chart-id (str "chart-" (or id (.replace generated #":" "")))]
-    [:>
-     (.-Provider chart-context)
-     {:value config}
-     [:div
-      (->
+    (r/as-element
+     [:>
+      (.-Provider chart-context)
+      {:value config}
+      [:div
+       (->
         props
         (assoc
          :data-slot "chart"
@@ -54,8 +56,13 @@
           "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line]:stroke-border/50 [&_.recharts-tooltip-cursor]:stroke-border [&_.recharts-layer]:outline-hidden [&_.recharts-surface]:outline-hidden"
           class))
         (dissoc :id :config :class-name :initial-dimension))
-      [chart-style chart-id config]
-      [:> recharts/ResponsiveContainer {:initialDimension (clj->js initial-dimension)} child]]]))
+       [chart-style chart-id config]
+       [:> recharts/ResponsiveContainer {:initialDimension (clj->js initial-dimension)} child]]])))
+
+(defn chart-container
+  [props child]
+  (r/create-element chart-container-root #js {:chartProps props
+                                               :child (r/as-element child)}))
 
 (def chart-tooltip recharts/Tooltip)
 
@@ -74,10 +81,10 @@
         (get config (str candidate))
         (get config (keyword key)))))
 
-(defn tooltip-content
-  "Recharts `:content` renderer. Config labels/icons/colors are resolved from chart-container."
-  [^js raw-props]
-  (let [config (use-chart)
+(defn- tooltip-content-root
+  [^js react-props]
+  (let [raw-props (.-rawProps react-props)
+        config (use-chart)
         {:keys [active
                 payload
                 label
@@ -90,7 +97,8 @@
                 name-key]
          :or {indicator :dot}}
         (js->clj raw-props :keywordize-keys true)]
-    (when (and active (seq payload))
+    (r/as-element
+     (when (and active (seq payload))
       [:div
        {:class
         (merge-classes
@@ -126,16 +134,23 @@
               [:span {:class "flex-1 text-muted-foreground"}
                (or (:label item-config) (.-name item))]
               [:span {:class "font-mono font-medium tabular-nums"}
-               (.toLocaleString (.-value item))]])])]])))
+               (.toLocaleString (.-value item))]])])]]))))
 
-(defn legend-content
-  [^js raw-props]
-  (let [config (use-chart)
+(defn tooltip-content
+  "Recharts `:content` renderer. Config labels/icons/colors are resolved from chart-container."
+  [raw-props]
+  (r/create-element tooltip-content-root #js {:rawProps raw-props}))
+
+(defn- legend-content-root
+  [^js react-props]
+  (let [raw-props (.-rawProps react-props)
+        config (use-chart)
         payload (some-> raw-props
                         .-payload
                         array-seq)
         top? (= "top" (.-verticalAlign raw-props))]
-    (when (seq payload)
+    (r/as-element
+     (when (seq payload)
       [:div {:class (merge-classes "flex items-center justify-center gap-4"
                                    (if top? "pb-3" "pt-3"))}
        (for [[idx ^js item] (map-indexed vector payload)
@@ -147,4 +162,8 @@
             [:> icon {:className "size-3"}]
             [:span {:class "size-2 rounded-sm"
                     :style {:background-color (.-color item)}}])
-          (or (:label cfg) (.-value item))])])))
+          (or (:label cfg) (.-value item))])]))))
+
+(defn legend-content
+  [raw-props]
+  (r/create-element legend-content-root #js {:rawProps raw-props}))
