@@ -9,7 +9,7 @@
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory]]))
 
 (def ^:export default
-  #js {:title      "Chat/Message"
+  #js {:title      "Components/Message"
        :parameters #js {:layout "padded"}})
 
 (defn ^:export Installation

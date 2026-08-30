@@ -73,10 +73,10 @@
            [:<> [:> ChevronDown {:class "size-4"}] [:span "Show more"]])]]])))
 
 (defn wrap-component
-  "Groups story children into a fragment.
+  "Groups story children into a fragment for Storybook rendering.
 
-  `defstory` still injects an options map containing the captured source for
-  compatibility, but Storybook Docs owns source display and copy controls."
+  `defstory` removes this render-only wrapper from the source published to
+  Storybook Docs, so consumers copy only the component usage."
   [& args]
   (let [has-opts? (and (seq args) (map? (first args)))
         cmps      (if has-opts? (rest args) args)]

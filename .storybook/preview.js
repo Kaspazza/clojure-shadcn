@@ -7,6 +7,7 @@ import {
   Description,
   DocsContext,
   DocsStory,
+  Story,
   Subheading,
   Title,
 } from '@storybook/addon-docs/blocks';
@@ -26,9 +27,8 @@ const DocsSections = () => {
     Fragment,
     { key: story.id },
     createElement(Subheading, null, title),
-    createElement(DocsStory, {
+    createElement(Story, {
       of: story.moduleExport,
-      expanded: false,
       __forceInitialArgs: true,
     }),
   );

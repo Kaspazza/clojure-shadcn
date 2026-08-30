@@ -4,8 +4,7 @@
   Ported from mateuszmazurczak.portfolio.macros."
   (:require
    [clojure.pprint :as pprint]
-   [clojure.string :as str]
-   [clojure.walk :as walk]))
+   [clojure.string :as str]))
 
 (defmacro embed-source
   "Reads source file at compile time and returns as string.
@@ -37,57 +36,43 @@
                             :error (.getMessage e)}
                            e))))))
 
+(defn- call-named?
+  [form function-name]
+  (and (seq? form)
+       (symbol? (first form))
+       (= function-name (name (first form)))))
+
+(defn- example-forms
+  "Removes only the outer Storybook render boundary from a story form.
+
+  A form is unwrapped solely when its exact outer shape is
+  `(r/as-element (helpers/wrap-component ...))`. Calls with either name deeper
+  in an example are consumer code and therefore remain in the displayed source."
+  [form]
+  (let [wrapped-form (second form)]
+    (if (and (call-named? form "as-element")
+             (call-named? wrapped-form "wrap-component"))
+      (let [args (next wrapped-form)]
+        (if (map? (first args))
+          (rest args)
+          args))
+      [form])))
+
 (defn- story-source
   [body]
-  (->> body
+  (->> (if (= 1 (count body))
+         (example-forms (first body))
+         body)
        (map #(with-out-str (pprint/pprint %)))
        (apply str)
        str/trim))
-
-(defn- wrap-component-call?
-  [form]
-  (and (seq? form)
-       (symbol? (first form))
-       (= "wrap-component" (name (first form)))))
-
-(defn- story-filename
-  [env]
-  (let [ns-sym (or (:name (:ns env))
-                   (throw (ex-info "defstory: no :ns in macro expansion env" {})))]
-    (-> (str ns-sym)
-        (str/split #"\.")
-        last
-        (str/replace "-" "_")
-        (str ".cljs"))))
-
-(defn- inject-source
-  [body source default-filename]
-  (let [injections (atom 0)
-        expanded   (walk/postwalk
-                    (fn [form]
-                      (if (wrap-component-call? form)
-                        (let [[wrap-component & args] form
-                              [opts children] (if (map? (first args))
-                                                [(first args) (rest args)]
-                                                [{} args])
-                              opts (cond-> (assoc opts :source source)
-                                     (not (contains? opts :filename))
-                                     (assoc :filename default-filename))]
-                          (swap! injections inc)
-                          (list* wrap-component opts children))
-                        form))
-                    body)]
-    (when-not (= 1 @injections)
-      (throw (ex-info "defstory expects exactly one wrap-component call"
-                      {:wrap-component-calls @injections})))
-    expanded))
 
 (defmacro defdoc
   "Defines an exported, zero-argument Storybook documentation story without
   embedding its implementation as display source.
 
   Use this for library documentation pages. Component examples should use
-  `defstory`, which injects their source into `wrap-component`."
+  `defstory`, which publishes consumer-ready source to Storybook Docs."
   [story-name & declaration]
   (let [[docstring declaration] (if (string? (first declaration))
                                   [(first declaration) (next declaration)]
@@ -111,14 +96,13 @@
          ~@body))))
 
 (defmacro defstory
-  "Defines an exported, zero-argument Storybook story and embeds its body as
-  display source in the story's single `wrap-component` call.
+  "Defines an exported, zero-argument Storybook story with consumer-ready
+  display source.
 
   The declaration has the same shape as `defn`: an optional docstring, an
-  empty argument vector, and one or more body forms. It captures those forms
-  directly and performs no source-file parsing. `wrap-component` receives a
-  filename inferred from the calling namespace; an explicit `:filename` in
-  its options map overrides that default.
+  empty argument vector, and one or more body forms. When a story has the
+  standard `r/as-element` / `helpers/wrap-component` render boundary,
+  Storybook Docs displays and copies only the wrapped component usage.
 
   Example:
   (defstory ButtonDemo
@@ -143,7 +127,6 @@
       (throw (ex-info "defstory expects at least one body form"
                       {:story-name story-name})))
     (let [source         (story-source body)
-          expanded-body  (inject-source body source (story-filename &env))
           api-reference? (= 'ApiReference story-name)
           exported-name  (with-meta story-name
                            (assoc (meta story-name) :export true))]
@@ -151,10 +134,11 @@
          (defn ~exported-name
            ~@(when docstring [docstring])
            []
-           ~@expanded-body)
+           ~@body)
          (set! (.-parameters ~story-name)
                ~(if api-reference?
                   `(~'js-obj "docs" (~'js-obj "codePanel" false
                                              "canvas" (~'js-obj "sourceState" "none")))
-                  `(~'js-obj "docs" (~'js-obj "source" (~'js-obj "code" ~source
+                  `(~'js-obj "docs" (~'js-obj "codePanel" true
+                                             "source" (~'js-obj "code" ~source
                                                                 "language" "clojure")))))))))
