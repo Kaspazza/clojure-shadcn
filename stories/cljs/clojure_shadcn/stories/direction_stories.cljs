@@ -19,6 +19,12 @@
      :namespace-path "src/cljs/clojure_shadcn/ui/components/direction.cljs"
      :filename "direction.cljs"}]))
 
+(defstory ApiReference []
+  (r/as-element (helpers/wrap-component
+    [:div {:class "space-y-4 p-6 max-w-4xl"}
+     [helpers/api-component-card {:component-name "direction-provider" :link {:href "https://www.radix-ui.com/primitives/docs/utilities/direction-provider" :label "Radix Direction Provider Docs"} :description "Supplies writing direction to descendant Radix primitives. It is a context provider, not a DOM element; set a matching HTML dir attribute where native text/layout direction is also required." :props [{:name ":direction / :dir" :type ":ltr | :rtl" :default ":ltr" :description ":direction takes precedence; the selected value is converted to a string."} {:name "additional props" :type "map entries" :default nil :description "Forwarded to Radix DirectionProvider."}]}]
+     [helpers/api-component-card {:component-name "use-direction" :description "React hook returning the resolved direction as :ltr or :rtl. Call only from a Reagent/React function component and obey the Rules of Hooks." :props [{:name "direction" :type "keyword, optional positional argument" :default nil :description "Local direction passed to Radix useDirection; without it, reads context or Radix's default."}]}]])))
+
 (defstory RightToLeft
   []
   (r/as-element

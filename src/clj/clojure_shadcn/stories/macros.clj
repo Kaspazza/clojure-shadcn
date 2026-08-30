@@ -142,11 +142,19 @@
     (when-not (seq body)
       (throw (ex-info "defstory expects at least one body form"
                       {:story-name story-name})))
-    (let [source        (story-source body)
-          expanded-body (inject-source body source (story-filename &env))
-          exported-name (with-meta story-name
-                          (assoc (meta story-name) :export true))]
-      `(defn ~exported-name
-         ~@(when docstring [docstring])
-         []
-         ~@expanded-body))))
+    (let [source         (story-source body)
+          expanded-body  (inject-source body source (story-filename &env))
+          api-reference? (= 'ApiReference story-name)
+          exported-name  (with-meta story-name
+                           (assoc (meta story-name) :export true))]
+      `(do
+         (defn ~exported-name
+           ~@(when docstring [docstring])
+           []
+           ~@expanded-body)
+         (set! (.-parameters ~story-name)
+               ~(if api-reference?
+                  `(~'js-obj "docs" (~'js-obj "codePanel" false
+                                             "canvas" (~'js-obj "sourceState" "none")))
+                  `(~'js-obj "docs" (~'js-obj "source" (~'js-obj "code" ~source
+                                                                "language" "clojure")))))))))

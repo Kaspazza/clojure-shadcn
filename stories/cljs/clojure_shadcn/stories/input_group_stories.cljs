@@ -20,6 +20,14 @@
      :namespace-path "src/cljs/clojure_shadcn/ui/components/input_group.cljs"
      :filename "input_group.cljs"}]))
 
+(defstory ApiReference []
+  (r/as-element (helpers/wrap-component
+    [:div {:class "space-y-4 p-6 max-w-4xl"}
+     [helpers/api-component-card {:component-name "input-group" :description "Compound role=group wrapper that coordinates focus and invalid styling for one input-group control plus addons." :props [{:name ":class / additional props" :type "string / map entries" :default nil :description "Classes are merged and remaining props forwarded to the div; role and data-slot are set."}]}]
+     [helpers/api-component-card {:component-name "input-group-addon" :description "Adornment region. Clicking non-button content focuses the first input or textarea in its parent; nested buttons retain their own interaction." :props [{:name ":align" :type ":inline-start | :inline-end | :block-start | :block-end" :default ":inline-start" :description "Controls order, spacing, and block/inline layout."} {:name ":on-click" :type "function" :default nil :description "Called after built-in focus behavior."} {:name ":class / additional props" :type "string / map entries" :default nil :description "Merged/forwarded to the role=group div."}]}]
+     [helpers/api-component-card {:component-name "input-group-button" :description "Button wrapper with compact group sizing. Defaults type to button to avoid accidental form submission." :props [{:name ":size" :type ":xs | :sm | :icon-xs | :icon-sm" :default ":xs" :description "Applies group-specific dimensions; the wrapped Button receives :size :xs."} {:name ":variant / :type" :type "keyword / string" :default ":ghost / button" :description "Defaults forwarded to Button; explicit values win."} {:name ":class / additional props" :type "string / map entries" :default nil :description "Merged/forwarded to Button."}]}]
+     [helpers/api-component-card {:component-name "input-group-text / input-group-input / input-group-textarea" :description "Text adornment and the supported Input/Textarea controls. Controls remove their own border/ring so the parent group owns focus and invalid presentation." :props [{:name ":class / additional props" :type "string / map entries" :default nil :description "Merged and forwarded to span, Input, or Textarea. Supply an accessible label to the actual control."}]}]])))
+
 (defstory WithAddon
   []
   (r/as-element

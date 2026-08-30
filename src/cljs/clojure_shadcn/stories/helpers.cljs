@@ -73,29 +73,14 @@
            [:<> [:> ChevronDown {:class "size-4"}] [:span "Show more"]])]]])))
 
 (defn wrap-component
-  "Wraps story children and, when given an options map with :source, renders
-   an expandable code block below the demo.
+  "Groups story children into a fragment.
 
-  Usage with `defstory` (which injects `:source` and infers the filename):
-  (defstory AvatarDemo
-    []
-    (wrap-component
-      child1
-      child2))
-
-  The options map is optional; without it wrap-component just groups children
-  into a fragment. Pass {:filename \"custom.cljs\"} only when an explicit
-  filename override is needed. Story declarations should use `defstory` to
-  display their source."
+  `defstory` still injects an options map containing the captured source for
+  compatibility, but Storybook Docs owns source display and copy controls."
   [& args]
-  (let [has-opts?  (and (seq args) (map? (first args)))
-        opts       (when has-opts? (first args))
-        cmps       (if has-opts? (rest args) args)
-        {:keys [source filename]} opts]
-    (if source
-      [:<> (into [:<>] cmps) [expandable-code-block {:source-code source
-                                                     :filename    filename}]]
-      (into [:<>] cmps))))
+  (let [has-opts? (and (seq args) (map? (first args)))
+        cmps      (if has-opts? (rest args) args)]
+    (into [:<>] cmps)))
 
 (defn installation-scene
   "Standard installation story for library components.

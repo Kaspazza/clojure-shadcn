@@ -4,6 +4,13 @@ import { basename, dirname, join } from 'node:path';
 const cljsStoryPattern = /cljs-stories\/.*_stories\.js$/;
 const namedExportPattern = /export\s+(?:let|const|var|function)\s+(\w+)/g;
 const titlePattern = /\.default\$\s*=\s*\(\{[^}]*"title":\s*"([^"]+)"/;
+const componentTitlePattern = /^(?:Components|Chat)\//;
+
+const storyRank = (exportName) => {
+  if (exportName === 'Installation') return 0;
+  if (exportName === 'ApiReference') return 1;
+  return 2;
+};
 
 // shadow-cljs emits valid ESM stories, but their default metadata export is a
 // runtime reference rather than the object literal expected by Storybook's CSF
@@ -20,11 +27,20 @@ const cljsStoryIndexer = {
       throw new Error(`Could not find Storybook title in ${runtimeFile}`);
     }
 
-    return [...moduleSource.matchAll(namedExportPattern)].map(([, exportName]) => ({
+    const tags = componentTitlePattern.test(title) ? ['autodocs'] : [];
+    const exports = [...moduleSource.matchAll(namedExportPattern)]
+      .map(([, exportName], sourceOrder) => ({ exportName, sourceOrder }))
+      .sort((left, right) =>
+        storyRank(left.exportName) - storyRank(right.exportName)
+        || left.sourceOrder - right.sourceOrder
+      );
+
+    return exports.map(({ exportName }) => ({
       type: 'story',
       title,
       importPath: fileName,
       exportName,
+      tags,
     }));
   },
 };
@@ -46,6 +62,8 @@ const config = {
   typescript: {
     reactDocgen: false,
   },
+
+  addons: ['@storybook/addon-docs']
 };
 
 export default config;
