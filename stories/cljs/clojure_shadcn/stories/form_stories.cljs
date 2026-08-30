@@ -93,20 +93,24 @@
      [:form {:class "w-80 space-y-4"
              :no-validate true
              :on-submit (sut/handle-submit methods #(js/alert (str "Submitted " (:email %))))}
-      [sut/form-field {:control (.-control methods)
-                       :name "email"
-                       :rules #js {:required "Email is required"}
-                       :render (fn [{:keys [field]}] [:f> sut/form-item {}
-                                                      [:f> sut/form-label {}
-                                                       "Email"]
-                                                      [:f> sut/form-control {}
-                                                       [input/input
-                                                        (merge field
-                                                               {:type "email"
-                                                                :placeholder "you@example.com"})]]
-                                                      [:f> sut/form-description {}
-                                                       "We only use this for account messages."]
-                                                      [:f> sut/form-message {}]])}]
+      [sut/form-field
+       {:control (.-control methods)
+        :name "email"
+        :rules #js {:required "Email is required"}
+        :render (fn [{:keys [field]}]
+                  [:f>
+                   sut/form-item
+                   {}
+                   [:f> sut/form-label {} "Email"]
+                   [:f>
+                    sut/form-control
+                    {}
+                    [input/input
+                     (merge field
+                            {:type "email"
+                             :placeholder "you@example.com"})]]
+                   [:f> sut/form-description {} "We only use this for account messages."]
+                   [:f> sut/form-message {}]])}]
       [button/button {:type "submit"}
        "Submit"]]]))
 
@@ -114,9 +118,18 @@
 
 
 (defstory FormPlayground
-  "Interactive form validation playground."
-  {:args {:email "" :submit-label "Submit"}
-   :arg-types {:email {:control {:type "text"}} :submit-label {:control {:type "text"}}}
-   :parameters {:controls {:exclude ["on-submit" "methods" "class"]}}}
-  [args]
-  (r/as-element (helpers/wrap-component [:form {:class "w-80 space-y-4" :on-submit #(.preventDefault %)} [input/input {:type "email" :default-value (:email args) :placeholder "you@example.com" :required true}] (button/button {:type "submit"} (:submit-label args))])))
+          "Interactive form validation playground."
+          {:args {:email ""
+                  :submit-label "Submit"}
+           :arg-types {:email {:control {:type "text"}}
+                       :submit-label {:control {:type "text"}}}
+           :parameters {:controls {:exclude ["on-submit" "methods" "class"]}}}
+          [args]
+          (r/as-element (helpers/wrap-component [:form {:class "w-80 space-y-4"
+                                                        :on-submit #(.preventDefault %)}
+                                                 [input/input {:type "email"
+                                                               :default-value (:email args)
+                                                               :placeholder "you@example.com"
+                                                               :required true}]
+                                                 (button/button {:type "submit"}
+                                                                (:submit-label args))])))

@@ -66,14 +66,16 @@
                                i])]]])))
 
 
-(defstory
- ScrollAreaPlayground
- "Controlled Storybook playground using only safe scalar component props."
- {:args {:class "h-48 w-72 rounded-md border"}
-  :arg-types {:class {:control {:type "text"}}}
-  :parameters {:controls {:exclude ["children"]}}
- }
- [args]
- (r/as-element
-  (helpers/wrap-component
-   [sut/scroll-area (select-keys args [:class]) [:div {:class "p-4"} (for [n (range 1 21)] ^{:key n} [:p {:class "text-sm"} (str "Item " n)])]])))
+(defstory ScrollAreaPlayground
+          "Controlled Storybook playground using only safe scalar component props."
+          {:args {:class "h-48 w-72 rounded-md border"}
+           :arg-types {:class {:control {:type "text"}}}
+           :parameters {:controls {:exclude ["children"]}}}
+          [args]
+          (r/as-element (helpers/wrap-component [sut/scroll-area
+                                                 (select-keys args [:class])
+                                                 [:div {:class "p-4"}
+                                                  (for [n (range 1 21)]
+                                                    ^{:key n}
+                                                    [:p {:class "text-sm"}
+                                                     (str "Item " n)])]])))

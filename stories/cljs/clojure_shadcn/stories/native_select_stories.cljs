@@ -87,10 +87,27 @@
 
 
 (defstory NativeSelectPlayground
-  "Interactive native-select playground."
-  {:args {:default-value "reagent" :size "default" :disabled false :required false}
-   :arg-types {:default-value {:control {:type "select"} :options ["reagent" "react" "clojure"]} :size {:control {:type "select"} :options ["default" "sm"]} :disabled {:control {:type "boolean"}} :required {:control {:type "boolean"}}}
-   :parameters {:controls {:exclude ["value" "on-change" "class"]}}
-   :decode-args (fn [{:keys [size] :as args}] (update args :size keyword))}
-  [args]
-  (r/as-element (helpers/wrap-component [sut/native-select (assoc args :aria-label "Framework") [sut/native-select-option {:value "reagent"} "Reagent"] [sut/native-select-option {:value "react"} "React"] [sut/native-select-option {:value "clojure"} "Clojure"]])))
+          "Interactive native-select playground."
+          {:args {:default-value "reagent"
+                  :size "default"
+                  :disabled false
+                  :required false}
+           :arg-types {:default-value {:control {:type "select"}
+                                       :options ["reagent" "react" "clojure"]}
+                       :size {:control {:type "select"}
+                              :options ["default" "sm"]}
+                       :disabled {:control {:type "boolean"}}
+                       :required {:control {:type "boolean"}}}
+           :parameters {:controls {:exclude ["value" "on-change" "class"]}}
+           :decode-args (fn [{:keys [size]
+                              :as args}]
+                          (update args :size keyword))}
+          [args]
+          (r/as-element (helpers/wrap-component [sut/native-select
+                                                 (assoc args :aria-label "Framework")
+                                                 [sut/native-select-option {:value "reagent"}
+                                                  "Reagent"]
+                                                 [sut/native-select-option {:value "react"}
+                                                  "React"]
+                                                 [sut/native-select-option {:value "clojure"}
+                                                  "Clojure"]])))

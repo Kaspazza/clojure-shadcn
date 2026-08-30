@@ -221,9 +221,19 @@
 
 
 (defstory InputPlayground
-  "Interactive native input playground."
-  {:args {:type "email" :placeholder "you@example.com" :default-value "" :disabled false :required false}
-   :arg-types {:type {:control {:type "select"} :options ["text" "email" "password" "search"]} :placeholder {:control {:type "text"}} :default-value {:control {:type "text"}} :disabled {:control {:type "boolean"}} :required {:control {:type "boolean"}}}
-   :parameters {:controls {:exclude ["value" "on-change" "class"]}}}
-  [args]
-  (r/as-element (helpers/wrap-component [:div {:class "max-w-sm p-6"} [sut/input args]])))
+          "Interactive native input playground."
+          {:args {:type "email"
+                  :placeholder "you@example.com"
+                  :default-value ""
+                  :disabled false
+                  :required false}
+           :arg-types {:type {:control {:type "select"}
+                              :options ["text" "email" "password" "search"]}
+                       :placeholder {:control {:type "text"}}
+                       :default-value {:control {:type "text"}}
+                       :disabled {:control {:type "boolean"}}
+                       :required {:control {:type "boolean"}}}
+           :parameters {:controls {:exclude ["value" "on-change" "class"]}}}
+          [args]
+          (r/as-element (helpers/wrap-component [:div {:class "max-w-sm p-6"}
+                                                 [sut/input args]])))

@@ -65,10 +65,23 @@
 
 
 (defstory SliderPlayground
-  "Interactive slider playground."
-  {:args {:default-value [40] :min 0 :max 100 :step 1 :disabled false}
-   :arg-types {:default-value {:control {:type "number"}} :min {:control {:type "number"}} :max {:control {:type "number"}} :step {:control {:type "number"}} :disabled {:control {:type "boolean"}}}
-   :parameters {:controls {:exclude ["value" "on-value-change" "on-value-commit" "class" "thumb-class"]}}
-   :decode-args (fn [{:keys [default-value] :as args}] (assoc args :default-value [default-value]))}
-  [args]
-  (r/as-element (helpers/wrap-component [:div {:class "w-[420px] p-6"} [sut/slider (assoc args :aria-label "Value")]])))
+          "Interactive slider playground."
+          {:args {:default-value [40]
+                  :min 0
+                  :max 100
+                  :step 1
+                  :disabled false}
+           :arg-types {:default-value {:control {:type "number"}}
+                       :min {:control {:type "number"}}
+                       :max {:control {:type "number"}}
+                       :step {:control {:type "number"}}
+                       :disabled {:control {:type "boolean"}}}
+           :parameters {:controls
+                        {:exclude
+                         ["value" "on-value-change" "on-value-commit" "class" "thumb-class"]}}
+           :decode-args (fn [{:keys [default-value]
+                              :as args}]
+                          (assoc args :default-value [default-value]))}
+          [args]
+          (r/as-element (helpers/wrap-component [:div {:class "w-[420px] p-6"}
+                                                 [sut/slider (assoc args :aria-label "Value")]])))

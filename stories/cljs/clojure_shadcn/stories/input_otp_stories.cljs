@@ -100,9 +100,22 @@
 
 
 (defstory InputOtpPlayground
-  "Interactive OTP playground."
-  {:args {:max-length 6 :disabled false :placeholder "○"}
-   :arg-types {:max-length {:control {:type "select"} :options [4 6]} :disabled {:control {:type "boolean"}} :placeholder {:control {:type "text"}}}
-   :parameters {:controls {:exclude ["value" "on-change" "class" "container-class"]}}}
-  [args]
-  (r/as-element (helpers/wrap-component [sut/input-otp {:max-length (:max-length args) :disabled (:disabled args) :aria-label "Verification code"} (into [sut/input-otp-group {}] (for [index (range (:max-length args))] ^{:key index} [sut/input-otp-slot {:index index :placeholder (:placeholder args)}]))])))
+          "Interactive OTP playground."
+          {:args {:max-length 6
+                  :disabled false
+                  :placeholder "○"}
+           :arg-types {:max-length {:control {:type "select"}
+                                    :options [4 6]}
+                       :disabled {:control {:type "boolean"}}
+                       :placeholder {:control {:type "text"}}}
+           :parameters {:controls {:exclude ["value" "on-change" "class" "container-class"]}}}
+          [args]
+          (r/as-element (helpers/wrap-component [sut/input-otp {:max-length (:max-length args)
+                                                                :disabled (:disabled args)
+                                                                :aria-label "Verification code"}
+                                                 (into [sut/input-otp-group {}]
+                                                       (for [index (range (:max-length args))]
+                                                         ^{:key index}
+                                                         [sut/input-otp-slot
+                                                          {:index index
+                                                           :placeholder (:placeholder args)}]))])))

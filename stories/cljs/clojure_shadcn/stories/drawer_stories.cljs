@@ -317,18 +317,26 @@
                              "Close")]]]]))))]))
 
 
-(defstory
- DrawerPlayground
- "Controlled Storybook playground using only safe scalar component props."
- {:args {:direction "bottom"}
-  :arg-types {:direction {:control {:type "select"} :options ["top" "right" "bottom" "left"]}}
-  :parameters {:controls {:exclude ["children" "open" "default-open" "on-open-change"]}}
-  :decode-args (fn [{:keys [direction] :as args}]
-                 (cond-> args direction (update :direction keyword)))}
- [args]
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/drawer (select-keys args [:direction])
-     [sut/drawer-trigger {:as-child true} [button/button {:variant :outline} "Open drawer"]]
-     [sut/drawer-content {} [sut/drawer-header {} [sut/drawer-title {} "Move goal"] [sut/drawer-description {} "Set your daily activity goal."]]]]])))
+(defstory DrawerPlayground
+          "Controlled Storybook playground using only safe scalar component props."
+          {:args {:direction "bottom"}
+           :arg-types {:direction {:control {:type "select"}
+                                   :options ["top" "right" "bottom" "left"]}}
+           :parameters {:controls {:exclude ["children" "open" "default-open" "on-open-change"]}}
+           :decode-args (fn [{:keys [direction]
+                              :as args}]
+                          (cond-> args
+                            direction (update :direction keyword)))}
+          [args]
+          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
+                                                 [sut/drawer
+                                                  (select-keys args [:direction])
+                                                  [sut/drawer-trigger {:as-child true}
+                                                   [button/button {:variant :outline}
+                                                    "Open drawer"]]
+                                                  [sut/drawer-content {}
+                                                   [sut/drawer-header {}
+                                                    [sut/drawer-title {}
+                                                     "Move goal"]
+                                                    [sut/drawer-description {}
+                                                     "Set your daily activity goal."]]]]])))

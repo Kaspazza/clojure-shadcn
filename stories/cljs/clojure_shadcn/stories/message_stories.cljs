@@ -140,7 +140,30 @@
        [:code
         "[message {:class \"items-start gap-3\"}\n [message-avatar {:src \"https://placehold.co/40x40\" :alt \"Assistant\" :fallback \"AI\"}]\n [:div {:class \"space-y-2\"}\n  [message-content {:markdown? true} \"**Hello** from the assistant\"]\n  [message-actions {}\n   [message-action {:tooltip \"Copy\"} [button {:size :icon} [:> Copy]]]]]]"]]]]])))
 
-(defstory MessageBasic "Interactive message playground." {:args {:align "start" :content "Hello! This is a basic message." :fallback "JD"} :arg-types {:align {:control {:type "select"} :options ["start" "end"]} :content {:control {:type "text"}} :fallback {:control {:type "text"}}} :parameters {:controls {:exclude ["class" "src" "alt" "on-click"]}} :decode-args (fn [{:keys [align] :as args}] (cond-> args align (update :align keyword)))} [args] (r/as-element (helpers/wrap-component [:div {:class "p-6"} [sut/message (select-keys args [:align]) [sut/message-avatar {:src "https://placehold.co/40x40/png" :alt "User" :fallback (:fallback args)}] [sut/message-content {} (:content args)]]])))
+(defstory MessageBasic
+          "Interactive message playground."
+          {:args {:align "start"
+                  :content "Hello! This is a basic message."
+                  :fallback "JD"}
+           :arg-types {:align {:control {:type "select"}
+                               :options ["start" "end"]}
+                       :content {:control {:type "text"}}
+                       :fallback {:control {:type "text"}}}
+           :parameters {:controls {:exclude ["class" "src" "alt" "on-click"]}}
+           :decode-args (fn [{:keys [align]
+                              :as args}]
+                          (cond-> args
+                            align (update :align keyword)))}
+          [args]
+          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
+                                                 [sut/message
+                                                  (select-keys args [:align])
+                                                  [sut/message-avatar
+                                                   {:src "https://placehold.co/40x40/png"
+                                                    :alt "User"
+                                                    :fallback (:fallback args)}]
+                                                  [sut/message-content {}
+                                                   (:content args)]]])))
 
 (defstory MessageAvatarFallback
           "Message showing avatar fallback.

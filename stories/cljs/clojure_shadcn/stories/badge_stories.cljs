@@ -67,7 +67,22 @@
       [:pre {:class "text-xs overflow-x-auto"}
        [:code "[badge {:variant :outline} \"Outline\"]"]]]]])))
 
-(defstory BadgeDemo "Interactive badge playground." {:args {:variant "default" :label "Badge"} :arg-types {:variant {:control {:type "select"} :options ["default" "secondary" "destructive" "outline" "ghost" "link"]} :label {:control {:type "text"}}} :parameters {:controls {:exclude ["class" "as-child" "on-click"]}} :decode-args (fn [{:keys [variant] :as args}] (cond-> args variant (update :variant keyword)))} [args] (r/as-element (helpers/wrap-component [:div {:class "p-6"} [sut/badge (select-keys args [:variant]) (:label args)]])))
+(defstory
+ BadgeDemo
+ "Interactive badge playground."
+ {:args {:variant "default"
+         :label "Badge"}
+  :arg-types {:variant {:control {:type "select"}
+                        :options ["default" "secondary" "destructive" "outline" "ghost" "link"]}
+              :label {:control {:type "text"}}}
+  :parameters {:controls {:exclude ["class" "as-child" "on-click"]}}
+  :decode-args (fn [{:keys [variant]
+                     :as args}]
+                 (cond-> args
+                   variant (update :variant keyword)))}
+ [args]
+ (r/as-element (helpers/wrap-component [:div {:class "p-6"}
+                                        [sut/badge (select-keys args [:variant]) (:label args)]])))
 
 (defstory
  BadgeOutline

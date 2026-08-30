@@ -38,4 +38,23 @@
                         :type "string"
                         :default nil}]}]])))
 
-(defstory MarkerVariants "Interactive marker playground." {:args {:variant "default" :content "Deployment completed"} :arg-types {:variant {:control {:type "select"} :options ["default" "separator" "border"]} :content {:control {:type "text"}}} :parameters {:controls {:exclude ["class" "as-child?"]}} :decode-args (fn [{:keys [variant] :as args}] (cond-> args variant (update :variant keyword)))} [args] (r/as-element (helpers/wrap-component [:div {:class "max-w-lg"} [sut/marker (select-keys args [:variant]) [sut/marker-icon {} [:> CheckCircle]] [sut/marker-content {} (:content args)]]])))
+(defstory MarkerVariants
+          "Interactive marker playground."
+          {:args {:variant "default"
+                  :content "Deployment completed"}
+           :arg-types {:variant {:control {:type "select"}
+                                 :options ["default" "separator" "border"]}
+                       :content {:control {:type "text"}}}
+           :parameters {:controls {:exclude ["class" "as-child?"]}}
+           :decode-args (fn [{:keys [variant]
+                              :as args}]
+                          (cond-> args
+                            variant (update :variant keyword)))}
+          [args]
+          (r/as-element (helpers/wrap-component [:div {:class "max-w-lg"}
+                                                 [sut/marker
+                                                  (select-keys args [:variant])
+                                                  [sut/marker-icon {}
+                                                   [:> CheckCircle]]
+                                                  [sut/marker-content {}
+                                                   (:content args)]]])))

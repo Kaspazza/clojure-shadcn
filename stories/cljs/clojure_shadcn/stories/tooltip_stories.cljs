@@ -132,7 +132,7 @@
  []
  (r/as-element (helpers/wrap-component [:div {:class "p-6"}
                                         [sut/tooltip {:trigger (button/button {:variant :outline}
-                                                                "Hover")
+                                                                              "Hover")
                                                       :trigger-as-child? true
                                                       :content "Add to library"}]])))
 
@@ -150,7 +150,7 @@
     [sut/tooltip
      {:trigger (button/button {:size :sm
                                :variant :outline}
-                "Save")
+                              "Save")
       :trigger-as-child? true
       :content
       [:div {:class "flex items-center gap-2"}
@@ -162,7 +162,7 @@
     [sut/tooltip
      {:trigger (button/button {:size :sm
                                :variant :outline}
-                "Print")
+                              "Print")
       :trigger-as-child? true
       :content
       [:div {:class "flex items-center gap-2"}
@@ -185,31 +185,33 @@
 
   Rich content works well for onboarding hints."
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/tooltip {:trigger (button/button {:variant :ghost}
-                                                                "Hover for info")
-                                                      :trigger-as-child? true
-                                                      :content
-                                                      [:div {:class "space-y-1"}
-                                                       [:p {:class "font-semibold"}
-                                                        "Pro tip"]
-                                                       [:p {:class "text-xs text-muted-foreground"}
-                                                        "Use ⌘K to search across projects."]]
-                                                      :content-class "max-w-xs"}]])))
+ (r/as-element (helpers/wrap-component
+                [:div {:class "p-6"}
+                 [sut/tooltip {:trigger (button/button {:variant :ghost} "Hover for info")
+                               :trigger-as-child? true
+                               :content [:div {:class "space-y-1"}
+                                         [:p {:class "font-semibold"}
+                                          "Pro tip"]
+                                         [:p {:class "text-xs text-muted-foreground"}
+                                          "Use ⌘K to search across projects."]]
+                               :content-class "max-w-xs"}]])))
 
 
-(defstory
- TooltipPlayground
- "Controlled Storybook playground using only safe scalar component props."
- {:args {:side "top"}
-  :arg-types {:side {:control {:type "select"} :options ["top" "right" "bottom" "left"]}}
-  :parameters {:controls {:exclude ["trigger" "content" "open" "default-open" "on-open-change"]}}
-  :decode-args (fn [{:keys [side] :as args}]
-                 (cond-> args side (update :side keyword)))}
- [args]
- (r/as-element
-  (helpers/wrap-component
-   [sut/tooltip (merge (select-keys args [:side])
-                       {:trigger (button/button {:variant :outline} "Hover me")
-                        :content "Helpful context"
-                        :trigger-as-child? true})])))
+(defstory TooltipPlayground
+          "Controlled Storybook playground using only safe scalar component props."
+          {:args {:side "top"}
+           :arg-types {:side {:control {:type "select"}
+                              :options ["top" "right" "bottom" "left"]}}
+           :parameters {:controls {:exclude
+                                   ["trigger" "content" "open" "default-open" "on-open-change"]}}
+           :decode-args (fn [{:keys [side]
+                              :as args}]
+                          (cond-> args
+                            side (update :side keyword)))}
+          [args]
+          (r/as-element (helpers/wrap-component [sut/tooltip
+                                                 (merge (select-keys args [:side])
+                                                        {:trigger (button/button {:variant :outline}
+                                                                                 "Hover me")
+                                                         :content "Helpful context"
+                                                         :trigger-as-child? true})])))

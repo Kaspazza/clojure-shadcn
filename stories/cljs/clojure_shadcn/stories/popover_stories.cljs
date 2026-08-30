@@ -249,16 +249,16 @@
                     "Popover content can be lightweight explanatory text or callouts."]]]])))
 
 
-(defstory
- PopoverPlayground
- "Controlled Storybook playground using only safe scalar component props."
- {:args {:side "bottom"}
-  :arg-types {:side {:control {:type "select"} :options ["top" "right" "bottom" "left"]}}
-  :parameters {:controls {:exclude ["children" "open" "default-open" "on-open-change"]}}
- }
- [args]
- (r/as-element
-  (helpers/wrap-component
-   [sut/popover {}
-    [sut/popover-trigger {:as-child true} [button/button {:variant :outline} "Open popover"]]
-    [sut/popover-content (select-keys args [:side]) "Place content here."]])))
+(defstory PopoverPlayground
+          "Controlled Storybook playground using only safe scalar component props."
+          {:args {:side "bottom"}
+           :arg-types {:side {:control {:type "select"}
+                              :options ["top" "right" "bottom" "left"]}}
+           :parameters {:controls {:exclude ["children" "open" "default-open" "on-open-change"]}}}
+          [args]
+          (r/as-element (helpers/wrap-component
+                         [sut/popover {}
+                          [sut/popover-trigger {:as-child true}
+                           [button/button {:variant :outline}
+                            "Open popover"]]
+                          [sut/popover-content (select-keys args [:side]) "Place content here."]])))

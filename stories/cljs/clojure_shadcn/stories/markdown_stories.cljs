@@ -68,7 +68,14 @@
        [:code
         "[markdown {:children \"# Release Notes\\n\\n- Added sync\\n- Fixed edge cases\\n\\n```clojure\\n(defn ready? [state]\\n  (= :ok (:status state)))\\n```\"\n           :class \"prose prose-sm max-w-none\"}]"]]]]])))
 
-(defstory MarkdownHeadings "Interactive markdown playground." {:args {:children "# Heading 1\n\n## Heading 2\n\n**Bold** and _italic_ text."} :arg-types {:children {:control {:type "text"}}} :parameters {:controls {:exclude ["class" "id" "components"]}}} [args] (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-xl"} [sut/markdown (select-keys args [:children])]])))
+(defstory MarkdownHeadings
+          "Interactive markdown playground."
+          {:args {:children "# Heading 1\n\n## Heading 2\n\n**Bold** and _italic_ text."}
+           :arg-types {:children {:control {:type "text"}}}
+           :parameters {:controls {:exclude ["class" "id" "components"]}}}
+          [args]
+          (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-xl"}
+                                                 [sut/markdown (select-keys args [:children])]])))
 
 (defstory
  MarkdownCodeBlocks

@@ -69,8 +69,7 @@
           property ["header" "cell"]]
     (when-let [renderer (aget column property)]
       (when (fn? renderer)
-        (aset column property (fn [context]
-                                (r/as-element (renderer context)))))))
+        (aset column property (fn [context] (r/as-element (renderer context)))))))
   columns)
 
 (defn make-columns
@@ -78,78 +77,78 @@
   (adapt-reagent-renderers
    #js
     [(make-checkbox-column)
-    #js {:accessorKey "id"
-         :header (fn [^js ctx] [sut/column-header-ui
-                                {:title "ID"
-                                 :can-sort? true
-                                 :sort-state (.getIsSorted (.-column ctx))
-                                 :on-toggle-sort #(.toggleSorting (.-column ctx) %)
-                                 :on-clear-sort #(.clearSorting (.-column ctx))
-                                 :on-toggle-visibility #(.toggleVisibility (.-column ctx) false)}])
-         :cell (fn [^js ctx] [:div {:class "font-mono text-xs"}
-                              (.getValue ctx)])}
-    #js {:accessorKey "title"
-         :header (fn [^js ctx] [sut/column-header-ui
-                                {:title "Title"
-                                 :can-sort? true
-                                 :sort-state (.getIsSorted (.-column ctx))
-                                 :on-toggle-sort #(.toggleSorting (.-column ctx) %)
-                                 :on-clear-sort #(.clearSorting (.-column ctx))
-                                 :on-toggle-visibility #(.toggleVisibility (.-column ctx) false)}])
-         :cell (fn [^js ctx] (.getValue ctx))}
-    #js {:accessorKey "status"
-         :header (fn [^js ctx] [sut/column-header-ui
-                                {:title "Status"
-                                 :can-sort? true
-                                 :sort-state (.getIsSorted (.-column ctx))
-                                 :on-toggle-sort #(.toggleSorting (.-column ctx) %)
-                                 :on-clear-sort #(.clearSorting (.-column ctx))}])
-         :cell (fn [^js ctx]
-                 (let [status (.getValue ctx)]
-                   [badge/badge {:variant (case status
-                                            "done" :default
-                                            "in-progress" :secondary
-                                            "todo" :outline
-                                            :default)}
-                    status]))
-         :filterFn (fn [^js row _column-id filter-value]
-                     (some #(= % (aget (.-original row) "status")) (js->clj filter-value)))}
-    #js {:accessorKey "priority"
-         :header (fn [^js ctx] [sut/column-header-ui
-                                {:title "Priority"
-                                 :can-sort? true
-                                 :sort-state (.getIsSorted (.-column ctx))
-                                 :on-toggle-sort #(.toggleSorting (.-column ctx) %)
-                                 :on-clear-sort #(.clearSorting (.-column ctx))}])
-         :cell (fn [^js ctx]
-                 (let [priority (.getValue ctx)]
-                   [:span {:class (case priority
-                                    "high" "text-red-600 font-medium"
-                                    "medium" "text-yellow-600"
-                                    "low" "text-green-600"
-                                    "")}
-                    priority]))
-         :filterFn (fn [^js row _column-id filter-value]
-                     (some #(= % (aget (.-original row) "priority")) (js->clj filter-value)))}
-    #js {:accessorKey "assignee"
-         :header "Assignee"
-         :cell (fn [^js ctx] (.getValue ctx))}
-    #js {:id "actions"
-         :cell (fn [^js _ctx] [dropdown-menu/dropdown-menu {}
-                               [dropdown-menu/dropdown-menu-trigger {:as-child true}
-                                (button/button {:variant :ghost
-                                                :size :icon
-                                                :class "h-8 w-8"}
-                                               [:> MoreHorizontal {:class "h-4 w-4"}])]
-                               [dropdown-menu/dropdown-menu-content {:align "end"}
-                                [dropdown-menu/dropdown-menu-label {}
-                                 "Actions"]
-                                [dropdown-menu/dropdown-menu-item {}
-                                 "Edit"]
-                                [dropdown-menu/dropdown-menu-item {}
-                                 "Delete"]]])
-         :enableSorting false
-         :enableHiding false}]))
+     #js {:accessorKey "id"
+          :header (fn [^js ctx] [sut/column-header-ui
+                                 {:title "ID"
+                                  :can-sort? true
+                                  :sort-state (.getIsSorted (.-column ctx))
+                                  :on-toggle-sort #(.toggleSorting (.-column ctx) %)
+                                  :on-clear-sort #(.clearSorting (.-column ctx))
+                                  :on-toggle-visibility #(.toggleVisibility (.-column ctx) false)}])
+          :cell (fn [^js ctx] [:div {:class "font-mono text-xs"}
+                               (.getValue ctx)])}
+     #js {:accessorKey "title"
+          :header (fn [^js ctx] [sut/column-header-ui
+                                 {:title "Title"
+                                  :can-sort? true
+                                  :sort-state (.getIsSorted (.-column ctx))
+                                  :on-toggle-sort #(.toggleSorting (.-column ctx) %)
+                                  :on-clear-sort #(.clearSorting (.-column ctx))
+                                  :on-toggle-visibility #(.toggleVisibility (.-column ctx) false)}])
+          :cell (fn [^js ctx] (.getValue ctx))}
+     #js {:accessorKey "status"
+          :header (fn [^js ctx] [sut/column-header-ui
+                                 {:title "Status"
+                                  :can-sort? true
+                                  :sort-state (.getIsSorted (.-column ctx))
+                                  :on-toggle-sort #(.toggleSorting (.-column ctx) %)
+                                  :on-clear-sort #(.clearSorting (.-column ctx))}])
+          :cell (fn [^js ctx]
+                  (let [status (.getValue ctx)]
+                    [badge/badge {:variant (case status
+                                             "done" :default
+                                             "in-progress" :secondary
+                                             "todo" :outline
+                                             :default)}
+                     status]))
+          :filterFn (fn [^js row _column-id filter-value]
+                      (some #(= % (aget (.-original row) "status")) (js->clj filter-value)))}
+     #js {:accessorKey "priority"
+          :header (fn [^js ctx] [sut/column-header-ui
+                                 {:title "Priority"
+                                  :can-sort? true
+                                  :sort-state (.getIsSorted (.-column ctx))
+                                  :on-toggle-sort #(.toggleSorting (.-column ctx) %)
+                                  :on-clear-sort #(.clearSorting (.-column ctx))}])
+          :cell (fn [^js ctx]
+                  (let [priority (.getValue ctx)]
+                    [:span {:class (case priority
+                                     "high" "text-red-600 font-medium"
+                                     "medium" "text-yellow-600"
+                                     "low" "text-green-600"
+                                     "")}
+                     priority]))
+          :filterFn (fn [^js row _column-id filter-value]
+                      (some #(= % (aget (.-original row) "priority")) (js->clj filter-value)))}
+     #js {:accessorKey "assignee"
+          :header "Assignee"
+          :cell (fn [^js ctx] (.getValue ctx))}
+     #js {:id "actions"
+          :cell (fn [^js _ctx] [dropdown-menu/dropdown-menu {}
+                                [dropdown-menu/dropdown-menu-trigger {:as-child true}
+                                 (button/button {:variant :ghost
+                                                 :size :icon
+                                                 :class "h-8 w-8"}
+                                                [:> MoreHorizontal {:class "h-4 w-4"}])]
+                                [dropdown-menu/dropdown-menu-content {:align "end"}
+                                 [dropdown-menu/dropdown-menu-label {}
+                                  "Actions"]
+                                 [dropdown-menu/dropdown-menu-item {}
+                                  "Edit"]
+                                 [dropdown-menu/dropdown-menu-item {}
+                                  "Delete"]]])
+          :enableSorting false
+          :enableHiding false}]))
 
 (defdoc
  Installation
@@ -637,19 +636,21 @@
                                                             :empty-state empty-state}]]))))]))
 
 
-(defstory
- DataTablePlayground
- "Controlled Storybook playground using only safe scalar component props."
- {:args {:initial-page-size 5}
-  :arg-types {:initial-page-size {:control {:type "number"} :min 1 :max 5 :step 1}}
-  :parameters {:controls {:exclude ["columns" "data" "renderers" "on-row-click"]}}
- }
- [args]
- (r/as-element
-  (helpers/wrap-component
-   [(fn []
-     (let [data (r/atom (clj->js (make-task-data)))
-           columns (r/atom (make-columns))]
-       (fn []
-         [:div {:class "p-6"}
-          [sut/data-table (assoc (select-keys args [:initial-page-size]) :columns @columns :data @data)]]))) ])))
+(defstory DataTablePlayground
+          "Controlled Storybook playground using only safe scalar component props."
+          {:args {:initial-page-size 5}
+           :arg-types {:initial-page-size {:control {:type "number"}
+                                           :min 1
+                                           :max 5
+                                           :step 1}}
+           :parameters {:controls {:exclude ["columns" "data" "renderers" "on-row-click"]}}}
+          [args]
+          (r/as-element (helpers/wrap-component
+                         [(fn []
+                            (let [data (r/atom (clj->js (make-task-data)))
+                                  columns (r/atom (make-columns))]
+                              (fn [] [:div {:class "p-6"}
+                                      [sut/data-table
+                                       (assoc (select-keys args [:initial-page-size])
+                                              :columns @columns
+                                              :data @data)]])))])))

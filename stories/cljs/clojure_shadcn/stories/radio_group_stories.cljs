@@ -261,10 +261,33 @@
 
 
 (defstory RadioGroupPlayground
-  "Interactive radio-group playground."
-  {:args {:default-value "comfortable" :orientation "vertical" :disabled false :required false}
-   :arg-types {:default-value {:control {:type "select"} :options ["default" "comfortable" "compact"]} :orientation {:control {:type "select"} :options ["vertical" "horizontal"]} :disabled {:control {:type "boolean"}} :required {:control {:type "boolean"}}}
-   :parameters {:controls {:exclude ["value" "on-value-change" "class"]}}
-   :decode-args (fn [{:keys [orientation] :as args}] (update args :orientation keyword))}
-  [args]
-  (r/as-element (helpers/wrap-component [:div {:class "p-6"} [sut/radio-group args [:div {:class "flex items-center gap-2"} [sut/radio-group-item {:id "density-default-playground" :value "default"}] [label/label {:html-for "density-default-playground"} "Default"]] [:div {:class "flex items-center gap-2"} [sut/radio-group-item {:id "density-comfortable-playground" :value "comfortable"}] [label/label {:html-for "density-comfortable-playground"} "Comfortable"]]]])))
+          "Interactive radio-group playground."
+          {:args {:default-value "comfortable"
+                  :orientation "vertical"
+                  :disabled false
+                  :required false}
+           :arg-types {:default-value {:control {:type "select"}
+                                       :options ["default" "comfortable" "compact"]}
+                       :orientation {:control {:type "select"}
+                                     :options ["vertical" "horizontal"]}
+                       :disabled {:control {:type "boolean"}}
+                       :required {:control {:type "boolean"}}}
+           :parameters {:controls {:exclude ["value" "on-value-change" "class"]}}
+           :decode-args (fn [{:keys [orientation]
+                              :as args}]
+                          (update args :orientation keyword))}
+          [args]
+          (r/as-element (helpers/wrap-component
+                         [:div {:class "p-6"}
+                          [sut/radio-group
+                           args
+                           [:div {:class "flex items-center gap-2"}
+                            [sut/radio-group-item {:id "density-default-playground"
+                                                   :value "default"}]
+                            [label/label {:html-for "density-default-playground"}
+                             "Default"]]
+                           [:div {:class "flex items-center gap-2"}
+                            [sut/radio-group-item {:id "density-comfortable-playground"
+                                                   :value "comfortable"}]
+                            [label/label {:html-for "density-comfortable-playground"}
+                             "Comfortable"]]]])))

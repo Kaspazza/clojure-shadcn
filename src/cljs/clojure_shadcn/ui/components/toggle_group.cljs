@@ -40,33 +40,33 @@
 
 (defn- toggle-group-item-root
   [^js react-props]
-  (let [context (react/useContext group-context)
-        raw-props (.-rawProps react-props)
-        child (.-child react-props)
-        {:keys [class variant size]
-         :as props}
-        (normalize-props raw-props)
-        variant (or variant (keyword (.-variant context)))
-        size (or size (keyword (.-size context)))
-        item-props
-        (->
-          props
-          (assoc
-           :data-slot "toggle-group-item"
-           :data-variant (name variant)
-           :data-size (name size)
-           :class
-           (merge-classes
-            (toggle-classes {:variant variant
-                             :size size})
-            "min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l"
-            class))
-          (dissoc :class-name :variant :size))]
+  (let
+    [context (react/useContext group-context)
+     raw-props (.-rawProps react-props)
+     child (.-child react-props)
+     {:keys [class variant size]
+      :as props}
+     (normalize-props raw-props)
+     variant (or variant (keyword (.-variant context)))
+     size (or size (keyword (.-size context)))
+     item-props
+     (->
+       props
+       (assoc
+        :data-slot "toggle-group-item"
+        :data-variant (name variant)
+        :data-size (name size)
+        :class
+        (merge-classes
+         (toggle-classes {:variant variant
+                          :size size})
+         "min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l"
+         class))
+       (dissoc :class-name :variant :size))]
     (r/as-element [:> primitive/Item item-props child])))
 
 (defn toggle-group-item
   [{:as raw-props} & children]
-  (r/create-element
-   toggle-group-item-root
-   #js {:rawProps raw-props
-        :child (r/as-element (into [:<>] children))}))
+  (r/create-element toggle-group-item-root
+                    #js {:rawProps raw-props
+                         :child (r/as-element (into [:<>] children))}))

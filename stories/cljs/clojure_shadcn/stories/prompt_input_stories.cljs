@@ -230,16 +230,22 @@
 
 
 (defstory PromptInputPlayground
-  "Interactive prompt-input playground."
-  {:args {:placeholder "Type your message…" :disabled false :max-height 240}
-   :arg-types {:placeholder {:control {:type "text"}}
-               :disabled {:control {:type "boolean"}}
-               :max-height {:control {:type "number"}}}
-   :parameters {:controls {:exclude ["value" "on-value-change" "on-submit" "class"]}}}
-  [args]
-  (r/as-element
-   (r/with-let [value (r/atom "")]
-     (helpers/wrap-component
-      [:div {:class "max-w-xl p-6"}
-       [sut/prompt-input {:value @value :disabled? (:disabled args) :max-height (:max-height args) :on-value-change #(reset! value %)}
-        [sut/prompt-input-textarea {:placeholder (:placeholder args)}]]]))))\n
+          "Interactive prompt-input playground."
+          {:args {:placeholder "Type your message…"
+                  :disabled false
+                  :max-height 240}
+           :arg-types {:placeholder {:control {:type "text"}}
+                       :disabled {:control {:type "boolean"}}
+                       :max-height {:control {:type "number"}}}
+           :parameters {:controls {:exclude ["value" "on-value-change" "on-submit" "class"]}}}
+          [args]
+          (r/as-element (r/with-let [value (r/atom "")]
+                                    (helpers/wrap-component
+                                     [:div {:class "max-w-xl p-6"}
+                                      [sut/prompt-input {:value @value
+                                                         :disabled? (:disabled args)
+                                                         :max-height (:max-height args)
+                                                         :on-value-change #(reset! value %)}
+                                       [sut/prompt-input-textarea {:placeholder (:placeholder
+                                                                                 args)}]]]))))
+\n

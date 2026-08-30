@@ -196,7 +196,19 @@
        [:code
         "[:div {:class \"flex items-center gap-3\"}\n [loader {:variant :circular :size :sm}]\n [loader {:variant :pulse-dot :size :md}]\n [loader {:variant :text-shimmer :text \"Generating\"}]]"]]]]])))
 
-(defstory LoaderAllVariants [] (r/as-element (helpers/wrap-component [:div {:class "p-6 flex flex-wrap items-center gap-6"} [sut/loader {:variant :circular}] [sut/loader {:variant :classic}] [sut/loader {:variant :pulse}] [sut/loader {:variant :pulse-dot}] [sut/loader {:variant :dots}] [sut/loader {:variant :typing}] [sut/loader {:variant :wave}] [sut/loader {:variant :bars}] [sut/loader {:variant :terminal}]])))
+(defstory LoaderAllVariants
+          []
+          (r/as-element (helpers/wrap-component [:div {:class
+                                                       "p-6 flex flex-wrap items-center gap-6"}
+                                                 [sut/loader {:variant :circular}]
+                                                 [sut/loader {:variant :classic}]
+                                                 [sut/loader {:variant :pulse}]
+                                                 [sut/loader {:variant :pulse-dot}]
+                                                 [sut/loader {:variant :dots}]
+                                                 [sut/loader {:variant :typing}]
+                                                 [sut/loader {:variant :wave}]
+                                                 [sut/loader {:variant :bars}]
+                                                 [sut/loader {:variant :terminal}]])))
 
 (defstory LoaderSizes
           "Loader size comparison.
@@ -226,4 +238,34 @@
                                                      :text "Loading"
                                                      :size :md}]])))
 
-(defstory LoaderComponent "Interactive unified loader playground." {:args {:variant "circular" :size "md" :text "Thinking"} :arg-types {:variant {:control {:type "select"} :options ["circular" "classic" "pulse" "pulse-dot" "dots" "typing" "wave" "bars" "terminal" "text-blink" "text-shimmer" "loading-dots"]} :size {:control {:type "select"} :options ["sm" "md" "lg"]} :text {:control {:type "text"}}} :parameters {:controls {:exclude ["class"]}} :decode-args (fn [{:keys [variant size] :as args}] (cond-> args variant (update :variant keyword) size (update :size keyword)))} [args] (r/as-element (helpers/wrap-component [:div {:class "p-6"} [sut/loader (select-keys args [:variant :size :text])]])))
+(defstory LoaderComponent
+          "Interactive unified loader playground."
+          {:args {:variant "circular"
+                  :size "md"
+                  :text "Thinking"}
+           :arg-types {:variant {:control {:type "select"}
+                                 :options ["circular"
+                                           "classic"
+                                           "pulse"
+                                           "pulse-dot"
+                                           "dots"
+                                           "typing"
+                                           "wave"
+                                           "bars"
+                                           "terminal"
+                                           "text-blink"
+                                           "text-shimmer"
+                                           "loading-dots"]}
+                       :size {:control {:type "select"}
+                              :options ["sm" "md" "lg"]}
+                       :text {:control {:type "text"}}}
+           :parameters {:controls {:exclude ["class"]}}
+           :decode-args (fn [{:keys [variant size]
+                              :as args}]
+                          (cond-> args
+                            variant (update :variant keyword)
+                            size (update :size keyword)))}
+          [args]
+          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
+                                                 [sut/loader
+                                                  (select-keys args [:variant :size :text])]])))

@@ -262,48 +262,85 @@
         [:> story])]]))
 
 (def ^:private base-presets
-  [{:id :neutral :label "Neutral" :swatch "oklch(0.55 0 0)"}
-   {:id :slate :label "Slate" :swatch "oklch(0.55 0.05 260)"}
-   {:id :taupe :label "Taupe" :swatch "oklch(0.55 0.03 65)"}])
+  [{:id :neutral
+    :label "Neutral"
+    :swatch "oklch(0.55 0 0)"}
+   {:id :slate
+    :label "Slate"
+    :swatch "oklch(0.55 0.05 260)"}
+   {:id :taupe
+    :label "Taupe"
+    :swatch "oklch(0.55 0.03 65)"}])
 
 (def ^:private theme-presets
-  [{:id :graphite :label "Graphite" :swatch "oklch(0.32 0.02 260)"}
-   {:id :ocean :label "Blue" :swatch "oklch(0.55 0.24 263)"}
-   {:id :violet :label "Violet" :swatch "oklch(0.58 0.26 293)"}
-   {:id :rose :label "Rose" :swatch "oklch(0.59 0.25 18)"}
-   {:id :forest :label "Green" :swatch "oklch(0.53 0.15 150)"}])
+  [{:id :graphite
+    :label "Graphite"
+    :swatch "oklch(0.32 0.02 260)"}
+   {:id :ocean
+    :label "Blue"
+    :swatch "oklch(0.55 0.24 263)"}
+   {:id :violet
+    :label "Violet"
+    :swatch "oklch(0.58 0.26 293)"}
+   {:id :rose
+    :label "Rose"
+    :swatch "oklch(0.59 0.25 18)"}
+   {:id :forest
+    :label "Green"
+    :swatch "oklch(0.53 0.15 150)"}])
 
 (def ^:private radii
-  [{:label "0" :value "0rem"}
-   {:label "0.3" :value "0.3rem"}
-   {:label "0.5" :value "0.5rem"}
-   {:label "0.75" :value "0.75rem"}
-   {:label "1.0" :value "1rem"}])
+  [{:label "0"
+    :value "0rem"}
+   {:label "0.3"
+    :value "0.3rem"}
+   {:label "0.5"
+    :value "0.5rem"}
+   {:label "0.75"
+    :value "0.75rem"}
+   {:label "1.0"
+    :value "1rem"}])
 
 (def ^:private heading-fonts
-  [{:id :figtree :label "Figtree" :family "'Figtree', sans-serif"}
-   {:id :inter :label "Inter" :family "'Inter', sans-serif"}
-   {:id :manrope :label "Manrope" :family "'Manrope', sans-serif"}
-   {:id :playfair :label "Playfair Display" :family "'Playfair Display', serif"}])
+  [{:id :figtree
+    :label "Figtree"
+    :family "'Figtree', sans-serif"}
+   {:id :inter
+    :label "Inter"
+    :family "'Inter', sans-serif"}
+   {:id :manrope
+    :label "Manrope"
+    :family "'Manrope', sans-serif"}
+   {:id :playfair
+    :label "Playfair Display"
+    :family "'Playfair Display', serif"}])
 
 (def ^:private body-fonts
-  [{:id :inter :label "Inter" :family "'Inter', sans-serif"}
-   {:id :figtree :label "Figtree" :family "'Figtree', sans-serif"}
-   {:id :manrope :label "Manrope" :family "'Manrope', sans-serif"}
-   {:id :source-serif :label "Source Serif 4" :family "'Source Serif 4', serif"}])
+  [{:id :inter
+    :label "Inter"
+    :family "'Inter', sans-serif"}
+   {:id :figtree
+    :label "Figtree"
+    :family "'Figtree', sans-serif"}
+   {:id :manrope
+    :label "Manrope"
+    :family "'Manrope', sans-serif"}
+   {:id :source-serif
+    :label "Source Serif 4"
+    :family "'Source Serif 4', serif"}])
 
 (defonce ^:private showcase-base
-  (r/atom (or (some-> (.getAttribute js/document.documentElement "data-base") keyword)
+  (r/atom (or (some-> (.getAttribute js/document.documentElement "data-base")
+                      keyword)
               :taupe)))
 
 (defonce ^:private showcase-preset
-  (r/atom (or (some-> (.getAttribute js/document.documentElement "data-theme") keyword)
+  (r/atom (or (some-> (.getAttribute js/document.documentElement "data-theme")
+                      keyword)
               :ocean)))
 
 (defonce ^:private showcase-mode
-  (r/atom (if (.contains (.-classList js/document.documentElement) "dark")
-            :dark
-            :light)))
+  (r/atom (if (.contains (.-classList js/document.documentElement) "dark") :dark :light)))
 
 (defonce ^:private showcase-radius (r/atom "0.75rem"))
 (defonce ^:private showcase-heading-font (r/atom :figtree))
@@ -327,9 +364,7 @@
   (.toggle (.-classList js/document.documentElement) "dark" (= mode :dark))
   (reset! showcase-mode mode))
 
-(defn- font-by-id
-  [fonts id]
-  (some #(when (= id (:id %)) %) fonts))
+(defn- font-by-id [fonts id] (some #(when (= id (:id %)) %) fonts))
 
 (defn- shuffle-theme!
   []
@@ -362,12 +397,14 @@
   [label fonts selected-font]
   (let [selected (font-by-id fonts @selected-font)]
     [:fieldset
-     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500"} label]
+     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500"}
+      label]
      [ui-select/select {:value (name @selected-font)
                         :on-value-change #(reset! selected-font (keyword %))}
       [ui-select/select-trigger
        {:aria-label (str "Select " (str/lower-case label) " font")
-        :class "w-full border-white/10 bg-transparent text-white shadow-none hover:bg-white/10 focus-visible:border-white/30 focus-visible:ring-white/20"}
+        :class
+        "w-full border-white/10 bg-transparent text-white shadow-none hover:bg-white/10 focus-visible:border-white/30 focus-visible:ring-white/20"}
        [ui-select/select-value {}]
        [:span {:aria-hidden true
                :class "ml-auto text-xl leading-none text-zinc-400"
@@ -379,35 +416,47 @@
          ^{:key id}
          [ui-select/select-item {:value (name id)
                                  :class "focus:bg-white/10 focus:text-white"}
-          [:span {:style {:font-family family}} label]])]]]))
+          [:span {:style {:font-family family}}
+           label]])]]]))
 
 (defn- theme-configurator
   []
-  [:aside {:class "overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 text-zinc-50 shadow-2xl lg:sticky lg:top-5"}
+  [:aside
+   {:class
+    "overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 text-zinc-50 shadow-2xl lg:sticky lg:top-5"}
    [:div {:class "flex items-center justify-between border-b border-white/10 px-4 py-4"}
     [:div
-     [:p {:class "text-sm font-semibold"} "Customize"]
-     [:p {:class "mt-0.5 text-xs text-zinc-400"} "Design your component theme"]]
-    [:span {:class "rounded-md border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] text-zinc-400"}
+     [:p {:class "text-sm font-semibold"}
+      "Customize"]
+     [:p {:class "mt-0.5 text-xs text-zinc-400"}
+      "Design your component theme"]]
+    [:span
+     {:class
+      "rounded-md border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] text-zinc-400"}
      "Live"]]
    [:div {:class "max-h-[calc(100vh-13rem)] space-y-6 overflow-y-auto p-4"}
     [:fieldset
-     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500"} "Base color"]
+     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500"}
+      "Base color"]
      [:div {:class "grid grid-cols-3 gap-1"}
       (for [{:keys [id label swatch]} base-presets]
         ^{:key id}
-        [:button {:type "button"
-                  :aria-pressed (= id @showcase-base)
-                  :on-click #(select-showcase-base! id)
-                  :class (str "flex flex-col items-center gap-2 rounded-md border px-2 py-2.5 text-xs transition-colors hover:bg-white/10 "
-                              (if (= id @showcase-base)
-                                "border-white/30 bg-white/10 text-white"
-                                "border-white/10 text-zinc-400"))}
+        [:button
+         {:type "button"
+          :aria-pressed (= id @showcase-base)
+          :on-click #(select-showcase-base! id)
+          :class
+          (str
+           "flex flex-col items-center gap-2 rounded-md border px-2 py-2.5 text-xs transition-colors hover:bg-white/10 "
+           (if (= id @showcase-base)
+             "border-white/30 bg-white/10 text-white"
+             "border-white/10 text-zinc-400"))}
          [:span {:class "size-5 rounded-full ring-1 ring-white/20"
                  :style {:background swatch}}]
          label])]]
     [:fieldset
-     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500"} "Theme color"]
+     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500"}
+      "Theme color"]
      [:div {:class "grid gap-1"}
       (for [{:keys [id label swatch]} theme-presets]
         ^{:key id}
@@ -421,22 +470,27 @@
                   :style {:background swatch}}]
           label]
          (when (= id @showcase-preset)
-           [:span {:class "text-xs text-zinc-400"} "✓"])])]]
+           [:span {:class "text-xs text-zinc-400"}
+            "✓"])])]]
     [:fieldset
-     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500"} "Appearance"]
+     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500"}
+      "Appearance"]
      [:div {:class "grid grid-cols-2 gap-2"}
       (for [[mode icon label] [[:light "☀" "Light"] [:dark "◐" "Dark"]]]
         ^{:key mode}
-        [:button {:type "button"
-                  :aria-pressed (= mode @showcase-mode)
-                  :on-click #(select-showcase-mode! mode)
-                  :class (str "rounded-lg border px-3 py-3 text-left text-sm transition-colors hover:bg-white/10 "
-                              (if (= mode @showcase-mode)
-                                "border-white/30 bg-white/10"
-                                "border-white/10"))}
-         [:span {:class "mr-2 text-base"} icon] label])]]
+        [:button
+         {:type "button"
+          :aria-pressed (= mode @showcase-mode)
+          :on-click #(select-showcase-mode! mode)
+          :class
+          (str "rounded-lg border px-3 py-3 text-left text-sm transition-colors hover:bg-white/10 "
+               (if (= mode @showcase-mode) "border-white/30 bg-white/10" "border-white/10"))}
+         [:span {:class "mr-2 text-base"}
+          icon]
+         label])]]
     [:fieldset
-     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500"} "Radius"]
+     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500"}
+      "Radius"]
      [:div {:class "grid grid-cols-5 gap-1"}
       (for [{:keys [label value]} radii]
         ^{:key value}
@@ -451,18 +505,23 @@
     [font-option "Heading" heading-fonts showcase-heading-font]
     [font-option "Font" body-fonts showcase-body-font]
     [:div {:class "rounded-lg border border-white/10 bg-white/[0.04] p-3"}
-     [:p {:class "text-[10px] uppercase tracking-wider text-zinc-500"} "Current preset"]
+     [:p {:class "text-[10px] uppercase tracking-wider text-zinc-500"}
+      "Current preset"]
      [:p {:class "mt-1 truncate font-mono text-xs text-zinc-300"}
-      (str (name @showcase-base) " / " (name @showcase-preset) " / "
-           (name @showcase-mode) " / " @showcase-radius)]]]
+      (str (name @showcase-base)
+           " / " (name @showcase-preset)
+           " / " (name @showcase-mode)
+           " / " @showcase-radius)]]]
    [:div {:class "grid grid-cols-2 gap-2 border-t border-white/10 p-4"}
     [:button {:type "button"
               :on-click reset-theme!
-              :class "rounded-md border border-white/15 px-3 py-2 text-xs font-medium hover:bg-white/10"}
+              :class
+              "rounded-md border border-white/15 px-3 py-2 text-xs font-medium hover:bg-white/10"}
      "Reset"]
     [:button {:type "button"
               :on-click shuffle-theme!
-              :class "rounded-md bg-white px-3 py-2 text-xs font-semibold text-zinc-950 hover:bg-zinc-200"}
+              :class
+              "rounded-md bg-white px-3 py-2 text-xs font-semibold text-zinc-950 hover:bg-zinc-200"}
      "Shuffle ↻"]]])
 
 (defn- overview
@@ -470,33 +529,42 @@
   (let [heading-font (font-by-id heading-fonts @showcase-heading-font)
         body-font (font-by-id body-fonts @showcase-body-font)]
     [:main {:data-base (name @showcase-base)
-          :data-theme (name @showcase-preset)
-          :style {"--radius" @showcase-radius
-                  "--font-sans" (:family body-font)
-                  "--showcase-heading-font" (:family heading-font)
-                  "--showcase-body-font" (:family body-font)}
-          :class (str "showcase-fonts min-h-screen bg-background text-foreground transition-colors"
-                      (when (= @showcase-mode :dark) " dark"))}
-   [:div {:class "mx-auto max-w-[1800px] px-4 py-5 sm:px-6 lg:px-8"}
-    [:header {:class "mb-6 flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-end"}
-     [:div
-      [:div {:class "mb-2 flex items-center gap-2"}
-       [:span {:class "rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary"}
-        "Component showcase"]]
-      [:h1 {:class "text-3xl font-bold tracking-tight"} "clojure-shadcn"]
-      [:p {:class "mt-1.5 max-w-xl text-sm text-muted-foreground"}
-       (str "Explore " (count components) " live ClojureScript components and tune their semantic theme in real time.")]]
-     [:a {:href "./?path=/story/docs-introduction--overview"
-          :target "_top"
-          :class "inline-flex h-9 items-center justify-center rounded-md border bg-background px-4 text-sm font-medium shadow-xs transition-colors hover:bg-accent"}
-      "Read the docs →"]]
-    [:div {:class "grid items-start gap-5 lg:grid-cols-[17rem_minmax(0,1fr)]"}
-     [theme-configurator]
-     (into [:div {:class "grid min-w-0 items-start gap-4 md:grid-cols-2 2xl:grid-cols-3"}]
-           (map (fn [{:keys [name]
-                      :as component}]
-                  ^{:key name} [component-card component])
-                components))]]]))
+            :data-theme (name @showcase-preset)
+            :style {"--radius" @showcase-radius
+                    "--font-sans" (:family body-font)
+                    "--showcase-heading-font" (:family heading-font)
+                    "--showcase-body-font" (:family body-font)}
+            :class (str
+                    "showcase-fonts min-h-screen bg-background text-foreground transition-colors"
+                    (when (= @showcase-mode :dark) " dark"))}
+     [:div {:class "mx-auto max-w-[1800px] px-4 py-5 sm:px-6 lg:px-8"}
+      [:header {:class
+                "mb-6 flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-end"}
+       [:div
+        [:div {:class "mb-2 flex items-center gap-2"}
+         [:span
+          {:class
+           "rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary"}
+          "Component showcase"]]
+        [:h1 {:class "text-3xl font-bold tracking-tight"}
+         "clojure-shadcn"]
+        [:p {:class "mt-1.5 max-w-xl text-sm text-muted-foreground"}
+         (str "Explore "
+              (count components)
+              " live ClojureScript components and tune their semantic theme in real time.")]]
+       [:a
+        {:href "./?path=/story/docs-introduction--overview"
+         :target "_top"
+         :class
+         "inline-flex h-9 items-center justify-center rounded-md border bg-background px-4 text-sm font-medium shadow-xs transition-colors hover:bg-accent"}
+        "Read the docs →"]]
+      [:div {:class "grid items-start gap-5 lg:grid-cols-[17rem_minmax(0,1fr)]"}
+       [theme-configurator]
+       (into [:div {:class "grid min-w-0 items-start gap-4 md:grid-cols-2 2xl:grid-cols-3"}]
+             (map (fn [{:keys [name]
+                        :as component}]
+                    ^{:key name} [component-card component])
+                  components))]]]))
 
 (defn ^:export Overview
   "Every available component rendered in one continuous, scannable page."

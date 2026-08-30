@@ -60,7 +60,27 @@
        [:code
         "[:div {:class \"space-y-3\"}\n [:p \"Section A\"]\n [separator {:orientation :horizontal}]\n [:p \"Section B\"]]"]]]]])))
 
-(defstory SeparatorDemo "Interactive separator playground." {:args {:orientation "horizontal" :decorative true} :arg-types {:orientation {:control {:type "select"} :options ["horizontal" "vertical"]} :decorative {:control {:type "boolean"}}} :parameters {:controls {:exclude ["class"]}} :decode-args (fn [{:keys [orientation] :as args}] (cond-> args orientation (update :orientation keyword)))} [args] (r/as-element (helpers/wrap-component [:div {:class "flex h-16 items-center gap-4"} [:span "First"] [sut/separator (assoc (select-keys args [:orientation :decorative]) :class "data-[orientation=vertical]:h-full")] [:span "Second"]])))
+(defstory SeparatorDemo
+          "Interactive separator playground."
+          {:args {:orientation "horizontal"
+                  :decorative true}
+           :arg-types {:orientation {:control {:type "select"}
+                                     :options ["horizontal" "vertical"]}
+                       :decorative {:control {:type "boolean"}}}
+           :parameters {:controls {:exclude ["class"]}}
+           :decode-args (fn [{:keys [orientation]
+                              :as args}]
+                          (cond-> args
+                            orientation (update :orientation keyword)))}
+          [args]
+          (r/as-element (helpers/wrap-component [:div {:class "flex h-16 items-center gap-4"}
+                                                 [:span "First"]
+                                                 [sut/separator
+                                                  (assoc (select-keys args
+                                                                      [:orientation :decorative])
+                                                         :class
+                                                         "data-[orientation=vertical]:h-full")]
+                                                 [:span "Second"]])))
 
 (defstory
  BreadcrumbSeparator

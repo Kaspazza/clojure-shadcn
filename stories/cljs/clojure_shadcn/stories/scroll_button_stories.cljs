@@ -70,7 +70,33 @@
        [:code
         "[chat-container-root {:class \"relative h-64\"}\n  [chat-container-content {}\n    ;; messages\n    [chat-container-scroll-anchor {}]]\n  [scroll-button {:class \"absolute bottom-4 right-4\"}]]"]]]]])))
 
-(defstory ScrollButtonChat "Interactive scroll-button playground." {:args {:variant "outline" :size "sm"} :arg-types {:variant {:control {:type "select"} :options ["default" "outline" "secondary" "ghost"]} :size {:control {:type "select"} :options ["xs" "sm" "default" "lg" "icon" "icon-sm"]}} :parameters {:controls {:exclude ["class" "on-click"]}} :decode-args (fn [{:keys [variant size] :as args}] (cond-> args variant (update :variant keyword) size (update :size keyword)))} [args] (r/as-element (helpers/wrap-component [:div {:class "p-6"} [chat-container/chat-container-root {:class "relative h-64 w-full rounded-md border"} [chat-container/chat-container-content {:class "p-4 space-y-3"} (for [idx (range 1 20)] ^{:key idx} [:div {:class "rounded-lg bg-muted px-3 py-2 text-sm"} (str "Line " idx)]) [chat-container/chat-container-scroll-anchor {}]] [sut/scroll-button (assoc (select-keys args [:variant :size]) :class "absolute bottom-4 right-4")]]])))
+(defstory ScrollButtonChat
+          "Interactive scroll-button playground."
+          {:args {:variant "outline"
+                  :size "sm"}
+           :arg-types {:variant {:control {:type "select"}
+                                 :options ["default" "outline" "secondary" "ghost"]}
+                       :size {:control {:type "select"}
+                              :options ["xs" "sm" "default" "lg" "icon" "icon-sm"]}}
+           :parameters {:controls {:exclude ["class" "on-click"]}}
+           :decode-args (fn [{:keys [variant size]
+                              :as args}]
+                          (cond-> args
+                            variant (update :variant keyword)
+                            size (update :size keyword)))}
+          [args]
+          (r/as-element
+           (helpers/wrap-component
+            [:div {:class "p-6"}
+             [chat-container/chat-container-root {:class "relative h-64 w-full rounded-md border"}
+              [chat-container/chat-container-content {:class "p-4 space-y-3"}
+               (for [idx (range 1 20)]
+                 ^{:key idx}
+                 [:div {:class "rounded-lg bg-muted px-3 py-2 text-sm"}
+                  (str "Line " idx)])
+               [chat-container/chat-container-scroll-anchor {}]]
+              [sut/scroll-button
+               (assoc (select-keys args [:variant :size]) :class "absolute bottom-4 right-4")]]])))
 
 (defstory ScrollButtonCustom
           "Scroll button with custom styling.

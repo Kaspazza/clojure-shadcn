@@ -371,23 +371,46 @@
 
 
 (defstory StepperPlayground
-  "Interactive stepper playground."
-  {:args {:current-step "details" :variant "horizontal" :label-orientation "horizontal" :reverse-progress false}
-   :arg-types {:current-step {:control {:type "select"} :options ["details" "billing" "confirm"]}
-               :variant {:control {:type "select"} :options ["horizontal" "vertical" "circle"]}
-               :label-orientation {:control {:type "select"} :options ["horizontal" "vertical"]}
-               :reverse-progress {:control {:type "boolean"}}}
-   :parameters {:controls {:exclude ["on-step-change" "class"]}}
-   :decode-args (fn [{:keys [current-step variant label-orientation reverse-progress] :as args}] (-> args (assoc :current-step (keyword current-step) :variant (keyword variant) :label-orientation (keyword label-orientation) :reverse-progress? reverse-progress) (dissoc :reverse-progress)))}
-  [args]
-  (r/as-element
-   (r/with-let [current (r/atom (:current-step args))]
-     (helpers/wrap-component
-      [:div {:class "max-w-xl p-6"}
-       [sut/stepper (assoc args :current-step @current :on-step-change #(reset! current %))
-        [sut/stepper-navigation {}
-         (for [{:keys [id title description]} (step-data)]
-           ^{:key id} [sut/stepper-step {:id id} [sut/stepper-title {} title] [sut/stepper-description {} description]])]
-        [sut/stepper-panel {:id :details} "Account details."]
-        [sut/stepper-panel {:id :billing} "Billing preferences."]
-        [sut/stepper-panel {:id :confirm} "Review and confirm."]]]))))\n
+          "Interactive stepper playground."
+          {:args {:current-step "details"
+                  :variant "horizontal"
+                  :label-orientation "horizontal"
+                  :reverse-progress false}
+           :arg-types {:current-step {:control {:type "select"}
+                                      :options ["details" "billing" "confirm"]}
+                       :variant {:control {:type "select"}
+                                 :options ["horizontal" "vertical" "circle"]}
+                       :label-orientation {:control {:type "select"}
+                                           :options ["horizontal" "vertical"]}
+                       :reverse-progress {:control {:type "boolean"}}}
+           :parameters {:controls {:exclude ["on-step-change" "class"]}}
+           :decode-args (fn [{:keys [current-step variant label-orientation reverse-progress]
+                              :as args}]
+                          (-> args
+                              (assoc :current-step (keyword current-step)
+                                     :variant (keyword variant)
+                                     :label-orientation (keyword label-orientation)
+                                     :reverse-progress? reverse-progress)
+                              (dissoc :reverse-progress)))}
+          [args]
+          (r/as-element
+           (r/with-let [current (r/atom (:current-step args))]
+                       (helpers/wrap-component
+                        [:div {:class "max-w-xl p-6"}
+                         [sut/stepper
+                          (assoc args :current-step @current :on-step-change #(reset! current %))
+                          [sut/stepper-navigation {}
+                           (for [{:keys [id title description]} (step-data)]
+                             ^{:key id}
+                             [sut/stepper-step {:id id}
+                              [sut/stepper-title {}
+                               title]
+                              [sut/stepper-description {}
+                               description]])]
+                          [sut/stepper-panel {:id :details}
+                           "Account details."]
+                          [sut/stepper-panel {:id :billing}
+                           "Billing preferences."]
+                          [sut/stepper-panel {:id :confirm}
+                           "Review and confirm."]]]))))
+\n

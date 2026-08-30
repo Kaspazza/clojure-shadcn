@@ -226,12 +226,10 @@ Custom component implementation."
                                 :disabled (or (:disabled child-props) disabled?)
                                 :on-click (fn [e]
                                             (.stopPropagation e)
-                                            (when original-on-click
-                                              (original-on-click e))))]
+                                            (when original-on-click (original-on-click e))))]
       (if (map? (nth child props-index nil))
         (assoc child props-index enhanced-props)
-        (into (subvec child 0 props-index)
-              (cons enhanced-props (subvec child props-index)))))))
+        (into (subvec child 0 props-index) (cons enhanced-props (subvec child props-index)))))))
 
 (defc prompt-input-action
  "Individual action button with tooltip for prompt input.

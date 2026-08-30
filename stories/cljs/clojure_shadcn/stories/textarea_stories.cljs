@@ -185,10 +185,21 @@
 
 
 (defstory TextareaPlayground
-  "Interactive native textarea playground."
-  {:args {:placeholder "Type your message…" :default-value "" :rows 4 :disabled false :auto-size true}
-   :arg-types {:placeholder {:control {:type "text"}} :default-value {:control {:type "text"}} :rows {:control {:type "number"}} :disabled {:control {:type "boolean"}} :auto-size {:control {:type "boolean"}}}
-   :parameters {:controls {:exclude ["value" "on-change" "class"]}}
-   :decode-args (fn [{:keys [auto-size] :as args}] (assoc (dissoc args :auto-size) :auto-size? auto-size))}
-  [args]
-  (r/as-element (helpers/wrap-component [:div {:class "max-w-sm p-6"} [sut/textarea args]])))
+          "Interactive native textarea playground."
+          {:args {:placeholder "Type your message…"
+                  :default-value ""
+                  :rows 4
+                  :disabled false
+                  :auto-size true}
+           :arg-types {:placeholder {:control {:type "text"}}
+                       :default-value {:control {:type "text"}}
+                       :rows {:control {:type "number"}}
+                       :disabled {:control {:type "boolean"}}
+                       :auto-size {:control {:type "boolean"}}}
+           :parameters {:controls {:exclude ["value" "on-change" "class"]}}
+           :decode-args (fn [{:keys [auto-size]
+                              :as args}]
+                          (assoc (dissoc args :auto-size) :auto-size? auto-size))}
+          [args]
+          (r/as-element (helpers/wrap-component [:div {:class "max-w-sm p-6"}
+                                                 [sut/textarea args]])))

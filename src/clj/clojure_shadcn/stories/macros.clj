@@ -105,9 +105,8 @@
   (let [[docstring declaration] (if (string? (first declaration))
                                   [(first declaration) (next declaration)]
                                   [nil declaration])
-        [config declaration] (if (map? (first declaration))
-                               [(first declaration) (next declaration)]
-                               [nil declaration])
+        [config declaration]
+        (if (map? (first declaration)) [(first declaration) (next declaration)] [nil declaration])
         [params & body] declaration
         controlled-story? (some? config)]
     (when-not (symbol? story-name)
@@ -128,29 +127,29 @@
           story-object (with-meta story-name {:tag 'js})
           args-symbol (first params)
           decode-args (:decode-args config)
-          story-parameters (if api-reference?
-                             `(~'js-obj
-                               "docs"
-                               (~'js-obj "codePanel" false "canvas" (~'js-obj "sourceState" "none")))
-                             `(~'js-obj
-                               "docs"
-                               (~'js-obj
-                                "codePanel"
-                                true
-                                "source"
-                                (~'js-obj "code" ~source "language" "clojure"))))]
-      `(do
-         (defn ~exported-name ~@(when docstring [docstring]) ~params
-           ~@(if controlled-story?
-               `((let [~args-symbol ~(if decode-args
-                                       `(~decode-args (~'js->clj ~args-symbol :keywordize-keys true))
-                                       `(~'js->clj ~args-symbol :keywordize-keys true))]
-                   ~@body))
-               body))
-         (set! (.-parameters ~story-object)
-               (~'js/Object.assign (~'js-obj) ~story-parameters ~(if-let [parameters (:parameters config)]
-                                                                         `(~'clj->js ~parameters)
-                                                                         `(~'js-obj))))
-         ~@(when controlled-story?
-             `((set! (.-args ~story-object) (~'clj->js ~(:args config)))
-               (set! (.-argTypes ~story-object) (~'clj->js ~(:arg-types config)))))))))
+          story-parameters
+          (if api-reference?
+            `(~'js-obj "docs" (~'js-obj "codePanel" false "canvas" (~'js-obj "sourceState" "none")))
+            `(~'js-obj
+              "docs"
+              (~'js-obj "codePanel" true "source" (~'js-obj "code" ~source "language" "clojure"))))]
+      `(do (defn ~exported-name
+             ~@(when docstring [docstring])
+             ~params
+             ~@(if controlled-story?
+                 `((let [~args-symbol ~(if decode-args
+                                         `(~decode-args
+                                           (~'js->clj ~args-symbol :keywordize-keys true))
+                                         `(~'js->clj ~args-symbol :keywordize-keys true))]
+                     ~@body))
+                 body))
+           (set! (.-parameters ~story-object)
+                 (~'js/Object.assign
+                  (~'js-obj)
+                  ~story-parameters
+                  ~(if-let [parameters (:parameters config)]
+                     `(~'clj->js ~parameters)
+                     `(~'js-obj))))
+           ~@(when controlled-story?
+               `((set! (.-args ~story-object) (~'clj->js ~(:args config)))
+                 (set! (.-argTypes ~story-object) (~'clj->js ~(:arg-types config)))))))))

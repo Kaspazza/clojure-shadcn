@@ -91,7 +91,29 @@
         "   \"UN\"]\n"
         "  [avatar-badge {:class \"bg-green-600\"}]]"]]]]])))
 
-(defstory AvatarDemo "Interactive avatar playground." {:args {:size "default" :alt "Shadcn" :fallback "CN"} :arg-types {:size {:control {:type "select"} :options ["sm" "default" "lg"]} :alt {:control {:type "text"}} :fallback {:control {:type "text"}}} :parameters {:controls {:exclude ["class" "src"]}} :decode-args (fn [{:keys [size] :as args}] (cond-> args size (update :size keyword)))} [args] (r/as-element (helpers/wrap-component [:div {:class "p-6"} [sut/avatar (select-keys args [:size]) [sut/avatar-image {:src "https://github.com/shadcn.png" :alt (:alt args)}] [sut/avatar-fallback {} (:fallback args)]]])))
+(defstory AvatarDemo
+          "Interactive avatar playground."
+          {:args {:size "default"
+                  :alt "Shadcn"
+                  :fallback "CN"}
+           :arg-types {:size {:control {:type "select"}
+                              :options ["sm" "default" "lg"]}
+                       :alt {:control {:type "text"}}
+                       :fallback {:control {:type "text"}}}
+           :parameters {:controls {:exclude ["class" "src"]}}
+           :decode-args (fn [{:keys [size]
+                              :as args}]
+                          (cond-> args
+                            size (update :size keyword)))}
+          [args]
+          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
+                                                 [sut/avatar
+                                                  (select-keys args [:size])
+                                                  [sut/avatar-image {:src
+                                                                     "https://github.com/shadcn.png"
+                                                                     :alt (:alt args)}]
+                                                  [sut/avatar-fallback {}
+                                                   (:fallback args)]]])))
 
 (defstory
  EmptyAvatar

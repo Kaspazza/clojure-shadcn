@@ -45,4 +45,27 @@
                                                    :type ":start | :end"
                                                    :default ":end"}]}]])))
 
-(defstory BubbleConversation "Interactive message-bubble playground." {:args {:variant "secondary" :align "start" :content "Can you send the latest report?"} :arg-types {:variant {:control {:type "select"} :options ["default" "secondary" "muted" "tinted" "outline" "ghost" "destructive"]} :align {:control {:type "select"} :options ["start" "end"]} :content {:control {:type "text"}}} :parameters {:controls {:exclude ["class" "as-child?"]}} :decode-args (fn [{:keys [variant align] :as args}] (cond-> args variant (update :variant keyword) align (update :align keyword)))} [args] (r/as-element (helpers/wrap-component [sut/bubble-group {:class "max-w-lg"} [sut/bubble (select-keys args [:variant :align]) [sut/bubble-content {} (:content args)]]])))
+(defstory BubbleConversation
+          "Interactive message-bubble playground."
+          {:args {:variant "secondary"
+                  :align "start"
+                  :content "Can you send the latest report?"}
+           :arg-types {:variant
+                       {:control {:type "select"}
+                        :options
+                        ["default" "secondary" "muted" "tinted" "outline" "ghost" "destructive"]}
+                       :align {:control {:type "select"}
+                               :options ["start" "end"]}
+                       :content {:control {:type "text"}}}
+           :parameters {:controls {:exclude ["class" "as-child?"]}}
+           :decode-args (fn [{:keys [variant align]
+                              :as args}]
+                          (cond-> args
+                            variant (update :variant keyword)
+                            align (update :align keyword)))}
+          [args]
+          (r/as-element (helpers/wrap-component [sut/bubble-group {:class "max-w-lg"}
+                                                 [sut/bubble
+                                                  (select-keys args [:variant :align])
+                                                  [sut/bubble-content {}
+                                                   (:content args)]]])))

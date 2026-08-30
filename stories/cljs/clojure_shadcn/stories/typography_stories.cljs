@@ -60,4 +60,19 @@
       "rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-muted-foreground"}
      "Typography is a data-oriented set of plain Reagent functions, not a context or global prose style. Use semantic variants according to document structure."]])))
 
-(defstory TypeScale "Interactive typography playground." {:args {:heading "The Taxonomy of Type" :body "Typography should communicate hierarchy without coupling content to a page-specific stylesheet."} :arg-types {:heading {:control {:type "text"}} :body {:control {:type "text"}}} :parameters {:controls {:exclude ["class"]}}} [args] (r/as-element (helpers/wrap-component [:article {:class "max-w-2xl"} [sut/h1 {} (:heading args)] [sut/p {} (:body args)]])))
+(defstory
+ TypeScale
+ "Interactive typography playground."
+ {:args
+  {:heading "The Taxonomy of Type"
+   :body
+   "Typography should communicate hierarchy without coupling content to a page-specific stylesheet."}
+  :arg-types {:heading {:control {:type "text"}}
+              :body {:control {:type "text"}}}
+  :parameters {:controls {:exclude ["class"]}}}
+ [args]
+ (r/as-element (helpers/wrap-component [:article {:class "max-w-2xl"}
+                                        [sut/h1 {}
+                                         (:heading args)]
+                                        [sut/p {}
+                                         (:body args)]])))

@@ -71,17 +71,21 @@
                                                    "The second tab cannot be selected."]]])))
 
 
-(defstory
- TabsPlayground
- "Controlled Storybook playground using only safe scalar component props."
- {:args {:default-value "account"}
-  :arg-types {:default-value {:control {:type "select"} :options ["account" "password"]}}
-  :parameters {:controls {:exclude ["children" "value" "on-value-change"]}}
- }
- [args]
- (r/as-element
-  (helpers/wrap-component
-   [sut/tabs (select-keys args [:default-value])
-    [sut/tabs-list {} [sut/tabs-trigger {:value "account"} "Account"] [sut/tabs-trigger {:value "password"} "Password"]]
-    [sut/tabs-content {:value "account"} "Account settings"]
-    [sut/tabs-content {:value "password"} "Password settings"]])))
+(defstory TabsPlayground
+          "Controlled Storybook playground using only safe scalar component props."
+          {:args {:default-value "account"}
+           :arg-types {:default-value {:control {:type "select"}
+                                       :options ["account" "password"]}}
+           :parameters {:controls {:exclude ["children" "value" "on-value-change"]}}}
+          [args]
+          (r/as-element (helpers/wrap-component [sut/tabs
+                                                 (select-keys args [:default-value])
+                                                 [sut/tabs-list {}
+                                                  [sut/tabs-trigger {:value "account"}
+                                                   "Account"]
+                                                  [sut/tabs-trigger {:value "password"}
+                                                   "Password"]]
+                                                 [sut/tabs-content {:value "account"}
+                                                  "Account settings"]
+                                                 [sut/tabs-content {:value "password"}
+                                                  "Password settings"]])))

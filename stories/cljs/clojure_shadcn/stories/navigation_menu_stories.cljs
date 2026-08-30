@@ -125,18 +125,19 @@
                                                      "A non-viewport menu link"]]]]])))
 
 
-(defstory
- NavigationMenuPlayground
- "Controlled Storybook playground using only safe scalar component props."
- {:args {:viewport true}
-  :arg-types {:viewport {:control {:type "boolean"}}}
-  :parameters {:controls {:exclude ["children" "value" "default-value" "on-value-change"]}}
- }
- [args]
- (r/as-element
-  (helpers/wrap-component
-   [sut/navigation-menu (select-keys args [:viewport])
-    [sut/navigation-menu-list {}
-     [sut/navigation-menu-item {}
-      [sut/navigation-menu-trigger {} "Getting started"]
-      [sut/navigation-menu-content {} [sut/navigation-menu-link {:href "#"} "Introduction"]]]]])))
+(defstory NavigationMenuPlayground
+          "Controlled Storybook playground using only safe scalar component props."
+          {:args {:viewport true}
+           :arg-types {:viewport {:control {:type "boolean"}}}
+           :parameters {:controls {:exclude
+                                   ["children" "value" "default-value" "on-value-change"]}}}
+          [args]
+          (r/as-element (helpers/wrap-component [sut/navigation-menu
+                                                 (select-keys args [:viewport])
+                                                 [sut/navigation-menu-list {}
+                                                  [sut/navigation-menu-item {}
+                                                   [sut/navigation-menu-trigger {}
+                                                    "Getting started"]
+                                                   [sut/navigation-menu-content {}
+                                                    [sut/navigation-menu-link {:href "#"}
+                                                     "Introduction"]]]]])))

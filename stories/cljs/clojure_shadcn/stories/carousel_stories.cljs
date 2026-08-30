@@ -333,19 +333,24 @@
   (r/as-element [carousel-events-example]))
 
 
-(defstory
- CarouselPlayground
- "Controlled Storybook playground using only safe scalar component props."
- {:args {:orientation "horizontal"}
-  :arg-types {:orientation {:control {:type "select"} :options ["horizontal" "vertical"]}}
-  :parameters {:controls {:exclude ["children" "opts" "plugins" "set-api"]}}
-  :decode-args (fn [{:keys [orientation] :as args}] (cond-> args orientation (update :orientation keyword)))}
- [args]
- (r/as-element
-  (helpers/wrap-component
-   [sut/carousel (assoc (select-keys args [:orientation]) :class "w-full max-w-xs")
-    [sut/carousel-content {}
-     [sut/carousel-item {} [slide-card "1"]]
-     [sut/carousel-item {} [slide-card "2"]]]
-    [sut/carousel-previous {}]
-    [sut/carousel-next {}]])))
+(defstory CarouselPlayground
+          "Controlled Storybook playground using only safe scalar component props."
+          {:args {:orientation "horizontal"}
+           :arg-types {:orientation {:control {:type "select"}
+                                     :options ["horizontal" "vertical"]}}
+           :parameters {:controls {:exclude ["children" "opts" "plugins" "set-api"]}}
+           :decode-args (fn [{:keys [orientation]
+                              :as args}]
+                          (cond-> args
+                            orientation (update :orientation keyword)))}
+          [args]
+          (r/as-element (helpers/wrap-component
+                         [sut/carousel
+                          (assoc (select-keys args [:orientation]) :class "w-full max-w-xs")
+                          [sut/carousel-content {}
+                           [sut/carousel-item {}
+                            [slide-card "1"]]
+                           [sut/carousel-item {}
+                            [slide-card "2"]]]
+                          [sut/carousel-previous {}]
+                          [sut/carousel-next {}]])))

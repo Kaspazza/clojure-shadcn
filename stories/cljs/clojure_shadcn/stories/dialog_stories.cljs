@@ -332,17 +332,21 @@
                              "Cancel")]]]]))))]))
 
 
-(defstory
- DialogPlayground
- "Controlled Storybook playground using only safe scalar component props."
- {:args {:modal true}
-  :arg-types {:modal {:control {:type "boolean"}}}
-  :parameters {:controls {:exclude ["children" "open" "default-open" "on-open-change"]}}
- }
- [args]
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/dialog (select-keys args [:modal])
-     [sut/dialog-trigger {:as-child true} [button/button {:variant :outline} "Open dialog"]]
-     [sut/dialog-content {} [sut/dialog-header {} [sut/dialog-title {} "Edit profile"] [sut/dialog-description {} "Make changes to your profile here."]]]]])))
+(defstory DialogPlayground
+          "Controlled Storybook playground using only safe scalar component props."
+          {:args {:modal true}
+           :arg-types {:modal {:control {:type "boolean"}}}
+           :parameters {:controls {:exclude ["children" "open" "default-open" "on-open-change"]}}}
+          [args]
+          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
+                                                 [sut/dialog
+                                                  (select-keys args [:modal])
+                                                  [sut/dialog-trigger {:as-child true}
+                                                   [button/button {:variant :outline}
+                                                    "Open dialog"]]
+                                                  [sut/dialog-content {}
+                                                   [sut/dialog-header {}
+                                                    [sut/dialog-title {}
+                                                     "Edit profile"]
+                                                    [sut/dialog-description {}
+                                                     "Make changes to your profile here."]]]]])))

@@ -134,19 +134,18 @@
                            [controlled-toggle]]])))
 
 
-(defstory
- ThemeTogglePlayground
- "Controlled Storybook playground using only safe scalar component props."
- {:args {:class ""}
-  :arg-types {:class {:control {:type "text"}}}
-  :parameters {:controls {:exclude ["theme" "on-toggle"]}}
- }
- [args]
- (r/as-element
-  (helpers/wrap-component
-   [(fn []
-     (let [theme (r/atom :light)]
-       (fn []
-         [sut/theme-toggle {:theme @theme
-                            :class (:class args)
-                            :on-toggle #(swap! theme (fn [current] (if (= current :dark) :light :dark)))}]))) ])))
+(defstory ThemeTogglePlayground
+          "Controlled Storybook playground using only safe scalar component props."
+          {:args {:class ""}
+           :arg-types {:class {:control {:type "text"}}}
+           :parameters {:controls {:exclude ["theme" "on-toggle"]}}}
+          [args]
+          (r/as-element
+           (helpers/wrap-component
+            [(fn []
+               (let [theme (r/atom :light)]
+                 (fn [] [sut/theme-toggle
+                         {:theme @theme
+                          :class (:class args)
+                          :on-toggle #(swap! theme (fn [current]
+                                                     (if (= current :dark) :light :dark)))}])))])))

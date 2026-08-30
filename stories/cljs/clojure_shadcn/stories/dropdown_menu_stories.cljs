@@ -516,16 +516,20 @@
               (button/button {:type "submit"} "Send Invite")]]]]))))]))
 
 
-(defstory
- DropdownMenuPlayground
- "Controlled Storybook playground using only safe scalar component props."
- {:args {:modal true}
-  :arg-types {:modal {:control {:type "boolean"}}}
-  :parameters {:controls {:exclude ["children" "open" "default-open" "on-open-change" "on-select"]}}
- }
- [args]
- (r/as-element
-  (helpers/wrap-component
-   [sut/dropdown-menu (select-keys args [:modal])
-    [sut/dropdown-menu-trigger {:as-child true} [button/button {:variant :outline} "Open menu"]]
-    [sut/dropdown-menu-content {} [sut/dropdown-menu-item {} "Profile"] [sut/dropdown-menu-item {} "Settings"]]])))
+(defstory DropdownMenuPlayground
+          "Controlled Storybook playground using only safe scalar component props."
+          {:args {:modal true}
+           :arg-types {:modal {:control {:type "boolean"}}}
+           :parameters {:controls
+                        {:exclude ["children" "open" "default-open" "on-open-change" "on-select"]}}}
+          [args]
+          (r/as-element (helpers/wrap-component [sut/dropdown-menu
+                                                 (select-keys args [:modal])
+                                                 [sut/dropdown-menu-trigger {:as-child true}
+                                                  [button/button {:variant :outline}
+                                                   "Open menu"]]
+                                                 [sut/dropdown-menu-content {}
+                                                  [sut/dropdown-menu-item {}
+                                                   "Profile"]
+                                                  [sut/dropdown-menu-item {}
+                                                   "Settings"]]])))

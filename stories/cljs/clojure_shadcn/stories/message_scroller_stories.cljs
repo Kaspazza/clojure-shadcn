@@ -71,4 +71,25 @@
      [:p {:class "text-xs text-muted-foreground"}
       "The root needs a bounded height. Keep the canonical provider/root/viewport/content hierarchy intact."]]])))
 
-(defstory Conversation "Interactive message-scroller playground." {:args {:scroll-anchor true :direction "end"} :arg-types {:scroll-anchor {:control {:type "boolean"}} :direction {:control {:type "select"} :options ["start" "end"]}} :parameters {:controls {:exclude ["class" "render"]}}} [args] (r/as-element (helpers/wrap-component [:div {:class "h-80 max-w-xl rounded-lg border"} [sut/message-scroller-provider {} [sut/message-scroller {} [sut/message-scroller-viewport {} [sut/message-scroller-content {:class "p-4"} (for [n (range 1 9)] ^{:key n} [sut/message-scroller-item {:scroll-anchor (and (:scroll-anchor args) (= n 8))} [:div {:class "rounded-lg bg-muted p-3 text-sm"} (str "Conversation message " n)]])]] [sut/message-scroller-button (select-keys args [:direction])]]]])))
+(defstory Conversation
+          "Interactive message-scroller playground."
+          {:args {:scroll-anchor true
+                  :direction "end"}
+           :arg-types {:scroll-anchor {:control {:type "boolean"}}
+                       :direction {:control {:type "select"}
+                                   :options ["start" "end"]}}
+           :parameters {:controls {:exclude ["class" "render"]}}}
+          [args]
+          (r/as-element (helpers/wrap-component
+                         [:div {:class "h-80 max-w-xl rounded-lg border"}
+                          [sut/message-scroller-provider {}
+                           [sut/message-scroller {}
+                            [sut/message-scroller-viewport {}
+                             [sut/message-scroller-content {:class "p-4"}
+                              (for [n (range 1 9)]
+                                ^{:key n}
+                                [sut/message-scroller-item {:scroll-anchor
+                                                            (and (:scroll-anchor args) (= n 8))}
+                                 [:div {:class "rounded-lg bg-muted p-3 text-sm"}
+                                  (str "Conversation message " n)]])]]
+                            [sut/message-scroller-button (select-keys args [:direction])]]]])))

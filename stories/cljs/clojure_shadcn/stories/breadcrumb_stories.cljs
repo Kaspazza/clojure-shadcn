@@ -349,18 +349,19 @@
                    "Close"]]]]]]]]]))))]))
 
 
-(defstory
- BreadcrumbPlayground
- "Controlled Storybook playground using only safe scalar component props."
- {:args {:class ""}
-  :arg-types {:class {:control {:type "text"}}}
-  :parameters {:controls {:exclude ["children"]}}
- }
- [args]
- (r/as-element
-  (helpers/wrap-component
-   [sut/breadcrumb (select-keys args [:class])
-    [sut/breadcrumb-list {}
-     [sut/breadcrumb-item {} [sut/breadcrumb-link {:href "#"} "Home"]]
-     [sut/breadcrumb-separator {}]
-     [sut/breadcrumb-item {} [sut/breadcrumb-page {} "Components"]]]])))
+(defstory BreadcrumbPlayground
+          "Controlled Storybook playground using only safe scalar component props."
+          {:args {:class ""}
+           :arg-types {:class {:control {:type "text"}}}
+           :parameters {:controls {:exclude ["children"]}}}
+          [args]
+          (r/as-element (helpers/wrap-component [sut/breadcrumb
+                                                 (select-keys args [:class])
+                                                 [sut/breadcrumb-list {}
+                                                  [sut/breadcrumb-item {}
+                                                   [sut/breadcrumb-link {:href "#"}
+                                                    "Home"]]
+                                                  [sut/breadcrumb-separator {}]
+                                                  [sut/breadcrumb-item {}
+                                                   [sut/breadcrumb-page {}
+                                                    "Components"]]]])))

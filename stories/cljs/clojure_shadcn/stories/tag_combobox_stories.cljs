@@ -244,16 +244,24 @@
                    (str "Created: " (:tag entry))])]])]]))))]))
 
 
-(defstory TagComboboxPlayground
-  "Interactive tag-combobox playground."
-  {:args {:placeholder "+ Add tag" :allow-create true}
-   :arg-types {:placeholder {:control {:type "text"}}
-               :allow-create {:control {:type "boolean"}}}
-   :parameters {:controls {:exclude ["tags" "selected-tag" "on-select" "on-create" "class"]}}}
-  [args]
-  (r/as-element
-   (r/with-let [tags (r/atom #{"bug" "feature" "urgent"})
-                selected (r/atom nil)]
-     (helpers/wrap-component
-      [:div {:class "p-6"}
-       [sut/tag-combobox {:tags @tags :selected-tag @selected :placeholder (:placeholder args) :on-select #(reset! selected %) :on-create (when (:allow-create args) (fn [tag] (swap! tags conj tag) (reset! selected tag)))}]]))))\n
+(defstory
+ TagComboboxPlayground
+ "Interactive tag-combobox playground."
+ {:args {:placeholder "+ Add tag"
+         :allow-create true}
+  :arg-types {:placeholder {:control {:type "text"}}
+              :allow-create {:control {:type "boolean"}}}
+  :parameters {:controls {:exclude ["tags" "selected-tag" "on-select" "on-create" "class"]}}}
+ [args]
+ (r/as-element (r/with-let [tags (r/atom #{"bug" "feature" "urgent"}) selected (r/atom nil)]
+                           (helpers/wrap-component [:div {:class "p-6"}
+                                                    [sut/tag-combobox
+                                                     {:tags @tags
+                                                      :selected-tag @selected
+                                                      :placeholder (:placeholder args)
+                                                      :on-select #(reset! selected %)
+                                                      :on-create (when (:allow-create args)
+                                                                   (fn [tag]
+                                                                     (swap! tags conj tag)
+                                                                     (reset! selected tag)))}]]))))
+\n

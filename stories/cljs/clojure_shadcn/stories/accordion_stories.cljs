@@ -77,12 +77,12 @@
  "Controlled Storybook playground using only safe scalar component props."
  {:args {:collapsible false}
   :arg-types {:collapsible {:control {:type "boolean"}}}
-  :parameters {:controls {:exclude ["children" "on-value-change" "value" "default-value"]}}
- }
+  :parameters {:controls {:exclude ["children" "on-value-change" "value" "default-value"]}}}
  [args]
- (r/as-element
-  (helpers/wrap-component
-   [sut/accordion (select-keys args [:collapsible])
-    [sut/accordion-item {:value "item-1"}
-     [sut/accordion-trigger {} "Is it accessible?"]
-     [sut/accordion-content {} "Yes. It follows the WAI-ARIA accordion pattern."]]])))
+ (r/as-element (helpers/wrap-component [sut/accordion
+                                        (select-keys args [:collapsible])
+                                        [sut/accordion-item {:value "item-1"}
+                                         [sut/accordion-trigger {}
+                                          "Is it accessible?"]
+                                         [sut/accordion-content {}
+                                          "Yes. It follows the WAI-ARIA accordion pattern."]]])))

@@ -93,10 +93,24 @@
 
 
 (defstory InputGroupPlayground
-  "Interactive input-group playground."
-  {:args {:placeholder "Search…" :disabled false :addon-align "inline-end"}
-   :arg-types {:placeholder {:control {:type "text"}} :disabled {:control {:type "boolean"}} :addon-align {:control {:type "select"} :options ["inline-start" "inline-end"]}}
-   :parameters {:controls {:exclude ["on-click" "class"]}}
-   :decode-args (fn [{:keys [addon-align] :as args}] (update args :addon-align keyword))}
-  [args]
-  (r/as-element (helpers/wrap-component [:div {:class "w-80"} [sut/input-group {} [sut/input-group-addon {:align (:addon-align args)} [:> Search {:aria-hidden true}]] [sut/input-group-input {:aria-label "Search" :placeholder (:placeholder args) :disabled (:disabled args)}]]])))
+          "Interactive input-group playground."
+          {:args {:placeholder "Search…"
+                  :disabled false
+                  :addon-align "inline-end"}
+           :arg-types {:placeholder {:control {:type "text"}}
+                       :disabled {:control {:type "boolean"}}
+                       :addon-align {:control {:type "select"}
+                                     :options ["inline-start" "inline-end"]}}
+           :parameters {:controls {:exclude ["on-click" "class"]}}
+           :decode-args (fn [{:keys [addon-align]
+                              :as args}]
+                          (update args :addon-align keyword))}
+          [args]
+          (r/as-element (helpers/wrap-component
+                         [:div {:class "w-80"}
+                          [sut/input-group {}
+                           [sut/input-group-addon {:align (:addon-align args)}
+                            [:> Search {:aria-hidden true}]]
+                           [sut/input-group-input {:aria-label "Search"
+                                                   :placeholder (:placeholder args)
+                                                   :disabled (:disabled args)}]]])))

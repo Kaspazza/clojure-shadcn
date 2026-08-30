@@ -172,9 +172,15 @@
 
 
 (defstory SwitchPlayground
-  "Interactive switch playground."
-  {:args {:default-checked false :disabled false :required false}
-   :arg-types {:default-checked {:control {:type "boolean"}} :disabled {:control {:type "boolean"}} :required {:control {:type "boolean"}}}
-   :parameters {:controls {:exclude ["checked" "on-checked-change" "class"]}}}
-  [args]
-  (r/as-element (helpers/wrap-component [:div {:class "p-6"} [sut/switch (assoc args :id "switch-playground")] ])))
+          "Interactive switch playground."
+          {:args {:default-checked false
+                  :disabled false
+                  :required false}
+           :arg-types {:default-checked {:control {:type "boolean"}}
+                       :disabled {:control {:type "boolean"}}
+                       :required {:control {:type "boolean"}}}
+           :parameters {:controls {:exclude ["checked" "on-checked-change" "class"]}}}
+          [args]
+          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
+                                                 [sut/switch
+                                                  (assoc args :id "switch-playground")]])))

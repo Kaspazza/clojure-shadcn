@@ -46,7 +46,23 @@
                :default nil
                :description "Merged and forwarded to the kbd element."}]}]])))
 
-(defstory KbdDemo "Interactive keyboard hint playground." {:args {:prefix "Press" :key "K" :suffix "to search"} :arg-types {:prefix {:control {:type "text"}} :key {:control {:type "text"}} :suffix {:control {:type "text"}}} :parameters {:controls {:exclude ["class"]}}} [args] (r/as-element (helpers/wrap-component [:div {:class "flex items-center gap-2 text-sm"} (:prefix args) [sut/kbd {} "⌘"] [sut/kbd {} (:key args)] (:suffix args)])))
+(defstory KbdDemo
+          "Interactive keyboard hint playground."
+          {:args {:prefix "Press"
+                  :key "K"
+                  :suffix "to search"}
+           :arg-types {:prefix {:control {:type "text"}}
+                       :key {:control {:type "text"}}
+                       :suffix {:control {:type "text"}}}
+           :parameters {:controls {:exclude ["class"]}}}
+          [args]
+          (r/as-element (helpers/wrap-component [:div {:class "flex items-center gap-2 text-sm"}
+                                                 (:prefix args)
+                                                 [sut/kbd {}
+                                                  "⌘"]
+                                                 [sut/kbd {}
+                                                  (:key args)]
+                                                 (:suffix args)])))
 
 (defstory KbdGroup
           []

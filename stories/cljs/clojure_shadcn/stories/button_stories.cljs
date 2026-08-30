@@ -106,15 +106,15 @@
                      :options ["xs" "sm" "default" "lg" "icon" "icon-xs" "icon-sm" "icon-lg"]}
               :disabled {:control {:type "boolean"}}}
   :parameters {:controls {:exclude ["on-click" "as-child" "class"]}}
-  :decode-args (fn [{:keys [variant size] :as args}]
+  :decode-args (fn [{:keys [variant size]
+                     :as args}]
                  (cond-> args
                    variant (update :variant keyword)
                    size (update :size keyword)))}
  [args]
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    (button/button (select-keys args [:variant :size :disabled]) (:label args))])))
+ (r/as-element (helpers/wrap-component [:div {:class "p-6"}
+                                        (button/button (select-keys args [:variant :size :disabled])
+                                                       (:label args))])))
 
 (defstory
  ButtonDestructive
