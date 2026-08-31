@@ -438,90 +438,75 @@
   (reset! showcase-heading-font :figtree)
   (reset! showcase-body-font :inter))
 
-(def ^:private choice-classes
-  "flex w-full items-center justify-between rounded-md border border-transparent px-3 py-2 text-left text-sm transition-colors hover:border-border hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring")
-
 (defn- font-option
   [label fonts selected-font]
   (let [selected (font-by-id fonts @selected-font)]
     [:fieldset
-     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500"}
+     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground"}
       label]
      [ui-select/select {:value (name @selected-font)
                         :on-value-change #(reset! selected-font (keyword %))}
       [ui-select/select-trigger
        {:aria-label (str "Select " (str/lower-case label) " font")
         :class
-        "w-full border-white/10 bg-transparent text-white shadow-none hover:bg-white/10 focus-visible:border-white/30 focus-visible:ring-white/20"}
+        "w-full border-input bg-background text-foreground shadow-none hover:bg-accent focus-visible:border-ring focus-visible:ring-ring"}
        [ui-select/select-value {}]
        [:span {:aria-hidden true
-               :class "ml-auto text-xl leading-none text-zinc-400"
+               :class "ml-auto text-xl leading-none text-muted-foreground"
                :style {:font-family (:family selected)}}
         "Aa"]]
       [ui-select/select-content {:align "start"
-                                 :class "border-white/10 bg-zinc-950 text-zinc-50"}
+                                 :class "border-border bg-popover text-popover-foreground"}
        (for [{:keys [id label family]} fonts]
          ^{:key id}
          [ui-select/select-item {:value (name id)
-                                 :class "focus:bg-white/10 focus:text-white"}
+                                 :class "focus:bg-accent focus:text-accent-foreground"}
           [:span {:style {:font-family family}}
            label]])]]]))
+
+(defn- palette-option
+  [label presets selected-preset on-value-change]
+  [:fieldset
+   [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500"}
+    label]
+   [ui-select/select {:value (name @selected-preset)
+                      :on-value-change #(on-value-change (keyword %))}
+    [ui-select/select-trigger
+     {:aria-label (str "Select " (str/lower-case label))
+      :class
+      "w-full border-input bg-background text-foreground shadow-none hover:bg-accent focus-visible:border-ring focus-visible:ring-ring"}
+     [ui-select/select-value {}]]
+    [ui-select/select-content {:align "start"
+                               :class "border-border bg-popover text-popover-foreground"}
+     (for [{:keys [id label swatch]} presets]
+       ^{:key id}
+       [ui-select/select-item {:value (name id)
+                               :class "focus:bg-accent focus:text-accent-foreground"}
+        [:span {:class "flex items-center gap-2"}
+         [:span {:class "size-3 rounded-full ring-1 ring-border"
+                 :style {:background swatch}}]
+         label]])]]])
 
 (defn- theme-configurator
   []
   [:aside
    {:class
-    "overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 text-zinc-50 shadow-2xl lg:sticky lg:top-5"}
-   [:div {:class "flex items-center justify-between border-b border-white/10 px-4 py-4"}
+    "overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-2xl lg:sticky lg:top-5"}
+   [:div {:class "flex items-center justify-between border-b border-border px-4 py-4"}
     [:div
      [:p {:class "text-sm font-semibold"}
       "Customize"]
-     [:p {:class "mt-0.5 text-xs text-zinc-400"}
+     [:p {:class "mt-0.5 text-xs text-muted-foreground"}
       "Design your component theme"]]
     [:span
      {:class
-      "rounded-md border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] text-zinc-400"}
+      "rounded-md border border-border bg-muted px-2 py-1 font-mono text-[10px] text-muted-foreground"}
      "Live"]]
    [:div {:class "max-h-[calc(100vh-13rem)] space-y-6 overflow-y-auto p-4"}
+    [palette-option "Base color" base-presets showcase-base select-showcase-base!]
+    [palette-option "Theme color" theme-presets showcase-preset select-showcase-preset!]
     [:fieldset
-     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500"}
-      "Base color"]
-     [:div {:class "grid grid-cols-3 gap-1"}
-      (for [{:keys [id label swatch]} base-presets]
-        ^{:key id}
-        [:button
-         {:type "button"
-          :aria-pressed (= id @showcase-base)
-          :on-click #(select-showcase-base! id)
-          :class
-          (str
-           "flex flex-col items-center gap-2 rounded-md border px-2 py-2.5 text-xs transition-colors hover:bg-white/10 "
-           (if (= id @showcase-base)
-             "border-white/30 bg-white/10 text-white"
-             "border-white/10 text-zinc-400"))}
-         [:span {:class "size-5 rounded-full ring-1 ring-white/20"
-                 :style {:background swatch}}]
-         label])]]
-    [:fieldset
-     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500"}
-      "Theme color"]
-     [:div {:class "grid gap-1"}
-      (for [{:keys [id label swatch]} theme-presets]
-        ^{:key id}
-        [:button {:type "button"
-                  :aria-pressed (= id @showcase-preset)
-                  :on-click #(select-showcase-preset! id)
-                  :class (str choice-classes
-                              (when (= id @showcase-preset) " border-white/15 bg-white/10"))}
-         [:span {:class "flex items-center gap-3"}
-          [:span {:class "size-4 rounded-full ring-1 ring-white/20"
-                  :style {:background swatch}}]
-          label]
-         (when (= id @showcase-preset)
-           [:span {:class "text-xs text-zinc-400"}
-            "✓"])])]]
-    [:fieldset
-     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500"}
+     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground"}
       "Appearance"]
      [:div {:class "grid grid-cols-2 gap-2"}
       (for [[mode icon label] [[:light "☀" "Light"] [:dark "◐" "Dark"]]]
@@ -531,13 +516,15 @@
           :aria-pressed (= mode @showcase-mode)
           :on-click #(select-showcase-mode! mode)
           :class
-          (str "rounded-lg border px-3 py-3 text-left text-sm transition-colors hover:bg-white/10 "
-               (if (= mode @showcase-mode) "border-white/30 bg-white/10" "border-white/10"))}
+          (str "rounded-lg border px-3 py-3 text-left text-sm transition-colors hover:bg-accent "
+               (if (= mode @showcase-mode)
+                 "border-ring bg-accent text-accent-foreground"
+                 "border-border"))}
          [:span {:class "mr-2 text-base"}
           icon]
          label])]]
     [:fieldset
-     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-zinc-500"}
+     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground"}
       "Radius"]
      [:div {:class "grid grid-cols-5 gap-1"}
       (for [{:keys [label value]} radii]
@@ -545,31 +532,31 @@
         [:button {:type "button"
                   :aria-pressed (= value @showcase-radius)
                   :on-click #(reset! showcase-radius value)
-                  :class (str "h-9 rounded-md border text-xs transition-colors hover:bg-white/10 "
+                  :class (str "h-9 rounded-md border text-xs transition-colors hover:bg-accent "
                               (if (= value @showcase-radius)
-                                "border-white/30 bg-white/10 text-white"
-                                "border-white/10 text-zinc-400"))}
+                                "border-ring bg-accent text-accent-foreground"
+                                "border-border text-muted-foreground"))}
          label])]]
     [font-option "Heading" heading-fonts showcase-heading-font]
     [font-option "Font" body-fonts showcase-body-font]
-    [:div {:class "rounded-lg border border-white/10 bg-white/[0.04] p-3"}
-     [:p {:class "text-[10px] uppercase tracking-wider text-zinc-500"}
+    [:div {:class "rounded-lg border border-border bg-muted/50 p-3"}
+     [:p {:class "text-[10px] uppercase tracking-wider text-muted-foreground"}
       "Current preset"]
-     [:p {:class "mt-1 truncate font-mono text-xs text-zinc-300"}
+     [:p {:class "mt-1 truncate font-mono text-xs text-foreground"}
       (str (name @showcase-base)
            " / " (name @showcase-preset)
            " / " (name @showcase-mode)
            " / " @showcase-radius)]]]
-   [:div {:class "grid grid-cols-2 gap-2 border-t border-white/10 p-4"}
+   [:div {:class "grid grid-cols-2 gap-2 border-t border-border p-4"}
     [:button {:type "button"
               :on-click reset-theme!
               :class
-              "rounded-md border border-white/15 px-3 py-2 text-xs font-medium hover:bg-white/10"}
+              "rounded-md border border-border px-3 py-2 text-xs font-medium hover:bg-accent"}
      "Reset"]
     [:button {:type "button"
               :on-click shuffle-theme!
               :class
-              "rounded-md bg-white px-3 py-2 text-xs font-semibold text-zinc-950 hover:bg-zinc-200"}
+              "rounded-md bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90"}
      "Shuffle ↻"]]])
 
 (defn- overview
