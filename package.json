@@ -1,8 +1,8 @@
 {
-  "name": "clojure-shadcn",
+  "name": "clojurescript-ui-components",
   "version": "0.1.0",
   "private": true,
-  "description": "shadcn/ui-style copy-paste component library for ClojureScript/Reagent",
+  "description": "Manufaktura — copy-first UI components for ClojureScript and Reagent",
   "license": "MIT",
   "author": "Mateusz Mazurczak <mateusz.mazurczak.dev@gmail.com>",
   "type": "module",

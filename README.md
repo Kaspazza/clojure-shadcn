@@ -1,11 +1,25 @@
-# clojure-shadcn
+# ClojureScript UI Components
+
+## Manufaktura
 
 **Copy-first UI components for ClojureScript, Reagent, and Tailwind CSS.**
 
-`clojure-shadcn` brings the idea behind [shadcn/ui](https://ui.shadcn.com/)
-to ClojureScript: choose a component, copy its source into your application,
-and make it yours. The components combine Clojure-friendly APIs with
-accessible React primitives and a coherent Tailwind-based visual language.
+**ClojureScript UI Components** is the descriptive, discoverable project name.
+**Manufaktura**  a collection of components made to be understood, copied, and adapted.
+
+> “A chair. And something more amazing, another chair!
+> Not a big deal? [chuckles]
+> They are identical.
+> Once upon a time, every object was made individually, by hand, which means
+> each one looked unique. Horrible. Luckily, we now have Western manufacturing,
+> which means we can now have two identical copies. Or a dozen.”
+>
+> — Jan Paweł Adamczewski, *1670*
+
+Manufaktura brings the idea behind [shadcn/ui](https://ui.shadcn.com/) to
+ClojureScript: choose a component, copy its source into your application, and
+make it yours. The components combine Clojure-friendly APIs with accessible
+React primitives and a coherent Tailwind-based visual language.
 
 This is not a conventional component dependency or a framework. It is a
 collection of readable starting points for building your own UI system.
@@ -29,7 +43,7 @@ This project separates those concerns:
 | --- | --- | --- |
 | Interaction and accessibility | [Radix UI](https://www.radix-ui.com/) and other focused React primitives | Focus management, keyboard interaction, ARIA behavior, overlays, and other difficult browser details |
 | Styling method | [Tailwind CSS v4](https://tailwindcss.com/) | Local, explicit utility classes and design-token integration |
-| Design defaults | `clojure-shadcn` | Coherent variants, spacing, states, composition, and component examples |
+| Design defaults | Manufaktura | Coherent variants, spacing, states, composition, and component examples |
 | Application API | ClojureScript + Reagent | Props maps, keyword variants, Hiccup children, and contained JavaScript interop |
 
 The result is a **glue layer**, not another UI framework. Behavior,
@@ -147,7 +161,7 @@ docs/philosophy.md                      architectural rationale and boundaries
 
 ## Scope
 
-`clojure-shadcn` provides UI building blocks. It does not prescribe re-frame,
+Manufaktura provides UI building blocks. It does not prescribe re-frame,
 routing, remote data, dependency injection, or domain architecture. Keep those
 application concerns outside copied components and connect them through props
 and events.

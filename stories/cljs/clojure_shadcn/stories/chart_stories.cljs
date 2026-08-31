@@ -90,23 +90,17 @@
 
 (def chart-data
   #js [#js {:month "January"
-            :desktop 186
-            :mobile 80}
+            :desktop 186}
        #js {:month "February"
-            :desktop 305
-            :mobile 200}
+            :desktop 305}
        #js {:month "March"
-            :desktop 237
-            :mobile 120}
+            :desktop 237}
        #js {:month "April"
-            :desktop 273
-            :mobile 190}])
+            :desktop 273}])
 
 (def chart-config
   {:desktop {:label "Desktop"
-             :color "hsl(var(--chart-1))"}
-   :mobile {:label "Mobile"
-            :color "hsl(var(--chart-2))"}})
+             :color "var(--chart-1)"}})
 
 (defstory
  BarChart
@@ -116,7 +110,8 @@
    [:div {:class "w-[560px] rounded-xl border bg-card p-6"}
     [:h3 {:class "mb-4 font-semibold"}
      "Visitors by device"]
-    [sut/chart-container {:config chart-config
+    [sut/chart-container {:id "visitors-by-device"
+                          :config chart-config
                           :class "min-h-[260px] w-full"}
      [:>
       recharts/BarChart
@@ -139,11 +134,6 @@
        recharts/Bar
        {:dataKey "desktop"
         :fill "var(--color-desktop)"
-        :radius 4}]
-      [:>
-       recharts/Bar
-       {:dataKey "mobile"
-        :fill "var(--color-mobile)"
         :radius 4}]]]])))
 
 

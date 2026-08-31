@@ -391,6 +391,7 @@
   (r/atom (if (.contains (.-classList js/document.documentElement) "dark") :dark :light)))
 
 (defonce ^:private showcase-radius (r/atom "0.75rem"))
+(defonce ^:private showcase-chart-color (r/atom :blue))
 (defonce ^:private showcase-heading-font (r/atom :figtree))
 (defonce ^:private showcase-body-font (r/atom :inter))
 
@@ -407,6 +408,10 @@
   (.setAttribute js/document.documentElement "data-theme" (name preset))
   (reset! showcase-preset preset))
 
+(defn- select-showcase-chart-color!
+  [color]
+  (reset! showcase-chart-color color))
+
 (defn- select-showcase-mode!
   [mode]
   (.toggle (.-classList js/document.documentElement) "dark" (= mode :dark))
@@ -414,18 +419,22 @@
 
 (defn- font-by-id [fonts id] (some #(when (= id (:id %)) %) fonts))
 
+(defn- palette-by-id [presets id] (some #(when (= id (:id %)) %) presets))
+
 (defn- shuffle-theme!
   []
   (let [base (:id (rand-nth base-presets))
         preset (:id (rand-nth theme-presets))
         mode (rand-nth [:light :dark])
         radius (:value (rand-nth radii))
+        chart-color (:id (rand-nth theme-presets))
         heading-font (:id (rand-nth heading-fonts))
         body-font (:id (rand-nth body-fonts))]
     (select-showcase-base! base)
     (select-showcase-preset! preset)
     (select-showcase-mode! mode)
     (reset! showcase-radius radius)
+    (select-showcase-chart-color! chart-color)
     (reset! showcase-heading-font heading-font)
     (reset! showcase-body-font body-font)))
 
@@ -435,6 +444,7 @@
   (select-showcase-preset! :blue)
   (select-showcase-mode! :light)
   (reset! showcase-radius "0.75rem")
+  (select-showcase-chart-color! :blue)
   (reset! showcase-heading-font :figtree)
   (reset! showcase-body-font :inter))
 
@@ -489,7 +499,9 @@
 
 (defn- theme-configurator
   []
-  [:aside
+  (let [selected-mode @showcase-mode
+        selected-radius @showcase-radius]
+    [:aside
    {:class
     "overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-2xl lg:sticky lg:top-5"}
    [:div {:class "flex items-center justify-between border-b border-border px-4 py-4"}
@@ -497,14 +509,11 @@
      [:p {:class "text-sm font-semibold"}
       "Customize"]
      [:p {:class "mt-0.5 text-xs text-muted-foreground"}
-      "Design your component theme"]]
-    [:span
-     {:class
-      "rounded-md border border-border bg-muted px-2 py-1 font-mono text-[10px] text-muted-foreground"}
-     "Live"]]
+      "Design your component theme"]]]
    [:div {:class "max-h-[calc(100vh-13rem)] space-y-6 overflow-y-auto p-4"}
     [palette-option "Base color" base-presets showcase-base select-showcase-base!]
     [palette-option "Theme color" theme-presets showcase-preset select-showcase-preset!]
+    [palette-option "Chart bars" theme-presets showcase-chart-color select-showcase-chart-color!]
     [:fieldset
      [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground"}
       "Appearance"]
@@ -513,11 +522,11 @@
         ^{:key mode}
         [:button
          {:type "button"
-          :aria-pressed (= mode @showcase-mode)
+          :aria-pressed (= mode selected-mode)
           :on-click #(select-showcase-mode! mode)
           :class
           (str "rounded-lg border px-3 py-3 text-left text-sm transition-colors hover:bg-accent "
-               (if (= mode @showcase-mode)
+               (if (= mode selected-mode)
                  "border-ring bg-accent text-accent-foreground"
                  "border-border"))}
          [:span {:class "mr-2 text-base"}
@@ -530,23 +539,15 @@
       (for [{:keys [label value]} radii]
         ^{:key value}
         [:button {:type "button"
-                  :aria-pressed (= value @showcase-radius)
+                  :aria-pressed (= value selected-radius)
                   :on-click #(reset! showcase-radius value)
                   :class (str "h-9 rounded-md border text-xs transition-colors hover:bg-accent "
-                              (if (= value @showcase-radius)
+                              (if (= value selected-radius)
                                 "border-ring bg-accent text-accent-foreground"
                                 "border-border text-muted-foreground"))}
          label])]]
     [font-option "Heading" heading-fonts showcase-heading-font]
-    [font-option "Font" body-fonts showcase-body-font]
-    [:div {:class "rounded-lg border border-border bg-muted/50 p-3"}
-     [:p {:class "text-[10px] uppercase tracking-wider text-muted-foreground"}
-      "Current preset"]
-     [:p {:class "mt-1 truncate font-mono text-xs text-foreground"}
-      (str (name @showcase-base)
-           " / " (name @showcase-preset)
-           " / " (name @showcase-mode)
-           " / " @showcase-radius)]]]
+    [font-option "Font" body-fonts showcase-body-font]]
    [:div {:class "grid grid-cols-2 gap-2 border-t border-border p-4"}
     [:button {:type "button"
               :on-click reset-theme!
@@ -557,15 +558,18 @@
               :on-click shuffle-theme!
               :class
               "rounded-md bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90"}
-     "Shuffle ↻"]]])
+     "Shuffle ↻"]]]))
 
 (defn- overview
   []
   (let [heading-font (font-by-id heading-fonts @showcase-heading-font)
-        body-font (font-by-id body-fonts @showcase-body-font)]
+        body-font (font-by-id body-fonts @showcase-body-font)
+        chart-color (palette-by-id theme-presets @showcase-chart-color)]
     [:main {:data-base (name @showcase-base)
             :data-theme (name @showcase-preset)
             :style {"--radius" @showcase-radius
+                    "--chart-1" (:swatch chart-color)
+                    "--chart-2" (:swatch chart-color)
                     "--font-sans" (:family body-font)
                     "--showcase-heading-font" (:family heading-font)
                     "--showcase-body-font" (:family body-font)}

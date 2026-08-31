@@ -4,6 +4,7 @@
    ["react"                     :as react]
    ["recharts"                  :as recharts]
    [clojure-shadcn.utils.styles :refer [merge-classes]]
+   [clojure.string              :as str]
    [reagent.core                :as r]))
 
 (def chart-context (react/createContext nil))
@@ -15,22 +16,31 @@
 
 (defn- chart-style
   [id config]
-  (let [rules (for [[k {:keys [color theme]}] config
-                    :when (or color theme)]
-                (str "--color-" (name k) ":" (or color (:light theme)) ";"))
+  (let [light-rules (for [[k {:keys [theme]}] config
+                          :when (:light theme)]
+                      (str "--color-" (name k) ":" (:light theme) ";"))
         dark-rules (for [[k {:keys [theme]}] config
                          :when (:dark theme)]
                      (str "--color-" (name k) ":" (:dark theme) ";"))]
-    [:style {:dangerouslySetInnerHTML {:__html (str "[data-chart='"
-                                                    id
-                                                    "']{"
-                                                    (apply str rules)
-                                                    "}"
-                                                    ".dark [data-chart='"
-                                                    id
-                                                    "']{"
-                                                    (apply str dark-rules)
-                                                    "}")}}]))
+    (when (or (seq light-rules) (seq dark-rules))
+      [:style {:dangerouslySetInnerHTML {:__html (str "[data-chart='"
+                                                      id
+                                                      "']{"
+                                                      (apply str light-rules)
+                                                      "}"
+                                                      ".dark [data-chart='"
+                                                      id
+                                                      "']{"
+                                                      (apply str dark-rules)
+                                                      "}")}}])))
+
+(defn- chart-color-vars
+  [config]
+  (into {}
+        (keep (fn [[k {:keys [color]}]]
+                (when color
+                  [(str "--color-" (name k)) color])))
+        config))
 
 (defn- chart-container-root
   [^js react-props]
@@ -41,7 +51,7 @@
         (.-chartProps react-props)
         child (.-child react-props)
         generated (react/useId)
-        chart-id (str "chart-" (or id (.replace generated #":" "")))]
+        chart-id (str "chart-" (or id (str/replace generated ":" "")))]
     (r/as-element
      [:>
       (.-Provider chart-context)
@@ -52,6 +62,7 @@
          (assoc
           :data-slot "chart"
           :data-chart chart-id
+          :style (merge (chart-color-vars config) (:style props))
           :class
           (merge-classes
            "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line]:stroke-border/50 [&_.recharts-tooltip-cursor]:stroke-border [&_.recharts-layer]:outline-hidden [&_.recharts-surface]:outline-hidden"
