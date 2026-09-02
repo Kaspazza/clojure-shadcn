@@ -122,10 +122,13 @@
                        :description {:control {:type "text"}}
                        :action-label {:control {:type "text"}}}
            :parameters {:controls {:exclude ["class" "on-click"]}}
-           :decode-args (fn [{:keys [media-variant]
+           :decode-args (fn [{:keys [mediaVariant actionLabel]
                               :as args}]
-                          (cond-> args
-                            media-variant (update :media-variant keyword)))}
+                          (cond-> (-> args
+                                      (assoc :media-variant mediaVariant
+                                             :action-label actionLabel)
+                                      (dissoc :mediaVariant :actionLabel))
+                            mediaVariant (update :media-variant keyword)))}
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "p-6"}
                                                  [sut/empty {}

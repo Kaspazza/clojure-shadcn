@@ -110,7 +110,7 @@ Custom component implementation."
    children]
   (let
     [base-classes
-     "flex w-full min-w-0 flex-col gap-2.5 rounded-lg bg-secondary text-foreground prose break-words whitespace-normal group-data-[align=end]/message:*:data-slot:self-end"
+     "flex w-full min-w-0 flex-col gap-2.5 wrap-break-word group-data-[align=end]/message:*:data-slot:self-end"
      combined-classes (merge-classes base-classes class)
      content (first children)]
     (if markdown?

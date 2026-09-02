@@ -98,7 +98,7 @@
    {:name "Avatar"
     :preview avatar/AvatarDemo}
    {:name "Badge"
-    :preview badge/BadgeDemo}
+    :preview badge/BadgeVariants}
    {:name "Breadcrumb"
     :preview breadcrumb/BreadcrumbDemo}
    {:name "Bubble"
@@ -238,6 +238,27 @@
    {:name "Typography"
     :preview typography/TypeScale}])
 
+(def ^:private theme-responsive-components
+  "Previews that make the theme configurator's tokens immediately visible."
+  #{"Alert"
+    "Badge"
+    "Button"
+    "Card"
+    "Chart"
+    "Checkbox"
+    "Input"
+    "Progress"
+    "Radio Group"
+    "Select"
+    "Switch"
+    "Tabs"
+    "Textarea"
+    "Toggle"})
+
+(defn- theme-responsive-first
+  [component]
+  (not (contains? theme-responsive-components (:name component))))
+
 (defn- component-id
   [name]
   (-> name
@@ -249,7 +270,7 @@
   (let [id (component-id name)
         ^js story preview]
     [:section {:id id
-               :class "min-w-0 scroll-mt-6 overflow-hidden rounded-lg border bg-card shadow-sm"}
+               :class "mb-4 w-full break-inside-avoid scroll-mt-6 overflow-hidden rounded-lg border bg-card shadow-sm"}
      [:header {:class "border-b bg-muted/30 px-4 py-2.5"}
       [:h2 {:class "text-sm font-semibold tracking-tight"}
        [:a {:href (str "./?path=/docs/components-" (or docs-id id) "--docs")
@@ -599,11 +620,11 @@
         "Read the docs →"]]
       [:div {:class "grid items-start gap-5 lg:grid-cols-[17rem_minmax(0,1fr)]"}
        [theme-configurator]
-       (into [:div {:class "grid min-w-0 items-start gap-4 md:grid-cols-2 2xl:grid-cols-3"}]
+       (into [:div {:class "min-w-0 columns-1 gap-4 md:columns-2 2xl:columns-3"}]
              (map (fn [{:keys [name]
                         :as component}]
                     ^{:key name} [component-card component])
-                  components))]]]))
+                  (sort-by theme-responsive-first components)))]]]))
 
 (defn ^:export Overview
   "Every available component rendered in one continuous, scannable page."

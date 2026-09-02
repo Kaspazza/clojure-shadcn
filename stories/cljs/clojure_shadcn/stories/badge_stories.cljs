@@ -85,6 +85,20 @@
                                         [sut/badge (select-keys args [:variant]) (:label args)]])))
 
 (defstory
+ BadgeVariants
+ "All badge variants displayed together for the component gallery."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "flex flex-wrap items-center gap-2 p-6"}
+    [sut/badge {} "Default"]
+    [sut/badge {:variant :secondary} "Secondary"]
+    [sut/badge {:variant :outline} "Outline"]
+    [sut/badge {:variant :destructive} "Destructive"]
+    [sut/badge {:variant :ghost} "Ghost"]
+    [sut/badge {:variant :link} "Link"]])))
+
+(defstory
  BadgeOutline
  "Outlined badge for neutral tags.
 

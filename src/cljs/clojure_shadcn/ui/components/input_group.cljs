@@ -22,7 +22,7 @@
        (merge-classes
         "group/input-group relative flex min-w-0 w-full items-center rounded-md border border-input shadow-xs outline-none transition-[color,box-shadow] h-9 has-[>textarea]:h-auto has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 has-[[aria-invalid=true]]:border-destructive has-[[aria-invalid=true]]:ring-destructive/20 dark:bg-input/30"
         class))
-      (dissoc :class :class-name))]
+      (dissoc :class-name))]
    children))
 
 (defn input-group-addon

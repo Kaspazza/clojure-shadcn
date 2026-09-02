@@ -3,6 +3,7 @@
   (:require
    ["lucide-react"                       :refer [Copy Trash2]]
    [clojure-shadcn.stories.helpers       :as helpers]
+   [clojure-shadcn.ui.components.bubble  :as bubble]
    [clojure-shadcn.ui.components.button  :as button]
    [clojure-shadcn.ui.components.message :as sut]
    [reagent.core                         :as r])
@@ -228,16 +229,19 @@
   Helpful for chat UIs with role-based presentation."
  []
  (r/as-element (helpers/wrap-component [:div {:class "p-6 space-y-4"}
-                                        [sut/message {:class "flex-row-reverse text-right"}
+                                        [sut/message {:align :end}
                                          [sut/message-avatar {:src "https://placehold.co/40x40/png"
                                                               :alt "User"
                                                               :fallback "ME"}]
-                                         [sut/message-content {:class
-                                                               "bg-primary text-primary-foreground"}
-                                          "User message aligned right."]]
+                                         [sut/message-content {}
+                                          [bubble/bubble {:align :end}
+                                           [bubble/bubble-content {}
+                                            "User message aligned right."]]]]
                                         [sut/message {}
                                          [sut/message-avatar {:src "https://placehold.co/40x40/png"
                                                               :alt "Assistant"
                                                               :fallback "AI"}]
                                          [sut/message-content {}
-                                          "Assistant response aligned left."]]])))
+                                          [bubble/bubble {:variant :muted}
+                                           [bubble/bubble-content {}
+                                            "Assistant response aligned left."]]]]])))
