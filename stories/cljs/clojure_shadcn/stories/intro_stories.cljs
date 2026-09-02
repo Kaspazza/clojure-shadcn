@@ -10,15 +10,6 @@
   #js {:title "Docs/Introduction"
        :parameters #js {:layout "padded"}})
 
-(defn- feature-card
-  "Consistent docs feature card body."
-  [title body]
-  [:div {:class "rounded-md border p-3"}
-   [:h3 {:class "text-sm font-semibold mb-1"}
-    title]
-   [:p {:class "text-xs text-muted-foreground"}
-    body]])
-
 (defn- section
   "Consistent docs section block."
   [title & children]
@@ -164,14 +155,7 @@
       [:h3 {:class "text-sm font-semibold mb-2"}
        "Philosophy — copy, don't install"]
       [:p {:class "text-sm text-muted-foreground leading-relaxed"}
-       "Every component ships as a plain ClojureScript namespace.  You copy it under src/cljs/ in your project, and from that point you own the code.  If you need a different default, change it — no upstream dependency, no version churn.  Inspired by shadcn/ui, adapted for the ClojureScript / Reagent world."]]
-     [:div {:class "grid grid-cols-2 md:grid-cols-3 gap-3"}
-      [feature-card "Copy, own" "Source lives in your repo."]
-      [feature-card "Style-free" "Pure Tailwind; no JS utility framework."]
-      [feature-card "Modular" "Each component is one namespace."]
-      [feature-card "API-ref docs" "Automation-generated prop tables."]
-      [feature-card "Controlled" "State stays in your app; components are pure."]
-      [feature-card "Radix under the hood" "Accessible primitives where needed."]]])))
+       "Every component ships as a plain ClojureScript namespace.  You copy it under src/cljs/ in your project, and from that point you own the code.  If you need a different default, change it — no upstream dependency, no version churn.  Inspired by shadcn/ui, adapted for the ClojureScript / Reagent world."]]])))
 
 (defdoc
   Installation
