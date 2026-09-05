@@ -38,11 +38,11 @@
        :props [{:name ":value"
                 :type "string"
                 :default nil
-                :description "Controlled search query value."}
+                :description "Controlled selected item value."}
                {:name ":onValueChange"
                 :type "function"
                 :default nil
-                :description "Called when query changes: (fn [value] ...)."}
+                :description "Called when the selected item changes: (fn [value] ...)."}
                {:name ":filter"
                 :type "function"
                 :default nil

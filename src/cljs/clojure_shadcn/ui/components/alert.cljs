@@ -21,7 +21,7 @@
       (->
         props
         (assoc
-         :role "alert"
+         :role (or (:role props) "alert")
          :data-slot "alert"
          :data-variant (name variant)
          :class

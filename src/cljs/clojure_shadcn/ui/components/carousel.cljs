@@ -66,9 +66,18 @@ Custom component implementation."
          handle-key-down
          (rhooks/use-callback
           (fn [event]
-            (when (= (.-key event) "ArrowLeft") (.preventDefault event) (scroll-prev))
-            (when (= (.-key event) "ArrowRight") (.preventDefault event) (scroll-next)))
-          [scroll-prev scroll-next])]
+            (let [target (.-target event)
+                  interactive? (and target
+                                    (.-closest target)
+                                    (.closest target
+                                              "a,button,input,textarea,select,option,[contenteditable]:not([contenteditable='false']),[role='button'],[role='link'],[role='textbox'],[role='combobox'],[role='slider'],[role='spinbutton'],[role='switch'],[tabindex]:not([tabindex='-1'])"))
+                  previous-key (if (= orientation :horizontal) "ArrowLeft" "ArrowUp")
+                  next-key (if (= orientation :horizontal) "ArrowRight" "ArrowDown")]
+              (when-not interactive?
+                (cond
+                  (= (.-key event) previous-key) (do (.preventDefault event) (scroll-prev))
+                  (= (.-key event) next-key) (do (.preventDefault event) (scroll-next))))))
+          [orientation scroll-prev scroll-next])]
      ;; Set API callback
      (rhooks/use-effect (fn [] (when (and api set-api) (set-api api))) [api set-api])
      ;; Update on select
@@ -78,7 +87,9 @@ Custom component implementation."
                             (.on ^js api "reInit" on-select)
                             (.on ^js api "select" on-select)
                             ;; Cleanup function
-                            (fn [] (.off ^js api "select" on-select))))
+                            (fn []
+                              (.off ^js api "select" on-select)
+                              (.off ^js api "reInit" on-select))))
                         [api on-select])
      (let [ctx-value (rhooks/use-memo (fn []
                                         #js {:carousel-ref carousel-ref

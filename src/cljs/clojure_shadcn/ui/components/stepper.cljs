@@ -121,13 +121,15 @@ Documentation: https://ui.shadcn.com/docs/components"
         (normalize-props raw-props)]
     (let [radius (/ (- size stroke-width) 2)
           circumference (* radius 2 js/Math.PI)
-          fill-perc (* (/ current-step total-steps) 100)
+          safe-total (max 1 (or total-steps 0))
+          safe-current (-> (or current-step 0) (max 0) (min safe-total))
+          fill-perc (* (/ safe-current safe-total) 100)
           dash-offset (- circumference (/ (* circumference fill-perc) 100))]
       [:div {:data-component "stepper-step-indicator"
              :role "progressbar"
-             :aria-valuenow current-step
-             :aria-valuemin 1
-             :aria-valuemax total-steps
+             :aria-valuenow safe-current
+             :aria-valuemin 0
+             :aria-valuemax safe-total
              :tab-index -1
              :class "relative inline-flex items-center justify-center"}
        [:svg {:width size
@@ -153,9 +155,9 @@ Documentation: https://ui.shadcn.com/docs/components"
        [:div {:class "absolute inset-0 flex items-center justify-center"}
         [:span {:class "text-sm font-medium"
                 :aria-live "polite"}
-         current-step
+         safe-current
          " of "
-         total-steps]]])))
+         (or total-steps 0)]]])))
 
 (defn- stepper-separator
   "Visual separator line between steps."
@@ -210,11 +212,10 @@ Documentation: https://ui.shadcn.com/docs/components"
          state (step-state current-idx index reverse-progress?)]
      (if (= variant "circle")
        ;; Circle variant: render all steps, but only show active one
-       [:li {:data-component "stepper-step"
-             :class (merge-classes "flex shrink-0 items-center gap-4 rounded-md"
-                                   "transition-opacity duration-100 ease-in-out"
-                                   (if active? "opacity-100" "opacity-0 absolute")
-                                   class)}
+       [:li (cond-> {:data-component "stepper-step"
+                     :aria-current (when active? "step")
+                     :class (merge-classes "flex shrink-0 items-center gap-4 rounded-md" class)}
+              (not active?) (assoc :hidden true :aria-hidden true))
         [circle-step-indicator {:current-step (inc current-idx)
                                 :total-steps total}]
         (into [:div {:data-component "stepper-step-content"
@@ -231,23 +232,17 @@ Documentation: https://ui.shadcn.com/docs/components"
                                         "data-[label-orientation=vertical]:justify-center" class)
                   :data-variant variant
                   :data-label-orientation label-orientation
-                  :data-state state
-                  :on-click #(when (and (not disabled?) on-step-change) (on-step-change id))}
+                  :data-state state}
            disabled? (assoc :data-disabled true))
          (mateuszmazurczak-button/button {:id (str "step-" id)
                                           :data-component "stepper-step-indicator"
                                           :type "button"
-                                          :role "tab"
-                                          :tab-index (if (not= state "inactive") 0 -1)
                                           :class "rounded-full"
                                           :variant (if (not= state "inactive") :default :secondary)
                                           :size :icon
                                           :disabled disabled?
-                                          :aria-controls (str "step-panel-" id)
                                           :aria-current (when active? "step")
-                                          :aria-posinset (inc index)
-                                          :aria-setsize total
-                                          :aria-selected active?
+                                          :aria-label (str "Step " (inc index) " of " total)
                                           :on-click #(when (and (not disabled?) on-step-change)
                                                        (on-step-change id))}
                                          (or icon (inc index)))
@@ -282,21 +277,25 @@ Documentation: https://ui.shadcn.com/docs/components"
                                     :is-last? is-last?}]])
              [:div {:class "my-3 flex-1 ps-4"}]]))]))))
 
-(defn- flatten-children
-  "Flatten children to handle both direct children and sequences from for/map."
+(defn- step-child? [child]
+  (and (vector? child) (= (first child) stepper-step)))
+
+(defn- expand-child-sequences
+  "Expand only top-level sequence children produced by `for`/`map`.
+   Hiccup vectors are opaque: nested markup and its metadata must not be traversed."
   [children]
-  (reduce (fn [acc child]
-            (cond
-              ;; It's a stepper-step vector
-              (and (vector? child)
-                   (or (identical? (first child) stepper-step) (= (first child) stepper-step)))
-              (conj acc child)
-              ;; It's a sequence (from for/map) - flatten it
-              (sequential? child) (into acc (flatten-children child))
-              ;; Something else, keep it
-              :else (conj acc child)))
-          []
-          children))
+  (mapcat #(if (and (sequential? %) (not (vector? %))) % [%]) children))
+
+(defn- number-step [idx total current-idx child]
+  (if-not (step-child? child)
+    child
+    (let [[component maybe-props & child-content] child
+          props (if (map? maybe-props) maybe-props {})
+          child-content (if (map? maybe-props) child-content (cons maybe-props child-content))]
+      (with-meta
+        (into [component (assoc props :index idx :total total :current-idx current-idx)]
+              child-content)
+        (meta child)))))
 
 (defc stepper-navigation
  "Navigation container for steps. Auto-numbers steps and injects context.
@@ -309,31 +308,27 @@ Documentation: https://ui.shadcn.com/docs/components"
  (let [ctx (rhooks/use-context stepper-context)
        variant (.-variant ctx)
        current-step (.-currentStep ctx)
-       ;; Flatten children to handle for/map sequences
-       flat-children (flatten-children children)
-       step-ids (keep (fn [child]
-                        (when (and (vector? child)
-                                   (or (identical? (first child) stepper-step)
-                                       (= (first child) stepper-step)))
-                          (let [props (second child)] (when (map? props) (:id props)))))
-                      flat-children)
-       current-idx
-       (if current-step (first (keep-indexed #(when (= %2 current-step) %1) step-ids)) -1)
+       expanded-children (vec (expand-child-sequences children))
+       step-ids (->> expanded-children
+                     (filter step-child?)
+                     (mapv #(some-> (second %) :id)))
+       current-idx (if (some? current-step)
+                     (or (first (keep-indexed #(when (= %2 current-step) %1) step-ids)) -1)
+                     -1)
        total (count step-ids)
        numbered-children
-       (map-indexed
-        (fn [idx child]
-          (if (and (vector? child)
-                   (or (identical? (first child) stepper-step) (= (first child) stepper-step)))
-            (let [[component props & rest] child
-                  props (if (map? props) props {})]
-              (into [component (assoc props :index idx :total total :current-idx current-idx)]
-                    rest))
-            child))
-        flat-children)]
+       (loop [remaining expanded-children
+              step-idx 0
+              result []]
+         (if-let [child (first remaining)]
+           (if (step-child? child)
+             (recur (next remaining)
+                    (inc step-idx)
+                    (conj result (number-step step-idx total current-idx child)))
+             (recur (next remaining) step-idx (conj result child)))
+           result))]
    [:nav {:data-component "stepper-navigation"
           :aria-label "Stepper Navigation"
-          :role "tablist"
           :class class}
     (into [:ol {:data-component "stepper-navigation-list"
                 :class (merge-classes "flex gap-2"
@@ -358,7 +353,7 @@ Documentation: https://ui.shadcn.com/docs/components"
    (when (= id current-step)
      (into [:div {:id (str "step-panel-" id)
                   :data-component "stepper-step-panel"
-                  :role "tabpanel"
+                  :role "region"
                   :aria-labelledby (str "step-" id)
                   :class class}]
            children))))

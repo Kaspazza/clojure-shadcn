@@ -70,11 +70,10 @@
                    [:> ChevronRight]))
 
 (defn pagination-ellipsis
-  [props]
+  [{:keys [label] :or {label "More pages"} :as props}]
   (elem :span
         "pagination-ellipsis"
         "flex size-9 items-center justify-center"
-        (merge {:aria-hidden true} props)
-        [[:> MoreHorizontal {:class "size-4"}]
-         [:span {:class "sr-only"}
-          "More pages"]]))
+        (dissoc props :label)
+        [[:> MoreHorizontal {:aria-hidden true :class "size-4"}]
+         [:span {:class "sr-only"} label]]))

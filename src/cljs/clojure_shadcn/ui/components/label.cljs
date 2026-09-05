@@ -16,10 +16,10 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/label"
   
   Props:
   - `:class` - Additional Tailwind classes to merge with defaults
-  - `:htmlFor` - ID of the form element to associate with (optional, handled automatically by Radix)
+  - `:html-for` / `:htmlFor` - Must match the associated control's `:id` when the control is not nested. Radix does not generate this association.
   
   Features:
-  - Automatically handles click-to-focus for associated form controls
+  - Click-to-focus works when `:html-for` references the control's explicit `:id`
   - Supports disabled state styling (when parent has data-disabled or peer is disabled)
   - Prevents text selection for better UX
   - Fully accessible with proper ARIA attributes

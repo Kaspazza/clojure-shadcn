@@ -1,20 +1,18 @@
 (ns clojure-shadcn.ui.components.typography
   "Reusable shadcn-style typography elements. Project extra; not registry:ui."
-  (:refer-clojure :exclude [list small])
+  (:refer-clojure :exclude [list])
   (:require
+   [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
 (defn- text-element
-  [tag
-   classes
-   {:keys [class]
-    :as props}
-   children]
-  (into [tag
+  [tag classes raw-props children]
+  (let [{:keys [class] :as props} (normalize-props raw-props)]
+    (into [tag
          (-> props
              (assoc :data-slot "typography" :class (merge-classes classes class))
              (dissoc :class-name))]
-        children))
+          children)))
 
 (defn h1
   [props & children]

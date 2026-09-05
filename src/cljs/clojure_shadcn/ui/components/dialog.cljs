@@ -31,7 +31,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
      [dialog-description {} \"Description\"]]
     [:div \"Content\"]]]"
   [props & children]
-  (into [:> RadixDialog/Root (assoc props :data-slot "dialog")] children))
+  (into [:> RadixDialog/Root (assoc (normalize-props props) :data-slot "dialog")] children))
 
 (defn dialog-trigger
   "Trigger button that opens the dialog.
@@ -43,13 +43,13 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
   [dialog-trigger {}
    [button {} \"Open Dialog\"]]"
   [props & children]
-  (into [:> RadixDialog/Trigger (assoc props :data-slot "dialog-trigger")] children))
+  (into [:> RadixDialog/Trigger (assoc (normalize-props props) :data-slot "dialog-trigger")] children))
 
 (defn dialog-portal
   "Portal component that renders dialog in a portal.
   Usually used internally by dialog-content."
   [props & children]
-  (into [:> RadixDialog/Portal (assoc props :data-slot "dialog-portal")] children))
+  (into [:> RadixDialog/Portal (assoc (normalize-props props) :data-slot "dialog-portal")] children))
 
 (defn dialog-close
   "Close button component that closes the dialog.
@@ -58,7 +58,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
   [dialog-close {}
    [button {:variant :outline} \"Cancel\"]]"
   [props & children]
-  (into [:> RadixDialog/Close (assoc props :data-slot "dialog-close")] children))
+  (into [:> RadixDialog/Close (assoc (normalize-props props) :data-slot "dialog-close")] children))
 
 (defn dialog-overlay
   "Overlay backdrop that appears behind the dialog.
@@ -84,6 +84,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
   Props:
   - `:class` - Additional Tailwind classes
   - `:show-close-button` - Show X close button in top-right (default: true)
+  - `:close-label` - Localized accessible name for the generated close button
   Both kebab-case and camelCase prop spellings are accepted.
   
   Features:
@@ -104,8 +105,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
     [button {:variant :outline} \"Cancel\"]
     [button {} \"Confirm\"]]]"
   [{:as raw-props} & children]
-  (let [{:keys [class show-close-button]
-         :or {show-close-button true}
+  (let [{:keys [class show-close-button close-label]
+         :or {show-close-button true close-label "Close"}
          :as props}
         (normalize-props raw-props)]
     [dialog-portal {}
@@ -125,7 +126,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
                     "gap-4 rounded-lg border p-6 shadow-lg duration-200"
                     "sm:max-w-lg"]
                    class))
-           (dissoc :class-name :show-close-button))]
+           (dissoc :class-name :show-close-button :close-label))]
       (concat
        children
        (when show-close-button
@@ -141,7 +142,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
              "[&_svg]:pointer-events-none [&_svg]:shrink-0" "[&_svg:not([class*='size-'])]:size-4")}
            [:> XIcon]
            [:span {:class "sr-only"}
-            "Close"]]])))]))
+            close-label]]])))]))
 
 (defn dialog-header
   "Header section for dialog (title + description).

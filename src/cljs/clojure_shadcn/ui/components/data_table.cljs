@@ -63,8 +63,10 @@ Custom component implementation."
   [{:keys [listeners attributes]}]
   (let [props (js->clj (js/Object.assign #js {} attributes listeners) :keywordize-keys true)]
     [:button
-     (merge props {:class "cursor-grab active:cursor-grabbing touch-none p-1"})
-     [:> GripVertical {:class "size-4 text-muted-foreground"}]]))
+     (merge props {:type "button"
+                   :aria-label "Drag row"
+                   :class "cursor-grab active:cursor-grabbing touch-none p-1"})
+     [:> GripVertical {:aria-hidden true :class "size-4 text-muted-foreground"}]]))
 
 (defc draggable-row
  [{:as raw-props}]
@@ -407,6 +409,43 @@ Custom component implementation."
             "asc" [:> ArrowUp]
             [:> ChevronsUpDown])])])))
 
+(defn- standard-row
+  [{:keys [row render-sub-component]}]
+  [:<>
+   [mateuszmazurczak-table/table-row {:data-state (when (.getIsSelected ^js row) "selected")}
+    (for [^js cell (.getVisibleCells ^js row)]
+      ^{:key (.-id cell)}
+      [mateuszmazurczak-table/table-cell {}
+       (flexRender (.. cell -column -columnDef -cell) (.getContext cell))])]
+   (when (and render-sub-component (.getIsExpanded ^js row))
+     [mateuszmazurczak-table/table-row {}
+      [mateuszmazurczak-table/table-cell {:col-span (.-length (.getVisibleCells ^js row))
+                                          :class "p-0"}
+       (render-sub-component row)]])])
+
+(defn- plain-table-body
+  [{:keys [rows render-sub-component]}]
+  ;; Components must return Hiccup, not a bare lazy sequence. Otherwise React
+  ;; iterates each Hiccup vector as raw children (function, props map, ...).
+  (into
+   [:<>]
+   (map (fn [^js row]
+          ^{:key (.-id row)}
+          [standard-row {:row row :render-sub-component render-sub-component}]))
+   rows))
+
+(defn- sortable-table-body
+  [{:keys [row-entries render-sub-component]}]
+  [:>
+   SortableContext
+   {:items (clj->js (mapv :id row-entries))
+    :strategy verticalListSortingStrategy}
+   (for [{:keys [id row]} row-entries]
+     ^{:key id}
+     [draggable-row {:row row
+                     :row-id id
+                     :render-sub-component render-sub-component}])])
+
 (defn- table-ui
   "Renders the table structure with headers and rows.
 
@@ -420,9 +459,7 @@ Custom component implementation."
   - `:no-results-state`      - Component or function to render when filters yield no results (optional)
   - `:on-reset-filters`      - Callback to reset filters (passed to no-results-state if it's a function)
   - `:render-sub-component`  - Function (fn [row]) to render expanded row content (optional)
-  - `:dnd-enabled?`          - Whether drag-and-drop is enabled (boolean)
-  - `:dnd-row-ids`           - Array of row IDs for sortable context (when dnd enabled)
-  - `:get-row-id`            - Function to extract row ID from row (when dnd enabled)
+  - `:dnd-row-entries`       - Prevalidated row/id pairs for sortable rendering (optional)
   Both kebab-case and camelCase prop spellings are accepted."
   [{:as raw-props}]
   (let [{:keys [header-groups
@@ -431,9 +468,7 @@ Custom component implementation."
                 no-results-state
                 on-reset-filters
                 render-sub-component
-                dnd-enabled?
-                dnd-row-ids
-                get-row-id]}
+                dnd-row-entries]}
         (normalize-props raw-props)]
     (let [has-rows? (pos? (.-length rows))]
       (if has-rows?
@@ -452,35 +487,11 @@ Custom component implementation."
                  (when-not (.-isPlaceholder header)
                    (flexRender (.. header -column -columnDef -header) (.getContext header)))])])]
           [mateuszmazurczak-table/table-body {}
-           (if dnd-enabled?
-             ;; Drag-and-drop enabled: wrap rows in SortableContext
-             [:>
-              SortableContext
-              {:items dnd-row-ids
-               :strategy verticalListSortingStrategy}
-              (for [^js row rows]
-                (let [row-id (get-row-id row)]
-                  ^{:key (.-id row)}
-                  [draggable-row {:row row
-                                  :row-id row-id
-                                  :render-sub-component render-sub-component}]))]
-             ;; Standard table rows (no drag-and-drop)
-             (for [^js row rows]
-               [:<> {:key (.-id row)}
-                ;; First row - normal row with cells
-                [mateuszmazurczak-table/table-row {:data-state (when (.getIsSelected ^js row)
-                                                                 "selected")}
-                 (for [^js cell (.getVisibleCells ^js row)]
-                   [mateuszmazurczak-table/table-cell {:key (.-id cell)}
-                    (flexRender (.. cell -column -columnDef -cell) (.getContext ^js cell))])]
-                ;; Second row - expanded subcomponent (only if expanded)
-                (when (and render-sub-component (.getIsExpanded ^js row))
-                  [mateuszmazurczak-table/table-row {}
-                   ;; Single cell spanning all visible columns
-                   [mateuszmazurczak-table/table-cell {:col-span (.-length (.getVisibleCells ^js
-                                                                                             row))
-                                                       :class "p-0"}
-                    (render-sub-component row)]])]))]]]
+           (if dnd-row-entries
+             [sortable-table-body {:row-entries dnd-row-entries
+                                   :render-sub-component render-sub-component}]
+             [plain-table-body {:rows rows
+                                :render-sub-component render-sub-component}])]]]
         ;; Empty state - render outside table structure
         [:div {:class "flex min-h-0 flex-1 flex-col rounded-md border"}
          [mateuszmazurczak-table/table {}
@@ -608,6 +619,57 @@ Custom component implementation."
          "Go to last page"]
         [:> ChevronsRight]]]]]))
 
+(defn- data-table-content
+  [{:keys [toolbar-data table-data pagination-data]}]
+  [:div {:class "flex min-h-0 flex-1 flex-col gap-4"}
+   (when toolbar-data [toolbar-ui toolbar-data])
+   [table-ui table-data]
+   [pagination-ui pagination-data]])
+
+(defn- dnd-row-entries
+  [rows get-row-id]
+  (when-not get-row-id
+    (throw (js/Error. "data-table DnD requires top-level :get-row-id")))
+  (:entries
+   (reduce
+    (fn [{:keys [ids] :as result} ^js row]
+      (let [id (get-row-id (.-original row))]
+        (when-not (or (string? id) (number? id))
+          (throw (js/Error. "data-table DnD row IDs must be non-nil strings or numbers")))
+        (when (contains? ids id)
+          (throw (js/Error. (str "data-table DnD row IDs must be unique; duplicate: " id))))
+        (-> result
+            (update :ids conj id)
+            (update :entries conj {:id id :row row}))))
+    {:ids #{} :entries []}
+    rows)))
+
+(defc dnd-data-table
+ [{:keys [get-row-id on-drag-end table-data toolbar-data pagination-data]}]
+ (let [rows (:rows table-data)
+       row-entries (rhooks/use-memo #(dnd-row-entries rows get-row-id) #js [rows get-row-id])
+       mouse-sensor (useSensor MouseSensor #js {})
+       touch-sensor (useSensor TouchSensor #js {})
+       keyboard-sensor (useSensor KeyboardSensor #js {})
+       sensors (useSensors mouse-sensor touch-sensor keyboard-sensor)
+       handle-drag-end
+       (rhooks/use-callback
+        (fn [^js event]
+          (let [^js active (.-active event)
+                ^js over (.-over event)]
+            (when (and active over (not= (.-id active) (.-id over)) on-drag-end)
+              (on-drag-end (.-id active) (.-id over)))))
+        #js [on-drag-end])]
+   [:>
+    DndContext
+    {:collisionDetection closestCenter
+     :modifiers #js [restrictToVerticalAxis]
+     :onDragEnd handle-drag-end
+     :sensors sensors}
+    [data-table-content {:toolbar-data toolbar-data
+                         :table-data (assoc table-data :dnd-row-entries row-entries)
+                         :pagination-data pagination-data}]]))
+
 (defc data-table
  "Comprehensive data table component with full TanStack Table integration.
 
@@ -624,6 +686,7 @@ Custom component implementation."
   - `:no-results-state`           - Component or function (fn [on-reset-filters]) to render when filters yield no results (optional)
   - `:render-sub-component`       - Function (fn [row]) to render expanded row content (optional, for expandable rows)
   - `:get-row-can-expand`         - Function (fn [row]) to determine if row can expand (optional, defaults to all rows expandable)
+  - `:get-row-id`                 - Stable row identity function (fn [original-row index parent-row]); used by all table state
   - `:dnd-config`                 - Drag-and-drop configuration (optional)
   Both kebab-case and camelCase prop spellings are accepted.
 
@@ -639,9 +702,9 @@ Custom component implementation."
 
   Drag-and-drop config shape:
   ```clojure
-  {:get-row-id (fn [row] ...)     ; Extract unique ID from row data (required)
-   :on-drag-end (fn [active-id over-id] ...)}  ; Called when drag ends (required)
+  {:on-drag-end (fn [active-id over-id] ...)} ; Called when drag ends (required)
   ```
+  Supply `:get-row-id` at the data-table root whenever stable row identity is needed.
 
   Features:
   - **Sorting**: Click column headers to sort (if configured in column def)
@@ -663,6 +726,7 @@ Custom component implementation."
                no-results-state
                render-sub-component
                get-row-can-expand
+               get-row-id
                dnd-config]
         :or {initial-page-size 25}}
        (normalize-props raw-props)]
@@ -683,9 +747,7 @@ Custom component implementation."
                                    (and (array? data) (every? #(not (map? %)) data)) data
                                    :else (clj->js (vec data))))
                                #js [data])
-         ;; Drag-and-drop setup - must be defined before table-config
          dnd-enabled? (some? dnd-config)
-         get-row-id-fn (when dnd-enabled? (:get-row-id dnd-config))
          table-config
          (rhooks/use-memo
           (fn []
@@ -713,12 +775,10 @@ Custom component implementation."
                                    :getFacetedRowModel (getFacetedRowModel)
                                    :getFacetedUniqueValues (getFacetedUniqueValues)
                                    :getExpandedRowModel (getExpandedRowModel)}]
-              ;; Add getRowId when drag-and-drop is enabled. TanStack
-              ;; calls getRowId with the *original data row*, and our
-              ;; other two call sites (dnd-row-ids, get-row-id below)
-              ;; also pass the raw data row — so get-row-id uniformly
-              ;; receives a plain JS data row.
-              (when (and dnd-enabled? get-row-id-fn) (aset base-config "getRowId" get-row-id-fn))
+              ;; TanStack calls getRowId with original row data. Keeping this
+              ;; top-level makes selection and expansion use the same identity
+              ;; as optional drag-and-drop.
+              (when get-row-id (aset base-config "getRowId" get-row-id))
               base-config))
           #js [data
                columns
@@ -727,30 +787,8 @@ Custom component implementation."
                row-selection
                column-filters
                expanded
-               dnd-enabled?
-               get-row-id-fn])
+               get-row-id])
          table-instance (useReactTable table-config)
-         dnd-row-ids (when dnd-enabled?
-                       (rhooks/use-memo
-                        (fn [] (let [ids-vec (mapv get-row-id-fn data) ids (clj->js ids-vec)] ids))
-                        #js [(pr-str (mapv get-row-id-fn data))]))
-         mouse-sensor (when dnd-enabled? (useSensor MouseSensor #js {}))
-         touch-sensor (when dnd-enabled? (useSensor TouchSensor #js {}))
-         keyboard-sensor (when dnd-enabled? (useSensor KeyboardSensor #js {}))
-         sensors (when dnd-enabled? (useSensors mouse-sensor touch-sensor keyboard-sensor))
-         handle-drag-end (when dnd-enabled?
-                           (let [on-drag-end (:on-drag-end dnd-config)]
-                             (rhooks/use-callback
-                              (fn [^js event]
-                                (let [^js active (.-active event)
-                                      ^js over (.-over event)]
-                                  (when (and active over (not= (.-id active) (.-id over)))
-                                    (when-let [handler on-drag-end]
-                                      (handler (.-id active) (.-id over))))))
-                              ;; Depend on the fn by identity — (pr-str dnd-config)
-                              ;; would fail to invalidate when the parent passes a
-                              ;; fresh closure, leaving a stale handler cached.
-                              #js [on-drag-end])))
          toolbar-data (when toolbar-config (extract-toolbar-data toolbar-config table-instance))
          pagination-data (extract-pagination-data table-instance)
          has-data? (pos? (.-length data))
@@ -765,22 +803,12 @@ Custom component implementation."
                      :empty-state current-empty-state
                      :no-results-state (when is-filtered? no-results-state)
                      :on-reset-filters (when toolbar-data (:on-reset-filters toolbar-data))
-                     :render-sub-component render-sub-component
-                     :dnd-enabled? dnd-enabled?
-                     :dnd-row-ids dnd-row-ids
-                     :get-row-id (when dnd-enabled? (fn [row] (get-row-id-fn row)))}
-         table-content [:div {:class "flex min-h-0 flex-1 flex-col gap-4"}
-                        (when toolbar-data [toolbar-ui toolbar-data])
-                        [table-ui table-data]
-                        [pagination-ui pagination-data]]]
+                     :render-sub-component render-sub-component}
+         content-props {:toolbar-data toolbar-data
+                        :table-data table-data
+                        :pagination-data pagination-data}]
      (if dnd-enabled?
-       ;; Wrap in DndContext for drag-and-drop
-       [:>
-        DndContext
-        {:collisionDetection closestCenter
-         :modifiers #js [restrictToVerticalAxis]
-         :onDragEnd handle-drag-end
-         :sensors sensors}
-        table-content]
-       ;; No drag-and-drop, render table directly
-       table-content))))
+       [dnd-data-table (assoc content-props
+                              :get-row-id get-row-id
+                              :on-drag-end (:on-drag-end dnd-config))]
+       [data-table-content content-props]))))

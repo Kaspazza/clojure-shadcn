@@ -18,8 +18,8 @@ Custom component implementation."
   
   Props:
   - `:class` - Additional Tailwind classes
-  - `:value` - Controlled search value
-  - `:onValueChange` - Callback when search value changes (fn [value])
+  - `:value` - Controlled selected item value
+  - `:onValueChange` - Callback when the selected item changes (fn [value])
   - `:filter` - Custom filter function (fn [value search])
   - `:shouldFilter` - Whether to filter items (default: true)
   - `:loop` - Whether selection should loop (default: false)
@@ -77,7 +77,7 @@ Custom component implementation."
         (normalize-props raw-props)]
     [dialog/dialog
      (-> props
-         (select-keys [:open :defaultOpen :onOpenChange :modal])
+         (select-keys [:open :default-open :on-open-change :modal])
          (assoc :data-slot "command-dialog"))
      [dialog/dialog-header {:class "sr-only"}
       [dialog/dialog-title {}

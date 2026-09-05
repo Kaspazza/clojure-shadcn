@@ -30,8 +30,36 @@ Custom component implementation."
                                        OctagonXIcon
                                        TriangleAlertIcon]]
    ["sonner"                   :refer [Toaster toast]]
+   [clojure.string             :as str]
    [clojure-shadcn.utils.props :refer [normalize-props]]
    [reagent.core               :as r]))
+
+(defn- kebab->camel-key [key]
+  (if (keyword? key)
+    (keyword (str/replace (name key) #"-([a-z])" (fn [[_ letter]] (str/upper-case letter))))
+    key))
+
+(def ^:private zero-arity-callback-keys
+  #{:onClick :onDismiss :onAutoClose})
+
+(defn- normalize-option-maps [value]
+  (cond
+    (map? value) (reduce-kv (fn [result key child]
+                              (let [normalized-key (kebab->camel-key key)]
+                                (assoc result
+                                       normalized-key
+                                       (if (and (contains? zero-arity-callback-keys normalized-key)
+                                                (fn? child))
+                                         (fn [& _] (child))
+                                         (normalize-option-maps child)))))
+                            {}
+                            (normalize-props value))
+    (vector? value) (mapv normalize-option-maps value)
+    (seq? value) (map normalize-option-maps value)
+    :else value))
+
+(defn- sonner-props [props]
+  (clj->js (normalize-option-maps (or props {}))))
 
 (defn toaster
   "Toast notification provider component.
@@ -55,22 +83,23 @@ Custom component implementation."
   - warning: TriangleAlertIcon
   - error: OctagonXIcon
   - loading: Loader2Icon (with spin animation)"
-  [& [{:as props}]]
+  [& [props]]
   [:>
    Toaster
-   (merge {:className "toaster group"
-           :position "top-right"
-           :icons (clj->js {:success (r/as-element [:> CircleCheckIcon {:className "size-4"}])
-                            :info (r/as-element [:> InfoIcon {:className "size-4"}])
-                            :warning (r/as-element [:> TriangleAlertIcon {:className "size-4"}])
-                            :error (r/as-element [:> OctagonXIcon {:className "size-4"}])
-                            :loading (r/as-element
-                                      [:> Loader2Icon {:className "size-4 animate-spin"}])})
-           :style (clj->js {"--normal-bg" "var(--popover)"
-                            "--normal-text" "var(--popover-foreground)"
-                            "--normal-border" "var(--border)"
-                            "--border-radius" "var(--radius)"})}
-          props)])
+   (sonner-props
+    (merge {:class-name "toaster group"
+            :position "top-right"
+            :icons {:success (r/as-element [:> CircleCheckIcon {:className "size-4"}])
+                    :info (r/as-element [:> InfoIcon {:className "size-4"}])
+                    :warning (r/as-element [:> TriangleAlertIcon {:className "size-4"}])
+                    :error (r/as-element [:> OctagonXIcon {:className "size-4"}])
+                    :loading (r/as-element
+                              [:> Loader2Icon {:className "size-4 animate-spin"}])}
+            :style {"--normal-bg" "var(--popover)"
+                    "--normal-text" "var(--popover-foreground)"
+                    "--normal-border" "var(--border)"
+                    "--border-radius" "var(--radius)"}}
+           (normalize-props (or props {}))))])
 
 (defn show-toast
   "Display a toast notification.
@@ -113,28 +142,9 @@ Custom component implementation."
               {:duration 5000
                :position \"top-center\"})"
   ([message] (show-toast message nil))
-  ([message {:as raw-props}]
-   (let [{:keys [description action duration position cancel id important on-dismiss on-auto-close]
-          :or {position "top-right"}
-          :as _options}
-         (normalize-props raw-props)]
-     (let [opts (cond-> {}
-                  description (assoc :description description)
-                  action (assoc :action
-                                (clj->js (-> action
-                                             (update :on-click (fn [f] #(f)))
-                                             (update :label identity))))
-                  cancel (assoc :cancel
-                                (clj->js (-> cancel
-                                             (update :on-click (fn [f] #(f)))
-                                             (update :label identity))))
-                  duration (assoc :duration duration)
-                  position (assoc :position position)
-                  id (assoc :id id)
-                  important (assoc :important important)
-                  on-dismiss (assoc :onDismiss (fn [_] (on-dismiss)))
-                  on-auto-close (assoc :onAutoClose (fn [_] (on-auto-close))))]
-       (toast message (clj->js opts))))))
+  ([message options]
+   (toast message (sonner-props (merge {:position "top-right"}
+                                       (normalize-props (or options {})))))))
 
 (defn show-success
   "Display a success toast with outline styling.
@@ -157,7 +167,7 @@ Custom component implementation."
                 {"--normal-bg" "var(--background)"
                  "--normal-text" "light-dark(var(--color-green-600), var(--color-green-400))"
                  "--normal-border" "light-dark(var(--color-green-600), var(--color-green-400))"})]
-     (toast.success message (clj->js styled-options)))))
+     (toast.success message (sonner-props styled-options)))))
 
 (defn show-error
   "Display an error toast with destructive outline styling.
@@ -177,7 +187,7 @@ Custom component implementation."
                                {"--normal-bg" "var(--background)"
                                 "--normal-text" "var(--destructive)"
                                 "--normal-border" "var(--destructive)"})]
-     (toast.error message (clj->js styled-options)))))
+     (toast.error message (sonner-props styled-options)))))
 
 (defn show-info
   "Display an info toast with outline styling.
@@ -200,7 +210,7 @@ Custom component implementation."
                 {"--normal-bg" "var(--background)"
                  "--normal-text" "light-dark(var(--color-sky-600), var(--color-sky-400))"
                  "--normal-border" "light-dark(var(--color-sky-600), var(--color-sky-400))"})]
-     (toast.info message (clj->js styled-options)))))
+     (toast.info message (sonner-props styled-options)))))
 
 (defn show-warning
   "Display a warning toast with outline styling.
@@ -223,7 +233,7 @@ Custom component implementation."
                 {"--normal-bg" "var(--background)"
                  "--normal-text" "light-dark(var(--color-amber-600), var(--color-amber-400))"
                  "--normal-border" "light-dark(var(--color-amber-600), var(--color-amber-400))"})]
-     (toast.warning message (clj->js styled-options)))))
+     (toast.warning message (sonner-props styled-options)))))
 
 (defn show-loading
   "Display a loading toast.
@@ -240,7 +250,7 @@ Custom component implementation."
     ;; Later, dismiss it
     (dismiss-toast toast-id))"
   ([message] (show-loading message nil))
-  ([message options] (toast.loading message (clj->js (or options {})))))
+  ([message options] (toast.loading message (sonner-props options))))
 
 (defn show-promise
   "Display a toast for a promise.
@@ -258,8 +268,10 @@ Custom component implementation."
     {:loading \"Fetching data...\"
      :success \"Data loaded!\"
      :error \"Failed to load data\"})"
-  [promise messages options]
-  (toast.promise promise (clj->js messages) (clj->js (or options {}))))
+  ([promise messages]
+   (toast.promise promise (sonner-props messages)))
+  ([promise messages options]
+   (toast.promise promise (sonner-props (merge (or options {}) messages)))))
 
 (defn dismiss-toast
   "Dismiss a specific toast by ID, or all toasts if no ID provided.
@@ -293,4 +305,4 @@ Custom component implementation."
                   ;; Convert Reagent component to React element
                   (r/as-element component)
                   component)
-                (clj->js (or options {}))))
+                (sonner-props options)))

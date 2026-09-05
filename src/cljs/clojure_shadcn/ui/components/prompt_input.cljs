@@ -66,24 +66,25 @@ Custom component implementation."
              disabled? false}
         :as props}
        (normalize-props raw-props)]
-   (let [[internal-value set-internal-value] (rhooks/use-state (or value ""))
+   (let [interaction-disabled? (or disabled? is-loading?)
+         [internal-value set-internal-value] (rhooks/use-state (or value ""))
          textarea-ref (rhooks/use-ref nil)
          handle-change (rhooks/use-callback (fn [new-value]
                                               (set-internal-value new-value)
                                               (when on-value-change (on-value-change new-value)))
                                             [on-value-change])
          handle-click (rhooks/use-callback (fn [e]
-                                             (when-not disabled?
+                                             (when-not interaction-disabled?
                                                (when-let [textarea (.-current textarea-ref)]
-                                                 (.focus textarea)))
-                                             (when on-click (on-click e)))
-                                           [disabled? on-click])
+                                                 (.focus textarea))
+                                               (when on-click (on-click e))))
+                                           [interaction-disabled? on-click])
          context-value (clj->js {:isLoading is-loading?
                                  :value (or value internal-value)
                                  :setValue (or on-value-change handle-change)
                                  :maxHeight max-height
                                  :onSubmit on-submit
-                                 :disabled disabled?
+                                 :disabled interaction-disabled?
                                  :textareaRef textarea-ref})]
      [:>
       mateuszmazurczak-tooltip/tooltip-provider-component
@@ -97,7 +98,7 @@ Custom component implementation."
                          :class
                          (merge-classes
                           "border-input bg-background cursor-text rounded-3xl border p-2 shadow-xs"
-                          (when disabled? "cursor-not-allowed opacity-60")
+                          (when interaction-disabled? "cursor-not-allowed opacity-60")
                           class))
                   (dissoc :is-loading?
                           :value
@@ -152,12 +153,13 @@ Custom component implementation."
                         (fn [e] (adjust-height (.-target e)) (set-value (.. e -target -value)))
                         [set-value disable-autosize?])
          handle-key-down (rhooks/use-callback (fn [e]
-                                                (when (and (= (.-key e) "Enter")
-                                                           (not (.-shiftKey e)))
-                                                  (.preventDefault e)
-                                                  (when on-submit (on-submit)))
-                                                (when on-key-down (on-key-down e)))
-                                              [on-submit on-key-down])]
+                                                (when-not disabled?
+                                                  (when (and (= (.-key e) "Enter")
+                                                             (not (.-shiftKey e)))
+                                                    (.preventDefault e)
+                                                    (when on-submit (on-submit)))
+                                                  (when on-key-down (on-key-down e))))
+                                              [disabled? on-submit on-key-down])]
      ;; Layout effect to adjust height when value changes
      (rhooks/use-layout-effect
       (fn []
@@ -224,9 +226,11 @@ Custom component implementation."
           original-on-click (:on-click child-props)
           enhanced-props (assoc child-props
                                 :disabled (or (:disabled child-props) disabled?)
+                                :aria-disabled (or (:aria-disabled child-props) disabled?)
                                 :on-click (fn [e]
                                             (.stopPropagation e)
-                                            (when original-on-click (original-on-click e))))]
+                                            (when (and (not disabled?) original-on-click)
+                                              (original-on-click e))))]
       (if (map? (nth child props-index nil))
         (assoc child props-index enhanced-props)
         (into (subvec child 0 props-index) (cons enhanced-props (subvec child props-index)))))))

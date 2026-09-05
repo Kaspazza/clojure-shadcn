@@ -56,7 +56,7 @@ const docsPage = () => createElement(
   createElement(DocsSections),
 );
 
-/** @type {import('@storybook/react').Preview} */
+/** @type {import('@storybook/react-vite').Preview} */
 const preview = {
   parameters: {
     layout: 'padded',

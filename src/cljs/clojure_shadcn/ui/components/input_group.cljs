@@ -32,7 +32,7 @@
    &
    children]
   (let [focus-input (fn [e]
-                      (when-not (.closest (.-target e) "button")
+                      (when-not (.closest (.-target e) "button,a,input,textarea,select,[role='button'],[role='link'],[contenteditable='true'],[tabindex]:not([tabindex='-1'])")
                         (some-> (.-currentTarget e)
                                 .-parentElement
                                 (.querySelector "input,textarea")

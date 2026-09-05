@@ -58,20 +58,13 @@
          :data-slot "item"
          :data-variant (name variant)
          :data-size (name size)
-         :className
-         (when as-child?
-           (merge-classes
-            "group/item flex flex-wrap items-center rounded-md border border-transparent text-sm transition-colors duration-100 outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 [a]:transition-colors [a]:hover:bg-accent/50"
-            (item-variant variant)
-            (item-size size)
-            class))
+         :role "listitem"
          :class
-         (when-not as-child?
-           (merge-classes
-            "group/item flex flex-wrap items-center rounded-md border border-transparent text-sm transition-colors duration-100 outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 [a]:transition-colors [a]:hover:bg-accent/50"
-            (item-variant variant)
-            (item-size size)
-            class)))
+         (merge-classes
+          "group/item flex flex-wrap items-center rounded-md border border-transparent text-sm transition-colors duration-100 outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 [a]:transition-colors [a]:hover:bg-accent/50"
+          (item-variant variant)
+          (item-size size)
+          class))
         (dissoc :variant :size :as-child? :class-name)))
      children)))
 

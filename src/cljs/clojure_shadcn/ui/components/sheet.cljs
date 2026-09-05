@@ -21,7 +21,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
 ;; Root Components (Simple Aliases)
 ;; ============================================================================
 
-(def sheet
+(defn sheet
   "Root component for Sheet. Manages open/closed state.
   
   Props:
@@ -44,9 +44,10 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
     [sheet-footer
      [button \"Save\"]]]]
   ```"
-  (.-Root DialogPrimitive))
+  [props & children]
+  (into [:> (.-Root DialogPrimitive) props] children))
 
-(def sheet-trigger
+(defn sheet-trigger
   "Trigger button that opens the sheet.
   
   Props:
@@ -58,9 +59,10 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
   [sheet-trigger {:as-child true}
    [button {:variant :outline} \"Open Sheet\"]]
   ```"
-  (.-Trigger DialogPrimitive))
+  [props & children]
+  (into [:> (.-Trigger DialogPrimitive) props] children))
 
-(def sheet-close
+(defn sheet-close
   "Button that closes the sheet.
   
   Props:
@@ -71,16 +73,18 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
   [sheet-close {:as-child true}
    [button {:variant :outline} \"Close\"]]
   ```"
-  (.-Close DialogPrimitive))
+  [props & children]
+  (into [:> (.-Close DialogPrimitive) props] children))
 
-(def sheet-portal
+(defn sheet-portal
   "Portal component that renders sheet content in a portal (outside DOM hierarchy).
   
   Props:
   - `:container` - DOM element to portal into (default: document.body)
   
   Note: Usually used internally by sheet-content, rarely needed directly."
-  (.-Portal DialogPrimitive))
+  [props & children]
+  (into [:> (.-Portal DialogPrimitive) props] children))
 
 ;; ============================================================================
 ;; Sheet Overlay
@@ -203,14 +207,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
     :as props}
    &
    children]
-  [:>
-   sheet-portal
-   [:>
-    (.-Overlay DialogPrimitive)
-    {:data-slot "sheet-overlay"
-     :class (merge-classes (str "fixed inset-0 z-50 bg-black/80 "
-                                "data-[state=open]:animate-in data-[state=closed]:animate-out "
-                                "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"))}]
+  [sheet-portal {}
+   [sheet-overlay {}]
    [:>
     (.-Content DialogPrimitive)
     (-> props

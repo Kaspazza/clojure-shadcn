@@ -17,10 +17,10 @@ Custom component implementation."
   - Other props passed to svg element"
   [{:keys [class]
     :as props}]
-  (let [other-props (dissoc props :class)]
+  (let [other-props (dissoc props :class :class-name)]
     [:>
      Loader2
-     (merge {:role "status"
-             :aria-label "Loading"
-             :class (styles/merge-classes "size-4 animate-spin" class)}
+     (merge {:aria-hidden true
+             :focusable false
+             :class (styles/merge-classes "size-4 animate-spin motion-reduce:animate-none" class)}
             other-props)]))

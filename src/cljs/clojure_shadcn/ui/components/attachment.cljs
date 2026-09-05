@@ -3,15 +3,17 @@
   (:require
    ["@radix-ui/react-slot"              :refer [Slot]]
    [clojure-shadcn.ui.components.button :as button]
+   [clojure-shadcn.utils.props          :refer [normalize-props]]
    [clojure-shadcn.utils.styles         :refer [merge-classes]]))
 
 (defn- node
-  [tag slot classes props children]
-  (into [tag
+  [tag slot classes raw-props children]
+  (let [props (normalize-props raw-props)]
+    (into [tag
          (-> props
              (assoc :data-slot slot :class (merge-classes classes (:class props)))
              (dissoc :class-name))]
-        children))
+          children)))
 
 (defn- size-classes
   [size]
@@ -115,9 +117,11 @@
     :as props}
    &
    children]
-  (let [p (-> props
+  (let [props (normalize-props props)
+        as-child? (or as-child? (:as-child props))
+        p (-> props
               (assoc :data-slot "attachment-trigger")
-              (dissoc :as-child? :class :class-name))
+              (dissoc :as-child? :as-child :class :class-name))
         classes (merge-classes "absolute inset-0 z-10 outline-none" class)]
     (if as-child?
       (into [:> Slot (assoc p :className classes)] children)

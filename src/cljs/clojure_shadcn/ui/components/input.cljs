@@ -33,7 +33,7 @@ Custom component implementation."
   - File input specific styling
   - Placeholder text styling
   - Responsive text sizing (base on mobile, sm on desktop)
-  - Full accessibility support
+  - Invalid styling when callers set `:aria-invalid true`; callers remain responsible for error association via `:aria-describedby`
   
   Examples:
   
@@ -85,6 +85,8 @@ Custom component implementation."
                            "file:text-foreground " "placeholder:text-muted-foreground "
                            "focus-visible:outline-none focus-visible:ring-2 "
                            "focus-visible:ring-ring focus-visible:ring-offset-2 "
+                           "aria-invalid:border-destructive aria-invalid:ring-destructive/20 "
+                           "dark:aria-invalid:ring-destructive/40 "
                            "disabled:cursor-not-allowed disabled:opacity-50 " "md:text-sm")
                       class))
        (dissoc :class-name))])

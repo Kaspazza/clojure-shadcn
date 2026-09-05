@@ -16,7 +16,7 @@
         (r/as-element [helpers/installation-scene
                        {:description
                         "Markdown component with syntax highlighting and rich formatting."
-                        :npm-install "npm install marked react-markdown remark-breaks remark-gfm"
+                        :npm-install "npm install react-markdown remark-breaks remark-gfm"
                         :source-code (embed-source "clojure-shadcn.ui.components.markdown")
                         :namespace-path "src/cljs/clojure_shadcn/ui/components/markdown.cljs"
                         :filename "markdown.cljs"}]))
@@ -31,7 +31,7 @@
      [helpers/api-component-card
       {:component-name "markdown"
        :description
-       "Markdown renderer with GFM support, automatic line breaks, and syntax-highlighted code blocks. Parses input into memoized blocks for better rendering performance."
+       "Markdown renderer with GFM support, automatic line breaks, and syntax-highlighted code blocks. The complete document is rendered in one ReactMarkdown pass."
        :link {:href "https://github.com/remarkjs/react-markdown"
               :label "react-markdown Docs"}
        :props
@@ -39,10 +39,6 @@
          :type "string"
          :default nil
          :description "Markdown content to render."}
-        {:name ":id"
-         :type "string"
-         :default nil
-         :description "Stable base ID used for generated block keys."}
         {:name ":class"
          :type "string"
          :default nil
@@ -72,7 +68,7 @@
           "Interactive markdown playground."
           {:args {:children "# Heading 1\n\n## Heading 2\n\n**Bold** and _italic_ text."}
            :arg-types {:children {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["class" "id" "components"]}}}
+           :parameters {:controls {:exclude ["class" "components" "remark-plugins" "rehype-plugins"]}}}
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-xl"}
                                                  [sut/markdown (select-keys args [:children])]])))

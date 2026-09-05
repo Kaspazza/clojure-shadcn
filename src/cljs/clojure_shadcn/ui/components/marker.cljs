@@ -27,7 +27,9 @@
               (dissoc :variant :as-child? :class :class-name))
         classes (marker-variants variant class)]
     (if as-child?
-      (into [:> Slot (assoc p :className classes)] children)
+      (if (= 1 (count children))
+        [:> Slot (assoc p :className classes) (first children)]
+        (throw (js/Error. "marker with :as-child? true requires exactly one child")))
       (into [:div (assoc p :class classes)] children))))
 
 (defn marker-icon

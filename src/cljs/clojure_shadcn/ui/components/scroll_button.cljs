@@ -36,9 +36,10 @@ Custom component implementation."
   
   Example with custom variant:
   [scroll-button {:variant :secondary :size :default}]"
- [{:keys [variant size class]
+ [{:keys [variant size class on-click aria-label]
    :or {variant :outline
-        size :sm}
+        size :sm
+        aria-label "Scroll to bottom"}
    :as props}]
  (let [context (useStickToBottomContext)
        is-at-bottom? (.-isAtBottom context)
@@ -53,6 +54,12 @@ Custom component implementation."
         (assoc :variant variant
                :size size
                :class combined-classes
-               :on-click (fn [_e] (scroll-to-bottom)))
+               :aria-label aria-label
+               :aria-hidden is-at-bottom?
+               :tab-index (when is-at-bottom? -1)
+               :on-click (fn [event]
+                           (when on-click (on-click event))
+                           (when-not (.-defaultPrevented event)
+                             (scroll-to-bottom))))
         (dissoc :class-name))
-    [:> ChevronDown {:class "h-5 w-5"}]]))
+    [:> ChevronDown {:class "h-5 w-5" :aria-hidden true}]]))

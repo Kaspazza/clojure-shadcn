@@ -126,5 +126,6 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
                         :data-variant (name variant)
                         :data-size (name size)
                         :class combined-classes)
+                 (cond-> (not as-child) (update :type #(or % "button")))
                  (dissoc :class-name :variant :size :as-child))]
             children))))

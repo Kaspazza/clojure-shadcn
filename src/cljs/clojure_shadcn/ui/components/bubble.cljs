@@ -2,15 +2,17 @@
   "Conversation bubble primitives based on the current shadcn/ui Bubble module."
   (:require
    ["@radix-ui/react-slot"      :refer [Slot]]
+   [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
 (defn- node
-  [tag slot classes props children]
-  (into [tag
+  [tag slot classes raw-props children]
+  (let [props (normalize-props raw-props)]
+    (into [tag
          (-> props
              (assoc :data-slot slot :class (merge-classes classes (:class props)))
              (dissoc :class-name))]
-        children))
+          children)))
 
 (defn bubble-group
   [props & children]
@@ -55,13 +57,15 @@
    &
    children]
   (let
-    [classes
+    [props (normalize-props props)
+     as-child? (or as-child? (:as-child props))
+     classes
      (merge-classes
       "w-fit max-w-full min-w-0 overflow-hidden rounded-xl border border-transparent px-3 py-2 text-sm leading-relaxed wrap-break-word group-data-[align=end]/bubble:self-end [button]:text-left [button,a]:transition-colors [button,a]:outline-none [button,a]:focus-visible:border-ring [button,a]:focus-visible:ring-3 [button,a]:focus-visible:ring-ring/50"
       class)
      p (-> props
            (assoc :data-slot "bubble-content")
-           (dissoc :as-child? :class :class-name))]
+           (dissoc :as-child? :as-child :class :class-name))]
     (if as-child?
       (into [:> Slot (assoc p :className classes)] children)
       (into [:div (assoc p :class classes)] children))))

@@ -22,11 +22,13 @@
            content-class
            disabled?
            clearable?
+           clear-label
            item-render
            value-render]
     :or {placeholder "Select an option…"
          search-placeholder "Search…"
-         empty-text "No option found."}}]
+         empty-text "No option found."
+         clear-label "Clear selection"}}]
   (r/with-let
    [open? (r/atom false)]
    (let [selected (some #(when (= value (:value %)) %) items)
@@ -49,25 +51,33 @@
                            (if item-render (item-render item) (item-label item))])]
      [popover/popover {:open @open?
                        :on-open-change #(reset! open? %)}
-      [popover/popover-trigger {:as-child true}
-       [button/button {:variant :outline
-                       :role "combobox"
-                       :aria-expanded @open?
-                       :disabled disabled?
-                       :class (merge-classes "w-[240px] justify-between font-normal" class)}
-        [:span {:class "truncate"}
-         (if selected (if value-render (value-render selected) (item-label selected)) placeholder)]
-        [:span {:class "ml-2 flex items-center gap-1"}
-         (when (and clearable? selected)
-           [:>
-            X
-            {:className "size-3.5"
-             :aria-label "Clear selection"
-             :onClick (fn [event] (.preventDefault event) (.stopPropagation event) (choose! nil))}])
+      [:div {:class "relative inline-flex"}
+       [popover/popover-trigger {:as-child true}
+        [button/button {:variant :outline
+                        :role "combobox"
+                        :aria-expanded @open?
+                        :disabled disabled?
+                        :class (merge-classes
+                                "w-[240px] justify-between font-normal"
+                                (when (and clearable? selected) "pr-14")
+                                class)}
+         [:span {:class "truncate"}
+          (if selected (if value-render (value-render selected) (item-label selected)) placeholder)]
          [:>
           ChevronsUpDown
           {:className "size-4 opacity-50"
-           :aria-hidden true}]]]]
+           :aria-hidden true}]]]
+       (when (and clearable? selected)
+         [button/button {:type "button"
+                         :variant :ghost
+                         :size :icon-xs
+                         :disabled disabled?
+                         :aria-label clear-label
+                         :class "absolute right-7 top-1/2 -translate-y-1/2"
+                         :on-click (fn [event]
+                                     (.stopPropagation event)
+                                     (choose! nil))}
+          [:> X {:className "size-3.5" :aria-hidden true}]])]
       [popover/popover-content {:align "start"
                                 :class (merge-classes "w-[240px] p-0" content-class)}
        [command/command {}

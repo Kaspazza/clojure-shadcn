@@ -148,7 +148,7 @@
        "⚠️ Important Notes"]
       [:ul {:class "text-xs text-muted-foreground space-y-1 list-disc pl-4"}
        [:li
-        "sheet, sheet-trigger, and sheet-close are raw React aliases, so render them with :> in Reagent."]
+        "All exported sheet components are ordinary Reagent wrappers and use standard vector invocation."]
        [:li "Use :side on sheet-content to control animation direction and panel placement."]
        [:li "For forms, keep explicit close controls (sheet-close) in footer for predictable UX."]]]
      [:div {:class "border rounded-lg p-4 bg-muted/50"}
@@ -156,7 +156,7 @@
        "Usage Example"]
       [:pre {:class "text-xs overflow-x-auto"}
        [:code
-        "[:> sheet {}\n [:> sheet-trigger {:as-child true}\n  [button {:variant :outline} \"Open\"]]\n [sheet-content {:side :right}\n  [sheet-header {}\n   [sheet-title {} \"Edit profile\"]\n   [sheet-description {} \"Update details and save.\"]]\n  [sheet-footer {}\n   [:> sheet-close {:as-child true} [button {:variant :outline} \"Close\"]]]]]"]]]]])))
+        "[sheet {}\n [sheet-trigger {:as-child true}\n  [button {:variant :outline} \"Open\"]]\n [sheet-content {:side :right}\n  [sheet-header {}\n   [sheet-title {} \"Edit profile\"]\n   [sheet-description {} \"Update details and save.\"]]\n  [sheet-footer {}\n   [sheet-close {:as-child true} [button {:variant :outline} \"Close\"]]]]]"]]]]])))
 
 (defstory
  SheetDemo
@@ -164,18 +164,15 @@
 
   Radix primitive: @radix-ui/react-dialog
 
-  Note: `sheet`, `sheet-trigger`, and `sheet-close` are raw React defs and use `:>`.
-  Wrapper components like `sheet-content` are reagent fns and use `[sut/...`.
+  All exported sheet components are ordinary Reagent wrapper functions.
 
   Sheets slide in from an edge to reveal secondary content."
  []
  (r/as-element
   (helpers/wrap-component
    [:div {:class "p-6"}
-    [:>
-     sut/sheet
-     {}
-     [:> sut/sheet-trigger {:as-child true} (button/button {:variant :outline} "Open")]
+    [sut/sheet {}
+     [sut/sheet-trigger {:as-child true} (button/button {:variant :outline} "Open")]
      [sut/sheet-content {}
       [sut/sheet-header {}
        [sut/sheet-title {}
@@ -195,7 +192,7 @@
                       :default-value "@peduarte"}]]]
       [sut/sheet-footer {}
        (button/button {:type "submit"} "Save changes")
-       [:> sut/sheet-close {:as-child true} (button/button {:variant :outline} "Close")]]]]])))
+       [sut/sheet-close {:as-child true} (button/button {:variant :outline} "Close")]]]]])))
 
 (defstory
  SheetSide
@@ -210,10 +207,8 @@
    [:div {:class "p-6 grid grid-cols-2 gap-2"}
     (for [side [:top :right :bottom :left]]
       ^{:key side}
-      [:>
-       sut/sheet
-       {}
-       [:> sut/sheet-trigger {:as-child true} (button/button {:variant :outline} (name side))]
+      [sut/sheet {}
+       [sut/sheet-trigger {:as-child true} (button/button {:variant :outline} (name side))]
        [sut/sheet-content {:side side}
         [sut/sheet-header {}
          [sut/sheet-title {}
@@ -236,9 +231,7 @@
                         :default-value "@peduarte"
                         :class "col-span-3"}]]]
         [sut/sheet-footer {}
-         [:>
-          sut/sheet-close
-          {:as-child true}
+         [sut/sheet-close {:as-child true}
           (button/button {:type "submit"} "Save changes")]]]])])))
 
 (defstory
@@ -252,10 +245,8 @@
  (r/as-element
   (helpers/wrap-component
    [:div {:class "p-6"}
-    [:>
-     sut/sheet
-     {}
-     [:> sut/sheet-trigger {:as-child true} (button/button {:variant :outline} "Open Scrollable")]
+    [sut/sheet {}
+     [sut/sheet-trigger {:as-child true} (button/button {:variant :outline} "Open Scrollable")]
      [sut/sheet-content {:class "overflow-y-auto"}
       [sut/sheet-header {}
        [sut/sheet-title {}
@@ -268,7 +259,7 @@
          [:p {:class "text-sm text-muted-foreground"}
           (str "Release item " idx ": Updated feature details and fixes.")])]
       [sut/sheet-footer {}
-       [:> sut/sheet-close {:as-child true} (button/button {:variant :outline} "Close")]]]]])))
+       [sut/sheet-close {:as-child true} (button/button {:variant :outline} "Close")]]]]])))
 
 
 (defstory SheetPlayground

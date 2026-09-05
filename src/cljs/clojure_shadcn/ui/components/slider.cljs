@@ -6,12 +6,24 @@
 
 (defn slider
   [{:as raw-props}]
-  (let [{:keys [class value default-value min max thumb-class]
+  (let [{:keys [class value default-value min max thumb-class thumb-labels aria-label]
          :or {min 0
-              max 100}
+              max 100
+              aria-label "Value"}
          :as props}
         (normalize-props raw-props)
-        values (or value default-value [min])]
+        values (or value default-value [min])
+        thumb-count (count values)
+        thumb-label (fn [index]
+                      (or (nth thumb-labels index nil)
+                          (when aria-label
+                            (if (= 1 thumb-count)
+                              aria-label
+                              (str aria-label " "
+                                   (case index
+                                     0 "minimum"
+                                     1 (if (= 2 thumb-count) "maximum" (str (inc index)))
+                                     (str (inc index))))))))]
     (into
      [:>
       primitive/Root
@@ -25,7 +37,7 @@
          (merge-classes
           "relative flex w-full touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col"
           class))
-        (dissoc :class-name :thumb-class))
+        (dissoc :class-name :thumb-class :thumb-labels :aria-label))
       [:>
        primitive/Track
        {:data-slot "slider-track"
@@ -42,6 +54,7 @@
         [:>
          primitive/Thumb
          {:data-slot "slider-thumb"
+          :aria-label (thumb-label index)
           :class
           (merge-classes
            "border-primary bg-background ring-ring/50 block size-4 shrink-0 rounded-full border shadow-sm transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"

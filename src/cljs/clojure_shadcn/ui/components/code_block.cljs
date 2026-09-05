@@ -42,14 +42,12 @@ Custom component implementation."
 
 (defn highlight
   [code language theme set-highlighted-html]
-  (let [code (if (or (nil? code) (empty? code))
-               (js/Promise.resolve "<pre><code></code></pre>")
-               (codeToHtml code
-                           #js {:lang language
-                                :theme theme}))]
-    (-> code
+  (let [source (or code "")]
+    (-> (if (empty? source)
+          (js/Promise.resolve "<pre><code></code></pre>")
+          (codeToHtml source #js {:lang language :theme theme}))
         (.then set-highlighted-html)
-        (.catch (fn [_err] (set-highlighted-html (str "<pre><code>" code "</code></pre>")))))))
+        (.catch (fn [_error] (set-highlighted-html nil))))))
 
 (defc code-block-code
  "Code block with syntax highlighting using Shiki.
@@ -72,11 +70,27 @@ Custom component implementation."
    :or {language "tsx"
         theme "github-light"}
    :as props}]
- (let [[highlighted-html set-highlighted-html] (rhooks/use-state nil)]
-   (rhooks/use-effect (fn [] (highlight code language theme set-highlighted-html) js/undefined)
-                      [code language theme])
+ (let [[highlight-result set-highlight-result] (rhooks/use-state nil)
+       generation-ref (rhooks/use-ref 0)
+       signature [code language theme]]
+   (rhooks/use-effect
+    (fn []
+      (let [generation (inc (.-current generation-ref))
+            active? (atom true)]
+        (set! (.-current generation-ref) generation)
+        (highlight code language theme
+                   (fn [html]
+                     (when (and @active? (= generation (.-current generation-ref)))
+                       (set-highlight-result {:signature signature :html html}))))
+        (fn []
+          (reset! active? false)
+          (when (= generation (.-current generation-ref))
+            (set! (.-current generation-ref) (inc generation))))))
+    [code language theme])
    (let [base-classes "w-full overflow-x-auto text-[13px] [&>pre]:px-4 [&>pre]:py-4"
-         combined-classes (merge-classes base-classes class)]
+         combined-classes (merge-classes base-classes class)
+         highlighted-html (when (= signature (:signature highlight-result))
+                            (:html highlight-result))]
      (if highlighted-html
        [:div
         (-> props
@@ -87,7 +101,7 @@ Custom component implementation."
         (-> props
             (assoc :class combined-classes)
             (dissoc :code :language :theme :class-name))
-        [:pre [:code code]]]))))
+        [:pre [:code (or code "")]]]))))
 
 (defn code-block-group
   "Group container for code block elements (e.g., header with actions).

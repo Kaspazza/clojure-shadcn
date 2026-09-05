@@ -210,7 +210,7 @@ Custom component implementation."
     (->
       props
       (assoc
-       :data-slot "field-label"
+       :data-slot "field-title"
        :class
        (merge-classes
         "group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50"
@@ -338,15 +338,21 @@ Custom component implementation."
                   ;; Multiple errors
                   :else (let [unique-errors (->> errors
                                                  (filter :message)
-                                                 (map (fn [error] [(:message error) error]))
-                                                 (into {})
-                                                 vals)]
+                                                 (reduce (fn [{:keys [seen ordered] :as acc} error]
+                                                           (let [message (:message error)]
+                                                             (if (contains? seen message)
+                                                               acc
+                                                               {:seen (conj seen message)
+                                                                :ordered (conj ordered error)})))
+                                                         {:seen #{} :ordered []})
+                                                 :ordered)]
                           (when (seq unique-errors)
                             (if (= 1 (count unique-errors))
                               (:message (first unique-errors))
                               [:ul {:class "ml-4 flex list-disc flex-col gap-1"}
-                               (for [[idx error] (map-indexed vector unique-errors)]
-                                 (when-let [msg (:message error)] ^{:key idx} [:li msg]))]))))]
+                               (for [error unique-errors
+                                     :let [msg (:message error)]]
+                                 ^{:key msg} [:li msg])]))))]
     (when content
       [:div
        (-> props

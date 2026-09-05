@@ -8,6 +8,7 @@
   Documentation: https://www.radix-ui.com/primitives/docs/components/avatar"
   (:require
    ["@radix-ui/react-avatar"    :as RadixAvatar]
+   [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
 (defn avatar
@@ -27,12 +28,9 @@
     [avatar-image {:src \"https://github.com/user.png\" :alt \"User\"}]
     [avatar-fallback {} \"UN\"]
     [avatar-badge {:class \"bg-green-600\"}]]"
-  [{:keys [class size]
-    :or {size :default}
-    :as props}
-   &
-   children]
-  (into
+  [{:as raw-props} & children]
+  (let [{:keys [class size] :or {size :default} :as props} (normalize-props raw-props)]
+   (into
    [:>
     RadixAvatar/Root
     (->
@@ -45,7 +43,7 @@
         "group/avatar relative flex size-8 shrink-0 rounded-full select-none data-[size=lg]:size-10 data-[size=sm]:size-6"
         class))
       (dissoc :class-name :size))]
-   children))
+   children)))
 
 (defn avatar-image
   "Avatar image component. Displays the actual image.
@@ -57,15 +55,15 @@
   
   Example:
   [avatar-image {:src \"https://github.com/user.png\" :alt \"User Name\"}]"
-  [{:keys [class]
-    :as props}]
-  [:>
-   RadixAvatar/Image
-   (-> props
-       (assoc :data-slot "avatar-image"
-              :class (merge-classes "aspect-square h-full w-full overflow-hidden rounded-[inherit]"
-                                    class))
-       (dissoc :class-name))])
+  [{:as raw-props}]
+  (let [{:keys [class] :as props} (normalize-props raw-props)]
+    [:>
+     RadixAvatar/Image
+     (-> props
+         (assoc :data-slot "avatar-image"
+                :class (merge-classes "aspect-square h-full w-full overflow-hidden rounded-[inherit]"
+                                      class))
+         (dissoc :class-name))]))
 
 (defn avatar-fallback
   "Avatar fallback component. Displays when image is not available.
@@ -77,11 +75,9 @@
   Example:
   [avatar-fallback {} \"JD\"]
   [avatar-fallback {:class \"bg-blue-500 text-white\"} \"AB\"]"
-  [{:keys [class]
-    :as props}
-   &
-   children]
-  (into
+  [{:as raw-props} & children]
+  (let [{:keys [class] :as props} (normalize-props raw-props)]
+   (into
    [:>
     RadixAvatar/Fallback
     (->
@@ -93,7 +89,7 @@
         "bg-muted text-muted-foreground flex size-full items-center justify-center rounded-full text-sm group-data-[size=sm]/avatar:text-xs"
         class))
       (dissoc :class-name))]
-   children))
+   children)))
 
 (defn avatar-badge
   "Avatar badge component. Displays a badge indicator at the bottom right of the avatar.

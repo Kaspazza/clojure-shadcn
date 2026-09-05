@@ -1,5 +1,5 @@
 (ns clojure-shadcn.ui.components.tooltip
-  "Self-contained tooltip component for displaying contextual information on hover/focus.
+  "Composable tooltip component for displaying contextual information on hover/focus.
 
   A popup that displays information related to an element when the element receives
   keyboard focus or the mouse hovers over it. Built on Radix UI's Tooltip primitive,
@@ -7,7 +7,7 @@
 
   ## Key Features
 
-  - **Self-Contained**: No provider needed, each tooltip manages its own context
+  - **Shared Context**: Wrap a tooltip region once with `tooltip-provider-component`
   - **Data-Driven**: Configured purely through a single map of options
   - **Accessible**: Proper ARIA attributes, keyboard navigation, screen reader support
   - **Smart Positioning**: Auto-repositions to stay in viewport (collision detection)
@@ -109,6 +109,13 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/tooltip"
 
 (def ^:private tooltip-content-primitive (.-Content TooltipPrimitive))
 
+(def ^:private tooltip-portal (.-Portal TooltipPrimitive))
+
+(defn- native-interactive-trigger? [trigger]
+  (and (vector? trigger)
+       (contains? #{:a :button :input :select :textarea :summary}
+                  (first trigger))))
+
 ;;
 ;; Public API - Exported provider for shared tooltip context
 ;;
@@ -134,10 +141,10 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/tooltip"
 ;;
 
 (defn tooltip
-  "Self-contained tooltip component configured purely with data.
+  "Tooltip component configured purely with data.
 
-  A single function that accepts a configuration map and renders a complete tooltip
-  with trigger and content. No provider or wrapper components needed.
+  Accepts a configuration map and renders a tooltip root, trigger, and portalled content.
+  Wrap the relevant application region once with `tooltip-provider-component`.
 
   ## Configuration Map
 
@@ -156,7 +163,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/tooltip"
 
   ### Timing
   - `:delay-duration` - Time (ms) before tooltip shows (default: 700)
-  - `:skip-delay-duration` - Time (ms) to skip delay between tooltips (default: 300)
+  Provider-level skip delay is configured on `tooltip-provider-component`.
 
   ### State
   - `:open` - Controlled open state (boolean)
@@ -165,8 +172,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/tooltip"
 
   ### Styling
   - `:content-class` - Additional Tailwind classes for content
-  - `:trigger-as-child?` - Merge trigger props into one child element (default: false)
-    - Set to `true` for interactive triggers so Radix does not add a nested button
+  - `:trigger-as-child?` - Merge trigger props into one child element
+    - Automatically enabled for native interactive Hiccup; explicitly set it for component triggers
     - Invoke pure Reagent renderers directly so Radix receives their native Hiccup element
     - Keep `false` only when Radix should provide the trigger button
   - `:disable-hoverable-content?` - Prevent tooltip from staying open on hover (default: false)
@@ -239,7 +246,6 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/tooltip"
            avoid-collisions?
            sticky
            delay-duration
-           skip-delay-duration
            open
            default-open
            on-open-change
@@ -248,27 +254,26 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/tooltip"
            trigger-as-child?
            disable-hoverable-content?]
     :or {side-offset 4
-         trigger-as-child? false
          avoid-collisions? true
-         delay-duration 700
-         skip-delay-duration 300}
+         delay-duration 700}
     :as _opts}]
-  [:>
-   tooltip-provider
-   {:delayDuration delay-duration
-    :skipDelayDuration skip-delay-duration
-    :disableHoverableContent disable-hoverable-content?}
+  (let [as-child? (if (some? trigger-as-child?)
+                    trigger-as-child?
+                    (native-interactive-trigger? trigger))]
    [:>
     tooltip-root
-    (cond-> {}
+    (cond-> {:delayDuration delay-duration
+             :disableHoverableContent disable-hoverable-content?}
       (some? open) (assoc :open open)
       (some? default-open) (assoc :defaultOpen default-open)
       on-open-change (assoc :onOpenChange on-open-change))
     ;; Trigger
-    [:> tooltip-trigger {:asChild trigger-as-child?} trigger]
+    [:> tooltip-trigger {:asChild as-child?} trigger]
     ;; Content
     [:>
-     tooltip-content-primitive
+     tooltip-portal
+     [:>
+      tooltip-content-primitive
      (cond-> {:sideOffset side-offset
               :className
               (merge-classes
@@ -288,4 +293,4 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/tooltip"
        (some? avoid-collisions?) (assoc :avoidCollisions avoid-collisions?)
        sticky (assoc :sticky (name sticky))
        (some? content-hidden?) (assoc :hidden content-hidden?))
-     content]]])
+      content]]]))

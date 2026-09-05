@@ -38,12 +38,7 @@
        [{:name ":class"
          :type "string"
          :default nil
-         :description "Additional Tailwind classes."}
-        {:name ":separator"
-         :type "hiccup/component"
-         :default nil
-         :description
-         "Reserved custom separator prop on root (children separators still control rendering)."}]}]
+         :description "Additional Tailwind classes."}]}]
      [helpers/api-component-card {:component-name "breadcrumb-list"
                                   :description "Ordered list container for breadcrumb items."
                                   :props [{:name ":class"

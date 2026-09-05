@@ -24,13 +24,29 @@
    (useForm (clj->js (cond-> opts
                        (:default-values opts) (update :default-values clj->js))))))
 
+(defn- shallow-js-props
+  [props]
+  (reduce-kv (fn [result k value]
+               (aset result (if (keyword? k) (name k) k) value)
+               result)
+             #js {}
+             props))
+
 (defn form
   [{:keys [methods]
     :as props}
    &
    children]
-  (into [:> FormProvider (merge (js->clj methods :keywordize-keys true) (dissoc props :methods))]
-        children))
+  (when-not methods
+    (throw (js/Error. "form requires the React Hook Form methods object")))
+  ;; Build only the shallow props envelope. RHF's identity-sensitive nested
+  ;; objects and functions are copied by reference, and the methods object is
+  ;; never converted or mutated during render.
+  (let [provider-props (js/Object.assign #js {}
+                                         methods
+                                         (shallow-js-props (dissoc props :methods)))
+        provider-children (r/as-element (into [:<>] children))]
+    (r/create-element FormProvider provider-props provider-children)))
 
 (defn handle-submit
   [^js methods on-valid & [on-invalid]]
@@ -60,15 +76,16 @@
   []
   (let [field (react/useContext field-context)
         item (react/useContext item-context)
-        methods (useFormContext)
-        name (some-> field
-                     .-name)
-        state (useFormState #js {:name name})
-        field-state (.getFieldState methods name state)
-        id (some-> item
-                   .-id)]
-    (when-not field (throw (js/Error. "use-form-field must be used within form-field")))
-    {:id id
+        methods (useFormContext)]
+    (when-not field
+      (throw (js/Error. "use-form-field must be used within form-field")))
+    (when-not item
+      (throw (js/Error. "use-form-field must be used within form-item")))
+    (let [name (.-name field)
+          state (useFormState #js {:name name})
+          field-state (.getFieldState methods name state)
+          id (.-id item)]
+      {:id id
      :name name
      :form-item-id (str id "-form-item")
      :form-description-id (str id "-form-item-description")
@@ -78,7 +95,7 @@
                     (js->clj :keywordize-keys true))
      :invalid? (boolean (.-invalid field-state))
      :touched? (boolean (.-isTouched field-state))
-     :dirty? (boolean (.-isDirty field-state))}))
+       :dirty? (boolean (.-isDirty field-state))})))
 
 (defn form-item
   [{:keys [class]

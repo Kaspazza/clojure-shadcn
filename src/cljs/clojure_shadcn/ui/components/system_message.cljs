@@ -68,7 +68,7 @@ Custom component implementation."
     - Map with keys:
       - `:label` - Button text (required)
       - `:on-click` - Click handler function
-      - `:variant` - Button variant (unused, always uses :default)
+      - `:variant` - Button variant (default: `:default`)
   - `:class` - Additional Tailwind classes to merge with defaults
   - All other props are passed to the underlying div element
   
@@ -126,7 +126,8 @@ Custom component implementation."
              children)]]
      ;; CTA button
      (when cta
-       [mateuszmazurczak-button/button {:variant :default
+       [mateuszmazurczak-button/button {:variant (or (:variant cta) :default)
                                         :size :sm
+                                        :type "button"
                                         :on-click (:on-click cta)}
         (:label cta)])]))

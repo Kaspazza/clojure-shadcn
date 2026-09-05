@@ -6,12 +6,13 @@
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
 (defn calendar
-  [{:keys [class class-names show-outside-days caption-layout]
-    :or {show-outside-days true
-         caption-layout :label}
-    :as raw-props}]
+  [raw-props]
   (let
-    [props (normalize-props raw-props)
+    [{:keys [class class-names show-outside-days caption-layout]
+      :or {show-outside-days true
+           caption-layout :label}
+      :as props}
+     (normalize-props raw-props)
      defaults (js->clj (getDefaultClassNames) :keywordize-keys true)
      classes
      (merge

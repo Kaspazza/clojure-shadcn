@@ -3,6 +3,7 @@
   This is a project extra, not a registry:ui module."
   (:require
    ["lucide-react"              :refer [CalendarIcon]]
+   [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
 (defn date-picker
@@ -10,9 +11,9 @@
 
   Accepts native input props. `:value` and `:default-value` use ISO yyyy-MM-dd.
   `:on-change` receives the browser event, preserving native form semantics."
-  [{:keys [class wrapper-class icon-class]
-    :as props}]
-  [:div {:data-slot "date-picker"
+  [{:as raw-props}]
+  (let [{:keys [class wrapper-class icon-class] :as props} (normalize-props raw-props)]
+   [:div {:data-slot "date-picker"
          :class (merge-classes "relative w-full" wrapper-class)}
    [:>
     CalendarIcon
@@ -31,4 +32,4 @@
        (merge-classes
         "border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 pl-9 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50"
         class))
-      (dissoc :wrapper-class :icon-class :class-name))]])
+      (dissoc :wrapper-class :icon-class :class-name))]]))

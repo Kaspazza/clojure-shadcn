@@ -212,10 +212,14 @@
                 :type "function"
                 :default nil
                 :description "Row expandability predicate: (fn [row] boolean)."}
+               {:name ":get-row-id"
+                :type "function"
+                :default nil
+                :description "Stable identity from original row data; used by selection, expansion, and DnD."}
                {:name ":dnd-config"
                 :type "map"
                 :default nil
-                :description "DnD config {:get-row-id fn :on-drag-end fn}."}]}]
+                :description "DnD config {:on-drag-end fn}; requires top-level :get-row-id."}]}]
      [helpers/api-component-card {:component-name "drag-handle-cell-ui"
                                   :description "Reusable drag handle cell for DnD-enabled tables."
                                   :props [{:name ":listeners"
@@ -368,17 +372,17 @@
        "⚠️ Important Notes"]
       [:ul {:class "text-xs text-muted-foreground space-y-1 list-disc pl-4"}
        [:li
-        "For best performance and stable selection/expansion state, provide stable row ids via :dnd-config/:get-row-id or table getRowId behavior."]
+        "For stable selection, expansion, and DnD state, provide :get-row-id at the data-table root."]
        [:li
         "Use :no-results-state for filtered-empty UX and :empty-state for true empty datasets; they serve different states."]
        [:li
-        "When enabling drag-and-drop, both :get-row-id and :on-drag-end should be provided in :dnd-config."]]]
+        "When enabling drag-and-drop, provide top-level :get-row-id and :dnd-config/:on-drag-end."]]]
      [:div {:class "border rounded-lg p-4 bg-muted/50"}
       [:h4 {:class "text-sm font-semibold mb-2"}
        "Usage Example"]
       [:pre {:class "text-xs overflow-x-auto"}
        [:code
-        "[data-table {:columns columns\n             :data rows\n             :initial-page-size 10\n             :toolbar-config {:text-filter {:column-id \"title\"\n                                            :placeholder \"Search tasks...\"}}\n             :dnd-config {:get-row-id (fn [row] (aget row \"id\"))\n                          :on-drag-end (fn [active-id over-id] ... )}}]"]]]]])))
+        "[data-table {:columns columns\n             :data rows\n             :initial-page-size 10\n             :toolbar-config {:text-filter {:column-id \"title\"\n                                            :placeholder \"Search tasks...\"}}\n             :get-row-id (fn [row] (aget row \"id\"))\n             :dnd-config {:on-drag-end (fn [active-id over-id] ... )}}]"]]]]])))
 
 (defstory
  BasicDataTable
@@ -532,8 +536,8 @@
                                    "Grab the handle (⋮⋮) on the left and drag to reorder rows"]
                                   [sut/data-table {:columns @columns
                                                    :data (clj->js @data)
-                                                   :dnd-config {:get-row-id (fn [row] (.-id row))
-                                                                :on-drag-end move-row}
+                                                   :get-row-id (fn [row] (.-id row))
+                                                   :dnd-config {:on-drag-end move-row}
                                                    :initial-page-size 10}]]))))]))
 
 (defstory
@@ -614,8 +618,8 @@
                                   [sut/data-table {:columns @columns
                                                    :data (clj->js @data)
                                                    :render-sub-component render-sub-component
-                                                   :dnd-config {:get-row-id (fn [row] (.-id row))
-                                                                :on-drag-end move-row}
+                                                   :get-row-id (fn [row] (.-id row))
+                                                   :dnd-config {:on-drag-end move-row}
                                                    :initial-page-size 10}]]))))]))
 
 (defstory TableEmptyState

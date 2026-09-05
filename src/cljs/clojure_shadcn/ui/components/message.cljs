@@ -111,12 +111,13 @@ Custom component implementation."
   (let
     [base-classes
      "flex w-full min-w-0 flex-col gap-2.5 wrap-break-word group-data-[align=end]/message:*:data-slot:self-end"
-     combined-classes (merge-classes base-classes class)
-     content (first children)]
+     combined-classes (merge-classes base-classes class)]
     (if markdown?
       [mateuszmazurczak-markdown/markdown
        (-> props
-           (assoc :data-slot "message-content" :class combined-classes :children content)
+           (assoc :data-slot "message-content"
+                  :class combined-classes
+                  :children (apply str children))
            (dissoc :markdown? :class-name))]
       (into [:div
              (-> props
@@ -179,11 +180,14 @@ Custom component implementation."
     :as props}
    &
    children]
-  (into [:div
-         (-> props
-             (assoc :class (merge-classes "text-muted-foreground flex items-center gap-2" class))
-             (dissoc :class-name))]
-        children))
+  [:>
+   mateuszmazurczak-tooltip/tooltip-provider-component
+   {}
+   (into [:div
+          (-> props
+              (assoc :class (merge-classes "text-muted-foreground flex items-center gap-2" class))
+              (dissoc :class-name))]
+         children)])
 
 (defn message-action
   "Message action component. Individual action button with tooltip.
@@ -212,7 +216,10 @@ Custom component implementation."
    children]
   [mateuszmazurczak-tooltip/tooltip
    (-> props
-       (assoc :trigger (r/as-element (first children))
+       (assoc :trigger (r/as-element
+                        (if (= 1 (count children))
+                          (first children)
+                          (into [:span {:class "contents"}] children)))
               :content tooltip
               :side side
               :content-class class

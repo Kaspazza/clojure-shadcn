@@ -61,7 +61,7 @@
                                                  [sut/slider {:default-value [25 75]
                                                               :min 0
                                                               :max 100
-                                                              :aria-label "Price range"}]])))
+                                                              :thumb-labels ["Minimum price" "Maximum price"]}]])))
 
 
 (defstory SliderPlayground

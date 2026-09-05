@@ -51,7 +51,8 @@
         (.-chartProps react-props)
         child (.-child react-props)
         generated (react/useId)
-        chart-id (str "chart-" (or id (str/replace generated ":" "")))]
+        ;; Caller IDs remain DOM IDs; an opaque generated token owns selector identity.
+        chart-id (str "chart-" (str/replace generated ":" ""))]
     (r/as-element
      [:>
       (.-Provider chart-context)
@@ -67,7 +68,7 @@
           (merge-classes
            "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line]:stroke-border/50 [&_.recharts-tooltip-cursor]:stroke-border [&_.recharts-layer]:outline-hidden [&_.recharts-surface]:outline-hidden"
            class))
-         (dissoc :id :config :class-name :initial-dimension))
+         (dissoc :config :class-name :initial-dimension))
        [chart-style chart-id config]
        [:> recharts/ResponsiveContainer {:initialDimension (clj->js initial-dimension)} child]]])))
 

@@ -11,13 +11,17 @@
   #js {:title "Components/Tooltip"
        :parameters #js {:layout "padded"}})
 
+(defn- story-tooltip [opts]
+  [:> sut/tooltip-provider-component {}
+   [sut/tooltip opts]])
+
 (defdoc Installation
         "Install dependencies and copy the component code into your project."
         []
         (r/as-element
          [helpers/installation-scene
           {:description
-           "Self-contained tooltip component for displaying contextual information on hover/focus."
+           "Composable tooltip with shared provider context and portalled content."
            :npm-install "npm install @radix-ui/react-tooltip"
            :source-code (embed-source "clojure-shadcn.ui.components.tooltip")
            :namespace-path "src/cljs/clojure_shadcn/ui/components/tooltip.cljs"
@@ -35,7 +39,7 @@
        :link {:href "https://www.radix-ui.com/primitives/docs/components/tooltip"
               :label "Radix Tooltip Docs"}
        :description
-       "Self-contained tooltip with configurable placement, delay, controlled state, and Radix slot-based trigger composition."
+       "Tooltip with configurable placement, delay, controlled state, shared provider context, and Radix slot-based trigger composition."
        :props [{:name ":trigger"
                 :type "hiccup"
                 :default nil
@@ -131,7 +135,7 @@
   Use tooltips for concise, contextual hints."
  []
  (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/tooltip {:trigger (button/button {:variant :outline}
+                                        [story-tooltip {:trigger (button/button {:variant :outline}
                                                                               "Hover")
                                                       :trigger-as-child? true
                                                       :content "Add to library"}]])))
@@ -147,7 +151,7 @@
  (r/as-element
   (helpers/wrap-component
    [:div {:class "p-6 flex flex-wrap gap-4"}
-    [sut/tooltip
+    [story-tooltip
      {:trigger (button/button {:size :sm
                                :variant :outline}
                               "Save")
@@ -159,7 +163,7 @@
         {:class
          "bg-muted text-muted-foreground inline-flex h-5 items-center rounded border px-1.5 font-mono text-[10px]"}
         "S"]]}]
-    [sut/tooltip
+    [story-tooltip
      {:trigger (button/button {:size :sm
                                :variant :outline}
                               "Print")
@@ -187,7 +191,7 @@
  []
  (r/as-element (helpers/wrap-component
                 [:div {:class "p-6"}
-                 [sut/tooltip {:trigger (button/button {:variant :ghost} "Hover for info")
+                 [story-tooltip {:trigger (button/button {:variant :ghost} "Hover for info")
                                :trigger-as-child? true
                                :content [:div {:class "space-y-1"}
                                          [:p {:class "font-semibold"}
@@ -209,7 +213,7 @@
                           (cond-> args
                             side (update :side keyword)))}
           [args]
-          (r/as-element (helpers/wrap-component [sut/tooltip
+          (r/as-element (helpers/wrap-component [story-tooltip
                                                  (merge (select-keys args [:side])
                                                         {:trigger (button/button {:variant :outline}
                                                                                  "Hover me")

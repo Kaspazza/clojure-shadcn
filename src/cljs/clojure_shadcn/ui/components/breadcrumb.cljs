@@ -19,7 +19,6 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   
   Props:
   - `:class` - Additional Tailwind classes to merge with defaults
-  - `:separator` - Optional custom separator component (defaults to ChevronRight)
   
   Example:
   [breadcrumb {}
@@ -33,7 +32,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   (into [:nav
          (-> props
              (assoc :aria-label "breadcrumb" :data-slot "breadcrumb" :class class)
-             (dissoc :class-name :separator))]
+             (dissoc :class-name))]
         children))
 
 (defn breadcrumb-list
@@ -96,16 +95,15 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
     [:a {} \"Home\"]]"
   [{:as raw-props} & children]
   (let [{:keys [class as-child]
-         :as props}
-        (normalize-props raw-props)]
-    (let [component (if as-child Slot "a")]
-      (into [:>
-             component
-             (-> props
-                 (assoc :data-slot "breadcrumb-link"
-                        :class (merge-classes "transition-colors hover:text-foreground" class))
-                 (dissoc :class-name :as-child))]
-            children))))
+         :as props} (normalize-props raw-props)
+        component (if as-child Slot "a")]
+    (into [:>
+           component
+           (-> props
+               (assoc :data-slot "breadcrumb-link"
+                      :class (merge-classes "transition-colors hover:text-foreground" class))
+               (dissoc :class-name :as-child))]
+          children)))
 
 (defn breadcrumb-page
   "Breadcrumb page component (span element). Represents the current page.
@@ -143,14 +141,17 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
     :as props}
    &
    children]
-  [:li
-   (-> props
-       (assoc :role "presentation"
-              :aria-hidden "true"
-              :data-slot "breadcrumb-separator"
-              :class (merge-classes "[&>svg]:size-3.5" class))
-       (dissoc :class-name))
-   (if (seq children) (first children) (r/as-element [:> ChevronRight]))])
+  (into
+   [:li
+    (-> props
+        (assoc :role "presentation"
+               :aria-hidden "true"
+               :data-slot "breadcrumb-separator"
+               :class (merge-classes "[&>svg]:size-3.5" class))
+        (dissoc :class-name))]
+   (if (seq children)
+     children
+     [(r/as-element [:> ChevronRight])])))
 
 (defn breadcrumb-ellipsis
   "Breadcrumb ellipsis component (span element). Used for collapsed breadcrumbs.
