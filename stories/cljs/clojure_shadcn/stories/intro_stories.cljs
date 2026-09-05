@@ -19,6 +19,39 @@
    (into [:div {:class "space-y-3 text-sm"}]
          children)])
 
+(defn- overview-section
+  [title & children]
+  [:section {:class "space-y-3"}
+   [:h2 {:class "text-xl font-semibold tracking-tight"}
+    title]
+   (into [:div {:class "space-y-3 text-sm leading-6 text-muted-foreground"}]
+         children)])
+
+(defn- principle-card
+  [eyebrow title body]
+  [:article {:class "rounded-lg border bg-card p-4"}
+   [:p {:class "mb-2 text-xs font-medium uppercase tracking-wider text-primary"}
+    eyebrow]
+   [:h3 {:class "mb-2 font-semibold text-card-foreground"}
+    title]
+   [:p {:class "text-sm leading-6 text-muted-foreground"}
+    body]])
+
+(defn- callout
+  [title & children]
+  [:div {:class "rounded-lg border border-primary/20 bg-primary/5 p-4"}
+   [:h3 {:class "mb-2 text-sm font-semibold text-foreground"}
+    title]
+   (into [:div {:class "space-y-2 text-sm leading-6 text-muted-foreground"}]
+         children)])
+
+(defn- bullet-list
+  [& items]
+  (into [:ul {:class "list-disc space-y-2 pl-5"}]
+        (map (fn [item]
+               [:li {} item])
+             items)))
+
 (defn- code-snippet
   "Simple mono code block used in docs."
   [code]
@@ -139,23 +172,70 @@
 
 (defdoc
   Overview
-  "What clojure-shadcn is and when to use it."
+  "What Manufaktura is, why it exists, and when to use it."
   []
   (r/as-element
    (helpers/wrap-component
-    [:div {:class "max-w-3xl p-6 space-y-2"}
-     [badge/badge {:variant :secondary
-                   :class "mb-4"}
-      "Docs"]
-     [:h1 {:class "text-3xl font-bold tracking-tight mb-1"}
-      "Manufaktura - cljs components"]
-     [:p {:class "text-base text-muted-foreground mb-6"}
-      "Copy-paste component library for ClojureScript / Reagent / tailwindcss. Build your own component library with code you can customize, extend, and make your own."]
-     [:div {:class "rounded-md border p-4 bg-card mb-6"}
-      [:h3 {:class "text-sm font-semibold mb-2"}
-       "Philosophy — copy, don't install"]
-      [:p {:class "text-sm text-muted-foreground leading-relaxed"}
-       "Every component ships as a plain ClojureScript namespace.  You copy it under src/cljs/ in your project, and from that point you own the code.  If you need a different default, change it — no upstream dependency, no version churn.  Inspired by shadcn/ui, adapted for the ClojureScript / Reagent world."]]])))
+    [:main {:class "mx-auto max-w-4xl space-y-10 p-6"}
+     [:header {:class "space-y-4"}
+      [badge/badge {:variant :secondary}
+       "Overview"]
+      [:h1 {:class "text-3xl font-bold tracking-tight md:text-4xl"}
+       "Copy-first UI components for ClojureScript"]
+      [:p {:class "max-w-3xl text-base leading-7 text-muted-foreground"}
+       "Manufaktura provides Reagent components styled with Tailwind CSS and built on React libraries such as Radix UI. Copy the components you need and adapt them in your application."]]
+     [callout
+      "Project status"
+      [:p {}
+       "Manufaktura is based on more than a decade of experience building frontend applications and is used in two production projects."]]
+     [overview-section
+      "Where Manufaktura fits"
+      [:p {}
+       "A button is easy to add. A UI that stays consistent and accessible is not. Focus management, keyboard interaction, ARIA semantics, animations and component state all add complexity as an application grows."]
+      [:p {}
+       "A full UI framework handles much of this work, but it couples multpile boundries, brings its own component API, styling rules and release cycle. Headless libraries and CSS tools give you more control, but connecting them into a consistent UI takes time and design knowledge."]
+      [:p {}
+       "Manufaktura sits between those approaches. It connects focused tools through small Reagent components, then gives you the source."]]
+     [:div {:class "grid gap-4 md:grid-cols-3"}
+      [principle-card
+       "Behavior"
+       "Headless libraries"
+       "Radix UI and other React libraries handle focus, keyboard navigation, portals and ARIA attributes."]
+      [principle-card
+       "Presentation"
+       "Tailwind CSS"
+       "Styles live in the component. Shared CSS variables provide theme values."]
+      [principle-card
+       "Application API"
+       "ClojureScript and Reagent"
+       "Components use props maps, keyword variants and Hiccup children. JavaScript interop stays inside the component."]]
+     [overview-section
+      "Not an application framework"
+      [:p {}
+       "Manufaktura does not require, global js dependencies, re-frame or make decisions about state, routing, data fetching or domain code. Your application decides what data components receive and what their events mean."]]
+     [overview-section
+      "Copy what you need"
+      [:p {}
+       "Manufaktura is not a runtime dependency. Choose a component, install the JavaScript packages it uses and copy its source into your project."]
+      [bullet-list
+       "Edit its markup, styles, variants and defaults directly."
+       "Read and debug it alongside your application code."
+       "Update its dependencies when your application is ready."
+       "Change one component without upgrading the rest."]
+      [callout
+       "Copied code is your responsibility"
+       [:p {}
+        "Copied components do not update automatically. Your team is responsible for testing and maintaining them."]]]
+     [overview-section
+      "Compose the parts"
+      [:p {}
+       "Larger components are split into parts that you arrange with Hiccup. A dialog, for example, has separate trigger, content, title, description and close components instead of an option for every layout."]
+      [:p {}
+       "Some structures are required for correct behavior and accessibility. The example stories show how those parts fit together."]]
+     [overview-section
+      "Accessibility"
+      [:p {}
+       "Headless libraries provide a foundation for keyboard interaction, focus management and ARIA semantics, but they cannot make the final application accessible. Your team must preserve that behavior, label controls and test real workflows."]]])))
 
 (defdoc
   Installation
@@ -169,9 +249,13 @@
      [section
       "Prerequisites"
       [:p {}
-       "Components are written for Reagent and styled with Tailwind CSS. Add Reagent to your Clojure dependencies, tailwind-merge for deterministic class conflict resolution, and tw-animate-css for component animations."]
-      [code-snippet
-       "{:deps {reagent/reagent {:mvn/version \"2.0.1\"}}}"]
+       "Components are written for "
+       [:a {:href "https://github.com/reagent-project/reagent"
+            :target "_blank"
+            :rel "noopener noreferrer"
+            :class "text-primary underline underline-offset-2 hover:opacity-80"}
+        "Reagent"]
+       " and styled with Tailwind CSS. Add Reagent to your Clojure dependencies, tailwind-merge for deterministic class conflict resolution, and tw-animate-css for component animations."]
       [code-snippet "npm install tailwindcss tailwind-merge tw-animate-css"]]
      [section
       "Configure Tailwind CSS"
