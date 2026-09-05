@@ -122,7 +122,9 @@ Documentation: https://ui.shadcn.com/docs/components"
     (let [radius (/ (- size stroke-width) 2)
           circumference (* radius 2 js/Math.PI)
           safe-total (max 1 (or total-steps 0))
-          safe-current (-> (or current-step 0) (max 0) (min safe-total))
+          safe-current (-> (or current-step 0)
+                           (max 0)
+                           (min safe-total))
           fill-perc (* (/ safe-current safe-total) 100)
           dash-offset (- circumference (/ (* circumference fill-perc) 100))]
       [:div {:data-component "stepper-step-indicator"
@@ -212,10 +214,11 @@ Documentation: https://ui.shadcn.com/docs/components"
          state (step-state current-idx index reverse-progress?)]
      (if (= variant "circle")
        ;; Circle variant: render all steps, but only show active one
-       [:li (cond-> {:data-component "stepper-step"
-                     :aria-current (when active? "step")
-                     :class (merge-classes "flex shrink-0 items-center gap-4 rounded-md" class)}
-              (not active?) (assoc :hidden true :aria-hidden true))
+       [:li
+        (cond-> {:data-component "stepper-step"
+                 :aria-current (when active? "step")
+                 :class (merge-classes "flex shrink-0 items-center gap-4 rounded-md" class)}
+          (not active?) (assoc :hidden true :aria-hidden true))
         [circle-step-indicator {:current-step (inc current-idx)
                                 :total-steps total}]
         (into [:div {:data-component "stepper-step-content"
@@ -277,8 +280,7 @@ Documentation: https://ui.shadcn.com/docs/components"
                                     :is-last? is-last?}]])
              [:div {:class "my-3 flex-1 ps-4"}]]))]))))
 
-(defn- step-child? [child]
-  (and (vector? child) (= (first child) stepper-step)))
+(defn- step-child? [child] (and (vector? child) (= (first child) stepper-step)))
 
 (defn- expand-child-sequences
   "Expand only top-level sequence children produced by `for`/`map`.
@@ -286,16 +288,16 @@ Documentation: https://ui.shadcn.com/docs/components"
   [children]
   (mapcat #(if (and (sequential? %) (not (vector? %))) % [%]) children))
 
-(defn- number-step [idx total current-idx child]
+(defn- number-step
+  [idx total current-idx child]
   (if-not (step-child? child)
     child
     (let [[component maybe-props & child-content] child
           props (if (map? maybe-props) maybe-props {})
           child-content (if (map? maybe-props) child-content (cons maybe-props child-content))]
-      (with-meta
-        (into [component (assoc props :index idx :total total :current-idx current-idx)]
-              child-content)
-        (meta child)))))
+      (with-meta (into [component (assoc props :index idx :total total :current-idx current-idx)]
+                       child-content)
+                 (meta child)))))
 
 (defc stepper-navigation
  "Navigation container for steps. Auto-numbers steps and injects context.
@@ -311,22 +313,22 @@ Documentation: https://ui.shadcn.com/docs/components"
        expanded-children (vec (expand-child-sequences children))
        step-ids (->> expanded-children
                      (filter step-child?)
-                     (mapv #(some-> (second %) :id)))
+                     (mapv #(some-> (second %)
+                                    :id)))
        current-idx (if (some? current-step)
                      (or (first (keep-indexed #(when (= %2 current-step) %1) step-ids)) -1)
                      -1)
        total (count step-ids)
-       numbered-children
-       (loop [remaining expanded-children
-              step-idx 0
-              result []]
-         (if-let [child (first remaining)]
-           (if (step-child? child)
-             (recur (next remaining)
-                    (inc step-idx)
-                    (conj result (number-step step-idx total current-idx child)))
-             (recur (next remaining) step-idx (conj result child)))
-           result))]
+       numbered-children (loop [remaining expanded-children
+                                step-idx 0
+                                result []]
+                           (if-let [child (first remaining)]
+                             (if (step-child? child)
+                               (recur (next remaining)
+                                      (inc step-idx)
+                                      (conj result (number-step step-idx total current-idx child)))
+                               (recur (next remaining) step-idx (conj result child)))
+                             result))]
    [:nav {:data-component "stepper-navigation"
           :aria-label "Stepper Navigation"
           :class class}

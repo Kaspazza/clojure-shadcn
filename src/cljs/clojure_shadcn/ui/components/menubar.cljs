@@ -62,9 +62,7 @@
                 "menubar-content"
                 content-class
                 (-> p
-                    (assoc :align (name align)
-                           :alignOffset align-offset
-                           :sideOffset side-offset)
+                    (assoc :align (name align) :alignOffset align-offset :sideOffset side-offset)
                     (dissoc :align-offset :side-offset))
                 c)]))
 

@@ -56,55 +56,46 @@ Custom component implementation."
                                     (callback transcript)))
                                 js/undefined)
                               [transcript])
-         _ (rhooks/use-effect
-            (fn []
-              (set! (.-current mounted-ref) true)
-              (fn []
-                (let [owned-or-pending? (or (.-current ownership-ref)
-                                            (.-current pending-start-ref))]
-                  (set! (.-current mounted-ref) false)
-                  (set! (.-current ownership-ref) false)
-                  (set! (.-current pending-start-ref) false)
-                  (set! (.-current start-generation-ref)
-                        (inc (.-current start-generation-ref)))
-                  (when owned-or-pending?
-                    (.abortListening SpeechRecognition)))))
-            [])
+         _ (rhooks/use-effect (fn []
+                                (set! (.-current mounted-ref) true)
+                                (fn []
+                                  (let [owned-or-pending? (or (.-current ownership-ref)
+                                                              (.-current pending-start-ref))]
+                                    (set! (.-current mounted-ref) false)
+                                    (set! (.-current ownership-ref) false)
+                                    (set! (.-current pending-start-ref) false)
+                                    (set! (.-current start-generation-ref)
+                                          (inc (.-current start-generation-ref)))
+                                    (when owned-or-pending? (.abortListening SpeechRecognition)))))
+                              [])
          handle-mic-toggle
          (rhooks/use-callback
           (fn []
             (cond
-              (.-current pending-start-ref)
-              nil
-
-              (and listening? (.-current ownership-ref))
-              (do
-                (set! (.-current ownership-ref) false)
-                (.stopListening SpeechRecognition))
-
-              :else
-              (let [generation (inc (.-current start-generation-ref))]
-                (set! (.-current start-generation-ref) generation)
-                (set! (.-current pending-start-ref) true)
-                (set! (.-current ownership-ref) false)
-                (reset-transcript!)
-                (-> (.startListening SpeechRecognition
-                                     #js {:continuous continuous
-                                          :language language})
-                    (.then (fn []
-                             (when (= generation (.-current start-generation-ref))
-                               (set! (.-current pending-start-ref) false)
-                               (when (.-current mounted-ref)
-                                 (set! (.-current ownership-ref) true)))))
-                    (.catch (fn [error]
-                              (when (= generation (.-current start-generation-ref))
-                                (set! (.-current pending-start-ref) false)
-                                (set! (.-current ownership-ref) false)
-                                (if-let [callback (.-current error-callback-ref)]
-                                  (callback error)
-                                  (js/console.error
-                                   "Failed to start speech recognition"
-                                   error)))))))))
+              (.-current pending-start-ref) nil
+              (and listening? (.-current ownership-ref)) (do (set! (.-current ownership-ref) false)
+                                                             (.stopListening SpeechRecognition))
+              :else (let [generation (inc (.-current start-generation-ref))]
+                      (set! (.-current start-generation-ref) generation)
+                      (set! (.-current pending-start-ref) true)
+                      (set! (.-current ownership-ref) false)
+                      (reset-transcript!)
+                      (-> (.startListening SpeechRecognition
+                                           #js {:continuous continuous
+                                                :language language})
+                          (.then (fn []
+                                   (when (= generation (.-current start-generation-ref))
+                                     (set! (.-current pending-start-ref) false)
+                                     (when (.-current mounted-ref)
+                                       (set! (.-current ownership-ref) true)))))
+                          (.catch (fn [error]
+                                    (when (= generation (.-current start-generation-ref))
+                                      (set! (.-current pending-start-ref) false)
+                                      (set! (.-current ownership-ref) false)
+                                      (if-let [callback (.-current error-callback-ref)]
+                                        (callback error)
+                                        (js/console.error "Failed to start speech recognition"
+                                                          error)))))))))
           [listening? reset-transcript! continuous language])]
      (if browser-supports?
        [prompt-input/prompt-input-action {:tooltip (if listening? "Stop recording" "Voice input")

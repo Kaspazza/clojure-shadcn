@@ -63,10 +63,14 @@ Custom component implementation."
   [{:keys [listeners attributes]}]
   (let [props (js->clj (js/Object.assign #js {} attributes listeners) :keywordize-keys true)]
     [:button
-     (merge props {:type "button"
-                   :aria-label "Drag row"
-                   :class "cursor-grab active:cursor-grabbing touch-none p-1"})
-     [:> GripVertical {:aria-hidden true :class "size-4 text-muted-foreground"}]]))
+     (merge props
+            {:type "button"
+             :aria-label "Drag row"
+             :class "cursor-grab active:cursor-grabbing touch-none p-1"})
+     [:>
+      GripVertical
+      {:aria-hidden true
+       :class "size-4 text-muted-foreground"}]]))
 
 (defc draggable-row
  [{:as raw-props}]
@@ -427,12 +431,12 @@ Custom component implementation."
   [{:keys [rows render-sub-component]}]
   ;; Components must return Hiccup, not a bare lazy sequence. Otherwise React
   ;; iterates each Hiccup vector as raw children (function, props map, ...).
-  (into
-   [:<>]
-   (map (fn [^js row]
-          ^{:key (.-id row)}
-          [standard-row {:row row :render-sub-component render-sub-component}]))
-   rows))
+  (into [:<>]
+        (map (fn [^js row]
+               ^{:key (.-id row)}
+               [standard-row {:row row
+                              :render-sub-component render-sub-component}]))
+        rows))
 
 (defn- sortable-table-body
   [{:keys [row-entries render-sub-component]}]
@@ -628,21 +632,25 @@ Custom component implementation."
 
 (defn- dnd-row-entries
   [rows get-row-id]
-  (when-not get-row-id
-    (throw (js/Error. "data-table DnD requires top-level :get-row-id")))
+  (when-not get-row-id (throw (js/Error. "data-table DnD requires top-level :get-row-id")))
   (:entries
-   (reduce
-    (fn [{:keys [ids] :as result} ^js row]
-      (let [id (get-row-id (.-original row))]
-        (when-not (or (string? id) (number? id))
-          (throw (js/Error. "data-table DnD row IDs must be non-nil strings or numbers")))
-        (when (contains? ids id)
-          (throw (js/Error. (str "data-table DnD row IDs must be unique; duplicate: " id))))
-        (-> result
-            (update :ids conj id)
-            (update :entries conj {:id id :row row}))))
-    {:ids #{} :entries []}
-    rows)))
+   (reduce (fn [{:keys [ids]
+                 :as result}
+                ^js row]
+             (let [id (get-row-id (.-original row))]
+               (when-not (or (string? id) (number? id))
+                 (throw (js/Error. "data-table DnD row IDs must be non-nil strings or numbers")))
+               (when (contains? ids id)
+                 (throw (js/Error. (str "data-table DnD row IDs must be unique; duplicate: " id))))
+               (-> result
+                   (update :ids conj id)
+                   (update :entries
+                           conj
+                           {:id id
+                            :row row}))))
+           {:ids #{}
+            :entries []}
+           rows)))
 
 (defc dnd-data-table
  [{:keys [get-row-id on-drag-end table-data toolbar-data pagination-data]}]
@@ -652,14 +660,13 @@ Custom component implementation."
        touch-sensor (useSensor TouchSensor #js {})
        keyboard-sensor (useSensor KeyboardSensor #js {})
        sensors (useSensors mouse-sensor touch-sensor keyboard-sensor)
-       handle-drag-end
-       (rhooks/use-callback
-        (fn [^js event]
-          (let [^js active (.-active event)
-                ^js over (.-over event)]
-            (when (and active over (not= (.-id active) (.-id over)) on-drag-end)
-              (on-drag-end (.-id active) (.-id over)))))
-        #js [on-drag-end])]
+       handle-drag-end (rhooks/use-callback
+                        (fn [^js event]
+                          (let [^js active (.-active event)
+                                ^js over (.-over event)]
+                            (when (and active over (not= (.-id active) (.-id over)) on-drag-end)
+                              (on-drag-end (.-id active) (.-id over)))))
+                        #js [on-drag-end])]
    [:>
     DndContext
     {:collisionDetection closestCenter
@@ -808,7 +815,6 @@ Custom component implementation."
                         :table-data table-data
                         :pagination-data pagination-data}]
      (if dnd-enabled?
-       [dnd-data-table (assoc content-props
-                              :get-row-id get-row-id
-                              :on-drag-end (:on-drag-end dnd-config))]
+       [dnd-data-table
+        (assoc content-props :get-row-id get-row-id :on-drag-end (:on-drag-end dnd-config))]
        [data-table-content content-props]))))

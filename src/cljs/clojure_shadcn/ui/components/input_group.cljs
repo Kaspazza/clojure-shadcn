@@ -31,18 +31,23 @@
     :as props}
    &
    children]
-  (let [focus-input (fn [e]
-                      (when-not (.closest (.-target e) "button,a,input,textarea,select,[role='button'],[role='link'],[contenteditable='true'],[tabindex]:not([tabindex='-1'])")
-                        (some-> (.-currentTarget e)
-                                .-parentElement
-                                (.querySelector "input,textarea")
-                                .focus))
-                      (when on-click (on-click e)))
-        align-class (case align
-                      :inline-end "order-last pr-3"
-                      :block-start "order-first w-full justify-start px-3 pt-3"
-                      :block-end "order-last w-full justify-start px-3 pb-3"
-                      "order-first pl-3")]
+  (let
+    [focus-input
+     (fn [e]
+       (when-not
+         (.closest
+          (.-target e)
+          "button,a,input,textarea,select,[role='button'],[role='link'],[contenteditable='true'],[tabindex]:not([tabindex='-1'])")
+         (some-> (.-currentTarget e)
+                 .-parentElement
+                 (.querySelector "input,textarea")
+                 .focus))
+       (when on-click (on-click e)))
+     align-class (case align
+                   :inline-end "order-last pr-3"
+                   :block-start "order-first w-full justify-start px-3 pt-3"
+                   :block-end "order-last w-full justify-start px-3 pb-3"
+                   "order-first pl-3")]
     (into
      [:div
       (->

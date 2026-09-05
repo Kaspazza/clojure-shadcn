@@ -57,10 +57,9 @@
                         :role "combobox"
                         :aria-expanded @open?
                         :disabled disabled?
-                        :class (merge-classes
-                                "w-[240px] justify-between font-normal"
-                                (when (and clearable? selected) "pr-14")
-                                class)}
+                        :class (merge-classes "w-[240px] justify-between font-normal"
+                                              (when (and clearable? selected) "pr-14")
+                                              class)}
          [:span {:class "truncate"}
           (if selected (if value-render (value-render selected) (item-label selected)) placeholder)]
          [:>
@@ -74,10 +73,11 @@
                          :disabled disabled?
                          :aria-label clear-label
                          :class "absolute right-7 top-1/2 -translate-y-1/2"
-                         :on-click (fn [event]
-                                     (.stopPropagation event)
-                                     (choose! nil))}
-          [:> X {:className "size-3.5" :aria-hidden true}]])]
+                         :on-click (fn [event] (.stopPropagation event) (choose! nil))}
+          [:>
+           X
+           {:className "size-3.5"
+            :aria-hidden true}]])]
       [popover/popover-content {:align "start"
                                 :class (merge-classes "w-[240px] p-0" content-class)}
        [command/command {}

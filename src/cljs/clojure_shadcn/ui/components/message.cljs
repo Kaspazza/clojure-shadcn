@@ -114,11 +114,10 @@ Custom component implementation."
      combined-classes (merge-classes base-classes class)]
     (if markdown?
       [mateuszmazurczak-markdown/markdown
-       (-> props
-           (assoc :data-slot "message-content"
-                  :class combined-classes
-                  :children (apply str children))
-           (dissoc :markdown? :class-name))]
+       (->
+         props
+         (assoc :data-slot "message-content" :class combined-classes :children (apply str children))
+         (dissoc :markdown? :class-name))]
       (into [:div
              (-> props
                  (assoc :data-slot "message-content" :class combined-classes)
@@ -216,10 +215,10 @@ Custom component implementation."
    children]
   [mateuszmazurczak-tooltip/tooltip
    (-> props
-       (assoc :trigger (r/as-element
-                        (if (= 1 (count children))
-                          (first children)
-                          (into [:span {:class "contents"}] children)))
+       (assoc :trigger (r/as-element (if (= 1 (count children))
+                                       (first children)
+                                       (into [:span {:class "contents"}]
+                                             children)))
               :content tooltip
               :side side
               :content-class class

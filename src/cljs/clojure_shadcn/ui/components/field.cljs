@@ -338,13 +338,16 @@ Custom component implementation."
                   ;; Multiple errors
                   :else (let [unique-errors (->> errors
                                                  (filter :message)
-                                                 (reduce (fn [{:keys [seen ordered] :as acc} error]
+                                                 (reduce (fn [{:keys [seen ordered]
+                                                               :as acc}
+                                                              error]
                                                            (let [message (:message error)]
                                                              (if (contains? seen message)
                                                                acc
                                                                {:seen (conj seen message)
                                                                 :ordered (conj ordered error)})))
-                                                         {:seen #{} :ordered []})
+                                                         {:seen #{}
+                                                          :ordered []})
                                                  :ordered)]
                           (when (seq unique-errors)
                             (if (= 1 (count unique-errors))

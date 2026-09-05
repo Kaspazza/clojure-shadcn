@@ -172,7 +172,8 @@
   (helpers/wrap-component
    [:div {:class "p-6"}
     [sut/sheet {}
-     [sut/sheet-trigger {:as-child true} (button/button {:variant :outline} "Open")]
+     [sut/sheet-trigger {:as-child true}
+      (button/button {:variant :outline} "Open")]
      [sut/sheet-content {}
       [sut/sheet-header {}
        [sut/sheet-title {}
@@ -192,7 +193,8 @@
                       :default-value "@peduarte"}]]]
       [sut/sheet-footer {}
        (button/button {:type "submit"} "Save changes")
-       [sut/sheet-close {:as-child true} (button/button {:variant :outline} "Close")]]]]])))
+       [sut/sheet-close {:as-child true}
+        (button/button {:variant :outline} "Close")]]]]])))
 
 (defstory
  SheetSide
@@ -208,7 +210,8 @@
     (for [side [:top :right :bottom :left]]
       ^{:key side}
       [sut/sheet {}
-       [sut/sheet-trigger {:as-child true} (button/button {:variant :outline} (name side))]
+       [sut/sheet-trigger {:as-child true}
+        (button/button {:variant :outline} (name side))]
        [sut/sheet-content {:side side}
         [sut/sheet-header {}
          [sut/sheet-title {}
@@ -246,7 +249,8 @@
   (helpers/wrap-component
    [:div {:class "p-6"}
     [sut/sheet {}
-     [sut/sheet-trigger {:as-child true} (button/button {:variant :outline} "Open Scrollable")]
+     [sut/sheet-trigger {:as-child true}
+      (button/button {:variant :outline} "Open Scrollable")]
      [sut/sheet-content {:class "overflow-y-auto"}
       [sut/sheet-header {}
        [sut/sheet-title {}
@@ -259,7 +263,8 @@
          [:p {:class "text-sm text-muted-foreground"}
           (str "Release item " idx ": Updated feature details and fixes.")])]
       [sut/sheet-footer {}
-       [sut/sheet-close {:as-child true} (button/button {:variant :outline} "Close")]]]]])))
+       [sut/sheet-close {:as-child true}
+        (button/button {:variant :outline} "Close")]]]]])))
 
 
 (defstory SheetPlayground

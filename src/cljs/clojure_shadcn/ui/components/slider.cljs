@@ -19,7 +19,8 @@
                           (when aria-label
                             (if (= 1 thumb-count)
                               aria-label
-                              (str aria-label " "
+                              (str aria-label
+                                   " "
                                    (case index
                                      0 "minimum"
                                      1 (if (= 2 thumb-count) "maximum" (str (inc index)))

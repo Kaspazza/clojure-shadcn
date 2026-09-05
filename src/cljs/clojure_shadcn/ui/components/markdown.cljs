@@ -8,8 +8,11 @@
    [clojure-shadcn.utils.styles             :refer [merge-classes]]
    [reagent.core                            :as r]))
 
-(defn- extract-language [class-name]
-  (or (some->> class-name (re-find #"language-(\w+)") second)
+(defn- extract-language
+  [class-name]
+  (or (some->> class-name
+               (re-find #"language-(\w+)")
+               second)
       "plaintext"))
 
 (def ^:private initial-components
@@ -21,16 +24,16 @@
                  start-line (when position (.. position -start -line))
                  end-line (when position (.. position -end -line))]
              (if (or (not start-line) (= start-line end-line))
-               (r/as-element [:span {:class (merge-classes
-                                            "bg-primary-foreground rounded-sm px-1 font-mono text-sm"
-                                            class-name)}
+               (r/as-element [:span {:class
+                                     (merge-classes
+                                      "bg-primary-foreground rounded-sm px-1 font-mono text-sm"
+                                      class-name)}
                               children])
-               (r/as-element
-                [code-block/code-block {:class class-name}
-                 [code-block/code-block-code {:code (if (string? children) children (str children))
-                                              :language (extract-language class-name)}]]))))
-   :pre (fn [props]
-          (r/as-element [:<> (.-children props)]))})
+               (r/as-element [code-block/code-block {:class class-name}
+                              [code-block/code-block-code
+                               {:code (if (string? children) children (str children))
+                                :language (extract-language class-name)}]]))))
+   :pre (fn [props] (r/as-element [:<> (.-children props)]))})
 
 (defn markdown
   "Render `:children` as one complete Markdown document.

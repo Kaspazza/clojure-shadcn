@@ -11,21 +11,18 @@
   #js {:title "Components/Tooltip"
        :parameters #js {:layout "padded"}})
 
-(defn- story-tooltip [opts]
-  [:> sut/tooltip-provider-component {}
-   [sut/tooltip opts]])
+(defn- story-tooltip [opts] [:> sut/tooltip-provider-component {} [sut/tooltip opts]])
 
 (defdoc Installation
         "Install dependencies and copy the component code into your project."
         []
-        (r/as-element
-         [helpers/installation-scene
-          {:description
-           "Composable tooltip with shared provider context and portalled content."
-           :npm-install "npm install @radix-ui/react-tooltip"
-           :source-code (embed-source "clojure-shadcn.ui.components.tooltip")
-           :namespace-path "src/cljs/clojure_shadcn/ui/components/tooltip.cljs"
-           :filename "tooltip.cljs"}]))
+        (r/as-element [helpers/installation-scene
+                       {:description
+                        "Composable tooltip with shared provider context and portalled content."
+                        :npm-install "npm install @radix-ui/react-tooltip"
+                        :source-code (embed-source "clojure-shadcn.ui.components.tooltip")
+                        :namespace-path "src/cljs/clojure_shadcn/ui/components/tooltip.cljs"
+                        :filename "tooltip.cljs"}]))
 
 (defstory
  ApiReference
@@ -136,9 +133,9 @@
  []
  (r/as-element (helpers/wrap-component [:div {:class "p-6"}
                                         [story-tooltip {:trigger (button/button {:variant :outline}
-                                                                              "Hover")
-                                                      :trigger-as-child? true
-                                                      :content "Add to library"}]])))
+                                                                                "Hover")
+                                                        :trigger-as-child? true
+                                                        :content "Add to library"}]])))
 
 (defstory
  KbdTooltip
@@ -192,13 +189,13 @@
  (r/as-element (helpers/wrap-component
                 [:div {:class "p-6"}
                  [story-tooltip {:trigger (button/button {:variant :ghost} "Hover for info")
-                               :trigger-as-child? true
-                               :content [:div {:class "space-y-1"}
-                                         [:p {:class "font-semibold"}
-                                          "Pro tip"]
-                                         [:p {:class "text-xs text-muted-foreground"}
-                                          "Use ⌘K to search across projects."]]
-                               :content-class "max-w-xs"}]])))
+                                 :trigger-as-child? true
+                                 :content [:div {:class "space-y-1"}
+                                           [:p {:class "font-semibold"}
+                                            "Pro tip"]
+                                           [:p {:class "text-xs text-muted-foreground"}
+                                            "Use ⌘K to search across projects."]]
+                                 :content-class "max-w-xs"}]])))
 
 
 (defstory TooltipPlayground

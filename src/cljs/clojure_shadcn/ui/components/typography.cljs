@@ -7,11 +7,13 @@
 
 (defn- text-element
   [tag classes raw-props children]
-  (let [{:keys [class] :as props} (normalize-props raw-props)]
+  (let [{:keys [class]
+         :as props}
+        (normalize-props raw-props)]
     (into [tag
-         (-> props
-             (assoc :data-slot "typography" :class (merge-classes classes class))
-             (dissoc :class-name))]
+           (-> props
+               (assoc :data-slot "typography" :class (merge-classes classes class))
+               (dissoc :class-name))]
           children)))
 
 (defn h1

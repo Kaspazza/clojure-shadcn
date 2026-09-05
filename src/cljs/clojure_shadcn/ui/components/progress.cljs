@@ -4,11 +4,13 @@
    [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
-(defn- finite-number? [value]
-  (and (number? value) (js/Number.isFinite value)))
+(defn- finite-number? [value] (and (number? value) (js/Number.isFinite value)))
 
-(defn- clamp [value lower upper]
-  (-> value (max lower) (min upper)))
+(defn- clamp
+  [value lower upper]
+  (-> value
+      (max lower)
+      (min upper)))
 
 (defn progress
   [raw-props]

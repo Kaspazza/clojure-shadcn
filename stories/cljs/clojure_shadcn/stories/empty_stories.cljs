@@ -125,8 +125,7 @@
            :decode-args (fn [{:keys [mediaVariant actionLabel]
                               :as args}]
                           (cond-> (-> args
-                                      (assoc :media-variant mediaVariant
-                                             :action-label actionLabel)
+                                      (assoc :media-variant mediaVariant :action-label actionLabel)
                                       (dissoc :mediaVariant :actionLabel))
                             mediaVariant (update :media-variant keyword)))}
           [args]

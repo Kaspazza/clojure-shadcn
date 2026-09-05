@@ -228,20 +228,22 @@
 
   Helpful for chat UIs with role-based presentation."
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 space-y-4"}
-                                        [sut/message {:align :end}
-                                         [sut/message-avatar {:src "https://placehold.co/40x40/png"
-                                                              :alt "User"
-                                                              :fallback "ME"}]
-                                         [sut/message-content {}
-                                          [bubble/bubble {:align :end}
-                                           [bubble/bubble-content {}
-                                            "User message aligned right."]]]]
-                                        [sut/message {}
-                                         [sut/message-avatar {:src "https://placehold.co/40x40/png"
-                                                              :alt "Assistant"
-                                                              :fallback "AI"}]
-                                         [sut/message-content {}
-                                          [bubble/bubble {:variant :muted}
-                                           [bubble/bubble-content {}
-                                            "Assistant response aligned left."]]]]])))
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "p-6 space-y-4"}
+    [sut/message {:align :end}
+     [sut/message-avatar {:src "https://placehold.co/40x40/png"
+                          :alt "User"
+                          :fallback "ME"}]
+     [sut/message-content {}
+      [bubble/bubble {:align :end}
+       [bubble/bubble-content {}
+        "User message aligned right."]]]]
+    [sut/message {}
+     [sut/message-avatar {:src "https://placehold.co/40x40/png"
+                          :alt "Assistant"
+                          :fallback "AI"}]
+     [sut/message-content {}
+      [bubble/bubble {:variant :muted}
+       [bubble/bubble-content {}
+        "Assistant response aligned left."]]]]])))

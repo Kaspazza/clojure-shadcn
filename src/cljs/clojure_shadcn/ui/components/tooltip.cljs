@@ -111,10 +111,10 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/tooltip"
 
 (def ^:private tooltip-portal (.-Portal TooltipPrimitive))
 
-(defn- native-interactive-trigger? [trigger]
+(defn- native-interactive-trigger?
+  [trigger]
   (and (vector? trigger)
-       (contains? #{:a :button :input :select :textarea :summary}
-                  (first trigger))))
+       (contains? #{:a :button :input :select :textarea :summary} (first trigger))))
 
 ;;
 ;; Public API - Exported provider for shared tooltip context
@@ -257,40 +257,40 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/tooltip"
          avoid-collisions? true
          delay-duration 700}
     :as _opts}]
-  (let [as-child? (if (some? trigger-as-child?)
-                    trigger-as-child?
-                    (native-interactive-trigger? trigger))]
-   [:>
-    tooltip-root
-    (cond-> {:delayDuration delay-duration
-             :disableHoverableContent disable-hoverable-content?}
-      (some? open) (assoc :open open)
-      (some? default-open) (assoc :defaultOpen default-open)
-      on-open-change (assoc :onOpenChange on-open-change))
-    ;; Trigger
-    [:> tooltip-trigger {:asChild as-child?} trigger]
-    ;; Content
+  (let [as-child?
+        (if (some? trigger-as-child?) trigger-as-child? (native-interactive-trigger? trigger))]
     [:>
-     tooltip-portal
+     tooltip-root
+     (cond-> {:delayDuration delay-duration
+              :disableHoverableContent disable-hoverable-content?}
+       (some? open) (assoc :open open)
+       (some? default-open) (assoc :defaultOpen default-open)
+       on-open-change (assoc :onOpenChange on-open-change))
+     ;; Trigger
+     [:> tooltip-trigger {:asChild as-child?} trigger]
+     ;; Content
      [:>
-      tooltip-content-primitive
-     (cond-> {:sideOffset side-offset
-              :className
-              (merge-classes
-               (str "z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 "
-                    "text-sm text-popover-foreground shadow-md " "animate-in fade-in-0 zoom-in-95 "
-                    "data-[state=closed]:animate-out " "data-[state=closed]:fade-out-0 "
-                    "data-[state=closed]:zoom-out-95 " "data-[side=bottom]:slide-in-from-top-2 "
-                    "data-[side=left]:slide-in-from-right-2 "
-                    "data-[side=right]:slide-in-from-left-2 "
-                    "data-[side=top]:slide-in-from-bottom-2 "
-                    "origin-(--radix-tooltip-content-transform-origin)")
-               content-class)}
-       side (assoc :side (name side))
-       align (assoc :align (name align))
-       align-offset (assoc :alignOffset align-offset)
-       collision-padding (assoc :collisionPadding collision-padding)
-       (some? avoid-collisions?) (assoc :avoidCollisions avoid-collisions?)
-       sticky (assoc :sticky (name sticky))
-       (some? content-hidden?) (assoc :hidden content-hidden?))
-      content]]]))
+      tooltip-portal
+      [:>
+       tooltip-content-primitive
+       (cond-> {:sideOffset side-offset
+                :className
+                (merge-classes
+                 (str "z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 "
+                      "text-sm text-popover-foreground shadow-md "
+                      "animate-in fade-in-0 zoom-in-95 "
+                      "data-[state=closed]:animate-out " "data-[state=closed]:fade-out-0 "
+                      "data-[state=closed]:zoom-out-95 " "data-[side=bottom]:slide-in-from-top-2 "
+                      "data-[side=left]:slide-in-from-right-2 "
+                      "data-[side=right]:slide-in-from-left-2 "
+                      "data-[side=top]:slide-in-from-bottom-2 "
+                      "origin-(--radix-tooltip-content-transform-origin)")
+                 content-class)}
+         side (assoc :side (name side))
+         align (assoc :align (name align))
+         align-offset (assoc :alignOffset align-offset)
+         collision-padding (assoc :collisionPadding collision-padding)
+         (some? avoid-collisions?) (assoc :avoidCollisions avoid-collisions?)
+         sticky (assoc :sticky (name sticky))
+         (some? content-hidden?) (assoc :hidden content-hidden?))
+       content]]]))

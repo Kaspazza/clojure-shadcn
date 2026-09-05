@@ -30,19 +30,20 @@ Custom component implementation."
                                        OctagonXIcon
                                        TriangleAlertIcon]]
    ["sonner"                   :refer [Toaster toast]]
-   [clojure.string             :as str]
    [clojure-shadcn.utils.props :refer [normalize-props]]
+   [clojure.string             :as str]
    [reagent.core               :as r]))
 
-(defn- kebab->camel-key [key]
+(defn- kebab->camel-key
+  [key]
   (if (keyword? key)
     (keyword (str/replace (name key) #"-([a-z])" (fn [[_ letter]] (str/upper-case letter))))
     key))
 
-(def ^:private zero-arity-callback-keys
-  #{:onClick :onDismiss :onAutoClose})
+(def ^:private zero-arity-callback-keys #{:onClick :onDismiss :onAutoClose})
 
-(defn- normalize-option-maps [value]
+(defn- normalize-option-maps
+  [value]
   (cond
     (map? value) (reduce-kv (fn [result key child]
                               (let [normalized-key (kebab->camel-key key)]
@@ -58,8 +59,7 @@ Custom component implementation."
     (seq? value) (map normalize-option-maps value)
     :else value))
 
-(defn- sonner-props [props]
-  (clj->js (normalize-option-maps (or props {}))))
+(defn- sonner-props [props] (clj->js (normalize-option-maps (or props {}))))
 
 (defn toaster
   "Toast notification provider component.
@@ -93,8 +93,7 @@ Custom component implementation."
                     :info (r/as-element [:> InfoIcon {:className "size-4"}])
                     :warning (r/as-element [:> TriangleAlertIcon {:className "size-4"}])
                     :error (r/as-element [:> OctagonXIcon {:className "size-4"}])
-                    :loading (r/as-element
-                              [:> Loader2Icon {:className "size-4 animate-spin"}])}
+                    :loading (r/as-element [:> Loader2Icon {:className "size-4 animate-spin"}])}
             :style {"--normal-bg" "var(--popover)"
                     "--normal-text" "var(--popover-foreground)"
                     "--normal-border" "var(--border)"
@@ -143,8 +142,8 @@ Custom component implementation."
                :position \"top-center\"})"
   ([message] (show-toast message nil))
   ([message options]
-   (toast message (sonner-props (merge {:position "top-right"}
-                                       (normalize-props (or options {})))))))
+   (toast message
+          (sonner-props (merge {:position "top-right"} (normalize-props (or options {})))))))
 
 (defn show-success
   "Display a success toast with outline styling.
@@ -268,8 +267,7 @@ Custom component implementation."
     {:loading \"Fetching data...\"
      :success \"Data loaded!\"
      :error \"Failed to load data\"})"
-  ([promise messages]
-   (toast.promise promise (sonner-props messages)))
+  ([promise messages] (toast.promise promise (sonner-props messages)))
   ([promise messages options]
    (toast.promise promise (sonner-props (merge (or options {}) messages)))))
 

@@ -240,20 +240,8 @@
 
 (def ^:private theme-responsive-components
   "Previews that make the theme configurator's tokens immediately visible."
-  #{"Alert"
-    "Badge"
-    "Button"
-    "Card"
-    "Chart"
-    "Checkbox"
-    "Input"
-    "Progress"
-    "Radio Group"
-    "Select"
-    "Switch"
-    "Tabs"
-    "Textarea"
-    "Toggle"})
+  #{"Alert" "Badge" "Button" "Card" "Chart" "Checkbox" "Input" "Progress" "Radio Group" "Select"
+    "Switch" "Tabs" "Textarea" "Toggle"})
 
 (defn- theme-responsive-first
   [component]
@@ -269,8 +257,10 @@
   [{:keys [docs-id name preview]}]
   (let [id (component-id name)
         ^js story preview]
-    [:section {:id id
-               :class "mb-4 w-full break-inside-avoid scroll-mt-6 overflow-hidden rounded-lg border bg-card shadow-sm"}
+    [:section
+     {:id id
+      :class
+      "mb-4 w-full break-inside-avoid scroll-mt-6 overflow-hidden rounded-lg border bg-card shadow-sm"}
      [:header {:class "border-b bg-muted/30 px-4 py-2.5"}
       [:h2 {:class "text-sm font-semibold tracking-tight"}
        [:a {:href (str "./?path=/docs/components-" (or docs-id id) "--docs")
@@ -429,9 +419,7 @@
   (.setAttribute js/document.documentElement "data-theme" (name preset))
   (reset! showcase-preset preset))
 
-(defn- select-showcase-chart-color!
-  [color]
-  (reset! showcase-chart-color color))
+(defn- select-showcase-chart-color! [color] (reset! showcase-chart-color color))
 
 (defn- select-showcase-mode!
   [mode]
@@ -523,63 +511,64 @@
   (let [selected-mode @showcase-mode
         selected-radius @showcase-radius]
     [:aside
-   {:class
-    "overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-2xl lg:sticky lg:top-5"}
-   [:div {:class "flex items-center justify-between border-b border-border px-4 py-4"}
-    [:div
-     [:p {:class "text-sm font-semibold"}
-      "Customize"]
-     [:p {:class "mt-0.5 text-xs text-muted-foreground"}
-      "Design your component theme"]]]
-   [:div {:class "max-h-[calc(100vh-13rem)] space-y-6 overflow-y-auto p-4"}
-    [palette-option "Base color" base-presets showcase-base select-showcase-base!]
-    [palette-option "Theme color" theme-presets showcase-preset select-showcase-preset!]
-    [palette-option "Chart bars" theme-presets showcase-chart-color select-showcase-chart-color!]
-    [:fieldset
-     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground"}
-      "Appearance"]
-     [:div {:class "grid grid-cols-2 gap-2"}
-      (for [[mode icon label] [[:light "☀" "Light"] [:dark "◐" "Dark"]]]
-        ^{:key mode}
-        [:button
-         {:type "button"
-          :aria-pressed (= mode selected-mode)
-          :on-click #(select-showcase-mode! mode)
-          :class
-          (str "rounded-lg border px-3 py-3 text-left text-sm transition-colors hover:bg-accent "
-               (if (= mode selected-mode)
-                 "border-ring bg-accent text-accent-foreground"
-                 "border-border"))}
-         [:span {:class "mr-2 text-base"}
-          icon]
-         label])]]
-    [:fieldset
-     [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground"}
-      "Radius"]
-     [:div {:class "grid grid-cols-5 gap-1"}
-      (for [{:keys [label value]} radii]
-        ^{:key value}
-        [:button {:type "button"
-                  :aria-pressed (= value selected-radius)
-                  :on-click #(reset! showcase-radius value)
-                  :class (str "h-9 rounded-md border text-xs transition-colors hover:bg-accent "
-                              (if (= value selected-radius)
-                                "border-ring bg-accent text-accent-foreground"
-                                "border-border text-muted-foreground"))}
-         label])]]
-    [font-option "Heading" heading-fonts showcase-heading-font]
-    [font-option "Font" body-fonts showcase-body-font]]
-   [:div {:class "grid grid-cols-2 gap-2 border-t border-border p-4"}
-    [:button {:type "button"
-              :on-click reset-theme!
-              :class
-              "rounded-md border border-border px-3 py-2 text-xs font-medium hover:bg-accent"}
-     "Reset"]
-    [:button {:type "button"
-              :on-click shuffle-theme!
-              :class
-              "rounded-md bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90"}
-     "Shuffle ↻"]]]))
+     {:class
+      "overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-2xl lg:sticky lg:top-5"}
+     [:div {:class "flex items-center justify-between border-b border-border px-4 py-4"}
+      [:div
+       [:p {:class "text-sm font-semibold"}
+        "Customize"]
+       [:p {:class "mt-0.5 text-xs text-muted-foreground"}
+        "Design your component theme"]]]
+     [:div {:class "max-h-[calc(100vh-13rem)] space-y-6 overflow-y-auto p-4"}
+      [palette-option "Base color" base-presets showcase-base select-showcase-base!]
+      [palette-option "Theme color" theme-presets showcase-preset select-showcase-preset!]
+      [palette-option "Chart bars" theme-presets showcase-chart-color select-showcase-chart-color!]
+      [:fieldset
+       [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground"}
+        "Appearance"]
+       [:div {:class "grid grid-cols-2 gap-2"}
+        (for [[mode icon label] [[:light "☀" "Light"] [:dark "◐" "Dark"]]]
+          ^{:key mode}
+          [:button
+           {:type "button"
+            :aria-pressed (= mode selected-mode)
+            :on-click #(select-showcase-mode! mode)
+            :class
+            (str "rounded-lg border px-3 py-3 text-left text-sm transition-colors hover:bg-accent "
+                 (if (= mode selected-mode)
+                   "border-ring bg-accent text-accent-foreground"
+                   "border-border"))}
+           [:span {:class "mr-2 text-base"}
+            icon]
+           label])]]
+      [:fieldset
+       [:legend {:class "mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground"}
+        "Radius"]
+       [:div {:class "grid grid-cols-5 gap-1"}
+        (for [{:keys [label value]} radii]
+          ^{:key value}
+          [:button {:type "button"
+                    :aria-pressed (= value selected-radius)
+                    :on-click #(reset! showcase-radius value)
+                    :class (str "h-9 rounded-md border text-xs transition-colors hover:bg-accent "
+                                (if (= value selected-radius)
+                                  "border-ring bg-accent text-accent-foreground"
+                                  "border-border text-muted-foreground"))}
+           label])]]
+      [font-option "Heading" heading-fonts showcase-heading-font]
+      [font-option "Font" body-fonts showcase-body-font]]
+     [:div {:class "grid grid-cols-2 gap-2 border-t border-border p-4"}
+      [:button {:type "button"
+                :on-click reset-theme!
+                :class
+                "rounded-md border border-border px-3 py-2 text-xs font-medium hover:bg-accent"}
+       "Reset"]
+      [:button
+       {:type "button"
+        :on-click shuffle-theme!
+        :class
+        "rounded-md bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90"}
+       "Shuffle ↻"]]]))
 
 (defn- overview
   []

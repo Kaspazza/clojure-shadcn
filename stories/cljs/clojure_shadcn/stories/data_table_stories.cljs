@@ -215,7 +215,8 @@
                {:name ":get-row-id"
                 :type "function"
                 :default nil
-                :description "Stable identity from original row data; used by selection, expansion, and DnD."}
+                :description
+                "Stable identity from original row data; used by selection, expansion, and DnD."}
                {:name ":dnd-config"
                 :type "map"
                 :default nil

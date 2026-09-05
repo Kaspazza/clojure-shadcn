@@ -31,14 +31,13 @@
   (helpers/wrap-component
    [:div {:class "p-6 max-w-4xl"}
     [:div {:class "space-y-4"}
-     [helpers/api-component-card
-      {:component-name "breadcrumb"
-       :description "Root nav wrapper for hierarchical page location trail."
-       :props
-       [{:name ":class"
-         :type "string"
-         :default nil
-         :description "Additional Tailwind classes."}]}]
+     [helpers/api-component-card {:component-name "breadcrumb"
+                                  :description
+                                  "Root nav wrapper for hierarchical page location trail."
+                                  :props [{:name ":class"
+                                           :type "string"
+                                           :default nil
+                                           :description "Additional Tailwind classes."}]}]
      [helpers/api-component-card {:component-name "breadcrumb-list"
                                   :description "Ordered list container for breadcrumb items."
                                   :props [{:name ":class"

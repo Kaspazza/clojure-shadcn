@@ -45,7 +45,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
 
 (def ^:private SIDEBAR_WIDTH_ICON "3rem")
 
-(defn- enum-keyword [value fallback]
+(defn- enum-keyword
+  [value fallback]
   (cond
     (keyword? value) value
     (string? value) (keyword value)
@@ -83,70 +84,69 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
        mateuszmazurczak-tooltip/tooltip-provider-component
        {}
        (cond
-        (= collapsible :none)
-        (into [:div
-               {:class
-                (merge-classes
-                 "flex h-full w-[var(--sidebar-width)] flex-col bg-sidebar text-sidebar-foreground"
-                 class)
-                :style css-vars}]
-              children)
-        is-mobile
-        [mateuszmazurczak-sheet/sheet
-         {:open open?
-          :on-open-change (or on-open-change identity)}
-         [mateuszmazurczak-sheet/sheet-content
-          {:data-sidebar "sidebar"
-           :data-mobile "true"
-           :class
-           (merge-classes
-            "w-[var(--sidebar-width)] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
-            class)
-           :style {"--sidebar-width" SIDEBAR_WIDTH_MOBILE}
-           :side side}
-          [mateuszmazurczak-sheet/sheet-header {:class "sr-only"}
-           [mateuszmazurczak-sheet/sheet-title {}
-            "Sidebar"]
-           [mateuszmazurczak-sheet/sheet-description {}
-            "Displays the mobile sidebar."]]
-          (into [:div {:class "flex h-full w-full flex-col"}]
-                children)]]
-        ;; Desktop: fixed sidebar with collapsible behavior
-        :else
-        [:div {:class "group peer hidden text-sidebar-foreground md:block"
-               :data-state state
-               :data-collapsible (when (= state "collapsed") (name collapsible))
-               :data-variant (name variant)
-               :data-side (name side)
-               :style css-vars}
-         ;; Gap handler (spacer that adapts to sidebar width)
-         [:div
-          {:class
-           (merge-classes
-            "relative w-[var(--sidebar-width)] bg-transparent transition-[width] duration-200 ease-linear"
-            "group-data-[collapsible=offcanvas]:w-0"
-            "group-data-[side=right]:rotate-180"
-            (if (or (= variant :floating) (= variant :inset))
-              "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4))]"
-              "group-data-[collapsible=icon]:w-[var(--sidebar-width-icon)]"))}]
-         ;; Fixed sidebar container
-         [:div
-          {:class
-           (merge-classes
-            "fixed inset-y-0 z-10 hidden h-svh w-[var(--sidebar-width)] transition-[left,right,width] duration-200 ease-linear md:flex"
-            (if (= side :left)
-              "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
-              "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]")
-            (if (or (= variant :floating) (= variant :inset))
-              "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+_2px)]"
-              "group-data-[collapsible=icon]:w-[var(--sidebar-width-icon)] group-data-[side=left]:border-r group-data-[side=right]:border-l")
-            class)}
-          (into
-           [:div
-            {:data-sidebar "sidebar"
-             :class
-             "flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"}]
-           children)]])])))
+         (= collapsible :none)
+         (into [:div
+                {:class
+                 (merge-classes
+                  "flex h-full w-[var(--sidebar-width)] flex-col bg-sidebar text-sidebar-foreground"
+                  class)
+                 :style css-vars}]
+               children)
+         is-mobile
+         [mateuszmazurczak-sheet/sheet {:open open?
+                                        :on-open-change (or on-open-change identity)}
+          [mateuszmazurczak-sheet/sheet-content
+           {:data-sidebar "sidebar"
+            :data-mobile "true"
+            :class
+            (merge-classes
+             "w-[var(--sidebar-width)] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+             class)
+            :style {"--sidebar-width" SIDEBAR_WIDTH_MOBILE}
+            :side side}
+           [mateuszmazurczak-sheet/sheet-header {:class "sr-only"}
+            [mateuszmazurczak-sheet/sheet-title {}
+             "Sidebar"]
+            [mateuszmazurczak-sheet/sheet-description {}
+             "Displays the mobile sidebar."]]
+           (into [:div {:class "flex h-full w-full flex-col"}]
+                 children)]]
+         ;; Desktop: fixed sidebar with collapsible behavior
+         :else
+         [:div {:class "group peer hidden text-sidebar-foreground md:block"
+                :data-state state
+                :data-collapsible (when (= state "collapsed") (name collapsible))
+                :data-variant (name variant)
+                :data-side (name side)
+                :style css-vars}
+          ;; Gap handler (spacer that adapts to sidebar width)
+          [:div
+           {:class
+            (merge-classes
+             "relative w-[var(--sidebar-width)] bg-transparent transition-[width] duration-200 ease-linear"
+             "group-data-[collapsible=offcanvas]:w-0"
+             "group-data-[side=right]:rotate-180"
+             (if (or (= variant :floating) (= variant :inset))
+               "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4))]"
+               "group-data-[collapsible=icon]:w-[var(--sidebar-width-icon)]"))}]
+          ;; Fixed sidebar container
+          [:div
+           {:class
+            (merge-classes
+             "fixed inset-y-0 z-10 hidden h-svh w-[var(--sidebar-width)] transition-[left,right,width] duration-200 ease-linear md:flex"
+             (if (= side :left)
+               "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
+               "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]")
+             (if (or (= variant :floating) (= variant :inset))
+               "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+_2px)]"
+               "group-data-[collapsible=icon]:w-[var(--sidebar-width-icon)] group-data-[side=left]:border-r group-data-[side=right]:border-l")
+             class)}
+           (into
+            [:div
+             {:data-sidebar "sidebar"
+              :class
+              "flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"}]
+            children)]])])))
 
 ;; -----------------------------------------------------------------------------
 ;; Trigger & Rail - Simple button components
@@ -336,7 +336,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
         Comp
         (-> props
             (dissoc :class :as-child)
-            (cond-> (not as-child) (update :type #(or % "button")))
+            (cond->
+              (not as-child) (update :type #(or % "button")))
             (assoc
              :data-sidebar "group-action"
              :class
@@ -434,7 +435,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
             Comp
             (-> props
                 (dissoc :class :as-child :is-active? :tooltip :variant :size :collapsed? :is-mobile)
-                (cond-> (not as-child) (update :type #(or % "button")))
+                (cond->
+                  (not as-child) (update :type #(or % "button")))
                 (assoc :data-sidebar "menu-button"
                        :data-size (name size)
                        :data-active (boolean is-active?)
@@ -462,7 +464,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
         (->
           props
           (dissoc :class :as-child :show-on-hover?)
-          (cond-> (not as-child) (update :type #(or % "button")))
+          (cond->
+            (not as-child) (update :type #(or % "button")))
           (assoc
            :data-sidebar "menu-action"
            :class
@@ -521,16 +524,16 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
          :as props}
         (normalize-props raw-props)]
     [:div
-       (-> props
-           (dissoc :class :show-icon? :width)
-           (assoc :data-sidebar "menu-skeleton"
-                  :class (merge-classes "flex h-8 items-center gap-2 rounded-md px-2" class)))
-       (when show-icon?
-         [mateuszmazurczak-skeleton/skeleton {:class "size-4 rounded-md"
-                                              :data-sidebar "menu-skeleton-icon"}])
-       [mateuszmazurczak-skeleton/skeleton {:class "h-4 max-w-[--skeleton-width] flex-1"
-                                            :data-sidebar "menu-skeleton-text"
-                                            :style {"--skeleton-width" width}}]]))
+     (-> props
+         (dissoc :class :show-icon? :width)
+         (assoc :data-sidebar "menu-skeleton"
+                :class (merge-classes "flex h-8 items-center gap-2 rounded-md px-2" class)))
+     (when show-icon?
+       [mateuszmazurczak-skeleton/skeleton {:class "size-4 rounded-md"
+                                            :data-sidebar "menu-skeleton-icon"}])
+     [mateuszmazurczak-skeleton/skeleton {:class "h-4 max-w-[--skeleton-width] flex-1"
+                                          :data-sidebar "menu-skeleton-text"
+                                          :style {"--skeleton-width" width}}]]))
 
 (defn sidebar-menu-sub
   [{:keys [class]

@@ -9,9 +9,9 @@
   [tag slot classes raw-props children]
   (let [props (normalize-props raw-props)]
     (into [tag
-         (-> props
-             (assoc :data-slot slot :class (merge-classes classes (:class props)))
-             (dissoc :class-name))]
+           (-> props
+               (assoc :data-slot slot :class (merge-classes classes (:class props)))
+               (dissoc :class-name))]
           children)))
 
 (defn bubble-group

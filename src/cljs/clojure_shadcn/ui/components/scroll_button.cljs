@@ -59,7 +59,9 @@ Custom component implementation."
                :tab-index (when is-at-bottom? -1)
                :on-click (fn [event]
                            (when on-click (on-click event))
-                           (when-not (.-defaultPrevented event)
-                             (scroll-to-bottom))))
+                           (when-not (.-defaultPrevented event) (scroll-to-bottom))))
         (dissoc :class-name))
-    [:> ChevronDown {:class "h-5 w-5" :aria-hidden true}]]))
+    [:>
+     ChevronDown
+     {:class "h-5 w-5"
+      :aria-hidden true}]]))

@@ -67,14 +67,16 @@
         (normalize-props raw-props)]
     [:>
      (.-Root CheckboxPrimitive)
-     (cond-> (-> props
-                 (assoc
-                  :data-slot "checkbox"
-                  :class
-                  (merge-classes
-                   "peer border-input dark:bg-input/30 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary data-[state=checked]:border-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive size-4 shrink-0 rounded-[4px] border shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
-                   class))
-                 (dissoc :class-name))
+     (cond->
+       (->
+         props
+         (assoc
+          :data-slot "checkbox"
+          :class
+          (merge-classes
+           "peer border-input dark:bg-input/30 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary data-[state=checked]:border-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive size-4 shrink-0 rounded-[4px] border shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
+           class))
+         (dissoc :class-name))
        (contains? props :checked) (assoc :checked (checked->radix checked))
        (and (contains? props :on-checked-change) on-checked-change)
        (assoc :on-checked-change (comp on-checked-change radix->checked)))

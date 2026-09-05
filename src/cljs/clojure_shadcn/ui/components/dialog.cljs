@@ -43,13 +43,15 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
   [dialog-trigger {}
    [button {} \"Open Dialog\"]]"
   [props & children]
-  (into [:> RadixDialog/Trigger (assoc (normalize-props props) :data-slot "dialog-trigger")] children))
+  (into [:> RadixDialog/Trigger (assoc (normalize-props props) :data-slot "dialog-trigger")]
+        children))
 
 (defn dialog-portal
   "Portal component that renders dialog in a portal.
   Usually used internally by dialog-content."
   [props & children]
-  (into [:> RadixDialog/Portal (assoc (normalize-props props) :data-slot "dialog-portal")] children))
+  (into [:> RadixDialog/Portal (assoc (normalize-props props) :data-slot "dialog-portal")]
+        children))
 
 (defn dialog-close
   "Close button component that closes the dialog.
@@ -106,7 +108,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
     [button {} \"Confirm\"]]]"
   [{:as raw-props} & children]
   (let [{:keys [class show-close-button close-label]
-         :or {show-close-button true close-label "Close"}
+         :or {show-close-button true
+              close-label "Close"}
          :as props}
         (normalize-props raw-props)]
     [dialog-portal {}

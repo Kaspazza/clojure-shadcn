@@ -37,31 +37,37 @@ Custom component implementation."
 
 (defn drawer-trigger
   [raw-props & children]
-  (into [:> drawer-trigger-primitive
-         (assoc (normalize-props raw-props) :data-slot "drawer-trigger")]
-        children))
+  (into
+   [:> drawer-trigger-primitive (assoc (normalize-props raw-props) :data-slot "drawer-trigger")]
+   children))
 
 (defn drawer-close
   [raw-props & children]
-  (into [:> drawer-close-primitive
-         (assoc (normalize-props raw-props) :data-slot "drawer-close")]
+  (into [:> drawer-close-primitive (assoc (normalize-props raw-props) :data-slot "drawer-close")]
         children))
 
 (defn drawer-overlay
   [{:as raw-props}]
-  (let [{:keys [class] :as props} (normalize-props raw-props)]
+  (let [{:keys [class]
+         :as props}
+        (normalize-props raw-props)]
     [:>
      drawer-overlay-primitive
-     (-> props
-         (assoc :data-slot "drawer-overlay"
-                :class (styles/merge-classes
-                        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50"
-                        class))
-         (dissoc :class-name))]))
+     (->
+       props
+       (assoc
+        :data-slot "drawer-overlay"
+        :class
+        (styles/merge-classes
+         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50"
+         class))
+       (dissoc :class-name))]))
 
 (defn drawer-content
   [{:as raw-props} & children]
-  (let [{:keys [class] :as props} (normalize-props raw-props)]
+  (let [{:keys [class]
+         :as props}
+        (normalize-props raw-props)]
     [:>
      drawer-portal-primitive
      {}
@@ -69,18 +75,19 @@ Custom component implementation."
      (into
       [:>
        drawer-content-primitive
-       (-> props
-           (assoc
-            :data-slot "drawer-content"
-            :class
-            (styles/merge-classes
-             "group/drawer-content bg-background fixed z-50 flex h-auto flex-col"
-             "data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:mt-24 data-[vaul-drawer-direction=bottom]:max-h-[80vh] data-[vaul-drawer-direction=bottom]:rounded-t-lg data-[vaul-drawer-direction=bottom]:border-t"
-             "data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0 data-[vaul-drawer-direction=top]:mb-24 data-[vaul-drawer-direction=top]:max-h-[80vh] data-[vaul-drawer-direction=top]:rounded-b-lg data-[vaul-drawer-direction=top]:border-b"
-             "data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:h-full data-[vaul-drawer-direction=right]:w-auto data-[vaul-drawer-direction=right]:rounded-l-lg data-[vaul-drawer-direction=right]:border-l"
-             "data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:h-full data-[vaul-drawer-direction=left]:w-auto data-[vaul-drawer-direction=left]:rounded-r-lg data-[vaul-drawer-direction=left]:border-r"
-             class))
-           (dissoc :class-name))
+       (->
+         props
+         (assoc
+          :data-slot "drawer-content"
+          :class
+          (styles/merge-classes
+           "group/drawer-content bg-background fixed z-50 flex h-auto flex-col"
+           "data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:mt-24 data-[vaul-drawer-direction=bottom]:max-h-[80vh] data-[vaul-drawer-direction=bottom]:rounded-t-lg data-[vaul-drawer-direction=bottom]:border-t"
+           "data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0 data-[vaul-drawer-direction=top]:mb-24 data-[vaul-drawer-direction=top]:max-h-[80vh] data-[vaul-drawer-direction=top]:rounded-b-lg data-[vaul-drawer-direction=top]:border-b"
+           "data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:h-full data-[vaul-drawer-direction=right]:w-auto data-[vaul-drawer-direction=right]:rounded-l-lg data-[vaul-drawer-direction=right]:border-l"
+           "data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:h-full data-[vaul-drawer-direction=left]:w-auto data-[vaul-drawer-direction=left]:rounded-r-lg data-[vaul-drawer-direction=left]:border-r"
+           class))
+         (dissoc :class-name))
        [:div
         {:aria-hidden true
          :class
@@ -101,7 +108,9 @@ Custom component implementation."
 
 (defn drawer-title
   [{:as raw-props} & children]
-  (let [{:keys [class] :as props} (normalize-props raw-props)]
+  (let [{:keys [class]
+         :as props}
+        (normalize-props raw-props)]
     (into [:>
            drawer-title-primitive
            (-> props
@@ -112,7 +121,9 @@ Custom component implementation."
 
 (defn drawer-description
   [{:as raw-props} & children]
-  (let [{:keys [class] :as props} (normalize-props raw-props)]
+  (let [{:keys [class]
+         :as props}
+        (normalize-props raw-props)]
     (into [:>
            drawer-description-primitive
            (-> props

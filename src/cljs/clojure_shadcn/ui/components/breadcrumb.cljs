@@ -95,7 +95,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
     [:a {} \"Home\"]]"
   [{:as raw-props} & children]
   (let [{:keys [class as-child]
-         :as props} (normalize-props raw-props)
+         :as props}
+        (normalize-props raw-props)
         component (if as-child Slot "a")]
     (into [:>
            component
@@ -141,17 +142,14 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
     :as props}
    &
    children]
-  (into
-   [:li
-    (-> props
-        (assoc :role "presentation"
-               :aria-hidden "true"
-               :data-slot "breadcrumb-separator"
-               :class (merge-classes "[&>svg]:size-3.5" class))
-        (dissoc :class-name))]
-   (if (seq children)
-     children
-     [(r/as-element [:> ChevronRight])])))
+  (into [:li
+         (-> props
+             (assoc :role "presentation"
+                    :aria-hidden "true"
+                    :data-slot "breadcrumb-separator"
+                    :class (merge-classes "[&>svg]:size-3.5" class))
+             (dissoc :class-name))]
+        (if (seq children) children [(r/as-element [:> ChevronRight])])))
 
 (defn breadcrumb-ellipsis
   "Breadcrumb ellipsis component (span element). Used for collapsed breadcrumbs.

@@ -36,11 +36,7 @@
 
 (defn- chart-color-vars
   [config]
-  (into {}
-        (keep (fn [[k {:keys [color]}]]
-                (when color
-                  [(str "--color-" (name k)) color])))
-        config))
+  (into {} (keep (fn [[k {:keys [color]}]] (when color [(str "--color-" (name k)) color]))) config))
 
 (defn- chart-container-root
   [^js react-props]

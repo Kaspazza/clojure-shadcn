@@ -44,8 +44,10 @@ Custom component implementation."
   [code language theme set-highlighted-html]
   (let [source (or code "")]
     (-> (if (empty? source)
-          (js/Promise.resolve "<pre><code></code></pre>")
-          (codeToHtml source #js {:lang language :theme theme}))
+            (js/Promise.resolve "<pre><code></code></pre>")
+            (codeToHtml source
+                        #js {:lang language
+                             :theme theme}))
         (.then set-highlighted-html)
         (.catch (fn [_error] (set-highlighted-html nil))))))
 
@@ -73,20 +75,23 @@ Custom component implementation."
  (let [[highlight-result set-highlight-result] (rhooks/use-state nil)
        generation-ref (rhooks/use-ref 0)
        signature [code language theme]]
-   (rhooks/use-effect
-    (fn []
-      (let [generation (inc (.-current generation-ref))
-            active? (atom true)]
-        (set! (.-current generation-ref) generation)
-        (highlight code language theme
-                   (fn [html]
-                     (when (and @active? (= generation (.-current generation-ref)))
-                       (set-highlight-result {:signature signature :html html}))))
-        (fn []
-          (reset! active? false)
-          (when (= generation (.-current generation-ref))
-            (set! (.-current generation-ref) (inc generation))))))
-    [code language theme])
+   (rhooks/use-effect (fn []
+                        (let [generation (inc (.-current generation-ref))
+                              active? (atom true)]
+                          (set! (.-current generation-ref) generation)
+                          (highlight code
+                                     language
+                                     theme
+                                     (fn [html]
+                                       (when (and @active?
+                                                  (= generation (.-current generation-ref)))
+                                         (set-highlight-result {:signature signature
+                                                                :html html}))))
+                          (fn []
+                            (reset! active? false)
+                            (when (= generation (.-current generation-ref))
+                              (set! (.-current generation-ref) (inc generation))))))
+                      [code language theme])
    (let [base-classes "w-full overflow-x-auto text-[13px] [&>pre]:px-4 [&>pre]:py-4"
          combined-classes (merge-classes base-classes class)
          highlighted-html (when (= signature (:signature highlight-result))
