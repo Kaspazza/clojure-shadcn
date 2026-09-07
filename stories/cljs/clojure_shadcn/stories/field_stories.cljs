@@ -2,9 +2,12 @@
   "Storybook stories for the Field component. Ported from mateuszmazurczak.portfolio.ui-components.field."
   (:require
    [clojure-shadcn.stories.helpers        :as helpers]
+   [clojure-shadcn.ui.components.button   :as button]
+   [clojure-shadcn.ui.components.checkbox :as checkbox]
    [clojure-shadcn.ui.components.field    :as sut]
    [clojure-shadcn.ui.components.input    :as input]
    [clojure-shadcn.ui.components.select   :as select]
+   [clojure-shadcn.ui.components.slider   :as slider]
    [clojure-shadcn.ui.components.textarea :as textarea]
    [reagent.core                          :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
@@ -292,3 +295,60 @@
                                                   [input/input {:id "field-playground"
                                                                 :placeholder (:placeholder args)
                                                                 :disabled (:disabled args)}]]])))
+
+(defstory FieldPatterns
+          "Aggregate form, slider, choice-card, responsive, invalid, and RTL field compositions."
+          []
+          (r/as-element
+           (helpers/wrap-component
+            [:form {:class "grid max-w-2xl gap-8"
+                    :on-submit #(.preventDefault %)}
+             [sut/field-set {}
+              [sut/field-legend {}
+               "Notification settings"]
+              [sut/field-group {}
+               [sut/field {:orientation :responsive}
+                [sut/field-label {:html-for "display-name"}
+                 "Display name"]
+                [sut/field-content {}
+                 [input/input {:id "display-name"
+                               :name "display-name"
+                               :required true}]
+                 [sut/field-description {}
+                  "Shown to collaborators."]]]
+               [sut/field {}
+                [sut/field-label {:html-for "volume"}
+                 "Alert volume"]
+                [slider/slider {:id "volume"
+                                :name "volume"
+                                :default-value [40]
+                                :aria-label "Alert volume"}]]
+               [sut/field {:class "rounded-lg border p-4"
+                           :orientation :horizontal}
+                [checkbox/checkbox {:id "weekly-summary"
+                                    :name "weekly-summary"}]
+                [sut/field-content {}
+                 [sut/field-label {:html-for "weekly-summary"}
+                  [sut/field-title {}
+                   "Weekly summary"]]
+                 [sut/field-description {}
+                  "Receive one concise activity email."]]]
+               [sut/field {}
+                [sut/field-label {:html-for "work-email"}
+                 "Work email"]
+                [input/input {:id "work-email"
+                              :type "email"
+                              :aria-invalid true
+                              :default-value "not-an-email"}]
+                [sut/field-error {:errors [{:message "Enter a valid work email."}]}]]]]
+             [:div {:dir "rtl"}
+              [sut/field {:orientation :responsive}
+               [sut/field-label {:html-for "arabic-name"}
+                "الاسم"]
+               [sut/field-content {}
+                [input/input {:id "arabic-name"
+                              :name "arabic-name"}]
+                [sut/field-description {}
+                 "يظهر هذا الاسم في ملفك الشخصي."]]]]
+             [button/button {:type "submit"}
+              "Save settings"]])))

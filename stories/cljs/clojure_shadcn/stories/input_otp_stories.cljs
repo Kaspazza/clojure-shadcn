@@ -119,3 +119,73 @@
                                                          [sut/input-otp-slot
                                                           {:index index
                                                            :placeholder (:placeholder args)}]))])))
+
+(defn- otp-slots
+  [n]
+  (into [sut/input-otp-group {}]
+        (for [index (range n)]
+          ^{:key index} [sut/input-otp-slot {:index index}])))
+
+(defn- otp-patterns-example
+  []
+  (r/with-let
+   [code (r/atom "")]
+   [:div {:class "grid gap-7"}
+    [:section {:class "grid gap-2"}
+     [:label {:class "text-sm font-medium"}
+      "Numeric code"]
+     [sut/input-otp {:max-length 4
+                     :pattern "[0-9]*"
+                     :input-mode "numeric"
+                     :value @code
+                     :on-change #(reset! code %)
+                     :aria-label "Four digit code"}
+      [otp-slots 4]]
+     [:output {:class "text-sm text-muted-foreground"
+               :aria-live "polite"}
+      "Controlled value: "
+      (if (seq @code) @code "empty")]]
+    [:section {:class "grid gap-2"}
+     [:label {:class "text-sm font-medium"}
+      "Alphanumeric code"]
+     [sut/input-otp {:max-length 6
+                     :pattern "[A-Za-z0-9]*"
+                     :aria-label "Six character code"}
+      [otp-slots 3]
+      [sut/input-otp-separator {}]
+      (into [sut/input-otp-group {}]
+            (for [index (range 3 6)]
+              ^{:key index} [sut/input-otp-slot {:index index}]))]]
+    [:form {:class "grid gap-2"
+            :on-submit #(.preventDefault %)}
+     [:label {:class "text-sm font-medium"}
+      "Invalid form value"]
+     [sut/input-otp {:max-length 6
+                     :name "verification-code"
+                     :required true
+                     :aria-label "Verification code"
+                     :aria-invalid true}
+      (into [sut/input-otp-group {}]
+            (for [index (range 6)]
+              ^{:key index}
+              [sut/input-otp-slot {:index index
+                                   :aria-invalid true}]))]
+     [:p {:class "text-sm text-destructive"}
+      "Enter all six digits."]
+     [:button {:type "submit"
+               :class "h-9 rounded-md bg-primary px-4 text-primary-foreground"}
+      "Verify"]]
+    [:section {:dir "rtl"
+               :class "grid gap-2"}
+     [:label {:class "text-sm font-medium"}
+      "رمز التحقق"]
+     [sut/input-otp {:max-length 4
+                     :input-mode "numeric"
+                     :aria-label "رمز التحقق"}
+      [otp-slots 4]]]]))
+
+(defstory
+ InputOtpPatterns
+ "Numeric and alphanumeric patterns, controlled output, invalid form integration, and RTL context."
+ []
+ (r/as-element (helpers/wrap-component [otp-patterns-example])))

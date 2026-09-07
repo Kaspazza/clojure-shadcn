@@ -38,14 +38,23 @@
 
 (defn alert-dialog-content
   [props & children]
-  [alert-dialog-portal {}
-   [alert-dialog-overlay {}]
-   (element
-    primitive/Content
-    "alert-dialog-content"
-    "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg"
-    props
-    children)])
+  (element
+   primitive/Portal
+   "alert-dialog-portal"
+   nil
+   {}
+   [(element
+     primitive/Overlay
+     "alert-dialog-overlay"
+     "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50"
+     {}
+     [])
+    (element
+     primitive/Content
+     "alert-dialog-content"
+     "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg"
+     props
+     children)]))
 
 (defn alert-dialog-header
   [props & children]
@@ -81,8 +90,7 @@
            "alert-dialog-action"
            nil
            (assoc (normalize-props props) :as-child true)
-           [(into [button {}]
-                  children)]))
+           [(apply button {} children)]))
 
 (defn alert-dialog-cancel
   [props & children]
@@ -90,5 +98,4 @@
            "alert-dialog-cancel"
            nil
            (assoc (normalize-props props) :as-child true)
-           [(into [button {:variant :outline}]
-                  children)]))
+           [(apply button {:variant :outline} children)]))

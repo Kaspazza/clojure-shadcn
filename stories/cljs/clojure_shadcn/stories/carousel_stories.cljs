@@ -214,18 +214,58 @@
 
   Library: embla-carousel
 
-  Use basis-1/3 to show 3 items at once. Adjust with responsive classes as needed."
+  Uses basis-1/2, sm:basis-1/3, and lg:basis-1/4 so visible slide count follows the viewport."
  []
  (r/as-element (helpers/wrap-component [:div {:class "p-6"}
                                         [sut/carousel {:opts {:align "start"}
                                                        :class "w-full max-w-sm"}
                                          (into [sut/carousel-content {}]
                                                (for [idx (range 1 6)]
-                                                 [sut/carousel-item {:key idx
-                                                                     :class "basis-1/3"}
+                                                 [sut/carousel-item
+                                                  {:key idx
+                                                   :class "basis-1/2 sm:basis-1/3 lg:basis-1/4"}
                                                   [slide-card idx]]))
                                          [sut/carousel-previous {}]
                                          [sut/carousel-next {}]]])))
+
+(defn carousel-position-example
+  []
+  (let [api (r/atom nil)
+        current (r/atom 1)
+        total (r/atom 0)]
+    (fn []
+      (let [sync-position (rhooks/use-callback
+                           (fn []
+                             (when-let [^js carousel-api @api]
+                               (reset! current (inc (.selectedScrollSnap carousel-api)))
+                               (reset! total (.-length (.scrollSnapList carousel-api)))))
+                           [])]
+        (rhooks/use-effect (fn []
+                             (when-let [^js carousel-api @api]
+                               (sync-position)
+                               (.on carousel-api "select" sync-position)
+                               (.on carousel-api "reInit" sync-position)
+                               (fn []
+                                 (.off carousel-api "select" sync-position)
+                                 (.off carousel-api "reInit" sync-position))))
+                           [@api sync-position])
+        (helpers/wrap-component [:div {:class "p-6"}
+                                 [sut/carousel {:set-api #(reset! api %)
+                                                :class "w-full max-w-xs"}
+                                  (into [sut/carousel-content {}]
+                                        (for [idx (range 1 6)]
+                                          [sut/carousel-item {:key idx}
+                                           [slide-card idx]]))
+                                  [sut/carousel-previous {}]
+                                  [sut/carousel-next {}]]
+                                 [:p {:class "mt-4 text-center text-sm text-muted-foreground"
+                                      :aria-live "polite"}
+                                  (str "Slide " @current " of " @total)]])))))
+
+(defstory CarouselPosition
+          "Consumer-managed current slide and total using the API supplied by :set-api."
+          []
+          (r/as-element [carousel-position-example]))
 
 (defstory
  CarouselOrientation

@@ -413,3 +413,33 @@
           (r/as-element (helpers/wrap-component [:div {:class "p-6"}
                                                  [sut/checkbox
                                                   (assoc args :id "checkbox-playground")]])))
+
+(defstory CheckboxFieldDisabled
+          "Disabled Field row. Based on shadcn/ui Checkbox — Field Disabled."
+          []
+          (r/as-element (helpers/wrap-component [:div {:class "max-w-md p-6"}
+                                                 [field/field {:orientation :horizontal
+                                                               :data-disabled true}
+                                                  [sut/checkbox {:id "checkbox-field-disabled"
+                                                                 :disabled true
+                                                                 :checked true}]
+                                                  [field/field-content {}
+                                                   [field/field-label {:html-for
+                                                                       "checkbox-field-disabled"}
+                                                    "Share analytics"]
+                                                   [field/field-description {}
+                                                    "Managed by your organization."]]]])))
+
+(defstory CheckboxRtl
+          "Right-to-left checkbox field. Based on shadcn/ui Checkbox — RTL."
+          []
+          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
+                                                       :class "max-w-md p-6"}
+                                                 [field/field {:orientation :horizontal}
+                                                  [sut/checkbox {:id "checkbox-rtl"
+                                                                 :default-checked true}]
+                                                  [field/field-content {}
+                                                   [field/field-label {:html-for "checkbox-rtl"}
+                                                    "تفعيل الإشعارات"]
+                                                   [field/field-description {}
+                                                    "يمكنك تغيير هذا الإعداد لاحقًا."]]]])))

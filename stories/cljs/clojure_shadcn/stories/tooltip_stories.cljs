@@ -77,10 +77,6 @@
                 :type "number"
                 :default "700"
                 :description "Open delay in ms"}
-               {:name ":skip-delay-duration"
-                :type "number"
-                :default "300"
-                :description "Delay-skip window in ms"}
                {:name ":open"
                 :type "boolean"
                 :default nil
@@ -109,11 +105,34 @@
                 :type "boolean"
                 :default "false"
                 :description "Disable hoverable content"}]}]
+     [helpers/api-component-card
+      {:component-name "tooltip-provider-component"
+       :description
+       "Radix Tooltip.Provider shared by a region of tooltips. Configure cross-tooltip timing here rather than on tooltip."
+       :props
+       [{:name ":delayDuration"
+         :type "number"
+         :default "700"
+         :description "Default delay before tooltips in the provider open."}
+        {:name ":skipDelayDuration"
+         :type "number"
+         :default "300"
+         :description
+         "Window in milliseconds during which moving to another tooltip skips its opening delay."}
+        {:name ":disableHoverableContent"
+         :type "boolean"
+         :default "false"
+         :description "Prevent content from remaining open while the pointer moves over it."}]}]
      [:div {:class "border rounded-lg p-4 bg-amber-500/10 border-amber-500/30 mb-4"}
       [:h4 {:class "text-sm font-semibold mb-2"}
        "⚠️ Important Notes"]
       [:ul {:class "text-xs text-muted-foreground space-y-1 list-disc pl-4"}
-       [:li "Prefer trigger-as-child? false when trigger is a Reagent component wrapper."]
+       [:li
+        "Wrap a tooltip region once with tooltip-provider-component; do not create one provider per tooltip in application code."]
+       [:li
+        "Provider props use Radix camelCase when invoked through :>, for example :delayDuration and :skipDelayDuration."]
+       [:li
+        "Use :trigger-as-child? true when the trigger resolves to one native element, including directly invoked pure Reagent renderers."]
        [:li
         "Tooltips should provide supplementary info only; don't hide critical actions/content inside them."]]]
      [:div {:class "border rounded-lg p-4 bg-muted/50"}
@@ -197,6 +216,60 @@
                                             "Use ⌘K to search across projects."]]
                                  :content-class "max-w-xs"}]])))
 
+
+(defstory TooltipSides
+          "Tooltip content on every supported side of its trigger."
+          []
+          (r/as-element (helpers/wrap-component
+                         [:>
+                          sut/tooltip-provider-component
+                          {}
+                          [:div {:class "grid min-h-72 grid-cols-2 place-items-center gap-20 p-16"}
+                           (for [side [:top :right :bottom :left]]
+                             ^{:key side}
+                             [sut/tooltip {:trigger (button/button {:variant :outline} (name side))
+                                           :trigger-as-child? true
+                                           :content (str "Tooltip on the " (name side))
+                                           :side side}])]])))
+
+(defstory
+ TooltipDisabledButton
+ "A focusable span triggers help for a disabled button, which cannot reliably receive pointer or focus events."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:>
+    sut/tooltip-provider-component
+    {}
+    [sut/tooltip
+     {:trigger
+      [:span
+       {:tab-index 0
+        :class
+        "inline-flex rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        :aria-label "Why publishing is unavailable"}
+       (button/button {:disabled true
+                       :class "pointer-events-none"}
+                      "Publish")]
+      :trigger-as-child? true
+      :content "Complete all required fields before publishing."}]])))
+
+(defstory TooltipRtl
+          "Right-to-left trigger and localized tooltip content."
+          []
+          (r/as-element (helpers/wrap-component
+                         [:>
+                          sut/tooltip-provider-component
+                          {}
+                          [:div {:class "p-12 text-right"
+                                 :dir "rtl"}
+                           [sut/tooltip {:trigger (button/button {:variant :outline}
+                                                                 "معلومات إضافية")
+                                         :trigger-as-child? true
+                                         :content [:span {:dir "rtl"}
+                                                   "تظهر هذه المعلومة عند التركيز أو المرور."]
+                                         :side :top
+                                         :align :start}]]])))
 
 (defstory TooltipPlayground
           "Controlled Storybook playground using only safe scalar component props."

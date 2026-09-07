@@ -9,6 +9,14 @@
   #js {:title "Components/Hover Card"
        :parameters #js {:layout "padded"}})
 
+(defn- project-preview
+  []
+  [:div {:class "space-y-2"}
+   [:h4 {:class "font-semibold"}
+    "shadcn/ui"]
+   [:p {:class "text-sm text-muted-foreground"}
+    "Beautifully designed components you can copy and own."]])
+
 (defdoc Installation
         []
         (r/as-element [helpers/installation-scene
@@ -44,29 +52,67 @@
 
 (defstory HoverCardBasic
           []
+          (r/as-element (helpers/wrap-component [:div {:class "p-16"}
+                                                 [sut/hover-card {}
+                                                  [sut/hover-card-trigger {:as-child true}
+                                                   [:a {:href "https://github.com/shadcn-ui/ui"
+                                                        :class
+                                                        "font-medium underline underline-offset-4"}
+                                                    "@shadcn"]]
+                                                  [sut/hover-card-content {:class "w-80"}
+                                                   [project-preview]]]])))
+
+(defstory HoverCardDelays
+          "Both opening and closing delays tuned for a fast preview interaction."
+          []
+          (r/as-element (helpers/wrap-component [:div {:class "p-16"}
+                                                 [sut/hover-card {:open-delay 100
+                                                                  :close-delay 600}
+                                                  [sut/hover-card-trigger {:as-child true}
+                                                   [:a {:href "https://github.com/shadcn-ui/ui"
+                                                        :class
+                                                        "font-medium underline underline-offset-4"}
+                                                    "Preview with custom delays"]]
+                                                  [sut/hover-card-content {}
+                                                   [project-preview]]]])))
+
+(defstory HoverCardPositioning
+          "All preferred sides combined with start, center, and end alignment."
+          []
+          (r/as-element
+           (helpers/wrap-component
+            [:div {:class "grid min-h-[32rem] grid-cols-3 place-items-center gap-16 p-24"}
+             (for [side [:top :right :bottom :left]
+                   align [:start :center :end]]
+               ^{:key (str (name side) "-" (name align))}
+               [sut/hover-card {}
+                [sut/hover-card-trigger {:as-child true}
+                 [:button {:type "button"
+                           :class "rounded-md border px-3 py-2 text-sm"
+                           :aria-label (str "Preview " (name side) " " (name align) " placement")}
+                  (str (name side) " / " (name align))]]
+                [sut/hover-card-content {:side side
+                                         :align align}
+                 [project-preview]]])])))
+
+(defstory HoverCardRtl
+          "Right-to-left trigger and preview content."
+          []
           (r/as-element (helpers/wrap-component
-                         [:div {:class "p-16"}
+                         [:div {:class "p-16 text-right"
+                                :dir "rtl"}
                           [sut/hover-card {}
                            [sut/hover-card-trigger {:as-child true}
                             [:a {:href "https://github.com/shadcn-ui/ui"
                                  :class "font-medium underline underline-offset-4"}
-                             "@shadcn"]]
-                           [sut/hover-card-content {:class "w-80"}
-                            [:div {:class "space-y-2"}
+                             "معاينة المشروع"]]
+                           [sut/hover-card-content {:align :start
+                                                    :dir "rtl"}
+                            [:div {:class "space-y-2 text-right"}
                              [:h4 {:class "font-semibold"}
-                              "shadcn/ui"]
+                              "واجهة المستخدم"]
                              [:p {:class "text-sm text-muted-foreground"}
-                              "Beautifully designed components you can copy and own."]]]]])))
-
-(defstory HoverCardFastOpen
-          []
-          (r/as-element (helpers/wrap-component [:div {:class "p-16"}
-                                                 [sut/hover-card {:open-delay 0}
-                                                  [sut/hover-card-trigger {}
-                                                   "Focus or hover immediately"]
-                                                  [sut/hover-card-content {}
-                                                   "No opening delay."]]])))
-
+                              "مكوّنات مصممة بعناية يمكنك نسخها وتخصيصها."]]]]])))
 
 (defstory HoverCardPlayground
           "Controlled Storybook playground using only safe scalar component props."

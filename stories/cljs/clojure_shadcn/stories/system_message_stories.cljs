@@ -1,6 +1,7 @@
 (ns clojure-shadcn.stories.system-message-stories
   "Storybook stories for the System Message component. Ported from mateuszmazurczak.portfolio.ui-components.system_message."
   (:require
+   ["lucide-react"                              :refer [Bell]]
    [clojure-shadcn.stories.helpers              :as helpers]
    [clojure-shadcn.ui.components.system-message :as sut]
    [reagent.core                                :as r])
@@ -125,14 +126,6 @@
                                                      :on-click #(js/console.log "retry")}}
                            "A network error occurred."]])))
 
-(defstory SystemMessageNoIcon
-          "System message without icon.
-  Set :icon-hidden? true for a cleaner layout."
-          []
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/system-message {:icon-hidden? true}
-                                                  "Minimal message without leading icon."]])))
-
 (defstory SystemMessageFilled
           "Filled system message style.
   Use :fill true for stronger visual emphasis."
@@ -143,12 +136,14 @@
                                                   "Maintenance window starts in 10 minutes."]])))
 
 (defstory
- SystemMessageCustomIcon
- "System message with custom icon.
-  Use :icon to override the default icon per message context."
+ SystemMessageFilledCtaCustomIcon
+ "Combine filled emphasis, an inline CTA, and a custom React icon through documented props."
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/system-message {:variant :action
-                                                             :icon [:span {:aria-hidden true}
-                                                                    "🔔"]}
-                                         "You have new workspace invitations."]])))
+ (r/as-element (helpers/wrap-component
+                [:div {:class "p-6"}
+                 [sut/system-message {:variant :action
+                                      :fill true
+                                      :icon Bell
+                                      :cta {:label "Review"
+                                            :on-click #(js/console.log "review invitations")}}
+                  "Three workspace invitations need your review."]])))

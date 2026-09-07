@@ -156,41 +156,48 @@
                               :on-click #(reset! open? false)}
                              "Cancel")]]]]))))]))
 
-(defstory
- RightDrawer
- "Right drawer with navigation example.
-   
-   Slides in from the right side - useful for navigation menus
-   or detail panels."
- []
- (r/as-element
-  [(fn []
-     (let [open? (r/atom false)]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-4"}
-           [sut/drawer {:open @open?
-                        :on-open-change #(reset! open? %)
-                        :direction :right}
-            [sut/drawer-trigger {:as-child true}
-             (button/button {:variant :outline} "Open Right Drawer")]
-            [sut/drawer-content {:class "w-80"}
-             [sut/drawer-header {}
-              [sut/drawer-title {}
-               "Navigation"]
-              [sut/drawer-description {}
-               "Browse through different sections"]]
-             [:div {:class "p-4 space-y-2"}
-              (for [item ["Dashboard" "Projects" "Tasks" "Settings"]]
-                ^{:key item}
-                [:button {:class "w-full text-left px-3 py-2 rounded-md hover:bg-accent"
-                          :on-click #(reset! open? false)}
-                 item])]
-             [sut/drawer-footer {}
-              (button/button {:variant :ghost
-                              :on-click #(reset! open? false)
-                              :class "w-full"}
-                             "Close")]]]]))))]))
+(defstory RightDrawer
+          "Right-side drawer with an independently scrollable body and persistent footer."
+          []
+          (r/as-element
+           [(fn []
+              (let [open? (r/atom false)
+                    sections ["Overview"
+                              "Activity"
+                              "Members"
+                              "Integrations"
+                              "Billing"
+                              "Security"
+                              "Notifications"
+                              "Automation"
+                              "Exports"
+                              "Advanced"]]
+                (fn []
+                  (helpers/wrap-component
+                   [:div {:class "p-4"}
+                    [sut/drawer {:open @open?
+                                 :on-open-change #(reset! open? %)
+                                 :direction :right}
+                     [sut/drawer-trigger {:as-child true}
+                      (button/button {:variant :outline} "Open project settings")]
+                     [sut/drawer-content {:class "w-80 overflow-hidden"}
+                      [sut/drawer-header {:class "shrink-0 border-b"}
+                       [sut/drawer-title {}
+                        "Project settings"]
+                       [sut/drawer-description {}
+                        "Choose a section to configure."]]
+                      [:nav {:class "min-h-0 flex-1 space-y-2 overflow-y-auto p-4"
+                             :aria-label "Project settings sections"}
+                       (for [item sections]
+                         ^{:key item}
+                         [:button {:type "button"
+                                   :class "w-full rounded-md px-3 py-3 text-left hover:bg-accent"}
+                          item])]
+                      [sut/drawer-footer {:class "shrink-0 border-t bg-background"}
+                       [sut/drawer-close {:as-child true}
+                        (button/button {:variant :outline
+                                        :class "w-full"}
+                                       "Close settings")]]]]]))))]))
 
 (defstory
  DrawerWithScroll
@@ -316,6 +323,77 @@
                               :on-click #(reset! open? false)}
                              "Close")]]]]))))]))
 
+
+(defstory StatefulGoalDrawer
+          "Stateful mobile-style drawer for adjusting and saving a daily activity goal."
+          []
+          (r/as-element
+           [(fn []
+              (let [open? (r/atom false)
+                    goal (r/atom 350)]
+                (fn []
+                  (helpers/wrap-component
+                   [:div {:class "p-4"}
+                    [sut/drawer {:open @open?
+                                 :on-open-change #(reset! open? %)
+                                 :direction :bottom}
+                     [sut/drawer-trigger {:as-child true}
+                      (button/button {:variant :outline} "Set daily goal")]
+                     [sut/drawer-content {}
+                      [sut/drawer-header {:class "text-center"}
+                       [sut/drawer-title {}
+                        "Daily activity goal"]
+                       [sut/drawer-description {}
+                        "Choose how many calories you want to burn each day."]]
+                      [:div
+                       {:class
+                        "mx-auto flex w-full max-w-sm items-center justify-center gap-6 px-4 py-6"}
+                       (button/button {:variant :outline
+                                       :size :icon
+                                       :aria-label "Decrease daily goal"
+                                       :disabled (<= @goal 100)
+                                       :on-click #(swap! goal (fn [value] (max 100 (- value 10))))}
+                                      "−")
+                       [:div {:class "min-w-28 text-center"}
+                        [:div {:class "text-5xl font-bold tabular-nums"}
+                         @goal]
+                        [:div {:class "text-sm text-muted-foreground"}
+                         "calories per day"]]
+                       (button/button {:variant :outline
+                                       :size :icon
+                                       :aria-label "Increase daily goal"
+                                       :disabled (>= @goal 1000)
+                                       :on-click #(swap! goal (fn [value] (min 1000 (+ value 10))))}
+                                      "+")]
+                      [sut/drawer-footer {:class "mx-auto w-full max-w-sm"}
+                       (button/button {:on-click #(reset! open? false)} "Save goal")
+                       [sut/drawer-close {:as-child true}
+                        (button/button {:variant :outline} "Cancel")]]]]]))))]))
+
+(defstory DrawerRtl
+          "Right-to-left drawer with localized labels and direction-aware alignment."
+          []
+          (r/as-element
+           (helpers/wrap-component
+            [:div {:class "p-4"
+                   :dir "rtl"}
+             [sut/drawer {:direction :right}
+              [sut/drawer-trigger {:as-child true}
+               (button/button {:variant :outline} "فتح الإعدادات")]
+              [sut/drawer-content {:class "w-80"
+                                   :dir "rtl"}
+               [sut/drawer-header {:class "text-right"}
+                [sut/drawer-title {}
+                 "إعدادات الحساب"]
+                [sut/drawer-description {}
+                 "حدّث تفضيلات حسابك."]]
+               [:div {:class "flex-1 px-4 text-right text-sm text-muted-foreground"}
+                "تُطبّق التغييرات بعد الحفظ."]
+               [sut/drawer-footer {}
+                [sut/drawer-close {:as-child true}
+                 (button/button {:variant :outline} "إلغاء")]
+                [sut/drawer-close {:as-child true}
+                 (button/button {} "حفظ")]]]]])))
 
 (defstory DrawerPlayground
           "Controlled Storybook playground using only safe scalar component props."

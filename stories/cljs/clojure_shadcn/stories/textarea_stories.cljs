@@ -3,6 +3,7 @@
   (:require
    [clojure-shadcn.stories.helpers        :as helpers]
    [clojure-shadcn.ui.components.button   :as button]
+   [clojure-shadcn.ui.components.field    :as field]
    [clojure-shadcn.ui.components.label    :as label]
    [clojure-shadcn.ui.components.textarea :as sut]
    [reagent.core                          :as r])
@@ -203,3 +204,30 @@
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "max-w-sm p-6"}
                                                  [sut/textarea args]])))
+
+(defstory TextareaFieldDisabled
+          "Disabled textarea inside Field. Based on shadcn/ui Textarea — Field Disabled."
+          []
+          (r/as-element (helpers/wrap-component [:div {:class "max-w-md p-6"}
+                                                 [field/field {:data-disabled true}
+                                                  [field/field-label {:html-for "disabled-notes"}
+                                                   "Internal notes"]
+                                                  [sut/textarea {:id "disabled-notes"
+                                                                 :disabled true
+                                                                 :default-value
+                                                                 "Editing is restricted."}]
+                                                  [field/field-description {}
+                                                   "Only administrators can edit notes."]]])))
+
+(defstory TextareaRtl
+          "Right-to-left textarea field. Based on shadcn/ui Textarea — RTL."
+          []
+          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
+                                                       :class "max-w-md p-6"}
+                                                 [field/field {}
+                                                  [field/field-label {:html-for "message-rtl"}
+                                                   "رسالتك"]
+                                                  [sut/textarea {:id "message-rtl"
+                                                                 :placeholder "اكتب رسالتك هنا"}]
+                                                  [field/field-description {}
+                                                   "سنرد خلال يوم عمل."]]])))

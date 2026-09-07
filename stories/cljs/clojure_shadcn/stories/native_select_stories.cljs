@@ -111,3 +111,34 @@
                                                   "React"]
                                                  [sut/native-select-option {:value "clojure"}
                                                   "Clojure"]])))
+
+(defstory NativeSelectInvalid
+          "Native validation styling and message. Based on shadcn/ui Native Select — Invalid."
+          []
+          (r/as-element (helpers/wrap-component [:div {:class "max-w-sm space-y-2 p-6"}
+                                                 [sut/native-select {:default-value ""
+                                                                     :required true
+                                                                     :aria-invalid true
+                                                                     :aria-describedby
+                                                                     "framework-error"
+                                                                     :aria-label "Framework"}
+                                                  [sut/native-select-option {:value ""
+                                                                             :disabled true}
+                                                   "Select a framework"]
+                                                  [sut/native-select-option {:value "reagent"}
+                                                   "Reagent"]]
+                                                 [:p {:id "framework-error"
+                                                      :class "text-sm text-destructive"}
+                                                  "Choose a framework."]])))
+
+(defstory NativeSelectRtl
+          "Right-to-left native select. Based on shadcn/ui Native Select — RTL."
+          []
+          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
+                                                       :class "max-w-sm p-6"}
+                                                 [sut/native-select {:default-value "ar"
+                                                                     :aria-label "اللغة"}
+                                                  [sut/native-select-option {:value "ar"}
+                                                   "العربية"]
+                                                  [sut/native-select-option {:value "en"}
+                                                   "الإنجليزية"]]])))

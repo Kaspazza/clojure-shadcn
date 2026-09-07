@@ -1,5 +1,6 @@
 (ns clojure-shadcn.stories.tabs-stories
   (:require
+   ["lucide-react"                    :refer [Bell Settings User]]
    [clojure-shadcn.stories.helpers    :as helpers]
    [clojure-shadcn.ui.components.tabs :as sut]
    [reagent.core                      :as r])
@@ -70,6 +71,66 @@
                                                   [sut/tabs-content {:value "active"}
                                                    "The second tab cannot be selected."]]])))
 
+
+(defstory
+ TabsWithIcons
+ "Radix Tabs triggers with decorative Lucide icons and visible labels.
+
+  Radix primitive: @radix-ui/react-tabs
+
+  Pair icons with text so each tab retains a clear accessible name."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "w-[420px] p-6"}
+    [sut/tabs {:default-value "profile"}
+     [sut/tabs-list {}
+      [sut/tabs-trigger {:value "profile"}
+       [:> User {:aria-hidden true}]
+       "Profile"]
+      [sut/tabs-trigger {:value "notifications"}
+       [:> Bell {:aria-hidden true}]
+       "Notifications"]
+      [sut/tabs-trigger {:value "settings"}
+       [:> Settings {:aria-hidden true}]
+       "Settings"]]
+     [sut/tabs-content {:value "profile"
+                        :class "rounded-md border p-4"}
+      "Update your public profile."]
+     [sut/tabs-content {:value "notifications"
+                        :class "rounded-md border p-4"}
+      "Choose which alerts you receive."]
+     [sut/tabs-content {:value "settings"
+                        :class "rounded-md border p-4"}
+      "Manage workspace defaults."]]])))
+
+(defstory
+ TabsRtl
+ "Right-to-left Radix Tabs without custom orientation styling.
+
+  Radix primitive: @radix-ui/react-tabs
+
+  Set :dir on Root so horizontal arrow-key behavior follows reading direction."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "w-[420px] p-6"
+          :dir "rtl"}
+    [sut/tabs {:default-value "account"
+               :dir "rtl"}
+     [sut/tabs-list {}
+      [sut/tabs-trigger {:value "account"}
+       [:> User {:aria-hidden true}]
+       "الحساب"]
+      [sut/tabs-trigger {:value "alerts"}
+       [:> Bell {:aria-hidden true}]
+       "التنبيهات"]]
+     [sut/tabs-content {:value "account"
+                        :class "rounded-md border p-4"}
+      "إدارة معلومات الحساب."]
+     [sut/tabs-content {:value "alerts"
+                        :class "rounded-md border p-4"}
+      "اختيار إعدادات التنبيهات."]]])))
 
 (defstory TabsPlayground
           "Controlled Storybook playground using only safe scalar component props."

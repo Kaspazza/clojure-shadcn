@@ -138,8 +138,12 @@
                                 [dropdown-menu/dropdown-menu-trigger {:as-child true}
                                  (button/button {:variant :ghost
                                                  :size :icon
-                                                 :class "h-8 w-8"}
-                                                [:> MoreHorizontal {:class "h-4 w-4"}])]
+                                                 :class "h-8 w-8"
+                                                 :aria-label "Open row actions"}
+                                                [:>
+                                                 MoreHorizontal
+                                                 {:class "h-4 w-4"
+                                                  :aria-hidden true}])]
                                 [dropdown-menu/dropdown-menu-content {:align "end"}
                                  [dropdown-menu/dropdown-menu-label {}
                                   "Actions"]
@@ -175,7 +179,7 @@
        :link {:href "https://tanstack.com/table/latest"
               :label "TanStack Table Docs"}
        :description
-       "Feature-rich TanStack table wrapper with built-in sorting, filtering, faceting, pagination, row selection, expandable rows, and optional drag-and-drop row reordering."
+       "Project wrapper built against @tanstack/react-table v8 (package range ^8.21.3), using the v8 headless table/state model. The UI composition and DnD integration are local to this component; they are not a TanStack v9 API preview."
        :props [{:name ":columns"
                 :type "js-array | vector"
                 :default nil
@@ -368,6 +372,11 @@
                 :type "function"
                 :default nil
                 :description "Callback: (fn [])."}]}]
+     [:div {:class "rounded-lg border bg-muted/50 p-4"}
+      [:h4 {:class "mb-2 text-sm font-semibold"}
+       "Provenance"]
+      [:p {:class "text-xs text-muted-foreground"}
+       "Headless sorting, filtering, faceting, pagination, selection, and expansion come from TanStack Table v8. Rendering, toolbar controls, empty states, and @dnd-kit row reordering are this project's wrapper composition. This reference intentionally makes no v9 or localized-RTL compatibility claim."]]
      [:div {:class "border rounded-lg p-4 bg-amber-500/10 border-amber-500/30 mb-4"}
       [:h4 {:class "text-sm font-semibold mb-2"}
        "⚠️ Important Notes"]
@@ -391,16 +400,41 @@
    
    Click column headers to sort, use pagination controls at the bottom."
  []
- (r/as-element [(fn []
-                  (let [data (r/atom (clj->js (make-task-data)))
-                        columns (r/atom (make-columns))]
-                    (fn []
-                      (helpers/wrap-component [:div {:class "p-8"}
-                                               [:h3 {:class "text-lg font-semibold mb-4"}
-                                                "Tasks"]
-                                               [sut/data-table {:columns @columns
-                                                                :data @data
-                                                                :initial-page-size 5}]]))))]))
+ (r/as-element
+  [(fn []
+     (let [data (r/atom (clj->js (make-task-data)))
+           columns (r/atom (make-columns))]
+       (fn []
+         (helpers/wrap-component
+          [:div {:class "p-8"}
+           [:h3 {:class "text-lg font-semibold mb-4"}
+            "Tasks"]
+           [:p {:class "mb-4 text-sm text-muted-foreground"}
+            "A single TanStack Table v8 model drives sorting, filtering, pagination, visibility, and row selection."]
+           [sut/data-table
+            {:columns @columns
+             :data @data
+             :initial-page-size 5
+             :get-row-id (fn [row] (.-id row))
+             :initial-column-visibility {}
+             :toolbar-config {:text-filter {:column-id "title"
+                                            :placeholder "Search tasks..."}
+                              :faceted-filters [{:column-id "status"
+                                                 :title "Status"
+                                                 :options [{:label "Todo"
+                                                            :value "todo"}
+                                                           {:label "In Progress"
+                                                            :value "in-progress"}
+                                                           {:label "Done"
+                                                            :value "done"}]}
+                                                {:column-id "priority"
+                                                 :title "Priority"
+                                                 :options [{:label "High"
+                                                            :value "high"}
+                                                           {:label "Medium"
+                                                            :value "medium"}
+                                                           {:label "Low"
+                                                            :value "low"}]}]}}]]))))]))
 
 (defstory
  TableWithToolbar
@@ -584,17 +618,15 @@
            columns (r/atom (into-array (concat [(drag-handle-column) expand-column]
                                                (make-columns))))
            render-sub-component
-           (fn [^js row]
-             (let [task (js->clj (.-original row) :keywordize-keys true)]
-               [:div {:class "p-4 bg-muted"}
-                [:h4 {:class "font-semibold mb-2"}
-                 "Task Details"]
-                [:div {:class "space-y-2 text-sm"}
-                 [:p
-                  [:strong "Full Description: "]
-                  "This is a detailed description of the task. "
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit."]
-                 [:p [:strong "Notes: "] "Additional notes and context about this task."]]]))
+           (fn [_row] [:div {:class "p-4 bg-muted"}
+                       [:h4 {:class "font-semibold mb-2"}
+                        "Task Details"]
+                       [:div {:class "space-y-2 text-sm"}
+                        [:p
+                         [:strong "Full Description: "]
+                         "This is a detailed description of the task. "
+                         "Lorem ipsum dolor sit amet, consectetur adipiscing elit."]
+                        [:p [:strong "Notes: "] "Additional notes and context about this task."]]])
            move-row (fn [active-id over-id]
                       (swap! data
                         (fn [tasks]

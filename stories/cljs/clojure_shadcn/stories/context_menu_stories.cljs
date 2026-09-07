@@ -1,5 +1,6 @@
 (ns clojure-shadcn.stories.context-menu-stories
   (:require
+   ["lucide-react"                            :refer [Copy Mail Share2 Trash2]]
    [clojure-shadcn.stories.helpers            :as helpers]
    [clojure-shadcn.ui.components.context-menu :as sut]
    [reagent.core                              :as r])
@@ -122,6 +123,64 @@
               [sut/context-menu-separator {}]
               [sut/context-menu-item {:variant :destructive}
                "Delete"]]])))
+
+(defstory
+ ContextMenuGroupsAndIcons
+ "Explicit Radix Context Menu groups with decorative action icons.
+
+  Radix primitive: @radix-ui/react-context-menu
+
+  Groups preserve menu semantics while separators communicate related action sets."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [sut/context-menu {}
+    [sut/context-menu-trigger
+     {:class "flex h-36 w-72 items-center justify-center rounded-md border border-dashed text-sm"}
+     "Right click the document"]
+    [sut/context-menu-content {:class "w-56"}
+     [sut/context-menu-group {}
+      [sut/context-menu-item {}
+       [:> Copy {:aria-hidden true}]
+       "Duplicate"]
+      [sut/context-menu-item {}
+       [:> Share2 {:aria-hidden true}]
+       "Share"]]
+     [sut/context-menu-separator {}]
+     [sut/context-menu-group {}
+      [sut/context-menu-item {}
+       [:> Mail {:aria-hidden true}]
+       "Send by email"]
+      [sut/context-menu-item {:variant :destructive}
+       [:> Trash2 {:aria-hidden true}]
+       "Move to trash"]]]])))
+
+(defstory
+ ContextMenuRtl
+ "Right-to-left Radix Context Menu with grouped actions.
+
+  Radix primitive: @radix-ui/react-context-menu
+
+  Pass :dir to Root so keyboard navigation and submenu direction match the content."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [sut/context-menu {:dir "rtl"}
+    [sut/context-menu-trigger
+     {:class "flex h-36 w-72 items-center justify-center rounded-md border text-sm"
+      :dir "rtl"}
+     "انقر بزر الفأرة الأيمن"]
+    [sut/context-menu-content {:class "w-56"}
+     [sut/context-menu-group {}
+      [sut/context-menu-item {}
+       [:> Copy {:aria-hidden true}]
+       "نسخ"]
+      [sut/context-menu-item {}
+       [:> Share2 {:aria-hidden true}]
+       "مشاركة"]]
+     [sut/context-menu-separator {}]
+     [sut/context-menu-item {:disabled true}
+      "إعادة تسمية"]]])))
 
 (defstory ContextMenuChoices
           []

@@ -57,8 +57,9 @@
        "Always provide both alert-dialog-title and alert-dialog-description so assistive technology can explain the decision."]
       [:li
        "Use alert-dialog-action only for the consequential action and alert-dialog-cancel for the safe escape path."]
+      [:li "Alert dialogs intentionally cannot be dismissed by interacting outside the modal."]
       [:li
-       "Alert dialogs intentionally cannot be dismissed by interacting outside the modal."]]]])))
+       "API gap: this local wrapper exposes no size, media, or action-variant option. Style the supported content/actions with forwarded props, or extend the component API before documenting those upstream patterns; stories must not simulate them."]]]])))
 
 (defstory AlertDialogBasic
           []
@@ -67,8 +68,8 @@
             [:div {:class "p-6"}
              [sut/alert-dialog {}
               [sut/alert-dialog-trigger {:as-child true}
-               [button/button {:variant :outline}
-                "Delete account"]]
+               (button/button {:variant :outline}
+                              "Delete account")]
               [sut/alert-dialog-content {}
                [sut/alert-dialog-header {}
                 [sut/alert-dialog-title {}
@@ -85,15 +86,15 @@
           []
           (r/as-element
            [(fn []
-              (let [open? (r/atom true)]
+              (let [open? (r/atom false)]
                 (fn []
                   (helpers/wrap-component
                    [:div {:class "p-6"}
                     [sut/alert-dialog {:open @open?
                                        :on-open-change #(reset! open? %)}
                      [sut/alert-dialog-trigger {:as-child true}
-                      [button/button {}
-                       "Open confirmation"]]
+                      (button/button {}
+                                     "Open confirmation")]
                      [sut/alert-dialog-content {}
                       [sut/alert-dialog-header {}
                        [sut/alert-dialog-title {}
@@ -119,8 +120,8 @@
              [sut/alert-dialog
               (select-keys args [:default-open])
               [sut/alert-dialog-trigger {:as-child true}
-               [button/button {:variant :outline}
-                "Delete account"]]
+               (button/button {:variant :outline}
+                              "Delete account")]
               [sut/alert-dialog-content {}
                [sut/alert-dialog-header {}
                 [sut/alert-dialog-title {}

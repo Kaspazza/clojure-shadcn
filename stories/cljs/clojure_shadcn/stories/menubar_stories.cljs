@@ -1,5 +1,6 @@
 (ns clojure-shadcn.stories.menubar-stories
   (:require
+   ["lucide-react"                       :refer [Copy Mail Scissors Undo2]]
    [clojure-shadcn.stories.helpers       :as helpers]
    [clojure-shadcn.ui.components.menubar :as sut]
    [reagent.core                         :as r])
@@ -97,44 +98,57 @@
                :default nil
                :description "Normalized, class-merged, and forwarded."}]}]])))
 
-(defstory MenubarDemo
-          []
-          (r/as-element
-           (helpers/wrap-component
-            [sut/menubar {}
-             [sut/menubar-menu {}
-              [sut/menubar-trigger {}
-               "File"]
-              [sut/menubar-content {}
-               [sut/menubar-item {}
-                "New tab"
-                [sut/menubar-shortcut {}
-                 "⌘T"]]
-               [sut/menubar-item {}
-                "New window"
-                [sut/menubar-shortcut {}
-                 "⌘N"]]
-               [sut/menubar-separator {}]
-               [sut/menubar-sub {}
-                [sut/menubar-sub-trigger {}
-                 "Share"]
-                [sut/menubar-sub-content {}
-                 [sut/menubar-item {}
-                  "Email"]
-                 [sut/menubar-item {}
-                  "Messages"]]]
-               [sut/menubar-item {:variant :destructive}
-                "Close"]]]
-             [sut/menubar-menu {}
-              [sut/menubar-trigger {}
-               "Edit"]
-              [sut/menubar-content {}
-               [sut/menubar-item {}
-                "Undo"
-                [sut/menubar-shortcut {}
-                 "⌘Z"]]
-               [sut/menubar-item {:disabled true}
-                "Redo"]]]])))
+(defstory
+ MenubarDemo
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [sut/menubar {}
+    [sut/menubar-menu {}
+     [sut/menubar-trigger {}
+      "File"]
+     [sut/menubar-content {}
+      [sut/menubar-item {}
+       "New tab"
+       [sut/menubar-shortcut {}
+        "⌘T"]]
+      [sut/menubar-item {}
+       "New window"
+       [sut/menubar-shortcut {}
+        "⌘N"]]
+      [sut/menubar-separator {}]
+      [sut/menubar-sub {}
+       [sut/menubar-sub-trigger {}
+        "Share"]
+       [sut/menubar-sub-content {}
+        [sut/menubar-item {}
+         "Email"]
+        [sut/menubar-item {}
+         "Messages"]]]
+      [sut/menubar-item {:variant :destructive}
+       "Close"]]]
+    [sut/menubar-menu {}
+     [sut/menubar-trigger {}
+      "Edit"]
+     [sut/menubar-content {}
+      [sut/menubar-item {}
+       [:> Undo2 {:aria-hidden true}]
+       "Undo"
+       [sut/menubar-shortcut {}
+        "⌘Z"]]
+      [sut/menubar-item {:inset true
+                         :disabled true}
+       "Redo"]
+      [sut/menubar-separator {}]
+      [sut/menubar-group {}
+       [sut/menubar-label {:inset true}
+        "Clipboard"]
+       [sut/menubar-item {}
+        [:> Scissors {:aria-hidden true}]
+        "Cut"]
+       [sut/menubar-item {}
+        [:> Copy {:aria-hidden true}]
+        "Copy"]]]]])))
 
 (defstory MenubarSelections
           []
@@ -163,6 +177,36 @@
                        [sut/menubar-radio-item {:value "benoit"}
                         "Benoit"]]]]]))))]))
 
+
+(defstory
+ MenubarRtl
+ "Right-to-left Radix Menubar with icons and checkbox state.
+
+  Radix primitive: @radix-ui/react-menubar
+
+  Set :dir on Root so arrow-key navigation follows reading direction."
+ []
+ (r/as-element
+  [(fn []
+     (let [mail? (r/atom true)]
+       (fn []
+         (helpers/wrap-component
+          [sut/menubar {:dir "rtl"}
+           [sut/menubar-menu {}
+            [sut/menubar-trigger {}
+             "تحرير"]
+            [sut/menubar-content {:dir "rtl"}
+             [sut/menubar-group {}
+              [sut/menubar-item {}
+               [:> Copy {:aria-hidden true}]
+               "نسخ"]
+              [sut/menubar-item {:inset true}
+               "لصق"]]
+             [sut/menubar-separator {}]
+             [sut/menubar-checkbox-item {:checked @mail?
+                                         :on-checked-change #(reset! mail? %)}
+              [:> Mail {:aria-hidden true}]
+              "إشعارات البريد"]]]]))))]))
 
 (defstory MenubarPlayground
           "Controlled Storybook playground using only safe scalar component props."

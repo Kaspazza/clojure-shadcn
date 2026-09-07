@@ -71,3 +71,44 @@
                             "Unable to continue"]
                            [sut/alert-description {}
                             "Resolve the validation errors and try again."]]])))
+
+(defstory
+ AlertColors
+ "Colors — upstream class-based color treatments without inventing alert variants."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "grid max-w-2xl gap-3"}
+    [sut/alert
+     {:class
+      "border-emerald-600/40 text-emerald-700 dark:text-emerald-400 [&>svg]:text-emerald-600"}
+     [:> CheckCircle2]
+     [sut/alert-title {}
+      "Deployment complete"]
+     [sut/alert-description {}
+      "The production release is now available."]]
+    [sut/alert {:class
+                "border-amber-600/40 text-amber-800 dark:text-amber-300 [&>svg]:text-amber-600"}
+     [:> CircleAlert]
+     [sut/alert-title {}
+      "Maintenance scheduled"]
+     [sut/alert-description {}
+      "Editing will be unavailable for approximately five minutes."]]
+    [sut/alert {:class "border-sky-600/40 text-sky-800 dark:text-sky-300 [&>svg]:text-sky-600"}
+     [:> CircleAlert]
+     [sut/alert-title {}
+      "New workspace policy"]
+     [sut/alert-description {}
+      "Review the updated access requirements before Friday."]]])))
+
+(defstory AlertRTL
+          "RTL — alert icon and copy follow right-to-left document direction."
+          []
+          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
+                                                       :class "max-w-xl text-right"}
+                                                 [sut/alert {}
+                                                  [:> CheckCircle2]
+                                                  [sut/alert-title {}
+                                                   "تم حفظ التغييرات"]
+                                                  [sut/alert-description {}
+                                                   "تم تحديث إعدادات حسابك بنجاح."]]])))

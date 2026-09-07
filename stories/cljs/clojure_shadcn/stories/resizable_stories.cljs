@@ -87,6 +87,67 @@
                              "Content"]]]])))
 
 
+(defstory
+ Vertical
+ "Dedicated top/bottom split. The group owns vertical keyboard and pointer resize semantics."
+ []
+ (r/as-element (helpers/wrap-component
+                [:div {:class "h-[420px] w-[520px] overflow-hidden rounded-lg border"}
+                 [sut/panel-group {:orientation :vertical}
+                  [sut/panel {:defaultSize 35
+                              :minSize 20}
+                   [:div {:class "grid h-full place-items-center bg-muted/30"}
+                    "Preview"]]
+                  [sut/handle {:with-handle? true
+                               :aria-label "Resize preview and console"}]
+                  [sut/panel {:defaultSize 65
+                              :minSize 25}
+                   [:div {:class "grid h-full place-items-center"}
+                    "Console"]]]])))
+
+(defstory
+ Nested
+ "Nested panel groups: a horizontal workspace containing an independent vertical detail split."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "h-[420px] w-[720px] overflow-hidden rounded-lg border"}
+    [sut/panel-group {:orientation :horizontal}
+     [sut/panel {:defaultSize 28
+                 :minSize 18}
+      [:div {:class "grid h-full place-items-center bg-muted/30"}
+       "Files"]]
+     [sut/handle {:with-handle? true
+                  :aria-label "Resize files and workspace"}]
+     [sut/panel {:defaultSize 72}
+      [sut/panel-group {:orientation :vertical}
+       [sut/panel {:defaultSize 70}
+        [:div {:class "grid h-full place-items-center"}
+         "Editor"]]
+       [sut/handle {:with-handle? true
+                    :aria-label "Resize editor and terminal"}]
+       [sut/panel {:defaultSize 30
+                   :minSize 15}
+        [:div {:class "grid h-full place-items-center bg-muted/30"}
+         "Terminal"]]]]]])))
+
+(defstory
+ Rtl
+ "RTL document direction with panels ordered from the inline start; resize behavior remains library-owned."
+ []
+ (r/as-element (helpers/wrap-component [:div {:dir "rtl"
+                                              :class
+                                              "h-48 w-[600px] overflow-hidden rounded-lg border"}
+                                        [sut/panel-group {:orientation :horizontal}
+                                         [sut/panel {:defaultSize 35}
+                                          [:div {:class "grid h-full place-items-center"}
+                                           "التنقل"]]
+                                         [sut/handle {:with-handle? true
+                                                      :aria-label "تغيير حجم اللوحات"}]
+                                         [sut/panel {:defaultSize 65}
+                                          [:div {:class "grid h-full place-items-center"}
+                                           "المحتوى"]]]])))
+
 (defstory ResizablePlayground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:orientation "horizontal"}

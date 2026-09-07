@@ -2,6 +2,7 @@
   "Storybook stories for the Skeleton component. Ported from mateuszmazurczak.portfolio.ui-components.skeleton."
   (:require
    [clojure-shadcn.stories.helpers        :as helpers]
+   [clojure-shadcn.ui.components.card     :as card]
    [clojure-shadcn.ui.components.skeleton :as sut]
    [reagent.core                          :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
@@ -104,3 +105,73 @@
                                         (for [idx (range 6)]
                                           ^{:key idx}
                                           [sut/skeleton {:class "h-24 w-full rounded-lg"}])])))
+
+(defstory SkeletonIdentityRow
+          "Identity row — upstream avatar-and-copy placeholder sized to the eventual content."
+          []
+          (r/as-element (helpers/wrap-component [:div {:class "flex w-80 items-center gap-4"}
+                                                 [sut/skeleton {:class
+                                                                "size-12 shrink-0 rounded-full"}]
+                                                 [:div {:class "flex-1 space-y-2"}
+                                                  [sut/skeleton {:class "h-4 w-32"}]
+                                                  [sut/skeleton {:class "h-3 w-48"}]]])))
+
+(defstory
+ SkeletonRealCard
+ "Card — real Card composition preserves the final component's regions while content loads."
+ []
+ (r/as-element (helpers/wrap-component [card/card {:class "w-full max-w-sm"
+                                                   :aria-busy true
+                                                   :aria-label "Loading project"}
+                                        [card/card-header {}
+                                         [sut/skeleton {:class "h-6 w-40"}]
+                                         [sut/skeleton {:class "h-4 w-64"}]]
+                                        [card/card-content {:class "space-y-3"}
+                                         [sut/skeleton {:class "aspect-video w-full rounded-lg"}]
+                                         [sut/skeleton {:class "h-4 w-full"}]]
+                                        [card/card-footer {}
+                                         [sut/skeleton {:class "h-9 w-full"}]]])))
+
+(defstory SkeletonForm
+          "Form — realistic labels and controls minimize layout shift during form loading."
+          []
+          (r/as-element (helpers/wrap-component
+                         [:div {:class "w-full max-w-md space-y-5 rounded-lg border p-6"
+                                :aria-busy true
+                                :aria-label "Loading form"}
+                          (for [width ["w-24" "w-32" "w-20"]]
+                            ^{:key width}
+                            [:div {:class "space-y-2"}
+                             [sut/skeleton {:class (str "h-4 " width)}]
+                             [sut/skeleton {:class "h-9 w-full"}]])
+                          [sut/skeleton {:class "h-9 w-28"}]])))
+
+(defstory SkeletonTable
+          "Table — upstream row-and-column placeholder mirrors a compact data table."
+          []
+          (r/as-element
+           (helpers/wrap-component
+            [:div {:class "w-full max-w-2xl overflow-hidden rounded-lg border"
+                   :aria-busy true
+                   :aria-label "Loading invoices"}
+             [:div {:class "grid grid-cols-[1fr_8rem_6rem] gap-4 border-b bg-muted/50 p-3"}
+              [sut/skeleton {:class "h-4 w-24"}]
+              [sut/skeleton {:class "h-4 w-16"}]
+              [sut/skeleton {:class "h-4 w-12"}]]
+             (for [row (range 4)]
+               ^{:key row}
+               [:div {:class "grid grid-cols-[1fr_8rem_6rem] gap-4 border-b p-3 last:border-0"}
+                [sut/skeleton {:class "h-4 w-40"}]
+                [sut/skeleton {:class "h-4 w-20"}]
+                [sut/skeleton {:class "h-4 w-14"}]])])))
+
+(defstory SkeletonRTL
+          "RTL — identity and text placeholders align with right-to-left content."
+          []
+          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
+                                                       :class "flex w-80 items-center gap-4"}
+                                                 [sut/skeleton {:class
+                                                                "size-12 shrink-0 rounded-full"}]
+                                                 [:div {:class "flex-1 space-y-2"}
+                                                  [sut/skeleton {:class "ms-auto h-4 w-32"}]
+                                                  [sut/skeleton {:class "ms-auto h-3 w-48"}]]])))

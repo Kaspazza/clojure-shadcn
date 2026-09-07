@@ -1,8 +1,10 @@
 (ns clojure-shadcn.stories.input-group-stories
   (:require
-   ["lucide-react"                           :refer [Search]]
+   ["lucide-react"                           :refer [AtSign Search Send]]
    [clojure-shadcn.stories.helpers           :as helpers]
    [clojure-shadcn.ui.components.input-group :as sut]
+   [clojure-shadcn.ui.components.kbd         :as kbd]
+   [clojure-shadcn.ui.components.spinner     :as spinner]
    [reagent.core                             :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
@@ -114,3 +116,57 @@
                            [sut/input-group-input {:aria-label "Search"
                                                    :placeholder (:placeholder args)
                                                    :disabled (:disabled args)}]]])))
+
+(defstory
+ InputGroupPatterns
+ "Consolidated block addons, icon/text/button/Kbd/spinner, textarea, custom control, and RTL compositions."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "grid w-[36rem] max-w-full gap-5"}
+    [sut/input-group {:class "flex-wrap"}
+     [sut/input-group-addon {:align :block-start}
+      [sut/input-group-text {}
+       "Repository URL"]]
+     [sut/input-group-addon {}
+      [:> AtSign {:aria-hidden true}]]
+     [sut/input-group-input {:aria-label "Repository URL"
+                             :placeholder "owner/project"}]
+     [sut/input-group-addon {:align :inline-end}
+      [kbd/kbd {}
+       "⌘K"]
+      [sut/input-group-button {:size :icon-xs
+                               :aria-label "Submit repository"}
+       [:> Send]]]]
+    [sut/input-group {}
+     [sut/input-group-addon {}
+      [spinner/spinner {}]
+      [sut/input-group-text {}
+       "Checking"]]
+     [sut/input-group-input {:aria-label "Package name"
+                             :default-value "clojure-shadcn"}]]
+    [sut/input-group {:class "flex-wrap"}
+     [sut/input-group-textarea {:aria-label "Message"
+                                :placeholder "Write a message…"}]
+     [sut/input-group-addon {:align :block-end}
+      [sut/input-group-text {}
+       "Markdown supported"]
+      [sut/input-group-button {:class "ml-auto"}
+       "Send"]]]
+    [sut/input-group {}
+     [sut/input-group-addon {}
+      [sut/input-group-text {}
+       "Custom"]]
+     [:input {:data-slot "input-group-control"
+              :aria-label "Custom numeric control"
+              :type "number"
+              :class "h-9 min-w-0 flex-1 bg-transparent px-3 outline-none"}]]
+    [:div {:dir "rtl"}
+     [sut/input-group {}
+      [sut/input-group-addon {}
+       [:> Search {:aria-hidden true}]]
+      [sut/input-group-input {:aria-label "بحث"
+                              :placeholder "بحث…"}]
+      [sut/input-group-addon {:align :inline-end}
+       [sut/input-group-text {}
+        "⌘K"]]]]])))

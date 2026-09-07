@@ -2,7 +2,8 @@
   (:require
    [clojure-shadcn.stories.helpers                :as helpers]
    [clojure-shadcn.ui.components.message-scroller :as sut]
-   [reagent.core                                  :as r])
+   [reagent.core                                  :as    r
+                                                  :refer [defc]])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -93,3 +94,149 @@
                                  [:div {:class "rounded-lg bg-muted p-3 text-sm"}
                                   (str "Conversation message " n)]])]]
                             [sut/message-scroller-button (select-keys args [:direction])]]]])))
+
+(defc scroller-controls
+ []
+ (let [^js commands (sut/use-message-scroller)
+       ^js scrollable (sut/use-message-scroller-scrollable)
+       ^js visibility (sut/use-message-scroller-visibility)
+       ^js visible (.-visibleMessageIds visibility)]
+   [:div {:class "flex flex-wrap items-center gap-2 border-t p-2 text-xs"}
+    [:button {:type "button"
+              :class "rounded border px-2 py-1"
+              :on-click #((.-scrollToStart commands) #js {:behavior "smooth"})}
+     "Start"]
+    [:button {:type "button"
+              :class "rounded border px-2 py-1"
+              :on-click #((.-scrollToMessage commands)
+                           "turn-3"
+                           #js {:align "center"
+                                :behavior "smooth"})}
+     "Turn 3"]
+    [:button {:type "button"
+              :class "rounded border px-2 py-1"
+              :on-click #((.-scrollToEnd commands) #js {:behavior "smooth"})}
+     "End"]
+    [:span {:class "text-muted-foreground"}
+     (str "scrollable: " (when (.-start scrollable) "start ") (when (.-end scrollable) "end"))]
+    [:span {:class "text-muted-foreground"}
+     (str "anchor: " (or (.-currentAnchorId visibility) "none")
+          " · visible: " (if visible (.join visible ", ") "none"))]]))
+
+(defstory
+ MessageScrollerAnchorsAndOpenPositions
+ "Turn anchors preserve previous context; compare supported initial start, end, and last-anchor positions."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "grid gap-4 lg:grid-cols-3"}
+    (for [position ["start" "end" "last-anchor"]]
+      ^{:key position}
+      [:div {:class "space-y-2"}
+       [:p {:class "text-sm font-medium"}
+        (str "Open at " position)]
+       [:div {:class "h-72 rounded-lg border"}
+        [sut/message-scroller-provider {:defaultScrollPosition position
+                                        :scrollPreviousItemPeek 72}
+         [sut/message-scroller {}
+          [sut/message-scroller-viewport {}
+           [sut/message-scroller-content {:class "gap-3 p-4"}
+            (for [n (range 1 7)]
+              ^{:key n}
+              [sut/message-scroller-item {:message-id (str "position-" position "-" n)
+                                          :scroll-anchor (contains? #{2 4 6} n)}
+               [:div {:class "space-y-1"}
+                (when (contains? #{2 4 6} n)
+                  [:p {:class "text-xs font-medium text-primary"}
+                   (str "Turn " (/ n 2))])
+                [:div {:class "rounded-lg bg-muted p-3 text-sm"}
+                 (str (if (odd? n) "Previous assistant context " "User anchor ") n)]]])]]
+          [sut/message-scroller-button {}]
+          [sut/message-scroller-button {:direction "start"}]]]]])])))
+
+(defstory
+ MessageScrollerPrependHistory
+ "Prepending older rows keeps the first visible item stable with the viewport’s public preservation prop."
+ []
+ (r/as-element
+  [(fn []
+     (let [messages (r/atom (vec (range 11 21)))]
+       (fn []
+         (helpers/wrap-component
+          [:div {:class "max-w-xl space-y-2"}
+           [:button {:type "button"
+                     :class "rounded-md border px-3 py-2 text-sm"
+                     :on-click #(swap! messages (fn [items]
+                                                  (into (vec (range (- (first items) 5)
+                                                                    (first items)))
+                                                        items)))}
+            "Load previous messages"]
+           [:div {:class "h-72 rounded-lg border"}
+            [sut/message-scroller-provider {:defaultScrollPosition "start"}
+             [sut/message-scroller {}
+              [sut/message-scroller-viewport {:preserveScrollOnPrepend true}
+               [sut/message-scroller-content {:class "gap-3 p-4"}
+                (for [n @messages]
+                  ^{:key n}
+                  [sut/message-scroller-item {:message-id (str "history-" n)
+                                              :class
+                                              "transition-opacity duration-300 starting:opacity-0"}
+                   [:div {:class "rounded-lg bg-muted p-3 text-sm"}
+                    (str "Message " n)]])]]]]]]))))]))
+
+(defstory
+ MessageScrollerStreaming
+ "Auto-scroll follows a growing live response only while the reader remains at the end."
+ []
+ (r/as-element
+  [(fn []
+     (let [text (r/atom "Generating")
+           timer (atom nil)]
+       (r/create-class
+        {:component-did-mount
+         (fn [_]
+           (let [chunks
+                 [" a" " concise" " release" " summary" " from" " current" " build" " results."]
+                 index (atom 0)]
+             (reset! timer (js/setInterval #(if (< @index (count chunks))
+                                              (do (swap! text str (nth chunks @index))
+                                                  (swap! index inc))
+                                              (js/clearInterval @timer))
+                                           400))))
+         :component-will-unmount #(when @timer (js/clearInterval @timer))
+         :reagent-render
+         (fn []
+           (helpers/wrap-component
+            [:div {:class "h-72 max-w-xl rounded-lg border"}
+             [sut/message-scroller-provider {:autoScroll true}
+              [sut/message-scroller {}
+               [sut/message-scroller-viewport {}
+                [sut/message-scroller-content {:class "gap-3 p-4"}
+                 [sut/message-scroller-item {:message-id "question"
+                                             :scroll-anchor true}
+                  [:div {:class "rounded-lg bg-primary p-3 text-sm text-primary-foreground"}
+                   "Summarize this release."]]
+                 [sut/message-scroller-item {:message-id "stream"}
+                  [:div {:class "rounded-lg bg-muted p-3 text-sm"}
+                   @text]]]]
+               [sut/message-scroller-button {}]]]]))})))]))
+
+(defstory
+ MessageScrollerCommandsAndVisibility
+ "Public hooks drive commands and expose current anchor, visible IDs, and scrollable edges."
+ []
+ (r/as-element (helpers/wrap-component
+                [:div {:class "h-80 max-w-xl rounded-lg border"}
+                 [sut/message-scroller-provider {:scrollMargin 16}
+                  [sut/message-scroller {}
+                   [sut/message-scroller-viewport {:aria-label "Command demo transcript"}
+                    [sut/message-scroller-content {:class "gap-3 p-4"}
+                     (for [n (range 1 9)]
+                       ^{:key n}
+                       [sut/message-scroller-item {:message-id (str "turn-" n)
+                                                   :scroll-anchor (odd? n)}
+                        [:div {:class "rounded-lg bg-muted p-4 text-sm"}
+                         (str "Turn " n)]])]]
+                   [sut/message-scroller-button {}]
+                   [sut/message-scroller-button {:direction "start"}]]
+                  [scroller-controls]]])))

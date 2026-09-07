@@ -96,6 +96,52 @@
                [sut/pagination-next {:href "#"}]]]])))
 
 
+(defstory
+ PaginationTableControls
+ "Compact pagination controls for a table footer.
+
+  Pattern: shadcn/ui Data Table pagination
+
+  Keep row-count controls beside page navigation without changing Pagination's built-in visible labels."
+ []
+ (r/as-element
+  [(fn []
+     (let [rows-per-page (r/atom "10")]
+       (fn []
+         (helpers/wrap-component
+          [:div {:class "flex flex-wrap items-center justify-between gap-3 rounded-md border p-3"}
+           [:div {:class "flex items-center gap-2 text-sm"}
+            [:label {:for "rows-per-page"
+                     :class "font-medium"}
+             "Rows per page"]
+            [:select {:id "rows-per-page"
+                      :class "h-8 rounded-md border bg-background px-2"
+                      :value @rows-per-page
+                      :on-change #(reset! rows-per-page (.. % -target -value))}
+             (for [size ["10" "20" "50"]]
+               ^{:key size}
+               [:option {:value size}
+                size])]]
+           [:span {:class "text-sm text-muted-foreground"}
+            (str "1–" @rows-per-page " of 96 rows")]
+           [sut/pagination {:class "mx-0 w-auto"}
+            [sut/pagination-content {}
+             [sut/pagination-item {}
+              [sut/pagination-previous {:href "#previous"
+                                        :class "h-8"}]]
+             [sut/pagination-item {}
+              [sut/pagination-link {:href "#page-1"
+                                    :is-active true
+                                    :size :sm}
+               "1"]]
+             [sut/pagination-item {}
+              [sut/pagination-link {:href "#page-2"
+                                    :size :sm}
+               "2"]]
+             [sut/pagination-item {}
+              [sut/pagination-next {:href "#next"
+                                    :class "h-8"}]]]]]))))]))
+
 (defstory PaginationPlayground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:class ""}

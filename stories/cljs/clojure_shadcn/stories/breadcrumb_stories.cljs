@@ -146,6 +146,55 @@
         "Breadcrumb"]]]]])))
 
 (defstory
+ BreadcrumbCustomLink
+ "Breadcrumb link composed into a consumer-owned anchor.
+
+  Radix primitive: @radix-ui/react-slot
+
+  Use :as-child when a router link or custom anchor must retain its own props."
+ []
+ (r/as-element (helpers/wrap-component [:div {:class "p-6"}
+                                        [sut/breadcrumb {}
+                                         [sut/breadcrumb-list {}
+                                          [sut/breadcrumb-item {}
+                                           [sut/breadcrumb-link {:as-child true}
+                                            [:a {:href "#guides"
+                                                 :data-router-link true}
+                                             "Guides"]]]
+                                          [sut/breadcrumb-separator {}]
+                                          [sut/breadcrumb-item {}
+                                           [sut/breadcrumb-page {}
+                                            "Routing"]]]]])))
+
+(defstory
+ BreadcrumbRtl
+ "Right-to-left breadcrumb with a custom directional separator.
+
+  Pattern: WAI-ARIA Breadcrumb
+
+  Set direction on the navigation region and choose a separator that follows reading order."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "p-6"
+          :dir "rtl"}
+    [sut/breadcrumb {}
+     [sut/breadcrumb-list {}
+      [sut/breadcrumb-item {}
+       [sut/breadcrumb-link {:href "#"}
+        "الرئيسية"]]
+      [sut/breadcrumb-separator {}
+       [:span "‹"]]
+      [sut/breadcrumb-item {}
+       [sut/breadcrumb-link {:href "#"}
+        "المكونات"]]
+      [sut/breadcrumb-separator {}
+       [:span "‹"]]
+      [sut/breadcrumb-item {}
+       [sut/breadcrumb-page {}
+        "مسار التنقل"]]]]])))
+
+(defstory
  BreadcrumbSimple
  "Simple breadcrumb link example.
 

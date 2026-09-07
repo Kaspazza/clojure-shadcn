@@ -264,17 +264,120 @@
        "⚠️ Important Notes"]
       [:ul {:class "text-xs text-muted-foreground space-y-1 list-disc pl-4"}
        [:li
-        "Sidebar behavior depends on provider/root composition; keep sidebar-provider at layout root."]
+        "There is no sidebar-provider in this API. The consumer owns :open?, :is-mobile, and :on-open-change and passes the same state to triggers and menu tooltips."]
        [:li
-        "Use :collapsible and :variant together intentionally—they affect both layout and interaction patterns."]
+        "sidebar-trigger and sidebar-rail do not discover a root context; wire their :on-click callbacks explicitly."]
        [:li
-        "For mobile flows, test with :is-mobile true and off-canvas variants to avoid inaccessible navigation states."]]]
+        "Mobile rendering delegates to Sheet only when :is-mobile is true and :collapsible is not \"none\". The consumer remains responsible for viewport detection and focus-testing the complete layout."]]]
      [:div {:class "border rounded-lg p-4 bg-muted/50"}
       [:h4 {:class "text-sm font-semibold mb-2"}
        "Usage Example"]
       [:pre {:class "text-xs overflow-x-auto"}
        [:code
-        "[sidebar-provider {}\n [sidebar {:variant :inset}\n  [sidebar-header {}]\n  [sidebar-content {}]\n  [sidebar-footer {}]]\n [sidebar-inset {} [:main {:class \"p-4\"} \"Content\"]]]"]]]]])))
+        "[:div {:class \"flex min-h-svh\"}\n [sidebar {:open? open? :is-mobile mobile? :on-open-change set-open! :variant \"inset\"}\n  [sidebar-header {} ...]\n  [sidebar-content {} ...]\n  [sidebar-rail {:on-click toggle!}]]\n [sidebar-inset {}\n  [sidebar-trigger {:on-click toggle!}]\n  [:section {:class \"p-4\"} \"Content\"]]]"]]]]])))
+
+(defn application-sidebar
+  []
+  (let [open? (r/atom true)
+        mobile? (r/atom false)
+        toggle! #(swap! open? not)]
+    (fn []
+      (helpers/wrap-component
+       [:div {:class "flex min-h-[680px] w-full overflow-hidden rounded-xl border"}
+        [sut/sidebar {:open? @open?
+                      :is-mobile @mobile?
+                      :on-open-change #(reset! open? %)
+                      :variant "inset"
+                      :collapsible "icon"}
+         [sut/sidebar-header {}
+          [sut/sidebar-menu {}
+           [sut/sidebar-menu-item {}
+            [sut/sidebar-menu-button {:as-child true
+                                      :size :lg}
+             [:a {:href "#workspace"}
+              [:> Kanban]
+              [:span "Northstar"]]]]]
+          [sut/sidebar-input {:placeholder "Search projects"
+                              :aria-label "Search projects"}]]
+         [sut/sidebar-separator {}]
+         [sut/sidebar-content {}
+          [sut/sidebar-group {}
+           [sut/sidebar-group-label {}
+            "Platform"]
+           [sut/sidebar-group-action {:aria-label "Add project"}
+            "+"]
+           [sut/sidebar-group-content {}
+            [sut/sidebar-menu {}
+             [sut/sidebar-menu-item {}
+              [sut/sidebar-menu-button {:as-child true
+                                        :is-active? true
+                                        :tooltip "Dashboard"
+                                        :collapsed? (not @open?)
+                                        :is-mobile @mobile?}
+               [:a {:href "#dashboard"}
+                [:> Kanban]
+                [:span "Dashboard"]]]]
+             [sut/sidebar-menu-item {}
+              [sut/sidebar-menu-button {:as-child true
+                                        :tooltip "Projects"
+                                        :collapsed? (not @open?)
+                                        :is-mobile @mobile?}
+               [:a {:href "#projects"}
+                [:> Folder]
+                [:span "Projects"]]]
+              [sut/sidebar-menu-action {:aria-label "Project actions"
+                                        :show-on-hover? true}
+               "⋯"]
+              [sut/sidebar-menu-badge {}
+               "8"]]
+             [sut/sidebar-menu-item {}
+              [sut/sidebar-menu-button {:as-child true
+                                        :tooltip "Team"
+                                        :collapsed? (not @open?)
+                                        :is-mobile @mobile?}
+               [:a {:href "#team"}
+                [:> Users]
+                [:span "Team"]]]]]]]
+          [sut/sidebar-group {}
+           [sut/sidebar-group-label {}
+            "Loading example"]
+           [sut/sidebar-menu {}
+            [sut/sidebar-menu-skeleton {:show-icon? true
+                                        :width "62%"}]
+            [sut/sidebar-menu-skeleton {:show-icon? true
+                                        :width "78%"}]]]]]
+        [sut/sidebar-footer {}
+         [sut/sidebar-menu {}
+          [sut/sidebar-menu-item {}
+           [sut/sidebar-menu-button {:as-child true
+                                     :tooltip "Settings"
+                                     :collapsed? (not @open?)
+                                     :is-mobile @mobile?}
+            [:a {:href "#settings"}
+             [:> Settings]
+             [:span "Settings"]]]]]]
+        [sut/sidebar-rail {:on-click toggle!}]]
+       [sut/sidebar-inset {}
+        [:header {:class "flex h-14 items-center gap-3 border-b px-4"}
+         [sut/sidebar-trigger {:on-click toggle!}]
+         [:h1 {:class "font-semibold"}
+          "Project overview"]
+         [:button {:type "button"
+                   :class "ml-auto rounded-md border px-3 py-1 text-sm"
+                   :on-click #(do (reset! mobile? (not @mobile?)) (reset! open? true))}
+          (if @mobile? "Use desktop layout" "Preview mobile sheet")]]
+        [:section {:class "grid flex-1 place-items-center p-8 text-center"}
+         [:div
+          [:h2 {:class "text-2xl font-semibold"}
+           "Application content"]
+          [:p {:class "mt-2 text-muted-foreground"}
+           "Controlled state is shared explicitly; no hidden provider coordinates this layout."]]]]))))
+
+(defstory
+ ApplicationLayout
+ "Application-scale, providerless controlled layout covering inset, trigger, rail, groups, actions, Slot links, collapse tooltips, skeletons, header/footer, and an explicit mobile-sheet preview."
+ []
+ (r/as-element [application-sidebar]))
 
 (defstory
  SidebarDemo

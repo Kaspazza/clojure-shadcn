@@ -143,19 +143,78 @@
                              :code "def greet(name):\n    return f'Hello {name}'"}]]])))
 
 (defstory CodeBlockCopyAction
-          "Code block with copy action row.
-  Demonstrates how to build simple copy UI."
+          "Functional copy action with visible success feedback."
+          []
+          (r/as-element
+           [(fn []
+              (let [code "{:db/id :user/email\n :db/valueType :db.type/string}"
+                    copied? (r/atom false)]
+                (fn []
+                  (helpers/wrap-component
+                   [:div {:class "p-6 max-w-xl"}
+                    [sut/code-block {}
+                     [sut/code-block-group {:class
+                                            "px-4 py-2 border-b flex items-center justify-between"}
+                      [:span {:class "text-xs text-muted-foreground"}
+                       "schema.edn"]
+                      (button/button {:size :sm
+                                      :variant :ghost
+                                      :on-click #(-> (.writeText js/navigator.clipboard code)
+                                                     (.then (fn [] (reset! copied? true))))}
+                                     (if @copied? "Copied" "Copy"))]
+                     [sut/code-block-code {:language "clojure"
+                                           :code code}]]]))))]))
+
+(defstory CodeBlockEmptyAndFallback
+          "Empty input and nil fallback remain stable while highlighting resolves."
+          []
+          (r/as-element (helpers/wrap-component [:div {:class "grid gap-4 p-6"}
+                                                 [:div
+                                                  [:p {:class "mb-2 text-xs text-muted-foreground"}
+                                                   "Empty string"]
+                                                  [sut/code-block
+                                                   [sut/code-block-code {:code ""
+                                                                         :language "clojure"}]]]
+                                                 [:div
+                                                  [:p {:class "mb-2 text-xs text-muted-foreground"}
+                                                   "Nil code"]
+                                                  [sut/code-block
+                                                   [sut/code-block-code {:code nil
+                                                                         :language "clojure"}]]]])))
+
+(defstory CodeBlockInvalidLanguage
+          "An invalid Shiki language demonstrates the component's raw-code fallback."
           []
           (r/as-element (helpers/wrap-component
                          [:div {:class "p-6 max-w-xl"}
-                          [sut/code-block {}
-                           [sut/code-block-group
-                            {:class "px-4 py-2 border-b flex items-center justify-between"}
-                            [:span {:class "text-xs text-muted-foreground"}
-                             "schema.edn"]
-                            (button/button {:size :sm
-                                            :variant :ghost}
-                                           "Copy")]
+                          [sut/code-block
                            [sut/code-block-code
-                            {:language "clojure"
-                             :code "{:db/id :user/email\n :db/valueType :db.type/string}"}]]])))
+                            {:language "not-a-real-language"
+                             :code "This remains readable when highlighting fails."}]]])))
+
+(defstory CodeBlockRapidAsyncChanges
+          "Rapidly replace code, language, and theme to exercise stale async-result protection."
+          []
+          (r/as-element
+           [(fn []
+              (let [selection (r/atom 0)
+                    samples [{:language "clojure"
+                              :theme "github-light"
+                              :code "(def answer 42)"}
+                             {:language "javascript"
+                              :theme "github-dark"
+                              :code "const answer = 42"}
+                             {:language "python"
+                              :theme "github-light"
+                              :code "answer = 42"}]]
+                (fn []
+                  (let [sample (nth samples @selection)]
+                    (helpers/wrap-component
+                     [:div {:class "p-6 max-w-xl space-y-3"}
+                      (button/button {:on-click #(dotimes [i 9]
+                                                   (js/setTimeout (fn []
+                                                                    (reset! selection
+                                                                      (mod i (count samples))))
+                                                                  (* i 35)))}
+                                     "Run rapid changes")
+                      [sut/code-block [sut/code-block-code sample]]])))))]))

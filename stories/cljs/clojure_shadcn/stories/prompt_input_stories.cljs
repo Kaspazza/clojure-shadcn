@@ -1,7 +1,7 @@
 (ns clojure-shadcn.stories.prompt-input-stories
   "Storybook stories for the Prompt Input component. Ported from mateuszmazurczak.portfolio.ui-components.prompt_input."
   (:require
-   ["lucide-react"                            :refer [Mic Paperclip Send]]
+   ["lucide-react"                            :refer [Mic Paperclip Send X]]
    [clojure-shadcn.stories.helpers            :as helpers]
    [clojure-shadcn.ui.components.button       :as button]
    [clojure-shadcn.ui.components.prompt-input :as sut]
@@ -248,4 +248,81 @@
                                                          :on-value-change #(reset! value %)}
                                        [sut/prompt-input-textarea {:placeholder (:placeholder
                                                                                  args)}]]]))))
-\n
+
+(defstory
+ PromptInputSubmitLifecycle
+ "A consumer-owned submit lifecycle clears the prompt, disables controls, then restores editing."
+ []
+ (r/as-element
+  [(fn []
+     (let [value (r/atom "")
+           submitting? (r/atom false)
+           status (r/atom "Ready")
+           submit! (fn []
+                     (when (seq @value)
+                       (reset! submitting? true)
+                       (reset! status (str "Sending: " @value))
+                       (reset! value "")
+                       (js/setTimeout #(do (reset! submitting? false) (reset! status "Sent"))
+                                      900)))]
+       (fn []
+         (helpers/wrap-component
+          [:div {:class "max-w-xl space-y-2"}
+           [sut/prompt-input {:value @value
+                              :is-loading? @submitting?
+                              :on-value-change #(reset! value %)
+                              :on-submit submit!}
+            [sut/prompt-input-textarea {:placeholder "Ask about the project…"}]
+            [sut/prompt-input-actions {:class "justify-end"}
+             [sut/prompt-input-action {:tooltip "Send message"}
+              (button/button {:variant :default
+                              :size :icon
+                              :aria-label "Send message"
+                              :disabled (or @submitting? (empty? @value))
+                              :on-click submit!}
+                             [:> Send])]]]
+           [:p {:class "text-xs text-muted-foreground"
+                :aria-live "polite"}
+            @status]]))))]))
+
+(defstory
+ PromptInputFileSelection
+ "Native file selection and removal composed with the current prompt-input action API."
+ []
+ (r/as-element
+  [(fn []
+     (let [value (r/atom "")
+           file-name (r/atom nil)
+           input-node (atom nil)]
+       (fn []
+         (helpers/wrap-component
+          [:div {:class "max-w-xl space-y-3"}
+           [:input {:ref #(reset! input-node %)
+                    :class "sr-only"
+                    :type "file"
+                    :on-change #(reset! file-name (some-> %
+                                                          .-target
+                                                          .-files
+                                                          (aget 0)
+                                                          .-name))}]
+           [sut/prompt-input {:value @value
+                              :on-value-change #(reset! value %)}
+            [sut/prompt-input-textarea {:placeholder "Add a note…"}]
+            [sut/prompt-input-actions {}
+             [sut/prompt-input-action {:tooltip "Choose file"}
+              (button/button {:variant :outline
+                              :size :icon
+                              :aria-label "Choose file"
+                              :on-click #(when-let [node @input-node] (.click ^js node))}
+                             [:> Paperclip])]]]
+           (when @file-name
+             [:div {:class "flex items-center justify-between rounded-md border px-3 py-2 text-sm"}
+              [:span {:class "truncate"}
+               @file-name]
+              (button/button {:variant :ghost
+                              :size :icon-xs
+                              :aria-label (str "Remove " @file-name)
+                              :on-click #(do (when-let [node @input-node]
+                                               (set! (.-value ^js node) ""))
+                                             (reset! file-name nil))}
+                             [:> X])])]))))]))

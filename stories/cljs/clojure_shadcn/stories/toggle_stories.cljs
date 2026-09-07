@@ -1,6 +1,6 @@
 (ns clojure-shadcn.stories.toggle-stories
   (:require
-   ["lucide-react"                      :refer [Bold Italic]]
+   ["lucide-react"                      :refer [Bold Italic Underline]]
    [clojure-shadcn.stories.helpers      :as helpers]
    [clojure-shadcn.ui.components.toggle :as sut]
    [reagent.core                        :as r])
@@ -104,3 +104,38 @@
                    size (update :size keyword)))}
  [args]
  (r/as-element (helpers/wrap-component [sut/toggle (select-keys args [:variant :size]) "Toggle"])))
+
+(defstory ToggleIconAndText
+          "Toggle with a visible icon and label. Based on shadcn/ui Toggle — With Text."
+          []
+          (r/as-element (helpers/wrap-component [:div {:class "flex gap-3 p-6"}
+                                                 [sut/toggle {:aria-label "Toggle bold"}
+                                                  [:> Bold]
+                                                  "Bold"]
+                                                 [sut/toggle {:variant :outline
+                                                              :aria-label "Toggle underline"}
+                                                  [:> Underline]
+                                                  "Underline"]])))
+
+(defstory ToggleOutlineDisabled
+          "Enabled and disabled outline states. Based on shadcn/ui Toggle — Outline and Disabled."
+          []
+          (r/as-element (helpers/wrap-component [:div {:class "flex gap-3 p-6"}
+                                                 [sut/toggle {:variant :outline
+                                                              :default-pressed true}
+                                                  [:> Bold]
+                                                  "Bold"]
+                                                 [sut/toggle {:variant :outline
+                                                              :disabled true}
+                                                  [:> Italic]
+                                                  "Italic"]])))
+
+(defstory ToggleRtl
+          "Right-to-left icon and text toggle. Based on shadcn/ui Toggle — RTL."
+          []
+          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
+                                                       :class "p-6"}
+                                                 [sut/toggle {:variant :outline
+                                                              :aria-label "تبديل الخط العريض"}
+                                                  [:> Bold]
+                                                  "عريض"]])))

@@ -90,17 +90,25 @@
 
 (def chart-data
   #js [#js {:month "January"
-            :desktop 186}
+            :desktop 186
+            :mobile 80}
        #js {:month "February"
-            :desktop 305}
+            :desktop 305
+            :mobile 200}
        #js {:month "March"
-            :desktop 237}
+            :desktop 237
+            :mobile 120}
        #js {:month "April"
-            :desktop 273}])
+            :desktop 273
+            :mobile 190}])
 
 (def chart-config
   {:desktop {:label "Desktop"
-             :color "var(--chart-1)"}})
+             :theme {:light "hsl(221 83% 53%)"
+                     :dark "hsl(217 91% 60%)"}}
+   :mobile {:label "Mobile"
+            :theme {:light "hsl(160 84% 39%)"
+                    :dark "hsl(158 64% 52%)"}}})
 
 (defstory
  BarChart
@@ -134,7 +142,119 @@
        recharts/Bar
        {:dataKey "desktop"
         :fill "var(--color-desktop)"
+        :radius 4}]
+      [:>
+       recharts/Bar
+       {:dataKey "mobile"
+        :fill "var(--color-mobile)"
         :radius 4}]]]])))
+
+(defn interactive-series-chart
+  []
+  (let [series (r/atom :desktop)]
+    (fn []
+      (helpers/wrap-component
+       [:div {:class "w-[560px] rounded-xl border bg-card p-6"}
+        [:div {:class "mb-4 flex items-center justify-between gap-4"}
+         [:h3 {:class "font-semibold"}
+          "Visitors by device"]
+         [:div {:class "flex rounded-md border p-1"
+                :aria-label "Visible series"}
+          (for [candidate [:desktop :mobile]]
+            ^{:key candidate}
+            [:button {:type "button"
+                      :class (str "rounded px-3 py-1 text-sm "
+                                  (when (= candidate @series) "bg-primary text-primary-foreground"))
+                      :aria-pressed (= candidate @series)
+                      :on-click #(reset! series candidate)}
+             (get-in chart-config [candidate :label])])]]
+        [sut/chart-container {:id "interactive-series"
+                              :config chart-config
+                              :class "min-h-[260px] w-full"}
+         [:>
+          recharts/BarChart
+          {:data chart-data
+           :accessibilityLayer true}
+          [:> recharts/CartesianGrid {:vertical false}]
+          [:>
+           recharts/XAxis
+           {:dataKey "month"
+            :tickLine false
+            :axisLine false}]
+          [:>
+           sut/chart-tooltip
+           {:cursor false
+            :content (fn [props] (r/as-element [sut/tooltip-content props]))}]
+          [:>
+           recharts/Bar
+           {:dataKey (name @series)
+            :fill (str "var(--color-" (name @series) ")")
+            :radius 4}]]]]))))
+
+(defstory InteractiveSeries
+          "Consumer-controlled series selector; the chart remains a standard Recharts composition."
+          []
+          (r/as-element [interactive-series-chart]))
+
+(defstory
+ TooltipIndicators
+ "Supported tooltip indicator matrix. Hover each chart to compare dot, line, dashed, and hidden indicators."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "grid w-[760px] grid-cols-2 gap-4"}
+    (for [[indicator hide?] [[:dot false] [:line false] [:dashed false] [:dot true]]]
+      ^{:key (str indicator hide?)}
+      [:div {:class "rounded-lg border bg-card p-3"}
+       [:p {:class "mb-2 text-sm font-medium"}
+        (if hide? "Hidden indicator" (str (name indicator) " indicator"))]
+       [sut/chart-container {:config chart-config
+                             :class "min-h-[180px] w-full"}
+        [:>
+         recharts/BarChart
+         {:data chart-data}
+         [:>
+          sut/chart-tooltip
+          {:content (fn [props]
+                      (aset props "indicator" indicator)
+                      (aset props "hide-label?" false)
+                      (aset props "hide-indicator?" hide?)
+                      (r/as-element [sut/tooltip-content props]))}]
+         [:>
+          recharts/Bar
+          {:dataKey "desktop"
+           :fill "var(--color-desktop)"}]]]])])))
+
+(defstory
+ ThemedRtlChart
+ "Theme-aware series colors and an honestly expressed RTL chart: DOM direction plus a reversed categorical axis."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:dir "rtl"
+          :class "dark w-[560px] rounded-xl border bg-background p-6 text-foreground"}
+    [:h3 {:class "mb-4 font-semibold"}
+     "الزيارات حسب الجهاز"]
+    [sut/chart-container {:config chart-config
+                          :class "min-h-[260px] w-full"}
+     [:>
+      recharts/BarChart
+      {:data chart-data
+       :accessibilityLayer true}
+      [:>
+       recharts/XAxis
+       {:dataKey "month"
+        :reversed true
+        :tickLine false
+        :axisLine false}]
+      [:>
+       recharts/Bar
+       {:dataKey "desktop"
+        :fill "var(--color-desktop)"}]
+      [:>
+       recharts/Bar
+       {:dataKey "mobile"
+        :fill "var(--color-mobile)"}]]]])))
 
 (defstory
  ChartPlayground

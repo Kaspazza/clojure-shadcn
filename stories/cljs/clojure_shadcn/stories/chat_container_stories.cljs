@@ -133,3 +133,56 @@
                                          [:div {:class
                                                 "border-t px-4 py-2 text-xs text-muted-foreground"}
                                           "Typing indicator goes here."]]])))
+
+(defstory
+ ChatContainerAppend
+ "Append messages while pinned to the live edge; scroll up to inspect history without being pulled back."
+ []
+ (r/as-element
+  [(fn []
+     (let [messages (r/atom ["Project created" "Repository connected" "First build passed"])]
+       (fn []
+         (helpers/wrap-component [:div {:class "max-w-xl space-y-3"}
+                                  [sut/chat-container-root {:class "h-56 rounded-md border"}
+                                   [sut/chat-container-content {:class "space-y-3 p-4"}
+                                    (for [[index message] (map-indexed vector @messages)]
+                                      ^{:key index}
+                                      [:div {:class "rounded-lg bg-muted px-3 py-2 text-sm"}
+                                       message])
+                                    [sut/chat-container-scroll-anchor {}]]]
+                                  [:button {:type "button"
+                                            :class "rounded-md border px-3 py-2 text-sm"
+                                            :on-click #(swap! messages conj
+                                                         (str "Update " (inc (count @messages))))}
+                                   "Append message"]]))))]))
+
+(defstory
+ ChatContainerStreaming
+ "A growing final message demonstrates resize-follow behavior during token streaming."
+ []
+ (r/as-element
+  [(fn []
+     (let [chunks
+           ["Streaming" " keeps" " the" " current" " response" " visible" " as" " it" " grows."]
+           text (r/atom (first chunks))
+           timer (atom nil)]
+       (r/create-class
+        {:component-did-mount (fn [_]
+                                (let [index (atom 1)]
+                                  (reset! timer (js/setInterval (fn []
+                                                                  (if (< @index (count chunks))
+                                                                    (do (swap! text str
+                                                                          (nth chunks @index))
+                                                                        (swap! index inc))
+                                                                    (js/clearInterval @timer)))
+                                                                450))))
+         :component-will-unmount #(when @timer (js/clearInterval @timer))
+         :reagent-render (fn []
+                           (helpers/wrap-component
+                            [sut/chat-container-root {:class "h-56 max-w-xl rounded-md border"}
+                             [sut/chat-container-content {:class "space-y-3 p-4"}
+                              [:div {:class "rounded-lg bg-muted px-3 py-2 text-sm"}
+                               "Summarize the release status."]
+                              [:div {:class "rounded-lg border px-3 py-2 text-sm"}
+                               @text]
+                              [sut/chat-container-scroll-anchor {}]]]))})))]))

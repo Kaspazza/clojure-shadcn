@@ -9,16 +9,17 @@
   #js {:title "Components/Date Picker"
        :parameters #js {:layout "padded"}})
 
-(defdoc Installation
-        []
-        (r/as-element
-         [helpers/installation-scene
-          {:description
-           "Reusable native date-picker composition; a project extra rather than a registry module."
-           :npm-install "npm install lucide-react"
-           :source-code (embed-source "clojure-shadcn.ui.components.date_picker")
-           :namespace-path "src/cljs/clojure_shadcn/ui/components/date_picker.cljs"
-           :filename "date_picker.cljs"}]))
+(defdoc
+ Installation
+ []
+ (r/as-element
+  [helpers/installation-scene
+   {:description
+    "Local project component wrapping a native HTML date input. It is not the shadcn/ui Popover + Calendar recipe and does not require React DayPicker."
+    :npm-install "npm install lucide-react"
+    :source-code (embed-source "clojure-shadcn.ui.components.date_picker")
+    :namespace-path "src/cljs/clojure_shadcn/ui/components/date_picker.cljs"
+    :filename "date_picker.cljs"}]))
 
 (defstory
  ApiReference
@@ -29,7 +30,7 @@
     [helpers/api-component-card
      {:component-name "date-picker"
       :description
-      "Accessible composition over the platform date input. It preserves native form, validation, locale, and keyboard behavior."
+      "Local facade over the platform <input type=date>, with a decorative calendar icon. It preserves browser-native form, validation, locale, picker UI, and keyboard behavior; it is not derived from the shadcn/ui Date Picker example."
       :props [{:name ":value / :default-value"
                :type "ISO date string"
                :default nil

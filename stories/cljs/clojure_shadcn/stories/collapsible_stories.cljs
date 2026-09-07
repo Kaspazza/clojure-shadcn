@@ -240,3 +240,101 @@
                                                   "Toggle details"]
                                                  [sut/collapsible-content {:class "pt-2 text-sm"}
                                                   "This content can be expanded."]])))
+
+(defstory
+ CollapsibleSummaryDetails
+ "Summary / details — compares the native HTML disclosure with the styled Radix Collapsible pattern."
+ []
+ (r/as-element (helpers/wrap-component
+                [:div {:class "grid max-w-2xl gap-6 md:grid-cols-2"}
+                 [:details {:class "rounded-lg border p-4"}
+                  [:summary {:class "cursor-pointer font-medium"}
+                   "Native details"]
+                  [:p {:class "pt-3 text-sm text-muted-foreground"}
+                   "Use when native disclosure semantics and minimal styling are sufficient."]]
+                 [sut/collapsible {:default-open true
+                                   :class "rounded-lg border p-4"}
+                  [sut/collapsible-trigger {:class
+                                            "flex w-full items-center justify-between font-medium"}
+                   "Radix Collapsible"
+                   [:span {:aria-hidden true}
+                    "+"]]
+                  [sut/collapsible-content {:class "pt-3 text-sm text-muted-foreground"}
+                   "Use when controlled state and Radix behavior are required."]]])))
+
+(defstory
+ CollapsibleSettings
+ "Settings — state-aware rows expose their current open/closed label and data-state styling."
+ []
+ (r/as-element
+  [(fn []
+     (let [open? (r/atom true)]
+       (fn []
+         (helpers/wrap-component
+          [sut/collapsible {:open @open?
+                            :on-open-change #(reset! open? %)
+                            :class "w-full max-w-md rounded-lg border"}
+           [sut/collapsible-trigger {:as-child true}
+            (button/button {:variant :ghost
+                            :class "w-full justify-between rounded-b-none px-4"}
+                           "Advanced settings"
+                           [:span {:class "text-xs text-muted-foreground"}
+                            (if @open? "Hide" "Show")])]
+           [sut/collapsible-content {:class "space-y-3 border-t p-4 text-sm"}
+            [:label {:class "flex items-center justify-between gap-4"}
+             "Usage analytics"
+             [:input {:type "checkbox"
+                      :default-checked true}]]
+            [:label {:class "flex items-center justify-between gap-4"}
+             "Beta updates"
+             [:input {:type "checkbox"}]]]]))))]))
+
+(defn- file-tree-node
+  [{:keys [name children]}]
+  (if (seq children)
+    [sut/collapsible {:default-open true
+                      :class "ps-3"}
+     [sut/collapsible-trigger {:class "flex w-full items-center gap-2 py-1 text-sm hover:underline"}
+      [:span {:aria-hidden true}
+       "▾"]
+      [:span name]]
+     [sut/collapsible-content {:class "border-s ps-3"}
+      (doall (map-indexed (fn [index child] ^{:key (str name "-" index)} [file-tree-node child])
+                          children))]]
+    [:div {:class "flex items-center gap-2 py-1 ps-8 text-sm text-muted-foreground"}
+     [:span {:aria-hidden true}
+      "•"]
+     name]))
+
+(defstory CollapsibleFileTree
+          "Recursive file tree — nested Collapsible nodes model independently expandable folders."
+          []
+          (r/as-element (helpers/wrap-component
+                         [:div {:class "w-full max-w-sm rounded-lg border p-3 font-mono"}
+                          [file-tree-node {:name "src"
+                                           :children [{:name "components"
+                                                       :children [{:name "button.cljs"}
+                                                                  {:name "card.cljs"}]}
+                                                      {:name "stories"
+                                                       :children [{:name "accordion_stories.cljs"}]}
+                                                      {:name "core.cljs"}]}]])))
+
+(defstory CollapsibleRTL
+          "RTL — state-aware Basic disclosure and alignment in right-to-left content."
+          []
+          (r/as-element [(fn []
+                           (let [open? (r/atom false)]
+                             (fn []
+                               (helpers/wrap-component
+                                [:div {:dir "rtl"
+                                       :class "max-w-md text-right"}
+                                 [sut/collapsible {:open @open?
+                                                   :on-open-change #(reset! open? %)}
+                                  [sut/collapsible-trigger {:as-child true}
+                                   (button/button {:variant :outline
+                                                   :class "w-full justify-between"}
+                                                  "تفاصيل إضافية"
+                                                  (if @open? "إخفاء" "عرض"))]
+                                  [sut/collapsible-content {:class
+                                                            "pt-3 text-sm text-muted-foreground"}
+                                   "يمكن إظهار هذا المحتوى أو إخفاؤه دون مغادرة الصفحة."]]]))))]))

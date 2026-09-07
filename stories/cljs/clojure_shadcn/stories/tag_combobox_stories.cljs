@@ -57,7 +57,15 @@
                {:name ":class"
                 :type "string"
                 :default nil
-                :description "Additional Tailwind classes merged into the trigger button."}]}]
+                :description "Additional Tailwind classes merged into the trigger button."}
+               {:name ":search-placeholder / :empty-text / :mobile-title"
+                :type "string"
+                :default "localized English defaults"
+                :description "Consumer-supplied search, empty-state, and mobile-sheet text."}
+               {:name ":create-label"
+                :type "string | function"
+                :default "function"
+                :description "Creation copy or (fn [candidate] label)."}]}]
      [:div {:class "border rounded-lg p-4 bg-amber-500/10 border-amber-500/30 mb-4"}
       [:h4 {:class "text-sm font-semibold mb-2"}
        "⚠️ Important Notes"]
@@ -77,7 +85,7 @@
 (defstory
  BasicTagSelection
  "Basic tag combobox with predefined tags.
-   
+
    Select from existing tags or create new ones.
    Responsive: uses popover on desktop, sheet on mobile."
  []
@@ -153,7 +161,7 @@
 (defstory
  MultipleTagComboboxes
  "Multiple independent tag comboboxes.
-   
+
    Shows how to use multiple tag comboboxes with different tag sets."
  []
  (r/as-element
@@ -200,7 +208,7 @@
 (defstory
  TagCreationWorkflow
  "Demonstrates the tag creation workflow.
-   
+
    Type a tag name that doesn't exist and see the 'Create' option appear."
  []
  (r/as-element
@@ -264,4 +272,44 @@
                                                                    (fn [tag]
                                                                      (swap! tags conj tag)
                                                                      (reset! selected tag)))}]]))))
-\n
+
+(defstory
+ TagComboboxLocalizedSearch
+ "Localized consumer copy covers search, empty results, creation, and the responsive sheet title."
+ []
+ (r/as-element
+  [(fn []
+     (let [tags (r/atom ["Projekt" "Pilne" "Do przeglądu"])
+           selected (r/atom nil)]
+       (fn []
+         (helpers/wrap-component
+          [:div {:class "max-w-sm space-y-3 p-6"}
+           [:p {:class "text-sm text-muted-foreground"}
+            "Search for ‘brak’ to see the localized empty state and create action."]
+           [sut/tag-combobox {:tags @tags
+                              :selected-tag @selected
+                              :placeholder "+ Dodaj tag"
+                              :search-placeholder "Szukaj tagów…"
+                              :empty-text "Nie znaleziono tagów."
+                              :mobile-title "Wybierz lub utwórz tag"
+                              :create-label #(str "Utwórz „" % "”")
+                              :on-select #(reset! selected %)
+                              :on-create
+                              (fn [tag] (swap! tags conj tag) (reset! selected tag))}]]))))]))
+
+(defstory
+ TagComboboxCaseHandling
+ "Input tags are trimmed and deduplicated case-insensitively while preserving the first display spelling."
+ []
+ (r/as-element
+  [(fn []
+     (let [selected (r/atom nil)]
+       (fn []
+         (helpers/wrap-component
+          [:div {:class "max-w-sm space-y-3 p-6"}
+           [sut/tag-combobox {:tags ["Bug" " bug " "BUG" "Feature"]
+                              :selected-tag @selected
+                              :on-select #(reset! selected %)
+                              :on-create #(reset! selected %)}]
+           [:p {:class "text-xs text-muted-foreground"}
+            "Open the list: Bug appears once; searching ‘bug’ does not offer a duplicate create action."]]))))]))

@@ -126,3 +126,26 @@
      "Center"]
     [sut/toggle-group-item {:value "right"}
      "Right"]])))
+
+(defstory ToggleGroupSizes
+          "Static supported size variants only. Based on shadcn/ui Toggle Group — Size."
+          []
+          (r/as-element
+           (helpers/wrap-component
+            [:div {:class "flex flex-col items-start gap-4 p-6"}
+             (for [[size label] [[:sm "Small"] [:default "Default"] [:lg "Large"]]]
+               ^{:key (name size)}
+               [sut/toggle-group {:type "single"
+                                  :default-value "center"
+                                  :variant :outline
+                                  :size size
+                                  :aria-label (str label " alignment")}
+                [sut/toggle-group-item {:value "left"
+                                        :aria-label "Align left"}
+                 [:> AlignLeft]]
+                [sut/toggle-group-item {:value "center"
+                                        :aria-label "Align center"}
+                 [:> AlignCenter]]
+                [sut/toggle-group-item {:value "right"
+                                        :aria-label "Align right"}
+                 [:> AlignRight]]])])))

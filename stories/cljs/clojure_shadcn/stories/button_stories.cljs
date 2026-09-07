@@ -1,7 +1,7 @@
 (ns clojure-shadcn.stories.button-stories
   "Storybook stories for the Button component. Ported from mateuszmazurczak.portfolio.ui-components.button."
   (:require
-   ["lucide-react"                       :refer [ArrowUpRight GitBranch]]
+   ["lucide-react"                       :refer [ArrowLeft ArrowRight ArrowUpRight GitBranch]]
    [clojure-shadcn.stories.helpers       :as helpers]
    [clojure-shadcn.ui.components.button  :as button]
    [clojure-shadcn.ui.components.spinner :as spinner]
@@ -278,3 +278,51 @@
                                         (button/button {:size :xs
                                                         :variant :secondary}
                                                        "Compact action")])))
+
+(defstory ButtonIconSizeMatrix
+          "All supported square icon sizes. Based on shadcn/ui Button — Icon Size."
+          []
+          (r/as-element (helpers/wrap-component [:div {:class "flex items-center gap-3 p-6"}
+                                                 (for [[size label] [[:icon-xs "Extra-small"]
+                                                                     [:icon-sm "Small"]
+                                                                     [:icon "Default"]
+                                                                     [:icon-lg "Large"]]]
+                                                   ^{:key (name size)}
+                                                   (button/button {:variant :outline
+                                                                   :size size
+                                                                   :aria-label
+                                                                   (str label " external link")}
+                                                                  [:> ArrowUpRight]))])))
+
+(defstory
+ ButtonLoadingPlacements
+ "Leading, trailing, and icon-only loading states across supported variants. Based on shadcn/ui Button — Spinner."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "flex flex-wrap items-center gap-3 p-6"}
+    (button/button {:disabled true}
+                   [spinner/spinner {}]
+                   "Saving")
+    (button/button {:variant :secondary
+                    :disabled true}
+                   "Publishing"
+                   [spinner/spinner {}])
+    (button/button {:variant :outline
+                    :disabled true}
+                   [spinner/spinner {}]
+                   "Loading")
+    (button/button {:variant :ghost
+                    :size :icon
+                    :disabled true
+                    :aria-label "Loading"}
+                   [spinner/spinner {}])])))
+
+(defstory ButtonRtl
+          "Bidirectional icon placement. Based on shadcn/ui Button — RTL."
+          []
+          (r/as-element (helpers/wrap-component
+                         [:div {:dir "rtl"
+                                :class "flex items-center gap-3 p-6"}
+                          (button/button {} [:> ArrowRight] "التالي")
+                          (button/button {:variant :outline} "السابق" [:> ArrowLeft])])))

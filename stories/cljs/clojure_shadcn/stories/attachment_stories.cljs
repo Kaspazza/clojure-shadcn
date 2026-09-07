@@ -90,3 +90,63 @@
               [sut/attachment-actions {}
                [sut/attachment-action {:aria-label "Remove"}
                 [:> X]]]]])))
+
+(defstory
+ AttachmentImageStateMatrix
+ "Image attachments across every supported lifecycle state."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "grid gap-4 sm:grid-cols-2 lg:grid-cols-5"}
+    (for [state [:idle :uploading :processing :error :done]]
+      ^{:key state}
+      [sut/attachment {:state state
+                       :orientation :vertical}
+       [sut/attachment-media {:variant :image}
+        [:img {:src
+               "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=160&h=160&fit=crop"
+               :alt "Mountain landscape"}]]
+       [sut/attachment-content {}
+        [sut/attachment-title {}
+         "landscape.jpg"]
+        [sut/attachment-description {}
+         (name state)]]
+       [sut/attachment-actions {}
+        [sut/attachment-action {:aria-label "Remove landscape.jpg"}
+         [:> X]]]])])))
+
+(defstory AttachmentOverflowGroup
+          "A horizontally scrollable attachment group for narrow layouts and long filenames."
+          []
+          (r/as-element (helpers/wrap-component [sut/attachment-group {:class "max-w-md"
+                                                                       :aria-label "Project files"}
+                                                 (for [index (range 1 8)]
+                                                   ^{:key index}
+                                                   [sut/attachment {:size :sm}
+                                                    [sut/attachment-media {}
+                                                     [:> FileText]]
+                                                    [sut/attachment-content {}
+                                                     [sut/attachment-title {}
+                                                      (str "quarterly-report-final-" index ".pdf")]
+                                                     [sut/attachment-description {}
+                                                      "2.4 MB"]]])])))
+
+(defstory
+ AttachmentFullCardTrigger
+ "The overlay trigger makes the full card openable while actions remain independently clickable."
+ []
+ (r/as-element (helpers/wrap-component
+                [sut/attachment {}
+                 [sut/attachment-trigger {:aria-label "Open project brief"
+                                          :on-click #(js/console.log "open project brief")}]
+                 [sut/attachment-media {}
+                  [:> FileText]]
+                 [sut/attachment-content {}
+                  [sut/attachment-title {}
+                   "project-brief.pdf"]
+                  [sut/attachment-description {}
+                   "Click anywhere to open"]]
+                 [sut/attachment-actions {}
+                  [sut/attachment-action {:aria-label "Remove project brief"
+                                          :on-click #(js/console.log "remove project brief")}
+                   [:> X]]]])))

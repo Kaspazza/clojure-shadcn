@@ -86,3 +86,33 @@
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "w-[420px] p-6"}
                                                  [sut/slider (assoc args :aria-label "Value")]])))
+
+(defstory SliderThreeThumb
+          "Three-point range. Based on shadcn/ui Slider — Multiple Thumbs."
+          []
+          (r/as-element (helpers/wrap-component [:div {:class "w-[420px] p-6"}
+                                                 [sut/slider {:default-value [20 50 80]
+                                                              :min 0
+                                                              :max 100
+                                                              :thumb-labels ["Low threshold"
+                                                                             "Target"
+                                                                             "High threshold"]}]])))
+
+(defstory SliderVertical
+          "Vertical orientation with an explicit height. Based on shadcn/ui Slider — Vertical."
+          []
+          (r/as-element (helpers/wrap-component [:div {:class "flex h-64 justify-center p-6"}
+                                                 [sut/slider {:orientation :vertical
+                                                              :default-value [35]
+                                                              :aria-label "Volume"}]])))
+
+(defstory SliderRtl
+          "Right-to-left range direction. Based on shadcn/ui Slider — RTL."
+          []
+          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
+                                                       :class "w-[420px] space-y-3 p-6"}
+                                                 [:p {:class "text-sm"}
+                                                  "مستوى الصوت"]
+                                                 [sut/slider {:dir "rtl"
+                                                              :default-value [65]
+                                                              :aria-label "مستوى الصوت"}]])))

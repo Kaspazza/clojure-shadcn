@@ -273,9 +273,7 @@
                        :disabled {:control {:type "boolean"}}
                        :required {:control {:type "boolean"}}}
            :parameters {:controls {:exclude ["value" "on-value-change" "class"]}}
-           :decode-args (fn [{:keys [orientation]
-                              :as args}]
-                          (update args :orientation keyword))}
+           :decode-args (fn [args] (update args :orientation keyword))}
           [args]
           (r/as-element (helpers/wrap-component
                          [:div {:class "p-6"}
@@ -291,3 +289,64 @@
                                                    :value "comfortable"}]
                             [label/label {:html-for "density-comfortable-playground"}
                              "Comfortable"]]]])))
+
+(defstory RadioOptionDescriptions
+          "Each option has supporting copy. Based on shadcn/ui Radio Group — Description."
+          []
+          (r/as-element
+           (helpers/wrap-component
+            [:div {:class "max-w-md p-6"}
+             [sut/radio-group {:default-value "email"
+                               :aria-label "Notification channel"}
+              (for [[value title description] [["email" "Email" "Receive a daily summary."]
+                                               ["push" "Push" "Receive alerts on this device."]]]
+                ^{:key value}
+                [field/field {:orientation :horizontal}
+                 [sut/radio-group-item {:id (str "channel-" value)
+                                        :value value
+                                        :aria-describedby (str "channel-" value "-description")}]
+                 [field/field-content {}
+                  [field/field-label {:html-for (str "channel-" value)}
+                   title]
+                  [field/field-description {:id (str "channel-" value "-description")}
+                   description]]])]])))
+
+(defstory RadioChoiceCards
+          "Whole-row selectable choice cards. Based on shadcn/ui Radio Group — Cards."
+          []
+          (r/as-element
+           (helpers/wrap-component [:div {:class "max-w-md p-6"}
+                                    [sut/radio-group {:default-value "pro"
+                                                      :aria-label "Plan"}
+                                     (for [[value title description]
+                                           [["starter" "Starter" "For personal projects."]
+                                            ["pro" "Pro" "For growing teams."]]]
+                                       ^{:key value}
+                                       [field/field-label {}
+                                        [field/field {:orientation :horizontal}
+                                         [sut/radio-group-item {:id (str "card-" value)
+                                                                :value value}]
+                                         [field/field-content {}
+                                          [field/field-title {}
+                                           title]
+                                          [field/field-description {}
+                                           description]]]])]])))
+
+(defstory RadioGroupRtl
+          "Right-to-left radio choices. Based on shadcn/ui Radio Group — RTL."
+          []
+          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
+                                                       :class "max-w-md p-6"}
+                                                 [sut/radio-group {:default-value "daily"
+                                                                   :dir "rtl"
+                                                                   :aria-label "تكرار الملخص"}
+                                                  [:div {:class "flex items-center gap-3"}
+                                                   [sut/radio-group-item {:id "digest-daily"
+                                                                          :value "daily"}]
+                                                   [label/label {:html-for "digest-daily"}
+                                                    "يومي"]]
+                                                  [:div {:class "flex items-center gap-3"}
+                                                   [sut/radio-group-item {:id "digest-weekly"
+                                                                          :value "weekly"}]
+                                                   [label/label {:html-for "digest-weekly"}
+                                                    "أسبوعي"]]]])))

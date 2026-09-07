@@ -249,6 +249,23 @@
                     "Popover content can be lightweight explanatory text or callouts."]]]])))
 
 
+(defstory PopoverAlignments
+          "Start, center, and end alignment using the existing content primitive."
+          []
+          (r/as-element (helpers/wrap-component
+                         [:div {:class "flex flex-wrap items-start justify-center gap-16 p-16"}
+                          (for [align ["start" "center" "end"]]
+                            ^{:key align}
+                            [sut/popover {}
+                             [sut/popover-trigger {:as-child true}
+                              (button/button {:variant :outline
+                                              :aria-label (str "Open " align " aligned popover")}
+                                             align)]
+                             [sut/popover-content {:align align
+                                                   :class "w-56"}
+                              [:p {:class "text-sm"}
+                               (str "Content aligned to the " align " edge.")]]])])))
+
 (defstory PopoverPlayground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:side "bottom"}

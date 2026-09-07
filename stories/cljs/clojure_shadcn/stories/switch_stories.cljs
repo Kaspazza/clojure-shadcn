@@ -184,3 +184,53 @@
           (r/as-element (helpers/wrap-component [:div {:class "p-6"}
                                                  [sut/switch
                                                   (assoc args :id "switch-playground")]])))
+
+(defstory SwitchChoiceCards
+          "Whole-card switch choices. Based on shadcn/ui Switch — Cards."
+          []
+          (r/as-element (helpers/wrap-component
+                         [:div {:class "max-w-md space-y-3 p-6"}
+                          (for [[id title description checked?]
+                                [["switch-wifi" "Wi-Fi" "Connect automatically." true]
+                                 ["switch-roaming" "Data roaming" "May incur charges." false]]]
+                            ^{:key id}
+                            [field/field-label {}
+                             [field/field {:orientation :horizontal}
+                              [field/field-content {}
+                               [field/field-title {}
+                                title]
+                               [field/field-description {}
+                                description]]
+                              [sut/switch {:id id
+                                           :default-checked checked?
+                                           :aria-label title}]]])])))
+
+(defstory
+ SwitchFieldDisabled
+ "Disabled Field row without unsupported size props. Based on shadcn/ui Switch — Field Disabled."
+ []
+ (r/as-element (helpers/wrap-component [:div {:class "max-w-md p-6"}
+                                        [field/field {:orientation :horizontal
+                                                      :data-disabled true}
+                                         [field/field-content {}
+                                          [field/field-label {:html-for "switch-disabled-field"}
+                                           "Automatic updates"]
+                                          [field/field-description {}
+                                           "Required by your administrator."]]
+                                         [sut/switch {:id "switch-disabled-field"
+                                                      :disabled true
+                                                      :checked true}]]])))
+
+(defstory SwitchRtl
+          "Right-to-left switch field. Based on shadcn/ui Switch — RTL."
+          []
+          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
+                                                       :class "max-w-md p-6"}
+                                                 [field/field {:orientation :horizontal}
+                                                  [field/field-content {}
+                                                   [field/field-label {:html-for "switch-rtl"}
+                                                    "الوضع الداكن"]
+                                                   [field/field-description {}
+                                                    "استخدم مظهرًا داكنًا."]]
+                                                  [sut/switch {:id "switch-rtl"
+                                                               :dir "rtl"}]]])))

@@ -113,6 +113,75 @@
                     [sut/navigation-menu-link {:href "#"}
                      label]])]]]]])))
 
+(defstory
+ NavigationMenuCustomLink
+ "Navigation Menu link composed into a consumer-owned anchor.
+
+  Radix primitive: @radix-ui/react-navigation-menu
+
+  Use :as-child for router links or anchors that own navigation props."
+ []
+ (r/as-element (helpers/wrap-component [sut/navigation-menu {}
+                                        [sut/navigation-menu-list {}
+                                         [sut/navigation-menu-item {}
+                                          [sut/navigation-menu-link {:as-child true}
+                                           [:a {:href "#guides"
+                                                :class (sut/navigation-menu-trigger-style)
+                                                :data-router-link true}
+                                            "Guides"]]]
+                                         [sut/navigation-menu-item {}
+                                          [sut/navigation-menu-link
+                                           {:href "#api"
+                                            :class (sut/navigation-menu-trigger-style)}
+                                           "API reference"]]]])))
+
+(defstory
+ NavigationMenuIndicator
+ "Optional Radix active-trigger indicator with the public wrapper.
+
+  Radix primitive: @radix-ui/react-navigation-menu
+
+  Place one indicator under the list when the design needs a viewport pointer."
+ []
+ (r/as-element (helpers/wrap-component [sut/navigation-menu {}
+                                        [sut/navigation-menu-list {}
+                                         [sut/navigation-menu-item {}
+                                          [sut/navigation-menu-trigger {}
+                                           "Resources"]
+                                          [sut/navigation-menu-content {}
+                                           [sut/navigation-menu-link {:href "#guides"}
+                                            "Guides"]]]
+                                         [sut/navigation-menu-indicator {}]]])))
+
+(defstory
+ NavigationMenuRtl
+ "Right-to-left Radix Navigation Menu.
+
+  Radix primitive: @radix-ui/react-navigation-menu
+
+  Pass :dir to Root so focus movement and content motion follow reading direction."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:dir "rtl"}
+    [sut/navigation-menu {:dir "rtl"}
+     [sut/navigation-menu-list {}
+      [sut/navigation-menu-item {}
+       [sut/navigation-menu-trigger {}
+        "البدء"]
+       [sut/navigation-menu-content {:dir "rtl"}
+        [:ul {:class "grid w-72 gap-2 p-2"}
+         [:li
+          [sut/navigation-menu-link {:href "#intro"}
+           "مقدمة"]]
+         [:li
+          [sut/navigation-menu-link {:href "#install"}
+           "التثبيت"]]]]]
+      [sut/navigation-menu-item {}
+       [sut/navigation-menu-link {:href "#docs"
+                                  :class (sut/navigation-menu-trigger-style)}
+        "التوثيق"]]]]])))
+
 (defstory NavigationMenuWithoutViewport
           []
           (r/as-element (helpers/wrap-component [sut/navigation-menu {:viewport false}

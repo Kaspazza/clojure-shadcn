@@ -47,7 +47,16 @@
          :type "map"
          :default nil
          :description
-         "Custom react-markdown component overrides. Defaults to built-in code/pre renderers."}]}]
+         "Complete react-markdown component map. Supplying it replaces (rather than merges with) built-in code/pre renderers."}
+        {:name ":remark-plugins"
+         :type "vector"
+         :default "[remarkGfm remarkBreaks]"
+         :description
+         "Complete remark plugin list; override to replace the enabled GFM and hard-break defaults."}
+        {:name ":rehype-plugins"
+         :type "vector"
+         :default nil
+         :description "Optional rehype plugins forwarded to react-markdown."}]}]
      [:div {:class "border rounded-lg p-4 bg-amber-500/10 border-amber-500/30 mb-4"}
       [:h4 {:class "text-sm font-semibold mb-2"}
        "⚠️ Important Notes"]
@@ -100,12 +109,50 @@
 
 (defstory
  MarkdownCombined
- "Full markdown example combining features.
-  Demonstrates headings, lists, links, and code together."
+ "Full enabled-GFM example: table, task list, strikethrough, autolink, hard break, and code."
  []
  (r/as-element
   (helpers/wrap-component
-   [:div {:class "p-6 max-w-xl"}
+   [:div {:class "p-6 max-w-2xl"}
     [sut/markdown
      {:children
-      "# Release Notes\n\n**Highlights**\n- Added realtime sync\n- Improved exports\n\nLearn more in the [changelog](https://example.com).\n\n```clojure\n(defn sync! [state]\n  (assoc state :status :ok))\n```"}]])))
+      "# Release Notes\n\n- [x] Tables\n- [ ] Shipping\n\n| Feature | State |\n| --- | --- |\n| GFM | **ready** |\n\n~~Removed~~ and https://example.com\nfirst line\nsecond line\n\n```clojure\n(defn ready? [] true)\n```"}]])))
+
+(defstory MarkdownPluginOverride
+          "A supported :components override replaces the default anchor renderer."
+          []
+          (r/as-element (helpers/wrap-component
+                         [:div {:class "p-6 max-w-xl"}
+                          [sut/markdown
+                           {:children "Read the [component guide](https://example.com)."
+                            :components
+                            {:a (fn [props]
+                                  (r/as-element
+                                   [:a {:href (.-href props)
+                                        :class
+                                        "rounded bg-primary px-2 py-1 text-primary-foreground"}
+                                    (.-children props)]))}}]])))
+
+(defstory MarkdownRawHtmlSafety
+          "Raw HTML is escaped by default because no raw-HTML rehype plugin is enabled."
+          []
+          (r/as-element
+           (helpers/wrap-component
+            [:div {:class "p-6 max-w-xl"}
+             [sut/markdown
+              {:children
+               "Before <script>alert('unsafe')</script> <b>not interpreted</b> after"}]])))
+
+(defstory MarkdownLineBreaks
+          "Single newlines become hard line breaks through the default remark-breaks plugin."
+          []
+          (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-xl"}
+                                                 [sut/markdown
+                                                  {:children "Line one\nLine two\nLine three"}]])))
+
+(defstory MarkdownSingleLineFence
+          "A one-line fenced block exercises fence detection without relying on multiline content."
+          []
+          (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-xl"}
+                                                 [sut/markdown {:children
+                                                                "```clojure\n(+ 1 2)\n```"}]])))

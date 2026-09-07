@@ -26,7 +26,7 @@
    [helpers/api-component-card
     {:component-name "combobox"
      :description
-     "Controlled single-select combining Popover and Command. It manages only open state; the caller owns selection. The trigger exposes role=combobox and aria-expanded, while Command provides filtering and keyboard navigation."
+     "Local data-driven facade over Popover and Command. Unlike shadcn/ui's compositional example, it accepts item maps and controlled selection rather than arbitrary Command children. It manages only open state; the caller owns selection. Filtering uses each item's text label and keywords, even when custom renderers display richer content."
      :props
      [{:name ":items"
        :type "vector of maps, required"
@@ -111,4 +111,57 @@
                 (helpers/wrap-component
                  [sut/combobox
                   (assoc args :items options :value @value :on-value-change #(reset! value %))]))))
-\n
+
+(def rich-options
+  [{:value {:id 1
+            :slug "clojure"}
+    :label "Clojure"
+    :kind "JVM"
+    :status "Stable"
+    :keywords ["lisp" "jvm"]}
+   {:value {:id 2
+            :slug "cljs"}
+    :label "ClojureScript"
+    :kind "Browser"
+    :status "Stable"
+    :keywords ["javascript" "browser"]}
+   {:value {:id 3
+            :slug "bb"}
+    :label "Babashka"
+    :kind "CLI"
+    :status "Fast"
+    :keywords ["scripts" "native"]}])
+
+(defn- rich-combobox-example
+  []
+  (r/with-let
+   [value (r/atom nil)]
+   [:div {:class "grid gap-3"}
+    [sut/combobox
+     {:items rich-options
+      :value @value
+      :on-value-change #(reset! value %)
+      :placeholder "Choose a runtime…"
+      :clearable? true
+      :item-render (fn [{:keys [label kind status]}]
+                     [:div {:class "flex min-w-0 flex-1 items-center justify-between gap-4"}
+                      [:span
+                       [:span {:class "font-medium"}
+                        label]
+                       [:span {:class "ml-2 text-xs text-muted-foreground"}
+                        kind]]
+                      [:span {:class "rounded bg-muted px-1.5 py-0.5 text-xs"}
+                       status]])
+      :value-render (fn [{:keys [label kind]}] [:span {:class "flex items-center gap-2"}
+                                                [:strong label]
+                                                [:span {:class "text-xs text-muted-foreground"}
+                                                 kind]])}]
+    [:p {:class "text-xs text-muted-foreground"}
+     "Selected object: "
+     (if @value (pr-str @value) "none")]]))
+
+(defstory
+ RichObjectRendering
+ "Rich result and selected-value rendering while preserving complete object values and label/keyword filtering."
+ []
+ (r/as-element (helpers/wrap-component [rich-combobox-example])))

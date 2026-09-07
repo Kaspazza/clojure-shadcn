@@ -267,6 +267,33 @@
         (button/button {:variant :outline} "Close")]]]]])))
 
 
+(defstory SheetRtl
+          "Right-to-left sheet content with localized labels and explicit close action."
+          []
+          (r/as-element
+           (helpers/wrap-component
+            [:div {:class "p-6"
+                   :dir "rtl"}
+             [sut/sheet {}
+              [sut/sheet-trigger {:as-child true}
+               (button/button {:variant :outline} "فتح الملف الشخصي")]
+              [sut/sheet-content {:side :right
+                                  :dir "rtl"}
+               [sut/sheet-header {:class "text-right sm:text-right"}
+                [sut/sheet-title {}
+                 "تعديل الملف الشخصي"]
+                [sut/sheet-description {}
+                 "حدّث بياناتك ثم احفظ التغييرات."]]
+               [:div {:class "grid flex-1 gap-3 px-4"}
+                [label/label {:html-for "sheet-rtl-name"}
+                 "الاسم"]
+                [input/input {:id "sheet-rtl-name"
+                              :default-value "ليلى أحمد"}]]
+               [sut/sheet-footer {:class "sm:justify-start sm:space-x-0 sm:gap-2"}
+                [sut/sheet-close {:as-child true}
+                 (button/button {:variant :outline} "إلغاء")]
+                (button/button {} "حفظ التغييرات")]]]])))
+
 (defstory SheetPlayground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:side "right"}

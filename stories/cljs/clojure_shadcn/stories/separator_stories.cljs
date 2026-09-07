@@ -122,3 +122,70 @@
                                         [:p {:class "text-sm"}
                                          "Muted divider"]
                                         [sut/separator {:class "bg-muted h-[2px]"}]])))
+
+(defstory
+ SeparatorResponsiveMenu
+ "Responsive menu — upstream navigation recipe switches between horizontal and vertical dividers."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:nav
+    {:aria-label "Account sections"
+     :class
+     "flex flex-col rounded-lg border p-4 sm:h-6 sm:flex-row sm:items-center sm:gap-4 sm:border-0 sm:p-0"}
+    [:a {:href "#profile"
+         :class "py-2 text-sm font-medium sm:py-0"}
+     "Profile"]
+    [sut/separator {:class "sm:hidden"}]
+    [sut/separator {:orientation :vertical
+                    :class "hidden sm:block sm:h-full"}]
+    [:a {:href "#billing"
+         :class "py-2 text-sm font-medium sm:py-0"}
+     "Billing"]
+    [sut/separator {:class "sm:hidden"}]
+    [sut/separator {:orientation :vertical
+                    :class "hidden sm:block sm:h-full"}]
+    [:a {:href "#team"
+         :class "py-2 text-sm font-medium sm:py-0"}
+     "Team"]])))
+
+(defstory SeparatorList
+          "List — semantic separators divide related content rows without becoming list items."
+          []
+          (r/as-element
+           (helpers/wrap-component
+            [:div {:class "max-w-md rounded-lg border px-4"}
+             [:div {:class "py-4"}
+              [:p {:class "font-medium"}
+               "Notifications"]
+              [:p {:class "text-sm text-muted-foreground"}
+               "Email and push preferences"]]
+             [sut/separator {:decorative false}]
+             [:div {:class "py-4"}
+              [:p {:class "font-medium"}
+               "Privacy"]
+              [:p {:class "text-sm text-muted-foreground"}
+               "Visibility and data sharing"]]
+             [sut/separator {:decorative false}]
+             [:div {:class "py-4"}
+              [:p {:class "font-medium"}
+               "Security"]
+              [:p {:class "text-sm text-muted-foreground"}
+               "Password and active sessions"]]])))
+
+(defstory SeparatorRTL
+          "RTL — logical spacing and vertical dividers in right-to-left navigation."
+          []
+          (r/as-element (helpers/wrap-component [:nav {:dir "rtl"
+                                                       :aria-label "أقسام الحساب"
+                                                       :class "flex h-6 items-center gap-4 text-sm"}
+                                                 [:a {:href "#profile"}
+                                                  "الملف الشخصي"]
+                                                 [sut/separator {:orientation :vertical
+                                                                 :class "h-full"}]
+                                                 [:a {:href "#billing"}
+                                                  "الفواتير"]
+                                                 [sut/separator {:orientation :vertical
+                                                                 :class "h-full"}]
+                                                 [:a {:href "#team"}
+                                                  "الفريق"]])))

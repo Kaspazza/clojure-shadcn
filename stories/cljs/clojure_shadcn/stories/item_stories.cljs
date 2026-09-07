@@ -2,6 +2,7 @@
   (:require
    ["lucide-react"                      :refer [FileText MoreHorizontal]]
    [clojure-shadcn.stories.helpers      :as helpers]
+   [clojure-shadcn.ui.components.avatar :as avatar]
    [clojure-shadcn.ui.components.button :as button]
    [clojure-shadcn.ui.components.item   :as sut]
    [reagent.core                        :as r])
@@ -101,3 +102,99 @@
                                                    "Quarterly report"]
                                                   [sut/item-description {}
                                                    "PDF · 2.4 MB"]]])))
+
+(defstory
+ ItemPolymorphicLinks
+ "Polymorphic links — upstream navigation items render anchors through :as-child? rather than nesting links."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [sut/item-group {:class "max-w-xl"}
+    [sut/item {:as-child? true
+               :variant :outline}
+     [:a {:href "#documentation"}
+      [sut/item-media {:variant :icon}
+       [:> FileText]]
+      [sut/item-content {}
+       [sut/item-title {}
+        "Documentation"]
+       [sut/item-description {}
+        "Read installation and component guides."]]]]
+    [sut/item {:as-child? true
+               :variant :muted}
+     [:a {:href "#examples"}
+      [sut/item-content {}
+       [sut/item-title {}
+        "Examples"]
+       [sut/item-description {}
+        "Browse complete composition recipes."]]]]])))
+
+(defstory
+ ItemMediaMatrix
+ "Avatar and Image — upstream media recipes shown beside the default icon treatment."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [sut/item-group {:class "max-w-2xl"}
+    [sut/item {:variant :outline}
+     [sut/item-media {}
+      [avatar/avatar {}
+       [avatar/avatar-image {:src "https://github.com/shadcn.png"
+                             :alt "@shadcn"}]
+       [avatar/avatar-fallback {}
+        "CN"]]]
+     [sut/item-content {}
+      [sut/item-title {}
+       "shadcn"]
+      [sut/item-description {}
+       "Updated the component registry."]]]
+    [sut/item-separator {}]
+    [sut/item {:variant :outline}
+     [sut/item-media {:variant :image}
+      [:img
+       {:src
+        "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=200&q=80"
+        :alt "Modern office"
+        :class "size-full object-cover"}]]
+     [sut/item-content {}
+      [sut/item-title {}
+       "Workspace tour"]
+      [sut/item-description {}
+       "See the new collaboration space."]]]])))
+
+(defstory ItemHeader
+          "Header — upstream item header/footer composition for richer list content."
+          []
+          (r/as-element (helpers/wrap-component
+                         [sut/item {:variant :outline
+                                    :class "max-w-xl"}
+                          [sut/item-header {:class "text-xs text-muted-foreground"}
+                           [:span "Release notes"]
+                           [:time {:date-time "2026-03-01"}
+                            "March 1"]]
+                          [sut/item-content {}
+                           [sut/item-title {}
+                            "Version 2.4"]
+                           [sut/item-description {}
+                            "Improved keyboard navigation and logical RTL spacing."]]
+                          [sut/item-footer {:class "text-xs text-muted-foreground"}
+                           "5 minute read"]])))
+
+(defstory ItemRTL
+          "RTL — item media, content, and actions follow logical right-to-left ordering."
+          []
+          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
+                                                       :class "max-w-xl text-right"}
+                                                 [sut/item {:variant :outline}
+                                                  [sut/item-media {:variant :icon}
+                                                   [:> FileText]]
+                                                  [sut/item-content {}
+                                                   [sut/item-title {}
+                                                    "التقرير الفصلي"]
+                                                   [sut/item-description {}
+                                                    "ملف PDF بحجم 2.4 ميجابايت"]]
+                                                  [sut/item-actions {}
+                                                   (button/button {:variant :ghost
+                                                                   :size :icon
+                                                                   :aria-label "المزيد"}
+                                                                  [:> MoreHorizontal])]]])))

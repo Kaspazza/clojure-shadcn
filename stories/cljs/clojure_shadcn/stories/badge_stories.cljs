@@ -198,3 +198,45 @@
                                          [:a {:href "#"
                                               :class "inline-flex items-center gap-1"}
                                           "View status"]]])))
+
+(defstory BadgeIcons
+          "Icons — upstream leading and trailing icon placements across real badge variants."
+          []
+          (r/as-element (helpers/wrap-component [:div {:class "flex flex-wrap items-center gap-2"}
+                                                 [sut/badge {}
+                                                  [:> BadgeCheck {:data-icon "inline-start"}]
+                                                  "Verified"]
+                                                 [sut/badge {:variant :secondary}
+                                                  "Saved"
+                                                  [:> Bookmark {:data-icon "inline-end"}]]
+                                                 [sut/badge {:variant :outline}
+                                                  [:> Bookmark {:data-icon "inline-start"}]
+                                                  "Bookmark"]])))
+
+(defstory
+ BadgeColors
+ "Colors — upstream class-based status colors; these are not additional component variants."
+ []
+ (r/as-element (helpers/wrap-component
+                [:div {:class "flex flex-wrap gap-2"}
+                 [sut/badge {:class "bg-emerald-600 text-white hover:bg-emerald-600/90"}
+                  "Healthy"]
+                 [sut/badge {:class "bg-amber-500 text-black hover:bg-amber-500/90"}
+                  "Pending"]
+                 [sut/badge {:class "bg-sky-600 text-white hover:bg-sky-600/90"}
+                  "In review"]
+                 [sut/badge {:variant :outline
+                             :class "border-violet-500 text-violet-700 dark:text-violet-300"}
+                  "Experimental"]])))
+
+(defstory BadgeRTL
+          "RTL — badges preserve logical icon placement and reading order."
+          []
+          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
+                                                       :class "flex flex-wrap gap-2"}
+                                                 [sut/badge {}
+                                                  [:> BadgeCheck {:data-icon "inline-start"}]
+                                                  "موثّق"]
+                                                 [sut/badge {:variant :secondary}
+                                                  "محفوظ"
+                                                  [:> Bookmark {:data-icon "inline-end"}]]])))

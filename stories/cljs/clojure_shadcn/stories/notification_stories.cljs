@@ -274,16 +274,125 @@
                            "Show Action Toast")])))
 
 (defstory ToastDuration
-          "Toast with custom duration.
-  Use :duration for longer or shorter visibility."
+          "Toast with custom duration. Use :duration for longer or shorter visibility."
           []
           (r/as-element (helpers/wrap-component
                          [:div {:class "p-6 space-y-4"}
                           [sut/toaster]
-                          (button/button {:on-click (fn []
-                                                      (sut/show-toast "Auto closes in 10 seconds"
-                                                                      {:duration 10000}))}
+                          (button/button {:on-click #(sut/show-toast "Auto closes in 10 seconds"
+                                                                     {:duration 10000})}
                                          "Show Long Toast")])))
+
+(defstory
+ NotificationPositions
+ "Trigger every supported Sonner viewport position."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "flex max-w-xl flex-wrap gap-2 p-6"}
+    [sut/toaster]
+    (for [position
+          ["top-left" "top-center" "top-right" "bottom-left" "bottom-center" "bottom-right"]]
+      ^{:key position}
+      [button/button {:variant :outline
+                      :on-click #(sut/show-toast position {:position position})}
+       position])])))
+
+(defstory NotificationAllTypes
+          "Generic, success, info, warning, error, and loading notifications."
+          []
+          (r/as-element (helpers/wrap-component [:div {:class "flex flex-wrap gap-2 p-6"}
+                                                 [sut/toaster {:rich-colors true}]
+                                                 (for [[label notify] [["Default" sut/show-toast]
+                                                                       ["Success" sut/show-success]
+                                                                       ["Info" sut/show-info]
+                                                                       ["Warning" sut/show-warning]
+                                                                       ["Error" sut/show-error]
+                                                                       ["Loading"
+                                                                        sut/show-loading]]]
+                                                   ^{:key label}
+                                                   [button/button {:variant :outline
+                                                                   :on-click #(notify label)}
+                                                    label])])))
+
+(defstory
+ NotificationPromise
+ "Promise notifications transition from loading to success or error using the current show-promise API."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "flex gap-2 p-6"}
+    [sut/toaster]
+    [button/button {:on-click (fn []
+                                (sut/show-promise (js/Promise. (fn [resolve _]
+                                                                 (js/setTimeout #(resolve "done")
+                                                                                1200)))
+                                                  {:loading "Saving…"
+                                                   :success "Saved"
+                                                   :error "Save failed"}))}
+     "Resolve promise"]
+    [button/button {:variant :destructive
+                    :on-click (fn []
+                                (sut/show-promise (js/Promise. (fn [_ reject]
+                                                                 (js/setTimeout #(reject (js/Error.
+                                                                                          "failed"))
+                                                                                1200)))
+                                                  {:loading "Saving…"
+                                                   :success "Saved"
+                                                   :error "Save failed"}))}
+     "Reject promise"]])))
+
+(defstory NotificationLoadingUpdateDismiss
+          "A stable id updates a loading toast in place, while another control dismisses it."
+          []
+          (r/as-element (helpers/wrap-component
+                         [:div {:class "flex gap-2 p-6"}
+                          [sut/toaster]
+                          [button/button {:on-click
+                                          (fn []
+                                            (sut/show-loading "Uploading…" {:id "upload-demo"})
+                                            (js/setTimeout #(sut/show-success "Upload complete"
+                                                                              {:id "upload-demo"})
+                                                           1400))}
+                           "Load then update"]
+                          [button/button {:variant :outline
+                                          :on-click #(sut/dismiss-toast "upload-demo")}
+                           "Dismiss"]])))
+
+(defstory
+ NotificationCancelCustomCallbacksAndConfig
+ "Cancel/action callbacks, custom Hiccup content, lifecycle callbacks, and Toaster configuration."
+ []
+ (r/as-element
+  (r/with-let [event (r/atom "No callback yet")]
+              (helpers/wrap-component
+               [:div {:class "space-y-3 p-6"}
+                [sut/toaster {:position "bottom-center"
+                              :close-button true
+                              :visible-toasts 4}]
+                [:output {:class "block text-sm text-muted-foreground"}
+                 @event]
+                [:div {:class "flex flex-wrap gap-2"}
+                 [button/button {:on-click (fn []
+                                             (sut/show-toast
+                                              "Delete draft?"
+                                              {:action {:label "Delete"
+                                                        :on-click #(reset! event "Action clicked")}
+                                               :cancel {:label "Cancel"
+                                                        :on-click #(reset! event "Cancelled")}
+                                               :on-dismiss #(reset! event "Dismissed")
+                                               :on-auto-close #(reset! event "Auto-closed")}))}
+                  "Callbacks"]
+                 [button/button {:variant :outline
+                                 :on-click #(sut/custom-toast
+                                             [:div {:class "flex items-center gap-2 font-medium"}
+                                              [:span "🚀"]
+                                              [:span "Custom release content"]]
+                                             {:duration 4000})}
+                  "Custom content"]
+                 [button/button {:variant :ghost
+                                 :on-click sut/dismiss-toast}
+                  "Dismiss all"]]]))))
 
 
 (defstory NotificationPlayground

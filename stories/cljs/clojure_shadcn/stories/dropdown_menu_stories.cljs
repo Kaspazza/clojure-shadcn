@@ -1,7 +1,13 @@
 (ns clojure-shadcn.stories.dropdown-menu-stories
   "Storybook stories for the Dropdown Menu component. Ported from mateuszmazurczak.portfolio.ui-components.dropdown_menu."
   (:require
-   ["lucide-react"                             :refer [MoreHorizontal]]
+   ["lucide-react"                             :refer [CircleUser
+                                                       CreditCard
+                                                       LogOut
+                                                       Mail
+                                                       MoreHorizontal
+                                                       Settings
+                                                       UserPlus]]
    [clojure-shadcn.stories.helpers             :as helpers]
    [clojure-shadcn.ui.components.button        :as button]
    [clojure-shadcn.ui.components.dialog        :as dialog]
@@ -375,6 +381,137 @@
        "Log out"
        [sut/dropdown-menu-shortcut {}
         "⇧⌘Q"]]]]])))
+
+(defstory
+ DropdownMenuIcons
+ "Ordinary dropdown actions with decorative Lucide icons.
+
+  Radix primitive: @radix-ui/react-dropdown-menu
+
+  Keep icon meaning paired with visible item text."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [sut/dropdown-menu {}
+    [sut/dropdown-menu-trigger {:as-child true}
+     [button/button {:variant :outline}
+      "Account actions"]]
+    [sut/dropdown-menu-content {:class "w-52"
+                                :align "start"}
+     [sut/dropdown-menu-item {}
+      [:> CircleUser {:aria-hidden true}]
+      "Profile"]
+     [sut/dropdown-menu-item {}
+      [:> CreditCard {:aria-hidden true}]
+      "Billing"]
+     [sut/dropdown-menu-item {}
+      [:> Settings {:aria-hidden true}]
+      "Settings"]
+     [sut/dropdown-menu-separator {}]
+     [sut/dropdown-menu-item {}
+      [:> LogOut {:aria-hidden true}]
+      "Sign out"]]])))
+
+(defstory
+ DropdownMenuAvatar
+ "Avatar-style trigger for an account menu.
+
+  Radix primitive: @radix-ui/react-dropdown-menu
+
+  Give icon-only or image triggers an accessible name."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [sut/dropdown-menu {}
+    [sut/dropdown-menu-trigger {:as-child true}
+     [:button {:type "button"
+               :aria-label "Open user menu"
+               :class "flex size-10 items-center justify-center rounded-full border bg-muted"}
+      [:>
+       CircleUser
+       {:aria-hidden true
+        :class "size-6"}]]]
+    [sut/dropdown-menu-content {:class "w-56"
+                                :align "end"}
+     [sut/dropdown-menu-label {}
+      "Maya Chen"]
+     [sut/dropdown-menu-separator {}]
+     [sut/dropdown-menu-group {}
+      [sut/dropdown-menu-item {}
+       [:> Settings {:aria-hidden true}]
+       "Account settings"]
+      [sut/dropdown-menu-item {}
+       [:> LogOut {:aria-hidden true}]
+       "Sign out"]]]])))
+
+(defstory
+ DropdownMenuTeamActions
+ "Focused composition with labels, groups, icons, shortcuts, and a submenu.
+
+  Radix primitive: @radix-ui/react-dropdown-menu
+
+  Use this structure for a dense but coherent team action menu."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [sut/dropdown-menu {}
+    [sut/dropdown-menu-trigger {:as-child true}
+     [button/button {:variant :outline}
+      "Acme team"]]
+    [sut/dropdown-menu-content {:class "w-60"
+                                :align "start"}
+     [sut/dropdown-menu-label {}
+      "Team workspace"]
+     [sut/dropdown-menu-group {}
+      [sut/dropdown-menu-item {}
+       [:> UserPlus {:aria-hidden true}]
+       "Invite member"
+       [sut/dropdown-menu-shortcut {}
+        "⌘I"]]
+      [sut/dropdown-menu-item {}
+       [:> Mail {:aria-hidden true}]
+       "Email team"]]
+     [sut/dropdown-menu-separator {}]
+     [sut/dropdown-menu-sub {}
+      [sut/dropdown-menu-sub-trigger {}
+       [:> Settings {:aria-hidden true}]
+       "Preferences"]
+      [sut/dropdown-menu-sub-content {}
+       [sut/dropdown-menu-item {}
+        "Notifications"]
+       [sut/dropdown-menu-item {}
+        "Permissions"]]]]])))
+
+(defstory
+ DropdownMenuRtl
+ "Right-to-left Radix Dropdown Menu.
+
+  Radix primitive: @radix-ui/react-dropdown-menu
+
+  Set :dir on Root so keyboard and submenu direction follow the content."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [sut/dropdown-menu {:dir "rtl"}
+    [sut/dropdown-menu-trigger {:as-child true}
+     [button/button {:variant :outline}
+      "فتح القائمة"]]
+    [sut/dropdown-menu-content {:class "w-52"
+                                :align "start"
+                                :dir "rtl"}
+     [sut/dropdown-menu-label {}
+      "الحساب"]
+     [sut/dropdown-menu-group {}
+      [sut/dropdown-menu-item {}
+       [:> CircleUser {:aria-hidden true}]
+       "الملف الشخصي"]
+      [sut/dropdown-menu-item {}
+       [:> Settings {:aria-hidden true}]
+       "الإعدادات"]]
+     [sut/dropdown-menu-separator {}]
+     [sut/dropdown-menu-item {}
+      [:> LogOut {:aria-hidden true}]
+      "تسجيل الخروج"]]])))
 
 (defstory
  DropdownMenuCheckboxes

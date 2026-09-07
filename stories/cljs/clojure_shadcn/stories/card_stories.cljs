@@ -90,3 +90,79 @@
                                                    "You have three unread messages."]]
                                                  [sut/card-content {}
                                                   "Your latest activity appears here."]])))
+
+(defstory
+ CardForm
+ "Form — the fuller upstream card recipe with labeled fields, header action, and footer actions."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [sut/card {:class "w-full max-w-md"}
+    [sut/card-header {}
+     [sut/card-title {}
+      [:h2 "Create project"]]
+     [sut/card-description {}
+      "Deploy a new project to your workspace."]
+     [sut/card-action {}
+      (button/button {:variant :ghost
+                      :size :sm}
+                     "Import")]]
+    [sut/card-content {:class "space-y-4"}
+     [:div {:class "grid gap-2"}
+      [:label {:for "project-name"
+               :class "text-sm font-medium"}
+       "Project name"]
+      [input/input {:id "project-name"
+                    :placeholder "Acme website"}]]
+     [:div {:class "grid gap-2"}
+      [:label {:for "project-domain"
+               :class "text-sm font-medium"}
+       "Domain"]
+      [input/input {:id "project-domain"
+                    :placeholder "acme.example.com"}]]]
+    [sut/card-footer {:class "justify-between border-t"}
+     (button/button {:variant :outline} "Cancel")
+     (button/button {} "Create project")]])))
+
+(defstory
+ CardImage
+ "Image — the upstream media card recipe composes a native image with Card regions."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [sut/card {:class "w-full max-w-sm overflow-hidden pt-0"}
+    [:img
+     {:src
+      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80"
+      :alt "Team collaborating around a table"
+      :class "aspect-video w-full object-cover"}]
+    [sut/card-header {}
+     [sut/card-title {}
+      [:h2 "Design systems workshop"]]
+     [sut/card-description {}
+      "A practical session for building a shared component language."]]
+    [sut/card-footer {}
+     (button/button {:class "w-full"} "Reserve a seat")]])))
+
+(defstory CardRTL
+          "RTL — the full card composition follows right-to-left reading order."
+          []
+          (r/as-element
+           (helpers/wrap-component
+            [:div {:dir "rtl"
+                   :class "text-right"}
+             [sut/card {:class "w-full max-w-md"}
+              [sut/card-header {}
+               [sut/card-title {}
+                [:h2 "إنشاء مشروع"]]
+               [sut/card-description {}
+                "أدخل بيانات المشروع الجديد."]]
+              [sut/card-content {}
+               [:div {:class "grid gap-2"}
+                [:label {:for "rtl-project"
+                         :class "text-sm font-medium"}
+                 "اسم المشروع"]
+                [input/input {:id "rtl-project"
+                              :placeholder "موقع الشركة"}]]]
+              [sut/card-footer {:class "justify-end border-t"}
+               (button/button {} "إنشاء")]]])))

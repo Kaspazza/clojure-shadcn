@@ -1,13 +1,19 @@
 (ns clojure-shadcn.stories.empty-stories
   "Storybook stories for the Empty State component. Ported from mateuszmazurczak.portfolio.ui-components.empty."
   (:require
-   ["lucide-react"                      :refer
-                                        [ArrowUpRight Bell Bookmark Heart Inbox Plus RefreshCcw]]
-   [clojure-shadcn.stories.helpers      :as helpers]
-   [clojure-shadcn.ui.components.avatar :as avatar]
-   [clojure-shadcn.ui.components.button :as button]
-   [clojure-shadcn.ui.components.empty  :as sut]
-   [reagent.core                        :as r])
+   ["lucide-react"                           :refer [ArrowUpRight
+                                                     Bell
+                                                     Bookmark
+                                                     Heart
+                                                     Inbox
+                                                     Plus
+                                                     RefreshCcw]]
+   [clojure-shadcn.stories.helpers           :as helpers]
+   [clojure-shadcn.ui.components.avatar      :as avatar]
+   [clojure-shadcn.ui.components.button      :as button]
+   [clojure-shadcn.ui.components.empty       :as sut]
+   [clojure-shadcn.ui.components.input-group :as input-group]
+   [reagent.core                             :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -297,3 +303,69 @@
        "Invite your team to collaborate on this project."]]
      [sut/empty-content {}
       (button/button {:size :sm} [:> Plus] "Invite Members")]]])))
+
+(defstory EmptyCanonicalActions
+          "Canonical actions — upstream primary, secondary, and inline-link action arrangements."
+          []
+          (r/as-element
+           (helpers/wrap-component
+            [:div {:class "grid gap-8 lg:grid-cols-2"}
+             [sut/empty {:class "border"}
+              [sut/empty-header {}
+               [sut/empty-media {:variant :icon}
+                [:> Inbox]]
+               [sut/empty-title {}
+                "No projects yet"]
+               [sut/empty-description {}
+                "Create a project or import one from another workspace."]]
+              [sut/empty-content {:class "flex-row"}
+               (button/button {} [:> Plus] "Create project")
+               (button/button {:variant :outline} "Import")]]
+             [sut/empty {:class "border"}
+              [sut/empty-header {}
+               [sut/empty-title {}
+                "Nothing saved"]
+               [sut/empty-description {}
+                "Bookmarks you save will appear here. "
+                [:a {:href "#learn"}
+                 "Learn how bookmarks work"]]]
+              [sut/empty-content {}
+               (button/button {:variant :outline} [:> ArrowUpRight] "Browse articles")]]])))
+
+(defstory EmptyInputGroup
+          "Input Group — upstream empty-state recovery pattern for joining a workspace by code."
+          []
+          (r/as-element (helpers/wrap-component
+                         [sut/empty {:class "max-w-xl border"}
+                          [sut/empty-header {}
+                           [sut/empty-media {:variant :icon}
+                            [:> Inbox]]
+                           [sut/empty-title {}
+                            "Join a workspace"]
+                           [sut/empty-description {}
+                            "Enter an invitation code to find your team."]]
+                          [sut/empty-content {:class "w-full max-w-sm"}
+                           [input-group/input-group {}
+                            [input-group/input-group-input {:aria-label "Invitation code"
+                                                            :placeholder "Invitation code"}]
+                            [input-group/input-group-addon {:align :inline-end}
+                             [input-group/input-group-button {}
+                              "Join"]]]]])))
+
+(defstory EmptyRTL
+          "RTL — canonical empty state with logical action ordering."
+          []
+          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
+                                                       :class "text-right"}
+                                                 [sut/empty {:class "border"}
+                                                  [sut/empty-header {}
+                                                   [sut/empty-media {:variant :icon}
+                                                    [:> Inbox]]
+                                                   [sut/empty-title {}
+                                                    "لا توجد مشاريع"]
+                                                   [sut/empty-description {}
+                                                    "أنشئ مشروعك الأول للبدء."]]
+                                                  [sut/empty-content {:class "flex-row"}
+                                                   (button/button {} [:> Plus] "إنشاء مشروع")
+                                                   (button/button {:variant :outline}
+                                                                  "استيراد")]]])))

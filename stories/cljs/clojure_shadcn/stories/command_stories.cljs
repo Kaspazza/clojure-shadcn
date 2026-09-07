@@ -259,34 +259,113 @@
   Useful for global search triggered from a button or shortcut."
  []
  (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6 space-y-3"}
-    [:p {:class "text-muted-foreground text-sm"}
-     "Command dialog rendered in an open state for showcase."]
-    [sut/command-dialog {:open true
-                         :title "Quick Actions"}
-     [sut/command-input {:placeholder "Type a command or search..."}]
-     [sut/command-list {}
-      [sut/command-empty {}
-       "No results found."]
-      [sut/command-group {:heading "Suggestions"}
-       [sut/command-item {}
-        [:> Calendar]
-        [:span "Calendar"]]
-       [sut/command-item {}
-        [:> Smile]
-        [:span "Search Emoji"]]
-       [sut/command-item {}
-        [:> CreditCard]
-        [:span "Calculator"]]]
-      [sut/command-separator {}]
-      [sut/command-group {:heading "Settings"}
-       [sut/command-item {}
-        [:> User]
-        [:span "Profile"]]
-       [sut/command-item {}
-        [:> Settings]
-        [:span "Settings"]]]]]])))
+  [(fn []
+     (let [open? (r/atom false)]
+       (fn []
+         (helpers/wrap-component
+          [:div {:class "p-6 space-y-3"}
+           [:button {:type "button"
+                     :class "rounded-md border px-4 py-2 text-sm font-medium"
+                     :on-click #(reset! open? true)}
+            "Open command palette"]
+           [sut/command-dialog {:open @open?
+                                :onOpenChange #(reset! open? %)
+                                :title "Quick Actions"
+                                :description "Search grouped workspace and account actions."}
+            [sut/command-input {:placeholder "Type a command or search..."}]
+            [sut/command-list {}
+             [sut/command-empty {}
+              "No results found."]
+             [sut/command-group {:heading "Workspace"}
+              [sut/command-item {:value "calendar"
+                                 :onSelect #(reset! open? false)}
+               [:> Calendar {:aria-hidden true}]
+               [:span "Open calendar"]
+               [sut/command-shortcut {}
+                "⌘C"]]
+              [sut/command-item {:value "calculator"
+                                 :onSelect #(reset! open? false)}
+               [:> CreditCard {:aria-hidden true}]
+               [:span "Open billing"]]]
+             [sut/command-separator {}]
+             [sut/command-group {:heading "Account"}
+              [sut/command-item {:value "profile"
+                                 :onSelect #(reset! open? false)}
+               [:> User {:aria-hidden true}]
+               [:span "Profile"]]
+              [sut/command-item {:value "settings"
+                                 :onSelect #(reset! open? false)}
+               [:> Settings {:aria-hidden true}]
+               [:span "Settings"]]]]]]))))]))
+
+(defstory
+ CommandShortcuts
+ "Command items with visual keyboard shortcut hints.
+
+  Library: cmdk
+
+  Shortcuts communicate existing commands; register the actual key handlers separately."
+ []
+ (r/as-element (helpers/wrap-component [:div {:class "max-w-md p-6"}
+                                        [sut/command {:class "rounded-lg border"}
+                                         [sut/command-input {:placeholder "Search actions..."}]
+                                         [sut/command-list {}
+                                          [sut/command-group {:heading "File"}
+                                           [sut/command-item {:value "new-file"}
+                                            [:span "New file"]
+                                            [sut/command-shortcut {}
+                                             "⌘N"]]
+                                           [sut/command-item {:value "open-file"}
+                                            [:span "Open file"]
+                                            [sut/command-shortcut {}
+                                             "⌘O"]]]]]])))
+
+(defstory
+ CommandScrollable
+ "Scrollable command list with enough grouped results to overflow.
+
+  Library: cmdk
+
+  Keep the search input visible while command-list owns vertical scrolling."
+ []
+ (r/as-element (helpers/wrap-component
+                [:div {:class "max-w-md p-6"}
+                 [sut/command {:class "rounded-lg border"}
+                  [sut/command-input {:placeholder "Jump to a section..."}]
+                  [sut/command-list {:class "max-h-48 overflow-y-auto"}
+                   (for [[heading items] [["Workspace" ["Overview" "Activity" "Members" "Settings"]]
+                                          ["Projects"
+                                           ["Website" "Mobile app" "Design system" "Research"]]
+                                          ["Account" ["Profile" "Billing" "Security" "Sign out"]]]]
+                     ^{:key heading}
+                     [sut/command-group {:heading heading}
+                      (for [item items]
+                        ^{:key item}
+                        [sut/command-item {:value (str heading " " item)}
+                         item])])]]])))
+
+(defstory
+ CommandRtl
+ "Right-to-left grouped command menu.
+
+  Library: cmdk
+
+  Apply dir=rtl at the command surface so text, groups, and shortcut placement inherit direction."
+ []
+ (r/as-element (helpers/wrap-component [:div {:class "max-w-md p-6"
+                                              :dir "rtl"}
+                                        [sut/command {:class "rounded-lg border"}
+                                         [sut/command-input {:placeholder "ابحث عن أمر..."}]
+                                         [sut/command-list {}
+                                          [sut/command-group {:heading "الحساب"}
+                                           [sut/command-item {:value "profile"}
+                                            [:> User {:aria-hidden true}]
+                                            [:span "الملف الشخصي"]
+                                            [sut/command-shortcut {}
+                                             "⌘P"]]
+                                           [sut/command-item {:value "settings"}
+                                            [:> Settings {:aria-hidden true}]
+                                            [:span "الإعدادات"]]]]]])))
 
 (defstory
  CommandComposition

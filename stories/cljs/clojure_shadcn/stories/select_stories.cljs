@@ -336,3 +336,66 @@
                                                     "Banana"]
                                                    [sut/select-item {:value "blueberry"}
                                                     "Blueberry"]]]])))
+
+(defn- grouped-select
+  [content-props trigger-props]
+  [sut/select {:default-value "paris"}
+   [sut/select-trigger
+    (merge {:class "w-56"} trigger-props)
+    [sut/select-value {:placeholder "Choose a city"}]]
+   [sut/select-content
+    content-props
+    [sut/select-group {}
+     [sut/select-label {}
+      "Europe"]
+     [sut/select-item {:value "paris"}
+      "Paris"]
+     [sut/select-item {:value "lisbon"}
+      "Lisbon"]]
+    [sut/select-separator {}]
+    [sut/select-group {}
+     [sut/select-label {}
+      "Asia"]
+     [sut/select-item {:value "tokyo"}
+      "Tokyo"]
+     [sut/select-item {:value "riyadh"}
+      "Riyadh"]]]])
+
+(defstory
+ SelectPatterns
+ "Content alignment, labeled groups and separator, canonical Field error composition, and RTL context."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "grid gap-8 md:grid-cols-2"}
+    [:section {:class "grid gap-3"}
+     [:p {:class "text-sm font-medium"}
+      "Start aligned"]
+     [grouped-select {:align "start"}
+      {}]
+     [:p {:class "text-sm font-medium"}
+      "End aligned"]
+     [grouped-select {:align "end"}
+      {}]]
+    [field/field {}
+     [field/field-label {:html-for "office"}
+      "Office"]
+     [sut/select {}
+      [sut/select-trigger {:id "office"
+                           :class "w-56"
+                           :aria-invalid true
+                           :aria-describedby "office-error"}
+       [sut/select-value {:placeholder "Choose an office"}]]
+      [sut/select-content {}
+       [sut/select-item {:value "remote"}
+        "Remote"]
+       [sut/select-item {:value "hq"}
+        "Headquarters"]]]
+     [field/field-error {:id "office-error"
+                         :errors [{:message "Choose an office."}]}]]
+    [:section {:dir "rtl"
+               :class "grid gap-2"}
+     [:label {:class "text-sm font-medium"}
+      "المدينة"]
+     [grouped-select {:align "start"}
+      {:aria-label "المدينة"}]]])))

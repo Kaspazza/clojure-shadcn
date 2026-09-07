@@ -1,10 +1,12 @@
 (ns clojure-shadcn.stories.avatar-stories
   "Storybook stories for the Avatar component. Ported from mateuszmazurczak.portfolio.ui-components.avatar."
   (:require
-   ["lucide-react"                      :refer [Plus]]
-   [clojure-shadcn.stories.helpers      :as helpers]
-   [clojure-shadcn.ui.components.avatar :as sut]
-   [reagent.core                        :as r])
+   ["lucide-react"                             :refer [ChevronsUpDown LogOut Plus Settings]]
+   [clojure-shadcn.stories.helpers             :as helpers]
+   [clojure-shadcn.ui.components.avatar        :as sut]
+   [clojure-shadcn.ui.components.button        :as button]
+   [clojure-shadcn.ui.components.dropdown-menu :as dropdown]
+   [reagent.core                               :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -213,3 +215,36 @@
                                           "PP"]
                                          [sut/avatar-badge {}
                                           [:> Plus]]]])))
+
+(defstory
+ AvatarDropdown
+ "Dropdown — the upstream account-menu composition uses a single avatar trigger; no avatar-group API is implied."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [dropdown/dropdown-menu {}
+    [dropdown/dropdown-menu-trigger {:as-child true}
+     (button/button {:variant :ghost
+                     :class "h-auto gap-3 px-2 py-1.5"}
+                    [sut/avatar {:size :sm}
+                     [sut/avatar-image {:src "https://github.com/shadcn.png"
+                                        :alt "@shadcn"}]
+                     [sut/avatar-fallback {}
+                      "CN"]]
+                    [:span {:class "grid text-left text-sm leading-tight"}
+                     [:span {:class "font-medium"}
+                      "shadcn"]
+                     [:span {:class "text-xs text-muted-foreground"}
+                      "m@example.com"]]
+                    [:> ChevronsUpDown {:class "size-4 text-muted-foreground"}])]
+    [dropdown/dropdown-menu-content {:align "end"
+                                     :class "w-56"}
+     [dropdown/dropdown-menu-label {}
+      "My account"]
+     [dropdown/dropdown-menu-separator {}]
+     [dropdown/dropdown-menu-item {}
+      [:> Settings]
+      "Settings"]
+     [dropdown/dropdown-menu-item {}
+      [:> LogOut]
+      "Log out"]]])))

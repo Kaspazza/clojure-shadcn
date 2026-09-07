@@ -188,7 +188,11 @@
        [:li
         "Text variants use :text, while non-text variants ignore it; choose variant intentionally."]
        [:li
-        "Prefer semantic loading copy for long operations (e.g., 'Syncing invoices...') over generic labels."]]]
+        "Prefer semantic loading copy for long operations (e.g., 'Syncing invoices...') over generic labels."]
+       [:li
+        "Every loader defaults to role=status and aria-label=Loading. Pass :label or :aria-label to name the actual operation."]
+       [:li
+        "All animation classes include motion-reduce:animate-none, so reduced-motion users see a static status indicator."]]]
      [:div {:class "border rounded-lg p-4 bg-muted/50"}
       [:h4 {:class "text-sm font-semibold mb-2"}
        "Usage Example"]
@@ -211,16 +215,46 @@
                                                  [sut/loader {:variant :terminal}]])))
 
 (defstory LoaderSizes
-          "Loader size comparison.
-  All loaders support :sm, :md, :lg sizes."
+          "Size-by-variant matrix. Every variant supports :sm, :md, and :lg."
           []
-          (r/as-element (helpers/wrap-component [:div {:class "p-6 flex items-center gap-6"}
+          (r/as-element
+           (helpers/wrap-component
+            [:div {:class "p-6 overflow-x-auto"}
+             (into [:div {:class "grid grid-cols-4 items-center gap-5 text-sm"}
+                    [:strong "Variant"]
+                    [:strong "Small"]
+                    [:strong "Medium"]
+                    [:strong "Large"]]
+                   (for [variant [:circular
+                                  :classic
+                                  :pulse
+                                  :pulse-dot
+                                  :dots
+                                  :typing
+                                  :wave
+                                  :bars
+                                  :terminal
+                                  :text-blink
+                                  :text-shimmer
+                                  :loading-dots]
+                         item (concat [[:span {:class "font-mono text-xs"}
+                                        (name variant)]]
+                                      (for [size [:sm :md :lg]]
+                                        [sut/loader {:variant variant
+                                                     :size size
+                                                     :text "Loading"
+                                                     :label
+                                                     (str (name variant) " " (name size))}]))]
+                     ^{:key (str variant "-" (hash item))} item))])))
+
+(defstory LoaderAccessibleLabel
+          "Custom accessible labels describe the operation without adding duplicate visible text."
+          []
+          (r/as-element (helpers/wrap-component [:div {:class "p-6 flex items-center gap-3"}
                                                  [sut/loader {:variant :circular
-                                                              :size :sm}]
-                                                 [sut/loader {:variant :circular
-                                                              :size :md}]
-                                                 [sut/loader {:variant :circular
-                                                              :size :lg}]])))
+                                                              :label "Saving account settings"}]
+                                                 [:span {:class "text-sm"}
+                                                  "Saving account settings"]])))
 
 (defstory
  LoaderTextVariants

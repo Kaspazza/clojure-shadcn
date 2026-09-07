@@ -1,12 +1,13 @@
 (ns clojure-shadcn.stories.message-stories
   "Storybook stories for the Message component. Ported from mateuszmazurczak.portfolio.ui-components.message."
   (:require
-   ["lucide-react"                       :refer [Copy Trash2]]
-   [clojure-shadcn.stories.helpers       :as helpers]
-   [clojure-shadcn.ui.components.bubble  :as bubble]
-   [clojure-shadcn.ui.components.button  :as button]
-   [clojure-shadcn.ui.components.message :as sut]
-   [reagent.core                         :as r])
+   ["lucide-react"                          :refer [Copy FileText ThumbsDown ThumbsUp Trash2]]
+   [clojure-shadcn.stories.helpers          :as helpers]
+   [clojure-shadcn.ui.components.attachment :as attachment]
+   [clojure-shadcn.ui.components.bubble     :as bubble]
+   [clojure-shadcn.ui.components.button     :as button]
+   [clojure-shadcn.ui.components.message    :as sut]
+   [reagent.core                            :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -247,3 +248,107 @@
       [bubble/bubble {:variant :muted}
        [bubble/bubble-content {}
         "Assistant response aligned left."]]]]])))
+
+(defstory
+ MessageGroupedMetadata
+ "Adjacent messages share a group while headers and footers retain per-message metadata and actions."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [sut/message-group {:class "max-w-2xl"}
+    [sut/message {}
+     [sut/message-avatar {:src ""
+                          :alt "Avery"
+                          :fallback "AV"}]
+     [sut/message-content {}
+      [sut/message-header {}
+       "Avery · 09:41"]
+      [bubble/bubble {:variant :muted}
+       [bubble/bubble-content {}
+        "I’ve attached the approved brief."]]
+      [sut/message-footer {:class "gap-2"}
+       [:span "Delivered"]
+       [sut/message-actions {}
+        [sut/message-action {:tooltip "Copy message"}
+         (button/button {:variant :ghost
+                         :size :icon-xs
+                         :aria-label "Copy message"}
+                        [:> Copy])]]]]]
+    [sut/message {:align :end}
+     [sut/message-avatar {:src ""
+                          :alt "You"
+                          :fallback "ME"}]
+     [sut/message-content {}
+      [sut/message-header {}
+       "You · 09:42"]
+      [bubble/bubble {:align :end}
+       [bubble/bubble-content {}
+        "Thanks, I’ll review it now."]]
+      [sut/message-footer {}
+       "Read"]]]])))
+
+(defstory MessageWithAttachment
+          "Compose Attachment inside message-content without a message-specific attachment prop."
+          []
+          (r/as-element
+           (helpers/wrap-component
+            [sut/message {:class "max-w-2xl"}
+             [sut/message-avatar {:src ""
+                                  :alt "Assistant"
+                                  :fallback "AI"}]
+             [sut/message-content {}
+              [sut/message-header {}
+               "Assistant"]
+              [bubble/bubble {:variant :ghost}
+               [bubble/bubble-content {}
+                "Here is the requested project brief."]]
+              [attachment/attachment {}
+               [attachment/attachment-media {}
+                [:> FileText]]
+               [attachment/attachment-content {}
+                [attachment/attachment-title {}
+                 "project-brief.pdf"]
+                [attachment/attachment-description {}
+                 "PDF · 1.8 MB"]]]]])))
+
+(defstory
+ MessageRichMarkdown
+ "A richer assistant response with headings, links, code, and a task list."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [sut/message {:class "max-w-3xl"}
+    [sut/message-avatar {:src ""
+                         :alt "Assistant"
+                         :fallback "AI"}]
+    [sut/message-content {:markdown? true}
+     "## Release checklist\n\n- [x] Run tests\n- [ ] Publish artifacts\n\nUse `npm publish` after reviewing the [package guide](https://docs.npmjs.com/cli/v11/commands/npm-publish).\n\n```clojure\n(def release-ready? true)\n```"]])))
+
+(defstory MessageStatefulFeedback
+          "Feedback actions keep selected state in the consumer and remain accessible buttons."
+          []
+          (r/as-element
+           [(fn []
+              (let [feedback (r/atom nil)]
+                (fn []
+                  (helpers/wrap-component
+                   [sut/message {:class "max-w-2xl"}
+                    [sut/message-avatar {:src ""
+                                         :alt "Assistant"
+                                         :fallback "AI"}]
+                    [sut/message-content {}
+                     [bubble/bubble {:variant :muted}
+                      [bubble/bubble-content {}
+                       "The deployment completed successfully."]]
+                     [sut/message-footer {}
+                      [sut/message-actions {}
+                       (for [[value label icon] [[:helpful "Helpful" ThumbsUp]
+                                                 [:not-helpful "Not helpful" ThumbsDown]]]
+                         ^{:key value}
+                         [sut/message-action {:tooltip label}
+                          (button/button {:variant (if (= @feedback value) :secondary :ghost)
+                                          :size :icon-xs
+                                          :aria-label label
+                                          :aria-pressed (= @feedback value)
+                                          :on-click #(reset! feedback value)}
+                                         [:> icon])])]]]]))))]))

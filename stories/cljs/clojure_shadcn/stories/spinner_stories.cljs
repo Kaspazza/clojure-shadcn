@@ -1,11 +1,13 @@
 (ns clojure-shadcn.stories.spinner-stories
   "Storybook stories for the Spinner component. Ported from mateuszmazurczak.portfolio.ui-components.spinner."
   (:require
-   [clojure-shadcn.stories.helpers       :as helpers]
-   [clojure-shadcn.ui.components.badge   :as badge]
-   [clojure-shadcn.ui.components.button  :as button]
-   [clojure-shadcn.ui.components.spinner :as sut]
-   [reagent.core                         :as r])
+   [clojure-shadcn.stories.helpers           :as helpers]
+   [clojure-shadcn.ui.components.badge       :as badge]
+   [clojure-shadcn.ui.components.button      :as button]
+   [clojure-shadcn.ui.components.empty       :as empty]
+   [clojure-shadcn.ui.components.input-group :as input-group]
+   [clojure-shadcn.ui.components.spinner     :as sut]
+   [reagent.core                             :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -31,19 +33,12 @@
     [:div {:class "space-y-4"}
      [helpers/api-component-card
       {:component-name "spinner"
-       :description "Lucide Loader2-based spinner with built-in accessibility defaults."
+       :description
+       "Lucide Loader2-based visual spinner. It is aria-hidden and does not provide status semantics by itself."
        :props [{:name ":class"
                 :type "string"
                 :default nil
                 :description "Additional CSS classes."}
-               {:name ":role"
-                :type "string"
-                :default "\"status\""
-                :description "Accessibility role."}
-               {:name ":aria-label"
-                :type "string"
-                :default "\"Loading\""
-                :description "Screen reader label."}
                {:name "additional props"
                 :type "map entries"
                 :default nil
@@ -53,7 +48,8 @@
        "⚠️ Important Notes"]
       [:ul {:class "text-xs text-muted-foreground space-y-1 list-disc pl-4"}
        [:li "Default icon size is size-4; override with :class for larger/smaller spinners."]
-       [:li "Spinner is purely presentational—pair with status text in long-running operations."]]]
+       [:li
+        "Spinner is aria-hidden and purely presentational; put status semantics and text on a parent or sibling."]]]
      [:div {:class "border rounded-lg p-4 bg-muted/50"}
       [:h4 {:class "text-sm font-semibold mb-2"}
        "Usage Example"]
@@ -63,16 +59,12 @@
 
 (defstory SpinnerBasic
           "Interactive spinner playground."
-          {:args {:class "size-4"
-                  :aria-label "Loading"}
+          {:args {:class "size-4"}
            :arg-types {:class {:control {:type "select"}
-                               :options ["size-3" "size-4" "size-6" "size-8"]}
-                       :aria-label {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["role"]}}}
+                               :options ["size-3" "size-4" "size-6" "size-8"]}}}
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/spinner
-                                                  (select-keys args [:class :aria-label])]])))
+                                                 [sut/spinner (select-keys args [:class])]])))
 
 (defstory
  SpinnerSize
@@ -165,3 +157,41 @@
        "Processing payment..."]]
      [:span {:class "text-sm tabular-nums"}
       "$100.00"]]])))
+
+(defstory SpinnerInputGroup
+          "Input Group — upstream loading field pairs a visual spinner with explicit status text."
+          []
+          (r/as-element (helpers/wrap-component [:div {:role "status"
+                                                       :class "max-w-sm"}
+                                                 [input-group/input-group {}
+                                                  [input-group/input-group-addon {}
+                                                   [sut/spinner {}]]
+                                                  [input-group/input-group-input
+                                                   {:disabled true
+                                                    :value "Searching repositories…"
+                                                    :aria-label "Repository search"}]]
+                                                 [:span {:class "sr-only"}
+                                                  "Searching repositories"]])))
+
+(defstory
+ SpinnerEmpty
+ "Empty — upstream loading empty-state composition uses explicit copy for the accessible status."
+ []
+ (r/as-element (helpers/wrap-component [empty/empty {:role "status"
+                                                     :class "border"}
+                                        [empty/empty-header {}
+                                         [empty/empty-media {}
+                                          [sut/spinner {:class "size-8"}]]
+                                         [empty/empty-title {}
+                                          "Loading results"]
+                                         [empty/empty-description {}
+                                          "This may take a moment."]]])))
+
+(defstory SpinnerRTL
+          "RTL — visual spinner accompanies explicit right-to-left loading text."
+          []
+          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
+                                                       :role "status"
+                                                       :class "flex items-center gap-2 text-sm"}
+                                                 [sut/spinner {}]
+                                                 [:span "جارٍ تحميل البيانات…"]])))

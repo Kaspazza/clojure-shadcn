@@ -1,8 +1,12 @@
 (ns clojure-shadcn.stories.bubble-stories
   (:require
-   [clojure-shadcn.stories.helpers      :as helpers]
-   [clojure-shadcn.ui.components.bubble :as sut]
-   [reagent.core                        :as r])
+   [clojure-shadcn.stories.helpers           :as helpers]
+   [clojure-shadcn.ui.components.bubble      :as sut]
+   [clojure-shadcn.ui.components.button      :as button]
+   [clojure-shadcn.ui.components.collapsible :as collapsible]
+   [clojure-shadcn.ui.components.popover     :as popover]
+   [clojure-shadcn.ui.components.tooltip     :as tooltip]
+   [reagent.core                             :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -69,3 +73,68 @@
                                                   (select-keys args [:variant :align])
                                                   [sut/bubble-content {}
                                                    (:content args)]]])))
+
+(defstory BubbleGroupWithReactions
+          "A grouped exchange with reactions positioned on opposite bubble edges."
+          []
+          (r/as-element (helpers/wrap-component [sut/bubble-group {:class "max-w-lg pb-3"}
+                                                 [sut/bubble {:variant :muted}
+                                                  [sut/bubble-content {}
+                                                   "The release notes are ready for review."]
+                                                  [sut/bubble-reactions {:side :bottom
+                                                                         :align :start}
+                                                   "👍 3"]]
+                                                 [sut/bubble {:align :end}
+                                                  [sut/bubble-content {}
+                                                   "Great — I’ll publish them after lunch."]
+                                                  [sut/bubble-reactions {}
+                                                   "✅ 1"]]])))
+
+(defstory BubbleAsChildLinksAndButtons
+          "Use :as-child? when the entire bubble should be a semantic link or button."
+          []
+          (r/as-element (helpers/wrap-component
+                         [sut/bubble-group {:class "max-w-lg"}
+                          [sut/bubble {:variant :outline}
+                           [sut/bubble-content {:as-child? true}
+                            [:a {:href "https://ui.shadcn.com/docs/components/bubble"
+                                 :target "_blank"
+                                 :rel "noopener noreferrer"}
+                             "Open the Bubble documentation →"]]]
+                          [sut/bubble {:variant :secondary}
+                           [sut/bubble-content {:as-child? true}
+                            [:button {:type "button"
+                                      :on-click #(js/console.log "retry")}
+                             "Retry this response"]]]])))
+
+(defstory BubbleInteractiveCompositions
+          "Bubble content can serve as a trigger for collapsible, tooltip, and popover primitives."
+          []
+          (r/as-element
+           (helpers/wrap-component
+            [:>
+             tooltip/tooltip-provider-component
+             {}
+             [sut/bubble-group {:class "max-w-lg"}
+              [collapsible/collapsible {}
+               [sut/bubble {:variant :outline}
+                [collapsible/collapsible-trigger {:as-child true}
+                 [sut/bubble-content {:as-child? true}
+                  [:button {:type "button"}
+                   "Show delivery details"]]]]
+               [collapsible/collapsible-content {:class "px-3 py-2 text-sm text-muted-foreground"}
+                "Delivered to the project channel at 09:42."]]
+              [sut/bubble {:variant :tinted}
+               [tooltip/tooltip {:trigger (sut/bubble-content {:as-child? true}
+                                                              [:button {:type "button"}
+                                                               "Hover for response timing"])
+                                 :trigger-as-child? true
+                                 :content "Estimated response time: under a minute"}]]
+              [popover/popover {}
+               [popover/popover-trigger {:asChild true}
+                (button/button {:variant :ghost
+                                :size :sm}
+                               "Open response details")]
+               [popover/popover-content {:align "start"}
+                [:p {:class "text-sm"}
+                 "Generated from three indexed project documents."]]]]])))

@@ -11,14 +11,17 @@
   #js {:title "Components/Form"
        :parameters #js {:layout "centered"}})
 
-(defdoc Installation
-        []
-        (r/as-element [helpers/installation-scene
-                       {:description "Idiomatic Reagent adapter for React Hook Form."
-                        :npm-install "npm install react-hook-form @radix-ui/react-slot"
-                        :source-code (embed-source "clojure-shadcn.ui.components.form")
-                        :namespace-path "src/cljs/clojure_shadcn/ui/components/form.cljs"
-                        :filename "form.cljs"}]))
+(defdoc
+ Installation
+ []
+ (r/as-element
+  [helpers/installation-scene
+   {:description
+    "Local Reagent facade over React Hook Form; this is project-specific adapter code, not a Radix primitive or a verbatim shadcn/ui registry module."
+    :npm-install "npm install react-hook-form @radix-ui/react-slot"
+    :source-code (embed-source "clojure-shadcn.ui.components.form")
+    :namespace-path "src/cljs/clojure_shadcn/ui/components/form.cljs"
+    :filename "form.cljs"}]))
 
 (defstory
  ApiReference
@@ -117,19 +120,37 @@
 (defstory Validation [] (r/as-element (helpers/wrap-component [:f> example-form])))
 
 
+(defn- playground-form
+  [{:keys [email submit-label]}]
+  (let [methods (sut/use-form {:default-values {:email email}})]
+    [sut/form {:methods methods}
+     [:form {:class "w-80 space-y-4"
+             :no-validate true
+             :on-submit (sut/handle-submit methods #(js/alert (str "Submitted " (:email %))))}
+      [sut/form-field {:control (.-control methods)
+                       :name "email"
+                       :rules #js {:required "Email is required"}
+                       :render (fn [{:keys [field]}] [:f>
+                                                      sut/form-item
+                                                      {}
+                                                      [:f> sut/form-label {} "Email"]
+                                                      [:f>
+                                                       sut/form-control
+                                                       {}
+                                                       [input/input
+                                                        (merge field
+                                                               {:type "email"
+                                                                :placeholder "you@example.com"})]]
+                                                      [:f> sut/form-message {}]])}]
+      [button/button {:type "submit"}
+       submit-label]]]))
+
 (defstory FormPlayground
-          "Interactive form validation playground."
+          "Interactive validation through the local React Hook Form facade."
           {:args {:email ""
                   :submit-label "Submit"}
            :arg-types {:email {:control {:type "text"}}
                        :submit-label {:control {:type "text"}}}
            :parameters {:controls {:exclude ["on-submit" "methods" "class"]}}}
           [args]
-          (r/as-element (helpers/wrap-component [:form {:class "w-80 space-y-4"
-                                                        :on-submit #(.preventDefault %)}
-                                                 [input/input {:type "email"
-                                                               :default-value (:email args)
-                                                               :placeholder "you@example.com"
-                                                               :required true}]
-                                                 (button/button {:type "submit"}
-                                                                (:submit-label args))])))
+          (r/as-element (helpers/wrap-component [:f> playground-form args])))

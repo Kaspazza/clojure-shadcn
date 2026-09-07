@@ -24,15 +24,18 @@
     :title "Confirm"
     :description "Review"}])
 
-(defdoc Installation
-        "Install dependencies and copy the component code into your project."
-        []
-        (r/as-element [helpers/installation-scene
-                       {:description "Pure presentational stepper components using React Context."
-                        :npm-install "npm install react"
-                        :source-code (embed-source "clojure-shadcn.ui.components.stepper")
-                        :namespace-path "src/cljs/clojure_shadcn/ui/components/stepper.cljs"
-                        :filename "stepper.cljs"}]))
+(defdoc
+ Installation
+ "Install dependencies and copy the component code into your project."
+ []
+ (r/as-element
+  [helpers/installation-scene
+   {:description
+    "Custom context-based stepper inspired by shadcn/ui composition patterns; it is not a current official shadcn/ui component."
+    :npm-install "npm install react"
+    :source-code (embed-source "clojure-shadcn.ui.components.stepper")
+    :namespace-path "src/cljs/clojure_shadcn/ui/components/stepper.cljs"
+    :filename "stepper.cljs"}]))
 
 (defstory
  ApiReference
@@ -44,7 +47,7 @@
      [helpers/api-component-card
       {:component-name "stepper"
        :description
-       "Root context provider for multi-step flows. Coordinates active step state shared by navigation and panels."
+       "Custom root context provider for multi-step flows, inspired by shadcn/ui composition conventions rather than copied from an official shadcn/ui Stepper. Coordinates caller-owned active state shared by navigation and panels."
        :props [{:name ":current-step"
                 :type "string | keyword | number"
                 :default nil
@@ -133,7 +136,9 @@
         "stepper-step and stepper-panel require stepper context; use them inside [stepper ...]."]
        [:li "Each stepper-step :id should have a corresponding stepper-panel :id for complete UX."]
        [:li
-        "stepper-navigation auto-injects index metadata; avoid manually setting :index/:total props."]]]
+        "stepper-navigation auto-injects index metadata; avoid manually setting :index/:total props."]
+       [:li
+        "Known Circle gap: the current :circle branch displays progress and labels but does not render an interactive step button. This story leaves that limitation visible."]]]
      [:div {:class "border rounded-lg p-4 bg-muted/50"}
       [:h4 {:class "text-sm font-semibold mb-2"}
        "Usage Example"]
@@ -219,27 +224,27 @@
                       [:div {:class "text-sm text-muted-foreground"}
                        "Confirmation step."]]]]))))]))
 
-(defstory StepperCircle
-          "Circle stepper variant.
-  Use :variant :circle to show step count and progress ring."
-          []
-          (r/as-element
-           [(fn []
-              (let [steps (step-data)
-                    current-step (r/atom :details)]
-                (fn []
-                  (helpers/wrap-component [:div {:class "p-6"}
-                                           [sut/stepper {:current-step @current-step
-                                                         :variant :circle
-                                                         :on-step-change #(reset! current-step %)}
-                                            [sut/stepper-navigation {}
-                                             (for [{:keys [id title description]} steps]
-                                               ^{:key id}
-                                               [sut/stepper-step {:id id}
-                                                [sut/stepper-title {}
-                                                 title]
-                                                [sut/stepper-description {}
-                                                 description]])]]]))))]))
+(defstory
+ StepperCircle
+ "Circle progress rendering with the current implementation gap exposed: it shows count/label but cannot change steps from the circle itself."
+ []
+ (r/as-element
+  [(fn []
+     (let [steps (step-data)
+           current-step (r/atom :details)]
+       (fn []
+         (helpers/wrap-component [:div {:class "p-6"}
+                                  [sut/stepper {:current-step @current-step
+                                                :variant :circle
+                                                :on-step-change #(reset! current-step %)}
+                                   [sut/stepper-navigation {}
+                                    (for [{:keys [id title description]} steps]
+                                      ^{:key id}
+                                      [sut/stepper-step {:id id}
+                                       [sut/stepper-title {}
+                                        title]
+                                       [sut/stepper-description {}
+                                        description]])]]]))))]))
 
 (defstory
  StepperReverseProgress

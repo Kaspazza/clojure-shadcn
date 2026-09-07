@@ -102,3 +102,14 @@
                                         [textarea/textarea {:id "message"
                                                             :placeholder
                                                             "Type your message here."}]])))
+
+(defstory LabelRtl
+          "Right-to-left label association. Based on shadcn/ui Label — RTL."
+          []
+          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
+                                                       :class "max-w-sm space-y-2 p-6"}
+                                                 [sut/label {:html-for "label-rtl-email"}
+                                                  "البريد الإلكتروني"]
+                                                 [input/input {:id "label-rtl-email"
+                                                               :type "email"
+                                                               :placeholder "name@example.com"}]])))

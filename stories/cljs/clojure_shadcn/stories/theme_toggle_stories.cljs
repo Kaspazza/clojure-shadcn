@@ -33,19 +33,28 @@
       {:component-name "theme-toggle"
        :description
        "Controlled theme switch button. Pure presentation: reads nothing from global state; the caller passes :theme and :on-toggle."
-       :props [{:name ":theme"
-                :type "keyword"
-                :default ":light"
-                :description ":light | :dark — decides which icon (Sun/Moon) is shown."}
-               {:name ":on-toggle"
-                :type "fn"
-                :default nil
-                :description "(fn []) click handler; flip theme in whatever state layer you use."}
-               {:name ":class"
-                :type "string"
-                :default nil
-                :description
-                "Extra Tailwind classes merged with the base ones via tailwind-merge."}]}]
+       :props
+       [{:name ":theme"
+         :type "keyword"
+         :default ":light"
+         :description ":light | :dark — decides which icon (Sun/Moon) is shown."}
+        {:name ":on-toggle"
+         :type "fn"
+         :default nil
+         :description "(fn []) click handler; flip theme in whatever state layer you use."}
+        {:name ":label"
+         :type "string"
+         :default "\"Toggle theme\""
+         :description "Accessible button name, used when :aria-label is not supplied."}
+        {:name ":class"
+         :type "string"
+         :default nil
+         :description "Extra Tailwind classes merged with the base ones via tailwind-merge."}
+        {:name "additional props"
+         :type "button attributes"
+         :default nil
+         :description
+         "Forwarded to the underlying button; :aria-label overrides :label and an explicit :type overrides the default button type."}]}]
      [:div {:class "border rounded-lg p-4 bg-amber-500/10 border-amber-500/30 mb-4"}
       [:h4 {:class "text-sm font-semibold mb-2"}
        "⚠️ Important Notes"]
@@ -90,17 +99,23 @@
  (r/as-element (helpers/wrap-component [:div {:class "p-6"}
                                         [controlled-toggle]])))
 
-(defstory ThemeToggleLight
-          "Static render pinned to :light (Sun icon visible)."
-          []
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/theme-toggle {:theme :light}]])))
+(defstory
+ ThemeToggleLight
+ "Disabled visual specimen pinned to :light; it is intentionally not presented as an interactive toggle."
+ []
+ (r/as-element (helpers/wrap-component [:div {:class "p-6"}
+                                        [sut/theme-toggle {:theme :light
+                                                           :label "Light theme specimen"
+                                                           :disabled true}]])))
 
-(defstory ThemeToggleDark
-          "Static render pinned to :dark (Moon icon visible)."
-          []
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/theme-toggle {:theme :dark}]])))
+(defstory
+ ThemeToggleDark
+ "Disabled visual specimen pinned to :dark; it is intentionally not presented as an interactive toggle."
+ []
+ (r/as-element (helpers/wrap-component [:div {:class "p-6"}
+                                        [sut/theme-toggle {:theme :dark
+                                                           :aria-label "Dark theme specimen"
+                                                           :disabled true}]])))
 
 (defstory ThemeToggleInHeader
           "Composition demo: toggle inside a minimal header."

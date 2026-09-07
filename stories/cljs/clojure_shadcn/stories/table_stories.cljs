@@ -261,33 +261,35 @@
               {:id "PRJ-106"
                :title "Data Pipeline"
                :status :blocked}]
-        row->view
-        (fn [{:keys [id title status]}] [sut/table-row {:key id}
-                                         [sut/table-cell {}
-                                          [:div {:class "font-medium"}
-                                           title]
-                                          [:div {:class "text-xs text-muted-foreground"}
-                                           id]]
-                                         [sut/table-cell {}
-                                          [badge/badge {:variant (case status
-                                                                   :active :default
-                                                                   :paused :secondary
-                                                                   :blocked :destructive
-                                                                   :default)}
-                                           (str/capitalize (name status))]]
-                                         [sut/table-cell {:class "text-right"}
-                                          [dropdown-menu/dropdown-menu {}
-                                           [dropdown-menu/dropdown-menu-trigger {:as-child true}
-                                            (button/button {:variant :ghost
-                                                            :size :icon}
-                                                           "⋯")]
-                                           [dropdown-menu/dropdown-menu-content {:align "end"}
-                                            [dropdown-menu/dropdown-menu-item {}
-                                             "View"]
-                                            [dropdown-menu/dropdown-menu-item {}
-                                             "Edit"]
-                                            [dropdown-menu/dropdown-menu-item {}
-                                             "Archive"]]]]])]
+        row->view (fn [{:keys [id title status]}]
+                    [sut/table-row {:key id}
+                     [sut/table-cell {}
+                      [:div {:class "font-medium"}
+                       title]
+                      [:div {:class "text-xs text-muted-foreground"}
+                       id]]
+                     [sut/table-cell {}
+                      [badge/badge {:variant (case status
+                                               :active :default
+                                               :paused :secondary
+                                               :blocked :destructive
+                                               :default)}
+                       (str/capitalize (name status))]]
+                     [sut/table-cell {:class "text-right"}
+                      [dropdown-menu/dropdown-menu {}
+                       [dropdown-menu/dropdown-menu-trigger {:as-child true}
+                        (button/button {:variant :ghost
+                                        :size :icon
+                                        :aria-label (str "Actions for " title)}
+                                       [:span {:aria-hidden true}
+                                        "⋯"])]
+                       [dropdown-menu/dropdown-menu-content {:align "end"}
+                        [dropdown-menu/dropdown-menu-item {}
+                         "View"]
+                        [dropdown-menu/dropdown-menu-item {}
+                         "Edit"]
+                        [dropdown-menu/dropdown-menu-item {}
+                         "Archive"]]]]])]
     (helpers/wrap-component [:div {:class "p-6"}
                              [sut/table {}
                               [sut/table-header {}
@@ -301,6 +303,45 @@
                               (into [sut/table-body {}]
                                     (map row->view rows))]]))))
 
+
+(defstory
+ TableRtl
+ "Semantic RTL table. Direction and logical text alignment are supplied through forwarded native props and classes."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "p-6"}
+    [sut/table {:dir "rtl"
+                :class "text-right"
+                :aria-label "الفواتير الأخيرة"}
+     [sut/table-caption {}
+      "قائمة بأحدث الفواتير."]
+     [sut/table-header {}
+      [sut/table-row {}
+       [sut/table-head {:scope "col"
+                        :class "text-right"}
+        "الفاتورة"]
+       [sut/table-head {:scope "col"
+                        :class "text-right"}
+        "الحالة"]
+       [sut/table-head {:scope "col"
+                        :class "text-left"}
+        "المبلغ"]]]
+     [sut/table-body {}
+      [sut/table-row {}
+       [sut/table-cell {}
+        "INV-101"]
+       [sut/table-cell {}
+        "مدفوعة"]
+       [sut/table-cell {:class "text-left"}
+        "٢٥٠٫٠٠ ر.س"]]
+      [sut/table-row {}
+       [sut/table-cell {}
+        "INV-102"]
+       [sut/table-cell {}
+        "قيد الانتظار"]
+       [sut/table-cell {:class "text-left"}
+        "١٥٠٫٠٠ ر.س"]]]]])))
 
 (defstory TablePlayground
           "Controlled Storybook playground using only safe scalar component props."

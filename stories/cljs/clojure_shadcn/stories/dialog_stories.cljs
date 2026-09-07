@@ -289,47 +289,135 @@
                  [:span "Settings"]]]]]]]]))))]))
 
 (defstory
- DrawerDialog
- "Dialog and drawer pair for responsive workflows.
+ ResponsiveDialogDrawer
+ "One workflow rendered as a dialog on desktop and a bottom drawer on narrow screens.
 
-  Radix primitive: @radix-ui/react-dialog
+  Radix primitive: @radix-ui/react-dialog; Vaul primitive: Drawer
 
-  Here we show both variants side by side (instead of media query)."
+  The local media-query adapter keeps one controlled open state while swapping presentation."
  []
  (r/as-element
   [(fn []
-     (let [dialog-open? (r/atom false)
-           drawer-open? (r/atom false)]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-6 flex flex-wrap gap-4"}
-           [sut/dialog {:open @dialog-open?
-                        :on-open-change #(reset! dialog-open? %)}
-            [sut/dialog-trigger {:as-child true}
-             (button/button {:variant :outline} "Edit Profile (Dialog)")]
-            [sut/dialog-content {:class "sm:max-w-[425px]"}
-             [sut/dialog-header {}
-              [sut/dialog-title {}
-               "Edit profile"]
-              [sut/dialog-description {}
-               "Make changes to your profile here. Click save when you're done."]]
-             [profile-form {}]]]
-           [drawer/drawer {:open @drawer-open?
-                           :on-open-change #(reset! drawer-open? %)
-                           :direction :bottom}
-            [drawer/drawer-trigger {:as-child true}
-             (button/button {:variant :outline} "Edit Profile (Drawer)")]
-            [drawer/drawer-content {}
-             [drawer/drawer-header {:class "text-left"}
-              [drawer/drawer-title {}
-               "Edit profile"]
-              [drawer/drawer-description {}
-               "Make changes to your profile here. Click save when you're done."]]
-             [profile-form {:class "px-4"}]
-             [drawer/drawer-footer {}
-              (button/button {:variant :outline
-                              :on-click #(reset! drawer-open? false)}
-                             "Cancel")]]]]))))]))
+     (let [open? (r/atom false)
+           desktop? (r/atom false)
+           media-query (atom nil)
+           update-layout! #(reset! desktop? (.-matches %))]
+       (r/create-class
+        {:display-name "responsive-dialog-drawer-story"
+         :component-did-mount (fn []
+                                (let [query (js/window.matchMedia "(min-width: 768px)")]
+                                  (reset! media-query query)
+                                  (reset! desktop? (.-matches query))
+                                  (.addEventListener query "change" update-layout!)))
+         :component-will-unmount (fn []
+                                   (when-let [query @media-query]
+                                     (.removeEventListener query "change" update-layout!)))
+         :reagent-render (fn []
+                           (helpers/wrap-component
+                            [:div {:class "p-6"}
+                             (if @desktop?
+                               [sut/dialog {:open @open?
+                                            :on-open-change #(reset! open? %)}
+                                [sut/dialog-trigger {:as-child true}
+                                 (button/button {:variant :outline} "Edit profile")]
+                                [sut/dialog-content {:class "sm:max-w-[425px]"}
+                                 [sut/dialog-header {}
+                                  [sut/dialog-title {}
+                                   "Edit profile"]
+                                  [sut/dialog-description {}
+                                   "Make changes to your profile and save when finished."]]
+                                 [profile-form {}]
+                                 [sut/dialog-footer {}
+                                  [sut/dialog-close {:as-child true}
+                                   (button/button {:variant :outline} "Cancel")]
+                                  (button/button {:on-click #(reset! open? false)}
+                                                 "Save changes")]]]
+                               [drawer/drawer {:open @open?
+                                               :on-open-change #(reset! open? %)
+                                               :direction :bottom}
+                                [drawer/drawer-trigger {:as-child true}
+                                 (button/button {:variant :outline} "Edit profile")]
+                                [drawer/drawer-content {}
+                                 [drawer/drawer-header {:class "text-left"}
+                                  [drawer/drawer-title {}
+                                   "Edit profile"]
+                                  [drawer/drawer-description {}
+                                   "Make changes to your profile and save when finished."]]
+                                 [profile-form {:class "px-4"}]
+                                 [drawer/drawer-footer {}
+                                  (button/button {:on-click #(reset! open? false)} "Save changes")
+                                  [drawer/drawer-close {:as-child true}
+                                   (button/button {:variant :outline} "Cancel")]]]])]))})))]))
+
+(defstory
+ DialogWithoutCornerClose
+ "Dialog without the generated corner close control.
+
+  Keep an explicit, clearly named close action in the footer so the modal remains easy to dismiss."
+ []
+ (r/as-element (helpers/wrap-component
+                [:div {:class "p-6"}
+                 [sut/dialog {}
+                  [sut/dialog-trigger {:as-child true}
+                   (button/button {:variant :outline} "Review invitation")]
+                  [sut/dialog-content {:show-close-button false}
+                   [sut/dialog-header {}
+                    [sut/dialog-title {}
+                     "Team invitation"]
+                    [sut/dialog-description {}
+                     "Review the invitation before returning to your workspace."]]
+                   [sut/dialog-footer {}
+                    [sut/dialog-close {:as-child true}
+                     (button/button {:variant :outline} "Close invitation")]]]]])))
+
+(defstory DialogScrollableBody
+          "Long dialog with an independently scrollable body and persistent header/footer actions."
+          []
+          (r/as-element
+           (helpers/wrap-component
+            [:div {:class "p-6"}
+             [sut/dialog {}
+              [sut/dialog-trigger {:as-child true}
+               (button/button {:variant :outline} "Review changelog")]
+              [sut/dialog-content
+               {:class "max-h-[80vh] grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden p-0"}
+               [sut/dialog-header {:class "border-b p-6"}
+                [sut/dialog-title {}
+                 "Release changelog"]
+                [sut/dialog-description {}
+                 "Review all changes before publishing."]]
+               [:div {:class "overflow-y-auto px-6"}
+                (for [section (range 1 16)]
+                  ^{:key section}
+                  [:p {:class "mb-4 text-sm text-muted-foreground"}
+                   (str "Change " section " improves reliability, accessibility, and feedback.")])]
+               [sut/dialog-footer {:class "border-t bg-background p-6"}
+                [sut/dialog-close {:as-child true}
+                 (button/button {:variant :outline} "Cancel review")]
+                (button/button {} "Publish release")]]]])))
+
+(defstory DialogRtl
+          "Dialog content and actions in a right-to-left document direction."
+          []
+          (r/as-element
+           (helpers/wrap-component
+            [:div {:class "p-6"
+                   :dir "rtl"}
+             [sut/dialog {}
+              [sut/dialog-trigger {:as-child true}
+               (button/button {:variant :outline} "فتح مربع الحوار")]
+              [sut/dialog-content {:class "text-right"
+                                   :dir "rtl"
+                                   :close-label "إغلاق"}
+               [sut/dialog-header {:class "text-right sm:text-right"}
+                [sut/dialog-title {}
+                 "تعديل الملف الشخصي"]
+                [sut/dialog-description {}
+                 "حدّث معلوماتك ثم احفظ التغييرات."]]
+               [sut/dialog-footer {:class "sm:justify-start"}
+                [sut/dialog-close {:as-child true}
+                 (button/button {:variant :outline} "إلغاء")]
+                (button/button {} "حفظ التغييرات")]]]])))
 
 
 (defstory DialogPlayground
