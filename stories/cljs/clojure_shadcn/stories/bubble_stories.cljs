@@ -4,6 +4,7 @@
    [clojure-shadcn.ui.components.bubble      :as sut]
    [clojure-shadcn.ui.components.button      :as button]
    [clojure-shadcn.ui.components.collapsible :as collapsible]
+   [clojure-shadcn.ui.components.markdown    :as markdown]
    [clojure-shadcn.ui.components.popover     :as popover]
    [clojure-shadcn.ui.components.tooltip     :as tooltip]
    [reagent.core                             :as r])
@@ -73,6 +74,37 @@
                                                   (select-keys args [:variant :align])
                                                   [sut/bubble-content {}
                                                    (:content args)]]])))
+
+(defstory
+ BubbleAlignmentAndVariantGallery
+ "Alignment changes conversation geometry while variants communicate sender, emphasis, and error semantics."
+ []
+ (r/as-element (helpers/wrap-component
+                [sut/bubble-group {:class "max-w-2xl"}
+                 (for [[variant align copy] [[:default :end "Primary user message"]
+                                             [:secondary :start "Secondary assistant response"]
+                                             [:muted :start "Muted supporting context"]
+                                             [:tinted :start "Tinted generated suggestion"]
+                                             [:outline :end "Outlined pending reply"]
+                                             [:ghost :start "Ghost long-form response"]
+                                             [:destructive :start "Destructive delivery failure"]]]
+                   ^{:key variant}
+                   [sut/bubble {:variant variant
+                                :align align}
+                    [sut/bubble-content {}
+                     copy]])])))
+
+(defstory
+ BubbleMarkdownComposition
+ "Markdown remains an explicit child composition, so Bubble owns conversation styling without owning content parsing."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [sut/bubble-group {:class "max-w-2xl"}
+    [sut/bubble {:variant :muted}
+     [sut/bubble-content {}
+      [markdown/markdown {}
+       "### Build summary\n\n- **18** tests passed\n- `release.jar` created\n\n[Open artifacts](https://example.com)"]]]])))
 
 (defstory BubbleGroupWithReactions
           "A grouped exchange with reactions positioned on opposite bubble edges."

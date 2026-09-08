@@ -1,241 +1,108 @@
 (ns clojure-shadcn.ui.components.tooltip
-  "Composable tooltip component for displaying contextual information on hover/focus.
+  "Radix Tooltip wrappers with two deliberately separate APIs.
 
-  A popup that displays information related to an element when the element receives
-  keyboard focus or the mouse hovers over it. Built on Radix UI's Tooltip primitive,
-  which provides excellent accessibility and positioning.
+  The compound API mirrors upstream composition: `tooltip-provider`,
+  `tooltip-root`, `tooltip-trigger`, `tooltip-portal`, `tooltip-content`, and
+  `tooltip-arrow`. Every wrapper accepts a props map, forwards additional props,
+  and adds its matching `data-slot`.
 
-  ## Key Features
+  `simple-tooltip` is the monolithic convenience API. The historical `tooltip`
+  name aliases `simple-tooltip` for source compatibility; it is not the compound
+  root. The historical `tooltip-provider-component` remains the raw Radix React
+  Provider for callers using `[:> tooltip-provider-component ...]`.
 
-  - **Shared Context**: Wrap a tooltip region once with `tooltip-provider-component`
-  - **Data-Driven**: Configured purely through a single map of options
-  - **Accessible**: Proper ARIA attributes, keyboard navigation, screen reader support
-  - **Smart Positioning**: Auto-repositions to stay in viewport (collision detection)
-  - **Directional Animations**: Slides in from appropriate direction based on placement
-  - **Portal Rendering**: Renders in portal to avoid z-index issues
-
-  ## Usage
-
-  Basic tooltip:
-  ```clojure
-  [tooltip
-   {:trigger [:button \"Hover me\"]
-    :content \"Helpful information\"}]
-  ```
-
-  With a button component as trigger:
-  ```clojure
-  ;; Invoke the pure renderer so Radix receives its native Hiccup element.
-  [tooltip
-   {:trigger (button {:variant :outline} \"Delete\")
-    :content \"This will permanently delete the item\"
-    :side :top
-    :side-offset 8
-    :content-class \"max-w-xs\"
-    :trigger-as-child? true}]
-  ```
-
-  With plain hiccup as trigger (can use asChild):
-  ```clojure
-  ;; When using plain hiccup, you can enable trigger-as-child? for prop merging
-  [tooltip
-   {:trigger [:button {:class \"px-4 py-2\"} \"Delete\"]
-    :content \"This will permanently delete the item\"
-    :trigger-as-child? true}]  ; Works with plain hiccup
-  ```
-
-  Rich content with a button:
-  ```clojure
-  [tooltip
-   {:trigger (button {:variant :ghost :size :icon}
-                     [:> info-icon {:class \"h-4 w-4\"}])
-    :content [:div
-              [:p {:class \"font-semibold\"} \"Pro Tip\"]
-              [:p {:class \"text-xs\"} \"Keyboard shortcuts available.\"]]
-    :trigger-as-child? true}]
-  ```
-
-  Controlled state (basic):
-  ```clojure
-  (let [open? (r/atom false)]
-    [tooltip
-     {:trigger [:button {:on-click #(swap! open? not)} \"Toggle\"]
-      :content \"I'm controlled externally\"
-      :open @open?
-      :on-open-change #(reset! open? %)}])
-  ```
-
-  Controlled state (with external button to prevent hover conflicts):
-  ```clojure
-  (let [open? (r/atom false)
-        force-closed? (r/atom false)]
-    [:div
-     ;; External button
-     [button {:on-click (fn []
-                          (if @open?
-                            (do (reset! force-closed? true)
-                                (reset! open? false)
-                                (js/setTimeout #(reset! force-closed? false) 300))
-                            (do (reset! force-closed? false)
-                                (reset! open? true))))}
-      (if @open? \"Close\" \"Open\")]
-     ;; Tooltip with hover
-     [tooltip
-      {:trigger [:span \"Hover me\"]
-       :content \"Controlled + hover-enabled\"
-       :open @open?
-       :on-open-change #(when-not (and % @force-closed?)
-                         (reset! open? %))}]])
-  ```
-
-Version: 1.0.0
-Last updated: 2026-02-06
-
-Based on Radix UI primitives.
-Documentation: https://www.radix-ui.com/primitives/docs/components/tooltip"
+  Both kebab-case and camelCase keyword props are accepted. If both forms are
+  present, kebab-case wins."
   (:require
-   ["@radix-ui/react-tooltip"   :as TooltipPrimitive]
+   ["@radix-ui/react-tooltip"   :as primitive]
+   [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
-;;
-;; Internal Radix primitives (not exported)
-;;
+(def ^:private content-classes
+  "bg-primary text-primary-foreground animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-fit origin-(--radix-tooltip-content-transform-origin) rounded-md px-3 py-1.5 text-xs text-balance")
 
-(def ^:private tooltip-provider (.-Provider TooltipPrimitive))
+(def ^:private arrow-classes
+  "bg-primary fill-primary z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]")
 
-(def ^:private tooltip-root (.-Root TooltipPrimitive))
+(defn- enum-name [value] (if (keyword? value) (name value) value))
 
-(def ^:private tooltip-trigger (.-Trigger TooltipPrimitive))
+(defn- radix-props
+  [raw-props slot]
+  (let [props (normalize-props (or raw-props {}))]
+    (cond-> (assoc props :data-slot slot)
+      (:side props) (update :side enum-name)
+      (:align props) (update :align enum-name)
+      (:sticky props) (update :sticky enum-name)
+      (:collision-boundary props) (update :collision-boundary identity))))
 
-(def ^:private tooltip-content-primitive (.-Content TooltipPrimitive))
+(defn tooltip-provider
+  "Radix Tooltip.Provider. Forwards provider timing, hoverability, direction, and all upstream props."
+  [props & children]
+  (into [:> primitive/Provider (radix-props props "tooltip-provider")] children))
 
-(def ^:private tooltip-portal (.-Portal TooltipPrimitive))
+(defn tooltip-root
+  "Radix Tooltip.Root. Supports uncontrolled or controlled state and per-tooltip delay options."
+  [props & children]
+  (into [:> primitive/Root (radix-props props "tooltip")] children))
+
+(defn tooltip-trigger
+  "Radix Tooltip.Trigger. Pass `:as-child true` to compose with one focusable child."
+  [props & children]
+  (into [:> primitive/Trigger (radix-props props "tooltip-trigger")] children))
+
+(defn tooltip-portal
+  "Radix Tooltip.Portal. `:container` and `:force-mount` are forwarded upstream."
+  [props & children]
+  (into [:> primitive/Portal (radix-props props "tooltip-portal")] children))
+
+(defn tooltip-content
+  "Styled Radix Tooltip.Content. Positioning, collision, event, and DOM props are forwarded."
+  [raw-props & children]
+  (let [{:keys [class side-offset]
+         :or {side-offset 0}
+         :as props}
+        (radix-props raw-props "tooltip-content")]
+    (into [:>
+           primitive/Content
+           (-> props
+               (assoc :side-offset side-offset :class (merge-classes content-classes class))
+               (dissoc :class-name))]
+          children)))
+
+(defn tooltip-arrow
+  "Styled Radix Tooltip.Arrow. Size, styling, and SVG props are forwarded."
+  [raw-props & children]
+  (let [{:keys [class]
+         :as props}
+        (radix-props raw-props "tooltip-arrow")]
+    (into [:>
+           primitive/Arrow
+           (-> props
+               (assoc :class (merge-classes arrow-classes class))
+               (dissoc :class-name))]
+          children)))
+
+(def tooltip-provider-component
+  "Compatibility alias for the raw Radix Provider React component. Prefer the
+  Reagent wrapper `tooltip-provider` in new code."
+  primitive/Provider)
 
 (defn- native-interactive-trigger?
   [trigger]
   (and (vector? trigger)
        (contains? #{:a :button :input :select :textarea :summary} (first trigger))))
 
-;;
-;; Public API - Exported provider for shared tooltip context
-;;
+(defn simple-tooltip
+  "Monolithic convenience tooltip.
 
-(def tooltip-provider-component
-  "TooltipProvider component for wrapping multiple tooltips.
-  Allows tooltips to share delay and skip-delay behavior.
-  
-  Props:
-  - `:delay-duration` - Time (ms) before tooltip shows (default: 700)
-  - `:skip-delay-duration` - Time (ms) to skip delay between tooltips (default: 300)
-  - `:disable-hoverable-content?` - Prevent tooltip from staying open on hover (default: false)
-  
-  Example:
-  ```clojure
-  [:> tooltip-provider-component {}
-   [my-component-with-tooltips]]
-  ```"
-  tooltip-provider)
+  Required options are `:trigger` and `:content`. Existing options remain
+  supported: side/alignment/collision options, delay and controlled state,
+  `:content-class`, `:content-hidden?`, `:trigger-as-child?`, and
+  `:disable-hoverable-content?`.
 
-;;
-;; Public API - Single data-driven component
-;;
-
-(defn tooltip
-  "Tooltip component configured purely with data.
-
-  Accepts a configuration map and renders a tooltip root, trigger, and portalled content.
-  Wrap the relevant application region once with `tooltip-provider-component`.
-
-  ## Configuration Map
-
-  ### Required
-  - `:trigger` - Hiccup element to trigger the tooltip (e.g., `[:button \"Hover me\"]`)
-  - `:content` - Hiccup element or string for tooltip content
-
-  ### Positioning
-  - `:side` - Preferred side: `:top`, `:right`, `:bottom`, `:left` (default: `:top`)
-  - `:side-offset` - Distance in pixels from trigger (default: 4)
-  - `:align` - Alignment: `:start`, `:center`, `:end` (default: `:center`)
-  - `:align-offset` - Offset in pixels from alignment edge (default: 0)
-  - `:collision-padding` - Padding from viewport edges (default: 0)
-  - `:avoid-collisions?` - Auto-reposition to stay in viewport (default: true)
-  - `:sticky` - Keep aligned when trigger moves: `:partial`, `:always` (default: `:partial`)
-
-  ### Timing
-  - `:delay-duration` - Time (ms) before tooltip shows (default: 700)
-  Provider-level skip delay is configured on `tooltip-provider-component`.
-
-  ### State
-  - `:open` - Controlled open state (boolean)
-  - `:default-open` - Uncontrolled default open state (boolean)
-  - `:on-open-change` - Callback when open state changes `(fn [open?] ...)`
-
-  ### Styling
-  - `:content-class` - Additional Tailwind classes for content
-  - `:trigger-as-child?` - Merge trigger props into one child element
-    - Automatically enabled for native interactive Hiccup; explicitly set it for component triggers
-    - Invoke pure Reagent renderers directly so Radix receives their native Hiccup element
-    - Keep `false` only when Radix should provide the trigger button
-  - `:disable-hoverable-content?` - Prevent tooltip from staying open on hover (default: false)
-
-  ## Examples
-
-  ```clojure
-  ;; Simple tooltip with a native button
-  [tooltip
-   {:trigger [:button \"Hover me\"]
-    :content \"Helpful info\"
-    :trigger-as-child? true}]
-
-  ;; With a pure Reagent renderer invoked directly
-  [tooltip
-   {:trigger (button {:variant :outline} \"Delete\")
-    :content \"This will permanently delete the item\"
-    :side :top
-    :side-offset 8
-    :trigger-as-child? true}]
-
-  ;; Rich content with custom styling
-  [tooltip
-   {:trigger (button {:variant :ghost} \"Info\")
-    :trigger-as-child? true
-    :content [:div
-              [:p {:class \"font-semibold\"} \"Pro Tip\"]
-              [:p {:class \"text-xs\"} \"Use Ctrl+K for shortcuts.\"]]
-    :content-class \"max-w-xs\"}]
-
-  ;; Controlled state (basic - trigger is the control)
-  (let [open? (r/atom false)]
-    [tooltip
-     {:trigger [:button {:on-click #(swap! open? not)} \"Toggle\"]
-      :content \"Controlled externally\"
-      :open @open?
-      :on-open-change #(reset! open? %)}])
-
-  ;; Controlled with separate button (handles hover conflicts)
-  (let [open? (r/atom false)
-        force-closed? (r/atom false)]
-    [:div
-     [button {:on-click #(if @open?
-                           (do (reset! force-closed? true)
-                               (reset! open? false)
-                               (js/setTimeout (fn [] (reset! force-closed? false)) 300))
-                           (do (reset! force-closed? false)
-                               (reset! open? true)))}
-      (if @open? \"Close\" \"Open\")]
-     [tooltip
-      {:trigger [:span \"Hover me\"]
-       :content \"Controlled + hover\"
-       :open @open?
-       :on-open-change #(when-not (and % @force-closed?)
-                         (reset! open? %))}]])
-
-  ;; With trigger-as-child? true for prop merging (plain hiccup only)
-  [tooltip
-   {:trigger [:button {:class \"custom-button\"} \"Hover\"]
-    :content \"Props merged into button\"
-    :trigger-as-child? true}]  ; Only use with plain hiccup elements
-  ```"
+  `:root-props`, `:trigger-props`, `:portal-props`, `:content-props`, and
+  `:arrow-props` forward directly to their compound parts. Explicit convenience
+  options win over forwarding-map values. Set `:arrow? true` to render an arrow."
   [{:keys [trigger
            content
            side
@@ -252,45 +119,42 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/tooltip"
            content-class
            content-hidden?
            trigger-as-child?
-           disable-hoverable-content?]
+           disable-hoverable-content?
+           root-props
+           trigger-props
+           portal-props
+           content-props
+           arrow?
+           arrow-props]
     :or {side-offset 4
          avoid-collisions? true
-         delay-duration 700}
-    :as _opts}]
+         delay-duration 700}}]
   (let [as-child?
-        (if (some? trigger-as-child?) trigger-as-child? (native-interactive-trigger? trigger))]
-    [:>
-     tooltip-root
-     (cond-> {:delayDuration delay-duration
-              :disableHoverableContent disable-hoverable-content?}
-       (some? open) (assoc :open open)
-       (some? default-open) (assoc :defaultOpen default-open)
-       on-open-change (assoc :onOpenChange on-open-change))
-     ;; Trigger
-     [:> tooltip-trigger {:asChild as-child?} trigger]
-     ;; Content
-     [:>
-      tooltip-portal
-      [:>
-       tooltip-content-primitive
-       (cond-> {:sideOffset side-offset
-                :className
-                (merge-classes
-                 (str "z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 "
-                      "text-sm text-popover-foreground shadow-md "
-                      "animate-in fade-in-0 zoom-in-95 "
-                      "data-[state=closed]:animate-out " "data-[state=closed]:fade-out-0 "
-                      "data-[state=closed]:zoom-out-95 " "data-[side=bottom]:slide-in-from-top-2 "
-                      "data-[side=left]:slide-in-from-right-2 "
-                      "data-[side=right]:slide-in-from-left-2 "
-                      "data-[side=top]:slide-in-from-bottom-2 "
-                      "origin-(--radix-tooltip-content-transform-origin)")
-                 content-class)}
-         side (assoc :side (name side))
-         align (assoc :align (name align))
-         align-offset (assoc :alignOffset align-offset)
-         collision-padding (assoc :collisionPadding collision-padding)
-         (some? avoid-collisions?) (assoc :avoidCollisions avoid-collisions?)
-         sticky (assoc :sticky (name sticky))
-         (some? content-hidden?) (assoc :hidden content-hidden?))
-       content]]]))
+        (if (some? trigger-as-child?) trigger-as-child? (native-interactive-trigger? trigger))
+        root-props (cond-> (merge root-props
+                                  {:delay-duration delay-duration
+                                   :disable-hoverable-content disable-hoverable-content?})
+                     (some? open) (assoc :open open)
+                     (some? default-open) (assoc :default-open default-open)
+                     on-open-change (assoc :on-open-change on-open-change))
+        content-props (cond-> (merge content-props
+                                     {:side-offset side-offset
+                                      :avoid-collisions avoid-collisions?
+                                      :class content-class})
+                        side (assoc :side side)
+                        align (assoc :align align)
+                        (some? align-offset) (assoc :align-offset align-offset)
+                        (some? collision-padding) (assoc :collision-padding collision-padding)
+                        sticky (assoc :sticky sticky)
+                        (some? content-hidden?) (assoc :hidden content-hidden?))]
+    [tooltip-root
+     root-props
+     [tooltip-trigger (assoc (or trigger-props {}) :as-child as-child?) trigger]
+     [tooltip-portal
+      portal-props
+      [tooltip-content content-props content (when arrow? [tooltip-arrow arrow-props])]]]))
+
+(def tooltip
+  "Compatibility alias for `simple-tooltip`. New compound callers should use
+  `tooltip-root`; `tooltip` intentionally retains its historical map API."
+  simple-tooltip)

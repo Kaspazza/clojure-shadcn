@@ -1,11 +1,12 @@
 (ns clojure-shadcn.stories.item-stories
   (:require
-   ["lucide-react"                      :refer [FileText MoreHorizontal]]
-   [clojure-shadcn.stories.helpers      :as helpers]
-   [clojure-shadcn.ui.components.avatar :as avatar]
-   [clojure-shadcn.ui.components.button :as button]
-   [clojure-shadcn.ui.components.item   :as sut]
-   [reagent.core                        :as r])
+   ["lucide-react"                             :refer [FileText MoreHorizontal]]
+   [clojure-shadcn.stories.helpers             :as helpers]
+   [clojure-shadcn.ui.components.avatar        :as avatar]
+   [clojure-shadcn.ui.components.button        :as button]
+   [clojure-shadcn.ui.components.dropdown-menu :as dropdown-menu]
+   [clojure-shadcn.ui.components.item          :as sut]
+   [reagent.core                               :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -161,6 +162,37 @@
        "Workspace tour"]
       [sut/item-description {}
        "See the new collaboration space."]]]])))
+
+(defstory
+ ItemDropdown
+ "Item actions composed with Dropdown Menu; the icon button is the actual menu trigger and remains independently accessible."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [sut/item {:variant :outline
+              :class "max-w-xl"}
+    [sut/item-media {:variant :icon}
+     [:> FileText]]
+    [sut/item-content {}
+     [sut/item-title {}
+      "Quarterly report"]
+     [sut/item-description {}
+      "PDF · 2.4 MB"]]
+    [sut/item-actions {}
+     [dropdown-menu/dropdown-menu {}
+      [dropdown-menu/dropdown-menu-trigger {:as-child true}
+       (button/button {:variant :ghost
+                       :size :icon
+                       :aria-label "Report actions"}
+                      [:> MoreHorizontal])]
+      [dropdown-menu/dropdown-menu-content {:align "end"}
+       [dropdown-menu/dropdown-menu-item {}
+        "Download"]
+       [dropdown-menu/dropdown-menu-item {}
+        "Share"]
+       [dropdown-menu/dropdown-menu-separator {}]
+       [dropdown-menu/dropdown-menu-item {:variant :destructive}
+        "Delete"]]]]])))
 
 (defstory ItemHeader
           "Header — upstream item header/footer composition for richer list content."

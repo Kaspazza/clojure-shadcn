@@ -5,6 +5,18 @@
    [clojure-shadcn.utils.props             :refer [normalize-props]]
    [clojure-shadcn.utils.styles            :refer [merge-classes]]))
 
+(defn button-group-variants
+  "Returns the complete button-group class string for `:orientation` and optional `:class`."
+  [{:keys [orientation class]
+    :or {orientation :horizontal}}]
+  (merge-classes
+   "flex w-fit items-stretch has-[>[data-slot=button-group]]:gap-2 [&>*]:focus-visible:relative [&>*]:focus-visible:z-10 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-md [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1"
+   (case orientation
+     :vertical
+     "flex-col [&>*:not(:first-child)]:rounded-t-none [&>*:not(:first-child)]:border-t-0 [&>*:not(:last-child)]:rounded-b-none"
+     "[&>*:not(:first-child)]:rounded-l-none [&>*:not(:first-child)]:border-l-0 [&>*:not(:last-child)]:rounded-r-none")
+   class))
+
 (defn button-group
   [{:as raw-props} & children]
   (let

@@ -32,14 +32,20 @@
      {:component-name "card"
       :description
       "Visual card root rendered as a div. Compose the region components below as needed; the API does not impose heading or landmark semantics."
-      :props [{:name ":class"
-               :type "string"
-               :default nil
-               :description "Classes merged with card defaults."}
-              {:name "additional props"
-               :type "map entries"
-               :default nil
-               :description "Normalized and forwarded to the div."}]}]
+      :props
+      [{:name ":size"
+        :type "keyword"
+        :default ":default"
+        :description
+        "One of: :default | :sm. Exposed as data-size on the root so every Card region responds consistently."}
+       {:name ":class"
+        :type "string"
+        :default nil
+        :description "Classes merged with card defaults."}
+       {:name "additional props"
+        :type "map entries"
+        :default nil
+        :description "Normalized and forwarded to the div."}]}]
     [helpers/api-component-card
      {:component-name "card-header / card-title / card-description"
       :description
@@ -55,7 +61,9 @@
       :props [{:name ":class / additional props"
                :type "string / map entries"
                :default nil
-               :description "Merged and forwarded to each underlying div."}]}]])))
+               :description "Merged and forwarded to each underlying div."}]}]
+    [:div {:class "rounded-lg border bg-muted/50 p-4 text-xs text-muted-foreground"}
+     "Card size belongs on the card root. The root publishes data-size and shared spacing; header, title, description, action, content, and footer retain their compositional APIs while responding to the root size."]])))
 
 (defstory CardDemo
           "Interactive card playground."
@@ -143,6 +151,34 @@
       "A practical session for building a shared component language."]]
     [sut/card-footer {}
      (button/button {:class "w-full"} "Reserve a seat")]])))
+
+(defstory
+ CardEdgeSpacing
+ "Edge and size recipes. Flush media removes top padding; :size :sm applies compact spacing consistently across Card regions."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "grid gap-6 md:grid-cols-2"}
+    [sut/card {:class "overflow-hidden pt-0"}
+     [:div {:class "grid aspect-video place-items-center bg-muted text-sm text-muted-foreground"}
+      "Flush edge media"]
+     [sut/card-header {:class "border-b"}
+      [sut/card-title {}
+       "Edge treatment"]
+      [sut/card-description {}
+       "Media reaches the card boundary while the header retains its inset."]]
+     [sut/card-content {}
+      "Content keeps the standard six-unit inset."]]
+    [sut/card {:size :sm}
+     [sut/card-header {:class "border-b"}
+      [sut/card-title {}
+       "Compact card"]
+      [sut/card-description {}
+       "The small size is declared once on the root."]]
+     [sut/card-content {}
+      "Shared spacing keeps every region aligned."]
+     [sut/card-footer {:class "border-t"}
+      (button/button {:size :sm} "Continue")]]])))
 
 (defstory CardRTL
           "RTL — the full card composition follows right-to-left reading order."

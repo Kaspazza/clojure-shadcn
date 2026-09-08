@@ -53,7 +53,12 @@
        :type "map entries"
        :default nil
        :description
-       "All remaining normalized props are forwarded, including :mode, :selected, :on-select, :disabled, and :number-of-months. Use the value shapes required by the selected DayPicker mode."}]}])))
+       "All remaining normalized props are forwarded, including :mode, :selected, :on-select, :disabled, and :number-of-months. Use the value shapes required by the selected DayPicker mode."}]}
+    [:div {:class "rounded-lg border border-amber-500/30 bg-amber-500/10 p-4"}
+     [:h4 {:class "mb-2 text-sm font-semibold"}
+      "Hijri calendar limitation"]
+     [:p {:class "text-xs text-muted-foreground"}
+      "This project uses react-day-picker 10.0.1, whose installed package exposes no Hijri calendar build or Hijri date adapter. date-fns 4.4.0 provides locale text but not Hijri calendar arithmetic, and no Hijri date dependency is installed. A truthful Hijri story therefore cannot be implemented with the existing dependencies; locale and RTL props only localize the Gregorian calendar."]]])))
 
 (defn- single-date-example
   []

@@ -30,7 +30,7 @@
    [:div {:class "p-6 max-w-4xl"}
     [:div {:class "space-y-4"}
      [helpers/api-component-card
-      {:component-name "badge"
+      {:component-name "badge / badge-variants"
        :description
        "Compact status/metadata pill with variant styling and optional slot polymorphism."
        :props [{:name ":variant"

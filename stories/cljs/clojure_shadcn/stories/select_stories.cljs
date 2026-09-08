@@ -141,7 +141,9 @@
        [:li
         "select-content is portaled, so stacking context/z-index should be managed at app layout level."]
        [:li
-        "Use :aria-invalid on select-trigger via forwarded props when integrating validation styling."]]]
+        "Use :aria-invalid on select-trigger via forwarded props when integrating validation styling."]
+       [:li
+        "Radix Select is not an autocomplete: it has typeahead navigation but no editable query input or arbitrary values. Use Combobox when users must filter options by typing."]]]
      [:div {:class "border rounded-lg p-4 bg-muted/50"}
       [:h4 {:class "text-sm font-semibold mb-2"}
        "Usage Example"]

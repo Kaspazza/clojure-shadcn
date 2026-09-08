@@ -98,6 +98,21 @@
 
 (defstory SixDigits [] (r/as-element (helpers/wrap-component [otp-example])))
 
+(defstory InputOtpDisabled
+          "Disabled OTP state. Based on shadcn/ui Input OTP — Disabled."
+          []
+          (r/as-element (helpers/wrap-component
+                         [sut/input-otp {:max-length 6
+                                         :disabled true
+                                         :value "482913"
+                                         :aria-label "Disabled verification code"}
+                          (into [sut/input-otp-group {}]
+                                (for [index (range 3)]
+                                  ^{:key index} [sut/input-otp-slot {:index index}]))
+                          [sut/input-otp-separator {}]
+                          (into [sut/input-otp-group {}]
+                                (for [index (range 3 6)]
+                                  ^{:key index} [sut/input-otp-slot {:index index}]))])))
 
 (defstory InputOtpPlayground
           "Interactive OTP playground."

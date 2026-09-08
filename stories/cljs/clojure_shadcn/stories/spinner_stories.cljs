@@ -6,6 +6,7 @@
    [clojure-shadcn.ui.components.button      :as button]
    [clojure-shadcn.ui.components.empty       :as empty]
    [clojure-shadcn.ui.components.input-group :as input-group]
+   [clojure-shadcn.ui.components.item        :as item]
    [clojure-shadcn.ui.components.spinner     :as sut]
    [reagent.core                             :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
@@ -157,6 +158,21 @@
        "Processing payment..."]]
      [:span {:class "text-sm tabular-nums"}
       "$100.00"]]])))
+
+(defstory
+ SpinnerItem
+ "Spinner used as Item media, with status semantics and text owned by the composed item rather than the decorative icon."
+ []
+ (r/as-element (helpers/wrap-component [item/item {:variant :outline
+                                                   :class "max-w-md"
+                                                   :role "status"}
+                                        [item/item-media {:variant :icon}
+                                         [sut/spinner {:class "size-5 text-primary"}]]
+                                        [item/item-content {}
+                                         [item/item-title {}
+                                          "Importing workspace"]
+                                         [item/item-description {}
+                                          "Checking files and resolving dependencies."]]])))
 
 (defstory SpinnerInputGroup
           "Input Group — upstream loading field pairs a visual spinner with explicit status text."

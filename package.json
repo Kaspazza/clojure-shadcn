@@ -7,10 +7,10 @@
   "author": "Mateusz Mazurczak <mateusz.mazurczak.dev@gmail.com>",
   "type": "module",
   "scripts": {
-    "watch-stories": "shadow-cljs watch stories",
-    "compile-stories": "shadow-cljs compile stories",
-    "storybook": "storybook dev -p 6010 --initial-path /story/home--overview",
-    "build-storybook": "storybook build",
+    "watch-stories": "bb watch-stories",
+    "compile-stories": "bb compile-stories",
+    "storybook": "bb storybook",
+    "build-storybook": "bb build-storybook",
     "dev": "bb dev"
   },
   "dependencies": {

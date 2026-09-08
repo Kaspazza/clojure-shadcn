@@ -87,21 +87,25 @@
                                            :type "map entries"
                                            :default nil
                                            :description "Forwarded to Dialog overlay."}]}]
-     [helpers/api-component-card {:component-name "sheet-content"
-                                  :description
-                                  "Sliding panel container with built-in overlay and close button."
-                                  :props [{:name ":side"
-                                           :type "keyword"
-                                           :default ":right"
-                                           :description "One of: :top | :bottom | :left | :right."}
-                                          {:name ":class"
-                                           :type "string"
-                                           :default nil
-                                           :description "Additional Tailwind classes."}
-                                          {:name "additional props"
-                                           :type "map entries"
-                                           :default nil
-                                           :description "Forwarded to Dialog content."}]}]
+     [helpers/api-component-card
+      {:component-name "sheet-content"
+       :description "Sliding panel container with built-in overlay and close button."
+       :props [{:name ":side"
+                :type "keyword"
+                :default ":right"
+                :description "One of: :top | :bottom | :left | :right."}
+               {:name ":show-close-button"
+                :type "boolean"
+                :default "true"
+                :description "Whether to render the generated corner close button."}
+               {:name ":class"
+                :type "string"
+                :default nil
+                :description "Additional Tailwind classes."}
+               {:name "additional props"
+                :type "map entries"
+                :default nil
+                :description "Forwarded to Dialog content."}]}]
      [helpers/api-component-card {:component-name "sheet-header"
                                   :description
                                   "Layout wrapper for sheet-title and sheet-description."
@@ -150,7 +154,9 @@
        [:li
         "All exported sheet components are ordinary Reagent wrappers and use standard vector invocation."]
        [:li "Use :side on sheet-content to control animation direction and panel placement."]
-       [:li "For forms, keep explicit close controls (sheet-close) in footer for predictable UX."]]]
+       [:li "For forms, keep explicit close controls (sheet-close) in footer for predictable UX."]
+       [:li
+        "Set :show-close-button false on sheet-content when the generated corner control is not appropriate; provide another clear dismissal control."]]]
      [:div {:class "border rounded-lg p-4 bg-muted/50"}
       [:h4 {:class "text-sm font-semibold mb-2"}
        "Usage Example"]
@@ -195,6 +201,27 @@
        (button/button {:type "submit"} "Save changes")
        [sut/sheet-close {:as-child true}
         (button/button {:variant :outline} "Close")]]]]])))
+
+(defstory
+ SheetWithoutCloseButton
+ "Sheet without the generated corner close button. An explicit footer action remains available for dismissal."
+ []
+ (r/as-element (helpers/wrap-component
+                [:div {:class "p-6"}
+                 [sut/sheet {}
+                  [sut/sheet-trigger {:as-child true}
+                   (button/button {:variant :outline} "Open without corner close")]
+                  [sut/sheet-content {:show-close-button false}
+                   [sut/sheet-header {}
+                    [sut/sheet-title {}
+                     "Review changes"]
+                    [sut/sheet-description {}
+                     "This sheet uses only its explicit dismissal action."]]
+                   [:div {:class "grid flex-1 gap-4 px-4 text-sm text-muted-foreground"}
+                    "Confirm the details before returning to the page."]
+                   [sut/sheet-footer {}
+                    [sut/sheet-close {:as-child true}
+                     (button/button {:variant :outline} "Done")]]]]])))
 
 (defstory
  SheetSide

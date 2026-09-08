@@ -109,3 +109,41 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/popover"
                                class))
                 (dissoc :class-name))]
            children)]))
+
+(defn popover-header
+  "Groups a popover title and description. Additional props are forwarded to the div."
+  [{:as raw-props} & children]
+  (let [{:keys [class]
+         :as props}
+        (normalize-props raw-props)]
+    (into [:div
+           (-> props
+               (assoc :data-slot "popover-header"
+                      :class (merge-classes "flex flex-col gap-1 text-sm" class))
+               (dissoc :class-name))]
+          children)))
+
+(defn popover-title
+  "Visual title for popover content. Renders the upstream div and forwards all props."
+  [{:as raw-props} & children]
+  (let [{:keys [class]
+         :as props}
+        (normalize-props raw-props)]
+    (into [:div
+           (-> props
+               (assoc :data-slot "popover-title" :class (merge-classes "font-medium" class))
+               (dissoc :class-name))]
+          children)))
+
+(defn popover-description
+  "Supporting text for a popover title. Additional props are forwarded to the paragraph."
+  [{:as raw-props} & children]
+  (let [{:keys [class]
+         :as props}
+        (normalize-props raw-props)]
+    (into [:p
+           (-> props
+               (assoc :data-slot "popover-description"
+                      :class (merge-classes "text-muted-foreground" class))
+               (dissoc :class-name))]
+          children)))

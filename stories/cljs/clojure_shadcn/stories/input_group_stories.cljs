@@ -2,6 +2,7 @@
   (:require
    ["lucide-react"                           :refer [AtSign Search Send]]
    [clojure-shadcn.stories.helpers           :as helpers]
+   [clojure-shadcn.ui.components.card        :as card]
    [clojure-shadcn.ui.components.input-group :as sut]
    [clojure-shadcn.ui.components.kbd         :as kbd]
    [clojure-shadcn.ui.components.spinner     :as spinner]
@@ -116,6 +117,27 @@
                            [sut/input-group-input {:aria-label "Search"
                                                    :placeholder (:placeholder args)
                                                    :disabled (:disabled args)}]]])))
+
+(defstory
+ InputGroupInCard
+ "Input Group composed inside Card regions, preserving the Card's spacing and the group's single focus ring."
+ []
+ (r/as-element (helpers/wrap-component [card/card {:class "w-full max-w-md"}
+                                        [card/card-header {}
+                                         [card/card-title {}
+                                          "Invite a teammate"]
+                                         [card/card-description {}
+                                          "Send an invitation by email address."]]
+                                        [card/card-content {}
+                                         [sut/input-group {}
+                                          [sut/input-group-addon {}
+                                           [:> AtSign {:aria-hidden true}]]
+                                          [sut/input-group-input {:type "email"
+                                                                  :aria-label "Email address"
+                                                                  :placeholder "name@example.com"}]
+                                          [sut/input-group-addon {:align :inline-end}
+                                           [sut/input-group-button {}
+                                            "Invite"]]]]])))
 
 (defstory
  InputGroupPatterns

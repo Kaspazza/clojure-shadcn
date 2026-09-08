@@ -1,10 +1,14 @@
 (ns clojure-shadcn.ui.components.sidebar
   "Pure presentational sidebar components.
    
-   Components are data-driven - no internal state management:
+   Presentational components are data-driven and have no internal state:
    - Consumer manages open/collapsed state
    - Consumer handles mobile detection
    - Consumer provides callbacks for interactions
+
+   `sidebar-provider` and `use-sidebar` are an optional adapter for consumers
+   that want React context and controlled/uncontrolled coordination. Existing
+   components never read that context implicitly.
    
    Usage:
    [sidebar {:open? @sidebar-open?
@@ -27,6 +31,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   (:require
    ["@radix-ui/react-slot"                 :refer [Slot]]
    ["lucide-react"                         :refer [PanelLeft]]
+   ["react"                                :as react]
    [clojure-shadcn.ui.components.button    :as mateuszmazurczak-button]
    [clojure-shadcn.ui.components.input     :as mateuszmazurczak-input]
    [clojure-shadcn.ui.components.separator :as mateuszmazurczak-separator]
@@ -34,7 +39,9 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
    [clojure-shadcn.ui.components.skeleton  :as mateuszmazurczak-skeleton]
    [clojure-shadcn.ui.components.tooltip   :as mateuszmazurczak-tooltip]
    [clojure-shadcn.utils.props             :refer [normalize-props]]
-   [clojure-shadcn.utils.styles            :refer [merge-classes]]))
+   [clojure-shadcn.utils.styles            :refer [merge-classes]]
+   [goog.object                            :as gobj]
+   [reagent.core                           :as r]))
 
 ;; -----------------------------------------------------------------------------
 ;; Constants
@@ -44,6 +51,130 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
 (def ^:private SIDEBAR_WIDTH_MOBILE "18rem")
 
 (def ^:private SIDEBAR_WIDTH_ICON "3rem")
+
+(def ^:private DEFAULT_SHORTCUT "b")
+
+(def ^:private SidebarContext (react/createContext nil))
+
+(defn use-sidebar
+  "Hook-equivalent context accessor. Call only from a React function component
+  (render Reagent consumers with `:f>`). Throws outside `sidebar-provider`.
+
+  Returns `:open?`, `:set-open!`, `:open-mobile?`, `:set-open-mobile!`,
+  `:is-mobile`, `:state`, and `:toggle-sidebar!`."
+  []
+  (let [context (react/useContext SidebarContext)]
+    (when-not context (throw (js/Error. "use-sidebar must be used within sidebar-provider")))
+    {:open? (gobj/get context "open")
+     :set-open! (gobj/get context "setOpen")
+     :open-mobile? (gobj/get context "openMobile")
+     :set-open-mobile! (gobj/get context "setOpenMobile")
+     :is-mobile (gobj/get context "isMobile")
+     :state (gobj/get context "state")
+     :toggle-sidebar! (gobj/get context "toggleSidebar")}))
+
+(defn- initial-mobile?
+  [explicit-mobile?]
+  (if (some? explicit-mobile?)
+    explicit-mobile?
+    (and (exists? js/window) (.-matches (.matchMedia js/window "(max-width: 767px)")))))
+
+(defn- persist-cookie!
+  [cookie-name cookie-max-age open?]
+  (when (exists? js/document)
+    (set! (.-cookie js/document) (str cookie-name "=" open? "; path=/; max-age=" cookie-max-age))))
+
+(defn- sidebar-provider-component
+  [props]
+  (let [controlled? (gobj/get props "controlled")
+        controlled-mobile? (gobj/get props "controlledMobile")
+        open-prop (gobj/get props "open")
+        open-mobile-prop (gobj/get props "openMobile")
+        on-open-change (gobj/get props "onOpenChange")
+        on-open-mobile-change (gobj/get props "onOpenMobileChange")
+        explicit-mobile? (gobj/get props "isMobile")
+        [internal-open set-internal-open] (react/useState (gobj/get props "defaultOpen"))
+        [internal-open-mobile set-internal-open-mobile] (react/useState
+                                                         (gobj/get props "defaultOpenMobile"))
+        [detected-mobile? set-detected-mobile] (react/useState #(initial-mobile? explicit-mobile?))
+        open? (if controlled? open-prop internal-open)
+        open-mobile? (if controlled-mobile? open-mobile-prop internal-open-mobile)
+        is-mobile (if (some? explicit-mobile?) explicit-mobile? detected-mobile?)
+        set-open! (fn [next-open]
+                    (let [next-open (if (fn? next-open) (next-open open?) next-open)]
+                      (when-not controlled? (set-internal-open next-open))
+                      (when on-open-change (on-open-change next-open))))
+        set-open-mobile! (fn [next-open]
+                           (let [next-open (if (fn? next-open) (next-open open-mobile?) next-open)]
+                             (when-not controlled-mobile? (set-internal-open-mobile next-open))
+                             (when on-open-mobile-change (on-open-mobile-change next-open))))
+        toggle-sidebar! (fn [] (if is-mobile (set-open-mobile! not) (set-open! not)))
+        shortcut (gobj/get props "shortcut")
+        persist-cookie? (gobj/get props "persistCookie")
+        cookie-name (gobj/get props "cookieName")
+        cookie-max-age (gobj/get props "cookieMaxAge")]
+    (react/useEffect (fn []
+                       (when (and (nil? explicit-mobile?) (exists? js/window))
+                         (let [query (.matchMedia js/window "(max-width: 767px)")
+                               update! #(set-detected-mobile (.-matches query))]
+                           (update!)
+                           (.addEventListener query "change" update!)
+                           #(.removeEventListener query "change" update!))))
+                     #js [explicit-mobile?])
+    (react/useEffect (fn []
+                       (when (and persist-cookie? cookie-name)
+                         (persist-cookie! cookie-name cookie-max-age open?))
+                       js/undefined)
+                     #js [persist-cookie? cookie-name cookie-max-age open?])
+    (react/useEffect (fn []
+                       (when (and shortcut (exists? js/document))
+                         (let [handler (fn [event]
+                                         (when (and (= (.toLowerCase (.-key event))
+                                                       (.toLowerCase shortcut))
+                                                    (or (.-metaKey event) (.-ctrlKey event)))
+                                           (.preventDefault event)
+                                           (toggle-sidebar!)))]
+                           (.addEventListener js/document "keydown" handler)
+                           #(.removeEventListener js/document "keydown" handler))))
+                     #js [shortcut is-mobile open? open-mobile?])
+    (let [value #js {:open open?
+                     :setOpen set-open!
+                     :openMobile open-mobile?
+                     :setOpenMobile set-open-mobile!
+                     :isMobile is-mobile
+                     :state (if open? "expanded" "collapsed")
+                     :toggleSidebar toggle-sidebar!}]
+      (react/createElement (.-Provider SidebarContext)
+                           #js {:value value}
+                           (gobj/get props "children")))))
+
+(defn sidebar-provider
+  "Optional state/context adapter; existing components never read it implicitly.
+
+  Controlled props: `:open?` / `:on-open-change` and
+  `:open-mobile?` / `:on-open-mobile-change`. Uncontrolled defaults are
+  `:default-open?` (true) and `:default-open-mobile?` (false). Omit
+  `:is-mobile` for a 767px matchMedia adapter. Ctrl/Cmd + `:shortcut` toggles
+  (default `\"b\"`; nil disables). Cookies are written only with
+  `:persist-cookie? true`."
+  [{:as raw-props} & children]
+  (let [props (normalize-props raw-props)
+        controlled? (contains? props :open?)
+        controlled-mobile? (contains? props :open-mobile?)
+        react-props #js {:controlled controlled?
+                         :controlledMobile controlled-mobile?
+                         :open (:open? props)
+                         :defaultOpen (get props :default-open? true)
+                         :onOpenChange (:on-open-change props)
+                         :openMobile (:open-mobile? props)
+                         :defaultOpenMobile (get props :default-open-mobile? false)
+                         :onOpenMobileChange (:on-open-mobile-change props)
+                         :isMobile (:is-mobile props)
+                         :shortcut (get props :shortcut DEFAULT_SHORTCUT)
+                         :persistCookie (true? (:persist-cookie? props))
+                         :cookieName (get props :cookie-name "sidebar_state")
+                         :cookieMaxAge (get props :cookie-max-age (* 60 60 24 7))}]
+    (apply r/create-element sidebar-provider-component react-props (map r/as-element children))))
 
 (defn- enum-keyword
   [value fallback]
@@ -86,7 +217,9 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
        (cond
          (= collapsible :none)
          (into [:div
-                {:class
+                {:data-slot "sidebar"
+                 :data-sidebar "sidebar"
+                 :class
                  (merge-classes
                   "flex h-full w-[var(--sidebar-width)] flex-col bg-sidebar text-sidebar-foreground"
                   class)
@@ -96,7 +229,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
          [mateuszmazurczak-sheet/sheet {:open open?
                                         :on-open-change (or on-open-change identity)}
           [mateuszmazurczak-sheet/sheet-content
-           {:data-sidebar "sidebar"
+           {:data-slot "sidebar"
+            :data-sidebar "sidebar"
             :data-mobile "true"
             :class
             (merge-classes
@@ -113,7 +247,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
                  children)]]
          ;; Desktop: fixed sidebar with collapsible behavior
          :else
-         [:div {:class "group peer hidden text-sidebar-foreground md:block"
+         [:div {:data-slot "sidebar"
+                :class "group peer hidden text-sidebar-foreground md:block"
                 :data-state state
                 :data-collapsible (when (= state "collapsed") (name collapsible))
                 :data-variant (name variant)
@@ -121,7 +256,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
                 :style css-vars}
           ;; Gap handler (spacer that adapts to sidebar width)
           [:div
-           {:class
+           {:data-slot "sidebar-gap"
+            :class
             (merge-classes
              "relative w-[var(--sidebar-width)] bg-transparent transition-[width] duration-200 ease-linear"
              "group-data-[collapsible=offcanvas]:w-0"
@@ -131,7 +267,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
                "group-data-[collapsible=icon]:w-[var(--sidebar-width-icon)]"))}]
           ;; Fixed sidebar container
           [:div
-           {:class
+           {:data-slot "sidebar-container"
+            :class
             (merge-classes
              "fixed inset-y-0 z-10 hidden h-svh w-[var(--sidebar-width)] transition-[left,right,width] duration-200 ease-linear md:flex"
              (if (= side :left)
@@ -143,7 +280,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
              class)}
            (into
             [:div
-             {:data-sidebar "sidebar"
+             {:data-slot "sidebar-inner"
+              :data-sidebar "sidebar"
               :class
               "flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"}]
             children)]])])))
@@ -163,7 +301,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   [mateuszmazurczak-button/button
    (-> props
        (dissoc :class)
-       (assoc :data-sidebar "trigger"
+       (assoc :data-slot "sidebar-trigger"
+              :data-sidebar "trigger"
               :variant :ghost
               :size :icon
               :class (merge-classes "h-7 w-7" class)
@@ -185,6 +324,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
      props
      (dissoc :class)
      (assoc
+      :data-slot "sidebar-rail"
       :data-sidebar "rail"
       :type "button"
       :aria-label "Toggle Sidebar"
@@ -220,6 +360,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
       props
       (dissoc :class)
       (assoc
+       :data-slot "sidebar-inset"
        :class
        (merge-classes
         (str
@@ -236,6 +377,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
    (-> props
        (dissoc :class)
        (assoc
+        :data-slot "sidebar-input"
         :data-sidebar "input"
         :class
         (merge-classes
@@ -250,7 +392,9 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   (into [:div
          (-> props
              (dissoc :class)
-             (assoc :data-sidebar "header" :class (merge-classes "flex flex-col gap-2 p-2" class)))]
+             (assoc :data-slot "sidebar-header"
+                    :data-sidebar "header"
+                    :class (merge-classes "flex flex-col gap-2 p-2" class)))]
         children))
 
 (defn sidebar-footer
@@ -261,7 +405,9 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   (into [:div
          (-> props
              (dissoc :class)
-             (assoc :data-sidebar "footer" :class (merge-classes "flex flex-col gap-2 p-2" class)))]
+             (assoc :data-slot "sidebar-footer"
+                    :data-sidebar "footer"
+                    :class (merge-classes "flex flex-col gap-2 p-2" class)))]
         children))
 
 (defn sidebar-separator
@@ -270,7 +416,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   [mateuszmazurczak-separator/separator
    (-> props
        (dissoc :class)
-       (assoc :data-sidebar "separator"
+       (assoc :data-slot "sidebar-separator"
+              :data-sidebar "separator"
               :class (merge-classes "mx-2 w-auto bg-sidebar-border" class)))])
 
 (defn sidebar-content
@@ -284,6 +431,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
       props
       (dissoc :class)
       (assoc
+       :data-slot "sidebar-content"
        :data-sidebar "content"
        :class
        (merge-classes
@@ -299,7 +447,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   (into [:div
          (-> props
              (dissoc :class)
-             (assoc :data-sidebar "group"
+             (assoc :data-slot "sidebar-group"
+                    :data-sidebar "group"
                     :class (merge-classes "relative flex w-full min-w-0 flex-col p-2" class)))]
         children))
 
@@ -314,6 +463,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
              (-> props
                  (dissoc :class :as-child)
                  (assoc
+                  :data-slot "sidebar-group-label"
                   :data-sidebar "group-label"
                   :class
                   (merge-classes
@@ -339,6 +489,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
             (cond->
               (not as-child) (update :type #(or % "button")))
             (assoc
+             :data-slot "sidebar-group-action"
              :data-sidebar "group-action"
              :class
              (merge-classes
@@ -360,7 +511,9 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   (into [:div
          (-> props
              (dissoc :class)
-             (assoc :data-sidebar "group-content" :class (merge-classes "w-full text-sm" class)))]
+             (assoc :data-slot "sidebar-group-content"
+                    :data-sidebar "group-content"
+                    :class (merge-classes "w-full text-sm" class)))]
         children))
 
 ;; -----------------------------------------------------------------------------
@@ -374,7 +527,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   (into [:ul
          (-> props
              (dissoc :class)
-             (assoc :data-sidebar "menu"
+             (assoc :data-slot "sidebar-menu"
+                    :data-sidebar "menu"
                     :class (merge-classes "flex w-full min-w-0 flex-col gap-1" class)))]
         children))
 
@@ -386,7 +540,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   (into [:li
          (-> props
              (dissoc :class)
-             (assoc :data-sidebar "menu-item"
+             (assoc :data-slot "sidebar-menu-item"
+                    :data-sidebar "menu-item"
                     :class (merge-classes "group/menu-item relative" class)))]
         children))
 
@@ -437,7 +592,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
                 (dissoc :class :as-child :is-active? :tooltip :variant :size :collapsed? :is-mobile)
                 (cond->
                   (not as-child) (update :type #(or % "button")))
-                (assoc :data-sidebar "menu-button"
+                (assoc :data-slot "sidebar-menu-button"
+                       :data-sidebar "menu-button"
                        :data-size (name size)
                        :data-active (boolean is-active?)
                        :class (merge-classes (menu-button-classes {:variant variant
@@ -467,6 +623,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
           (cond->
             (not as-child) (update :type #(or % "button")))
           (assoc
+           :data-slot "sidebar-menu-action"
            :data-sidebar "menu-action"
            :class
            (merge-classes
@@ -498,6 +655,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
       props
       (dissoc :class)
       (assoc
+       :data-slot "sidebar-menu-badge"
        :data-sidebar "menu-badge"
        :class
        (merge-classes
@@ -526,7 +684,8 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
     [:div
      (-> props
          (dissoc :class :show-icon? :width)
-         (assoc :data-sidebar "menu-skeleton"
+         (assoc :data-slot "sidebar-menu-skeleton"
+                :data-sidebar "menu-skeleton"
                 :class (merge-classes "flex h-8 items-center gap-2 rounded-md px-2" class)))
      (when show-icon?
        [mateuszmazurczak-skeleton/skeleton {:class "size-4 rounded-md"
@@ -546,6 +705,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
       props
       (dissoc :class)
       (assoc
+       :data-slot "sidebar-menu-sub"
        :data-sidebar "menu-sub"
        :class
        (merge-classes
@@ -562,7 +722,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
   (into [:li
          (-> props
              (dissoc :class)
-             (assoc :class class))]
+             (assoc :data-slot "sidebar-menu-sub-item" :class class))]
         children))
 
 (defn sidebar-menu-sub-button
@@ -583,6 +743,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
           props
           (dissoc :class :as-child :size :is-active?)
           (assoc
+           :data-slot "sidebar-menu-sub-button"
            :data-sidebar "menu-sub-button"
            :data-size (name size)
            :data-active (boolean is-active?)

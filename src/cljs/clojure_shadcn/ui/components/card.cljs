@@ -15,25 +15,36 @@
           children)))
 
 (defn card
-  [props & children]
-  (element :div
-           "card"
-           "flex flex-col gap-6 rounded-xl border bg-card py-6 text-card-foreground shadow-sm"
-           props
-           children))
+  [raw-props & children]
+  (let [{:keys [size]
+         :or {size :default}
+         :as props}
+        (normalize-props raw-props)]
+    (element
+     :div
+     "card"
+     "group/card flex flex-col gap-(--card-spacing) rounded-xl border bg-card py-(--card-spacing) text-card-foreground shadow-sm [--card-spacing:--spacing(6)] data-[size=sm]:[--card-spacing:--spacing(4)]"
+     (-> props
+         (assoc :data-size (name size))
+         (dissoc :size))
+     children)))
 
 (defn card-header
   [props & children]
   (element
    :div
    "card-header"
-   "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6"
+   "group/card-header @container/card-header grid auto-rows-min items-start gap-2 px-(--card-spacing) has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:pb-(--card-spacing)"
    props
    children))
 
 (defn card-title
   [props & children]
-  (element :div "card-title" "leading-none font-semibold" props children))
+  (element :div
+           "card-title"
+           "leading-none font-semibold group-data-[size=sm]/card:text-sm"
+           props
+           children))
 
 (defn card-description
   [props & children]
@@ -47,8 +58,14 @@
            props
            children))
 
-(defn card-content [props & children] (element :div "card-content" "px-6" props children))
+(defn card-content
+  [props & children]
+  (element :div "card-content" "px-(--card-spacing)" props children))
 
 (defn card-footer
   [props & children]
-  (element :div "card-footer" "flex items-center px-6 [.border-t]:pt-6" props children))
+  (element :div
+           "card-footer"
+           "flex items-center px-(--card-spacing) [.border-t]:pt-(--card-spacing)"
+           props
+           children))

@@ -66,6 +66,17 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
     ;; default fallback
     "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2"))
 
+(defn button-variants
+  "Returns the complete button class string for `:variant`, `:size`, and optional `:class`."
+  [{:keys [variant size class]
+    :or {variant :default
+         size :default}}]
+  (merge-classes
+   "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 rounded-lg border border-transparent bg-clip-padding text-sm font-medium focus-visible:ring-3 aria-invalid:ring-3 [&_svg:not([class*='size-'])]:size-4 inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none shrink-0 [&_svg]:shrink-0 outline-none group/button select-none"
+   (variant-classes variant)
+   (size-classes size)
+   class))
+
 (defn button
   "Button component with support for multiple variants, sizes, and polymorphic rendering.
   
@@ -113,12 +124,10 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/slot"
               size :default}
          :as props}
         (normalize-props raw-props)]
-    (let
-      [component (if as-child Slot "button")
-       base-classes
-       "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 rounded-lg border border-transparent bg-clip-padding text-sm font-medium focus-visible:ring-3 aria-invalid:ring-3 [&_svg:not([class*='size-'])]:size-4 inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none shrink-0 [&_svg]:shrink-0 outline-none group/button select-none"
-       combined-classes
-       (merge-classes base-classes (variant-classes variant) (size-classes size) class)]
+    (let [component (if as-child Slot "button")
+          combined-classes (button-variants {:variant variant
+                                             :size size
+                                             :class class})]
       (into [:>
              component
              (-> props

@@ -148,6 +148,34 @@
                                           [:div {:class "grid h-full place-items-center"}
                                            "المحتوى"]]]])))
 
+(defstory
+ ResizableHandleStates
+ "Separators remain interactive without a grip icon; the second example exposes the focus-visible treatment for documentation."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "grid gap-6"}
+    [:div {:class "h-32 w-[520px] overflow-hidden rounded-lg border"}
+     [sut/panel-group {:orientation :horizontal}
+      [sut/panel {:defaultSize 40}
+       [:div {:class "grid h-full place-items-center"}
+        "No icon"]]
+      [sut/handle {:aria-label "Resize plain panels"}]
+      [sut/panel {:defaultSize 60}
+       [:div {:class "grid h-full place-items-center bg-muted/30"}
+        "Still draggable"]]]
+     [:div {:class "h-32 w-[520px] overflow-hidden rounded-lg border"}
+      [sut/panel-group {:orientation :horizontal}
+       [sut/panel {:defaultSize 40}
+        [:div {:class "grid h-full place-items-center"}
+         "Focused"]]
+       [sut/handle {:with-handle? true
+                    :aria-label "Resize focused panels"
+                    :class "ring-[3px] ring-ring/50 border-ring"}]
+       [sut/panel {:defaultSize 60}
+        [:div {:class "grid h-full place-items-center bg-muted/30"}
+         "Handle"]]]]]])))
+
 (defstory ResizablePlayground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:orientation "horizontal"}

@@ -80,6 +80,18 @@
                 :default nil
                 :description "Forwarded to Radix Popover.Anchor."}]}]
      [helpers/api-component-card
+      {:component-name "popover-header / popover-title / popover-description"
+       :description
+       "Semantic presentation helpers for a heading block inside popover-content. They render div, div, and p respectively, apply the upstream data slots and styles, and forward additional DOM props."
+       :props [{:name ":class"
+                :type "string"
+                :default nil
+                :description "Additional Tailwind classes merged with component defaults."}
+               {:name "additional props"
+                :type "map entries"
+                :default nil
+                :description "Forwarded to the underlying DOM element."}]}]
+     [helpers/api-component-card
       {:component-name "popover-content"
        :description
        "Portaled floating content container with animations and collision-aware positioning."
@@ -149,10 +161,10 @@
       (button/button {:variant :outline} "Open popover")]
      [sut/popover-content {:class "w-80"}
       [:div {:class "grid gap-4"}
-       [:div {:class "space-y-2"}
-        [:h4 {:class "leading-none font-medium"}
+       [sut/popover-header {}
+        [sut/popover-title {}
          "Dimensions"]
-        [:p {:class "text-muted-foreground text-sm"}
+        [sut/popover-description {}
          "Set the dimensions for the layer."]]
        [:div {:class "grid gap-2"}
         [:div {:class "grid grid-cols-3 items-center gap-4"}
@@ -248,6 +260,31 @@
                    [:p {:class "text-sm text-muted-foreground"}
                     "Popover content can be lightweight explanatory text or callouts."]]]])))
 
+
+(defstory
+ PopoverRtl
+ "Localized form popover in right-to-left reading order. This verifies forwarded directionality and start alignment."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "p-6"
+          :dir "rtl"}
+    [sut/popover {}
+     [sut/popover-trigger {:as-child true}
+      (button/button {:variant :outline} "تعديل الملف")]
+     [sut/popover-content {:align "start"
+                           :class "w-80"
+                           :dir "rtl"}
+      [sut/popover-header {}
+       [sut/popover-title {}
+        "بيانات الحساب"]
+       [sut/popover-description {}
+        "حدّث الاسم الظاهر في ملفك الشخصي."]]
+      [:div {:class "mt-4 grid gap-2"}
+       [label/label {:html-for "rtl-display-name"}
+        "الاسم"]
+       [input/input {:id "rtl-display-name"
+                     :default-value "مريم"}]]]]])))
 
 (defstory PopoverAlignments
           "Start, center, and end alignment using the existing content primitive."

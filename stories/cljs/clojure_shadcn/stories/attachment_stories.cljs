@@ -115,6 +115,30 @@
         [sut/attachment-action {:aria-label "Remove landscape.jpg"}
          [:> X]]]])])))
 
+(defstory
+ AttachmentSizeGallery
+ "All supported sizes in the same file-row composition, making density and action hit areas comparable."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "grid max-w-2xl gap-4 sm:grid-cols-3"}
+    (for [[size label] [[:default "Default"] [:sm "Small"] [:xs "Extra small"]]]
+      ^{:key size}
+      [:div {:class "space-y-2"}
+       [:p {:class "text-xs font-medium text-muted-foreground"}
+        label]
+       [sut/attachment {:size size}
+        [sut/attachment-media {}
+         [:> FileText]]
+        [sut/attachment-content {}
+         [sut/attachment-title {}
+          "roadmap.pdf"]
+         [sut/attachment-description {}
+          "PDF · 840 KB"]]
+        [sut/attachment-actions {}
+         [sut/attachment-action {:aria-label (str "Remove " label " attachment")}
+          [:> X]]]]])])))
+
 (defstory AttachmentOverflowGroup
           "A horizontally scrollable attachment group for narrow layouts and long filenames."
           []

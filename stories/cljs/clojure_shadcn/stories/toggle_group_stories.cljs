@@ -127,6 +127,65 @@
     [sut/toggle-group-item {:value "right"}
      "Right"]])))
 
+(defstory
+ ToggleGroupPatterns
+ "Behavior-distinct disabled, outline, spaced, vertical, RTL, and font-selector compositions. Spacing and vertical layout are class recipes over the current API."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "grid gap-6 p-6"}
+    [sut/toggle-group {:type "multiple"
+                       :variant :outline
+                       :disabled true
+                       :default-value ["bold"]}
+     [sut/toggle-group-item {:value "bold"}
+      [:> Bold]]
+     [sut/toggle-group-item {:value "italic"}
+      [:> Italic]]]
+    [sut/toggle-group
+     {:type "single"
+      :default-value "serif"
+      :variant :outline
+      :class
+      "gap-2 [&_[data-slot=toggle-group-item]]:rounded-md [&_[data-slot=toggle-group-item]]:border-l"}
+     [sut/toggle-group-item {:value "sans"
+                             :class "font-sans"}
+      "Sans"]
+     [sut/toggle-group-item {:value "serif"
+                             :class "font-serif"}
+      "Serif"]
+     [sut/toggle-group-item {:value "mono"
+                             :class "font-mono"}
+      "Mono"]]
+    [sut/toggle-group {:type "single"
+                       :orientation "vertical"
+                       :default-value "center"
+                       :class "flex-col items-stretch [&_[data-slot=toggle-group-item]]:rounded-md"}
+     [sut/toggle-group-item {:value "left"}
+      [:> AlignLeft]
+      "Left"]
+     [sut/toggle-group-item {:value "center"}
+      [:> AlignCenter]
+      "Center"]
+     [sut/toggle-group-item {:value "right"}
+      [:> AlignRight]
+      "Right"]]
+    [:div {:dir "rtl"}
+     [sut/toggle-group {:type "single"
+                        :dir "rtl"
+                        :default-value "right"
+                        :variant :outline
+                        :aria-label "محاذاة النص"}
+      [sut/toggle-group-item {:value "right"
+                              :aria-label "محاذاة لليمين"}
+       [:> AlignRight]]
+      [sut/toggle-group-item {:value "center"
+                              :aria-label "توسيط"}
+       [:> AlignCenter]]
+      [sut/toggle-group-item {:value "left"
+                              :aria-label "محاذاة لليسار"}
+       [:> AlignLeft]]]]])))
+
 (defstory ToggleGroupSizes
           "Static supported size variants only. Based on shadcn/ui Toggle Group — Size."
           []

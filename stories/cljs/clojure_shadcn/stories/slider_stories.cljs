@@ -106,6 +106,19 @@
                                                               :default-value [35]
                                                               :aria-label "Volume"}]])))
 
+(defstory
+ SliderDisabled
+ "Disabled single-value and range sliders retain their values while preventing pointer and keyboard changes."
+ []
+ (r/as-element (helpers/wrap-component [:div {:class "grid w-[420px] gap-8 p-6"}
+                                        [sut/slider {:default-value [40]
+                                                     :disabled true
+                                                     :aria-label "Disabled volume"}]
+                                        [sut/slider {:default-value [20 75]
+                                                     :disabled true
+                                                     :thumb-labels ["Disabled minimum"
+                                                                    "Disabled maximum"]}]])))
+
 (defstory SliderRtl
           "Right-to-left range direction. Based on shadcn/ui Slider — RTL."
           []

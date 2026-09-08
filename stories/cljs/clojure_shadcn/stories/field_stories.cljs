@@ -1,15 +1,17 @@
 (ns clojure-shadcn.stories.field-stories
   "Storybook stories for the Field component. Ported from mateuszmazurczak.portfolio.ui-components.field."
   (:require
-   [clojure-shadcn.stories.helpers        :as helpers]
-   [clojure-shadcn.ui.components.button   :as button]
-   [clojure-shadcn.ui.components.checkbox :as checkbox]
-   [clojure-shadcn.ui.components.field    :as sut]
-   [clojure-shadcn.ui.components.input    :as input]
-   [clojure-shadcn.ui.components.select   :as select]
-   [clojure-shadcn.ui.components.slider   :as slider]
-   [clojure-shadcn.ui.components.textarea :as textarea]
-   [reagent.core                          :as r])
+   [clojure-shadcn.stories.helpers           :as helpers]
+   [clojure-shadcn.ui.components.button      :as button]
+   [clojure-shadcn.ui.components.checkbox    :as checkbox]
+   [clojure-shadcn.ui.components.field       :as sut]
+   [clojure-shadcn.ui.components.input       :as input]
+   [clojure-shadcn.ui.components.radio-group :as radio]
+   [clojure-shadcn.ui.components.select      :as select]
+   [clojure-shadcn.ui.components.slider      :as slider]
+   [clojure-shadcn.ui.components.switch      :as switch]
+   [clojure-shadcn.ui.components.textarea    :as textarea]
+   [reagent.core                             :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -352,3 +354,58 @@
                  "يظهر هذا الاسم في ملفك الشخصي."]]]]
              [button/button {:type "submit"}
               "Save settings"]])))
+
+(defstory
+ FieldChoices
+ "Radio, switch, and selectable choice-card field compositions. Based on current shadcn/ui Field examples."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "grid max-w-xl gap-8 p-6"}
+    [sut/field-set {}
+     [sut/field-legend {:variant :label}
+      "Workspace visibility"]
+     [sut/field-description {}
+      "Choose who can discover this workspace."]
+     [radio/radio-group {:default-value "team"}
+      [sut/field {:orientation :horizontal}
+       [radio/radio-group-item {:id "visibility-team"
+                                :value "team"}]
+       [sut/field-label {:html-for "visibility-team"
+                         :class "font-normal"}
+        "Team members"]]
+      [sut/field {:orientation :horizontal}
+       [radio/radio-group-item {:id "visibility-public"
+                                :value "public"}]
+       [sut/field-label {:html-for "visibility-public"
+                         :class "font-normal"}
+        "Anyone with the link"]]]]
+    [sut/field {:orientation :horizontal
+                :class "rounded-lg border p-4"}
+     [sut/field-content {}
+      [sut/field-label {:html-for "field-switch"}
+       "Automatic updates"]
+      [sut/field-description {}
+       "Install stable updates when the app is idle."]]
+     [switch/switch {:id "field-switch"
+                     :default-checked true}]]
+    [radio/radio-group {:default-value "starter"
+                        :class "grid sm:grid-cols-2"}
+     [sut/field-label {:class "cursor-pointer"}
+      [sut/field {:orientation :horizontal
+                  :class "rounded-lg border p-4 has-[[data-state=checked]]:border-primary"}
+       [radio/radio-group-item {:value "starter"}]
+       [sut/field-content {}
+        [sut/field-title {}
+         "Starter"]
+        [sut/field-description {}
+         "For personal projects and prototypes."]]]]
+     [sut/field-label {:class "cursor-pointer"}
+      [sut/field {:orientation :horizontal
+                  :class "rounded-lg border p-4 has-[[data-state=checked]]:border-primary"}
+       [radio/radio-group-item {:value "team"}]
+       [sut/field-content {}
+        [sut/field-title {}
+         "Team"]
+        [sut/field-description {}
+         "Shared controls for growing teams."]]]]]])))

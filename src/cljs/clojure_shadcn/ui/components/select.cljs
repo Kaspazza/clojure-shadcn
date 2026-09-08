@@ -94,21 +94,31 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/select"
         (concat children
                 [[:> RadixSelect/Icon {:asChild true} (r/as-element [chevron-down-icon])]])))
 
-(defn- select-scroll-up-button
-  [{:keys [class]}]
-  [:>
-   RadixSelect/ScrollUpButton
-   {:data-slot "select-scroll-up-button"
-    :class (merge-classes "flex cursor-default items-center justify-center py-1" class)}
-   (r/as-element [chevron-up-icon])])
+(defn select-scroll-up-button
+  [{:as raw-props}]
+  (let [{:keys [class]
+         :as props}
+        (normalize-props raw-props)]
+    [:>
+     RadixSelect/ScrollUpButton
+     (-> props
+         (assoc :data-slot "select-scroll-up-button"
+                :class (merge-classes "flex cursor-default items-center justify-center py-1" class))
+         (dissoc :class-name))
+     (r/as-element [chevron-up-icon])]))
 
-(defn- select-scroll-down-button
-  [{:keys [class]}]
-  [:>
-   RadixSelect/ScrollDownButton
-   {:data-slot "select-scroll-down-button"
-    :class (merge-classes "flex cursor-default items-center justify-center py-1" class)}
-   (r/as-element [chevron-down-icon])])
+(defn select-scroll-down-button
+  [{:as raw-props}]
+  (let [{:keys [class]
+         :as props}
+        (normalize-props raw-props)]
+    [:>
+     RadixSelect/ScrollDownButton
+     (-> props
+         (assoc :data-slot "select-scroll-down-button"
+                :class (merge-classes "flex cursor-default items-center justify-center py-1" class))
+         (dissoc :class-name))
+     (r/as-element [chevron-down-icon])]))
 
 (defn select-content
   [{:as raw-props} & children]
@@ -159,12 +169,17 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/select"
                [select-scroll-down-button {}]]))]))
 
 (defn select-label
-  [{:keys [class]} & children]
-  (into [:>
-         RadixSelect/Label
-         {:data-slot "select-label"
-          :class (merge-classes "text-muted-foreground px-2 py-1.5 text-xs" class)}]
-        children))
+  [{:as raw-props} & children]
+  (let [{:keys [class]
+         :as props}
+        (normalize-props raw-props)]
+    (into [:>
+           RadixSelect/Label
+           (-> props
+               (assoc :data-slot "select-label"
+                      :class (merge-classes "text-muted-foreground px-2 py-1.5 text-xs" class))
+               (dissoc :class-name))]
+          children)))
 
 (defn select-item
   [{:keys [class]
@@ -187,12 +202,17 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/select"
                                     "*:[span]:last:gap-2" class))
        (dissoc :class-name))
    [:span {:class "absolute right-2 flex size-3.5 items-center justify-center"}
-    [:> RadixSelect/ItemIndicator (r/as-element [check-icon])]]
+    [:> RadixSelect/ItemIndicator {:data-slot "select-item-indicator"} (r/as-element [check-icon])]]
    (into [:> RadixSelect/ItemText] children)])
 
 (defn select-separator
-  [{:keys [class]}]
-  [:>
-   RadixSelect/Separator
-   {:data-slot "select-separator"
-    :class (merge-classes "bg-border pointer-events-none -mx-1 my-1 h-px" class)}])
+  [{:as raw-props}]
+  (let [{:keys [class]
+         :as props}
+        (normalize-props raw-props)]
+    [:>
+     RadixSelect/Separator
+     (-> props
+         (assoc :data-slot "select-separator"
+                :class (merge-classes "bg-border pointer-events-none -mx-1 my-1 h-px" class))
+         (dissoc :class-name))]))

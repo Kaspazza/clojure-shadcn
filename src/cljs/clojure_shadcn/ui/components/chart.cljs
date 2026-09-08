@@ -14,14 +14,18 @@
   (or (react/useContext chart-context)
       (throw (js/Error. "use-chart must be used within chart-container"))))
 
-(defn- chart-style
-  [id config]
-  (let [light-rules (for [[k {:keys [theme]}] config
-                          :when (:light theme)]
-                      (str "--color-" (name k) ":" (:light theme) ";"))
-        dark-rules (for [[k {:keys [theme]}] config
-                         :when (:dark theme)]
-                     (str "--color-" (name k) ":" (:dark theme) ";"))]
+(defn chart-style
+  "Emits scoped chart color variables. chart-container includes this automatically."
+  [{:keys [id config]}]
+  (let [rules-for (fn [theme]
+                    (keep (fn [[k
+                                {:keys [color]
+                                 theme-colors :theme}]]
+                            (when-let [value (or (get theme-colors theme) color)]
+                              (str "--color-" (name k) ":" value ";")))
+                          config))
+        light-rules (rules-for :light)
+        dark-rules (rules-for :dark)]
     (when (or (seq light-rules) (seq dark-rules))
       [:style {:dangerouslySetInnerHTML {:__html (str "[data-chart='"
                                                       id
@@ -47,7 +51,6 @@
         (.-chartProps react-props)
         child (.-child react-props)
         generated (react/useId)
-        ;; Caller IDs remain DOM IDs; an opaque generated token owns selector identity.
         chart-id (str "chart-" (str/replace generated ":" ""))]
     (r/as-element
      [:>
@@ -65,7 +68,8 @@
            "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line]:stroke-border/50 [&_.recharts-tooltip-cursor]:stroke-border [&_.recharts-layer]:outline-hidden [&_.recharts-surface]:outline-hidden"
            class))
          (dissoc :config :class-name :initial-dimension))
-       [chart-style chart-id config]
+       [chart-style {:id chart-id
+                     :config config}]
        [:> recharts/ResponsiveContainer {:initialDimension (clj->js initial-dimension)} child]]])))
 
 (defn chart-container
@@ -174,3 +178,6 @@
                         (or (:label cfg) (.-value item))])]))))
 
 (defn legend-content [raw-props] (r/create-element legend-content-root #js {:rawProps raw-props}))
+
+(def chart-tooltip-content "Canonical alias for tooltip-content." tooltip-content)
+(def chart-legend-content "Canonical alias for legend-content." legend-content)

@@ -66,6 +66,18 @@
                                            :default nil
                                            :description "Additional Tailwind classes"}]}]
      [helpers/api-component-card
+      {:component-name "avatar-group / avatar-group-count"
+       :description
+       "Compound layout pieces for overlapping avatars and a size-aware overflow count. They render div elements, set dedicated data slots, and forward all additional DOM props."
+       :props [{:name ":class"
+                :type "string"
+                :default nil
+                :description "Additional Tailwind classes merged with the group or count defaults."}
+               {:name "additional props"
+                :type "map entries"
+                :default nil
+                :description "Forwarded to the underlying div."}]}]
+     [helpers/api-component-card
       {:component-name "avatar-badge"
        :description
        "Badge indicator positioned at bottom right of avatar. Automatically sizes based on parent avatar size."
@@ -80,7 +92,9 @@
        [:li "Always provide meaningful :alt text for avatar-image when identity matters."]
        [:li "Use avatar-fallback for resilient UX in slow or failed image loading states."]
        [:li
-        "avatar-badge is size-aware relative to parent avatar; avoid manual absolute positioning overrides."]]]
+        "avatar-badge is size-aware relative to parent avatar; avoid manual absolute positioning overrides."]
+       [:li
+        "Place avatar-group-count inside avatar-group so its size can follow :sm and :lg avatars via the group data selectors."]]]
      [:div {:class "border rounded-lg p-4 bg-muted/50"}
       [:h4 {:class "text-sm font-semibold mb-2"}
        "Usage Example"]
@@ -135,33 +149,55 @@
 
 (defstory
  EmptyAvatarGroup
- "Stacked avatar group for empty states.
+ "Compound avatar group with a size-aware overflow count.
 
-  Radix primitive: @radix-ui/react-avatar
+  Based on shadcn/ui Avatar Group — current new-york-v4.
 
-  Use stacked avatars to represent teams or groups."
+  Use the count when more members exist than the interface can display."
  []
  (r/as-element
   (helpers/wrap-component
-   [:div {:class "p-6 flex -space-x-2"}
-    [sut/avatar {:size :lg
-                 :class "ring-2 ring-background grayscale"}
-     [sut/avatar-image {:src "https://github.com/shadcn.png"
-                        :alt "@shadcn"}]
-     [sut/avatar-fallback {}
-      "CN"]]
-    [sut/avatar {:size :lg
-                 :class "ring-2 ring-background grayscale"}
-     [sut/avatar-image {:src "https://github.com/maxleiter.png"
-                        :alt "@maxleiter"}]
-     [sut/avatar-fallback {}
-      "LR"]]
-    [sut/avatar {:size :lg
-                 :class "ring-2 ring-background grayscale"}
-     [sut/avatar-image {:src "https://github.com/evilrabbit.png"
-                        :alt "@evilrabbit"}]
-     [sut/avatar-fallback {}
-      "ER"]]])))
+   [:div {:class "p-6"}
+    [sut/avatar-group {}
+     [sut/avatar {:size :lg
+                  :class "grayscale"}
+      [sut/avatar-image {:src "https://github.com/shadcn.png"
+                         :alt "@shadcn"}]
+      [sut/avatar-fallback {}
+       "CN"]]
+     [sut/avatar {:size :lg
+                  :class "grayscale"}
+      [sut/avatar-image {:src "https://github.com/maxleiter.png"
+                         :alt "@maxleiter"}]
+      [sut/avatar-fallback {}
+       "ML"]]
+     [sut/avatar {:size :lg
+                  :class "grayscale"}
+      [sut/avatar-image {:src "https://github.com/evilrabbit.png"
+                         :alt "@evilrabbit"}]
+      [sut/avatar-fallback {}
+       "ER"]]
+     [sut/avatar-group-count {:aria-label "5 more members"}
+      "+5"]]])))
+
+(defstory
+ AvatarGroupRtl
+ "Avatar group in a right-to-left container. The DOM order and overlap remain observable independently of the localized count label."
+ []
+ (r/as-element (helpers/wrap-component [:div {:class "p-6"
+                                              :dir "rtl"}
+                                        [sut/avatar-group {:aria-label "فريق المشروع"}
+                                         [sut/avatar {}
+                                          [sut/avatar-fallback {}
+                                           "س"]]
+                                         [sut/avatar {}
+                                          [sut/avatar-fallback {}
+                                           "م"]]
+                                         [sut/avatar {}
+                                          [sut/avatar-fallback {}
+                                           "ل"]]
+                                         [sut/avatar-group-count {:aria-label "ثلاثة أعضاء آخرون"}
+                                          "+٣"]]])))
 
 (defstory
  AvatarCustomSizes

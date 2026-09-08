@@ -32,7 +32,7 @@
     [:div {:class "space-y-6"}
      [:div {:class "space-y-4"}
       [helpers/api-component-card
-       {:component-name "button"
+       {:component-name "button / button-variants"
         :link {:href "https://ui.shadcn.com/docs/components/button"
                :label "shadcn Button Docs"}
         :description

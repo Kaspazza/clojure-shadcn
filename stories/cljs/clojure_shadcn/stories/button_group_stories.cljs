@@ -33,7 +33,7 @@
   (helpers/wrap-component
    [:div {:class "space-y-4 p-6 max-w-4xl"}
     [helpers/api-component-card
-     {:component-name "button-group"
+     {:component-name "button-group / button-group-variants"
       :description
       "A role=group container that joins adjacent controls and manages orientation-aware borders, corners, and focus stacking."
       :props

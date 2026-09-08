@@ -29,6 +29,41 @@
    [:div {:class "p-6 max-w-4xl"}
     [:div {:class "space-y-4"}
      [helpers/api-component-card
+      {:component-name "sidebar-provider / use-sidebar"
+       :description "Optional context state adapter; presentational components remain explicit"
+       :props [{:name ":open? / :default-open?"
+                :type "boolean"
+                :default "controlled / true"
+                :description "Desktop controlled value or uncontrolled initial value"}
+               {:name ":on-open-change"
+                :type "function"
+                :default nil
+                :description "Desktop state callback"}
+               {:name ":open-mobile? / :default-open-mobile?"
+                :type "boolean"
+                :default "controlled / false"
+                :description "Independent mobile controlled value or initial value"}
+               {:name ":on-open-mobile-change"
+                :type "function"
+                :default nil
+                :description "Mobile state callback"}
+               {:name ":is-mobile"
+                :type "boolean"
+                :default "matchMedia"
+                :description "Explicit responsive mode; omit for max-width 767px detection"}
+               {:name ":shortcut"
+                :type "string | nil"
+                :default "\"b\""
+                :description "Ctrl/Cmd shortcut key; nil disables"}
+               {:name ":persist-cookie?"
+                :type "boolean"
+                :default "false"
+                :description "Opt-in desktop open-state cookie persistence"}
+               {:name ":cookie-name / :cookie-max-age"
+                :type "string / seconds"
+                :default "sidebar_state / 604800"
+                :description "Cookie configuration"}]}]
+     [helpers/api-component-card
       {:component-name "sidebar"
        :description "Sidebar component"
        :props [{:name ":open?"
@@ -264,17 +299,84 @@
        "⚠️ Important Notes"]
       [:ul {:class "text-xs text-muted-foreground space-y-1 list-disc pl-4"}
        [:li
-        "There is no sidebar-provider in this API. The consumer owns :open?, :is-mobile, and :on-open-change and passes the same state to triggers and menu tooltips."]
+        "The original components remain explicit-state presentation functions. They never discover or mutate provider state implicitly."]
        [:li
-        "sidebar-trigger and sidebar-rail do not discover a root context; wire their :on-click callbacks explicitly."]
+        "sidebar-provider is an optional controlled/uncontrolled adapter. A :f> React/Reagent consumer calls use-sidebar, then explicitly passes its values and callbacks to sidebar, trigger, rail, and tooltips."]
        [:li
-        "Mobile rendering delegates to Sheet only when :is-mobile is true and :collapsible is not \"none\". The consumer remains responsible for viewport detection and focus-testing the complete layout."]]]
+        "The context exposes desktop and mobile open state independently. Omit :is-mobile for matchMedia detection; Ctrl/Cmd+B toggles the active viewport state by default."]
+       [:li
+        "Cookie persistence is off by default and requires :persist-cookie? true. All sidebar DOM parts expose current data-slot metadata while retaining data-sidebar selectors for compatibility."]]]
      [:div {:class "border rounded-lg p-4 bg-muted/50"}
       [:h4 {:class "text-sm font-semibold mb-2"}
        "Usage Example"]
       [:pre {:class "text-xs overflow-x-auto"}
        [:code
         "[:div {:class \"flex min-h-svh\"}\n [sidebar {:open? open? :is-mobile mobile? :on-open-change set-open! :variant \"inset\"}\n  [sidebar-header {} ...]\n  [sidebar-content {} ...]\n  [sidebar-rail {:on-click toggle!}]]\n [sidebar-inset {}\n  [sidebar-trigger {:on-click toggle!}]\n  [:section {:class \"p-4\"} \"Content\"]]]"]]]]])))
+
+(defn context-sidebar-layout
+  [{:keys [dir label]}]
+  (let [{:keys [open? set-open! open-mobile? set-open-mobile! is-mobile state toggle-sidebar!]}
+        (sut/use-sidebar)
+        active-open? (if is-mobile open-mobile? open?)]
+    (helpers/wrap-component
+     [:div {:class "flex min-h-[420px] w-full overflow-hidden rounded-xl border"
+            :dir dir}
+      [sut/sidebar {:open? active-open?
+                    :is-mobile is-mobile
+                    :on-open-change (if is-mobile set-open-mobile! set-open!)
+                    :side (if (= dir "rtl") "right" "left")
+                    :collapsible "icon"}
+       [sut/sidebar-header {}
+        [:strong {:class "px-2 text-sm"}
+         label]]
+       [sut/sidebar-content {}
+        [sut/sidebar-menu {}
+         [sut/sidebar-menu-item {}
+          [sut/sidebar-menu-button {:is-active? true
+                                    :collapsed? (= state "collapsed")
+                                    :is-mobile is-mobile
+                                    :tooltip "Overview"}
+           [:> Kanban]
+           [:span "Overview"]]]]]
+       [sut/sidebar-rail {:on-click toggle-sidebar!}]]
+      [sut/sidebar-inset {}
+       [:header {:class "flex h-14 items-center gap-3 border-b px-4"}
+        [sut/sidebar-trigger {:on-click toggle-sidebar!}]
+        [:span {:class "text-sm"}
+         (str "state=" state ", mobile=" is-mobile)]
+        [:span {:class "ms-auto text-xs text-muted-foreground"}
+         "Press Ctrl/Cmd+B"]]
+       [:div {:class "p-6 text-sm text-muted-foreground"}
+        "Provider state is read with use-sidebar and passed explicitly to every presentational component."]]])))
+
+(defstory
+ ProviderAdapter
+ "Uncontrolled provider adapter with keyboard toggle and automatic responsive matchMedia coordination. Cookie persistence remains disabled."
+ []
+ (r/as-element [sut/sidebar-provider {:default-open? true}
+                [:f> context-sidebar-layout {:label "Context adapter"}]]))
+
+(defstory ProviderControlled
+          "Controlled provider: the owner receives changes and remains the source of truth."
+          []
+          (r/as-element
+           [(fn []
+              (let [open? (r/atom true)]
+                (fn [] [sut/sidebar-provider {:open? @open?
+                                              :on-open-change #(reset! open? %)
+                                              :is-mobile false
+                                              :shortcut nil}
+                        [:f> context-sidebar-layout {:label "Controlled context"}]])))]))
+
+(defstory ProviderMobileRtl
+          "Forced mobile provider with independent open-mobile state and RTL/right-side rendering."
+          []
+          (r/as-element [sut/sidebar-provider {:default-open-mobile? true
+                                               :is-mobile true}
+                         [:f>
+                          context-sidebar-layout
+                          {:dir "rtl"
+                           :label "Mobile RTL"}]]))
 
 (defn application-sidebar
   []

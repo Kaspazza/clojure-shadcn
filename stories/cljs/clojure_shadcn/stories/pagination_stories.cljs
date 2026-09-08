@@ -142,6 +142,47 @@
               [sut/pagination-next {:href "#next"
                                     :class "h-8"}]]]]]))))]))
 
+(defstory
+ PaginationVariants
+ "Simple, icon-only, and RTL pagination. Icon-only links keep explicit accessible labels; RTL reverses both reading order and directional labels."
+ []
+ (r/as-element
+  (helpers/wrap-component
+   [:div {:class "grid gap-8"}
+    [sut/pagination {:aria-label "Simple pagination"}
+     [sut/pagination-content {}
+      [sut/pagination-item {}
+       [sut/pagination-previous {:href "#previous"}]]
+      [sut/pagination-item {}
+       [sut/pagination-link {:href "#page-2"
+                             :is-active true}
+        "2"]]
+      [sut/pagination-item {}
+       [sut/pagination-next {:href "#next"}]]]]
+    [sut/pagination {:aria-label "Icon-only pagination"}
+     [sut/pagination-content {}
+      [sut/pagination-item {}
+       [sut/pagination-link {:href "#first"
+                             :aria-label "First page"}
+        "«"]]
+      [sut/pagination-item {}
+       [sut/pagination-link {:href "#last"
+                             :aria-label "Last page"}
+        "»"]]]]
+    [:div {:dir "rtl"}
+     [sut/pagination {:aria-label "ترقيم الصفحات"}
+      [sut/pagination-content {}
+       [sut/pagination-item {}
+        [sut/pagination-next {:href "#next"
+                              :aria-label "الصفحة التالية"}]]
+       [sut/pagination-item {}
+        [sut/pagination-link {:href "#page-1"
+                              :is-active true}
+         "١"]]
+       [sut/pagination-item {}
+        [sut/pagination-previous {:href "#previous"
+                                  :aria-label "الصفحة السابقة"}]]]]]])))
+
 (defstory PaginationPlayground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:class ""}

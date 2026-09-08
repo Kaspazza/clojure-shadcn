@@ -11,6 +11,7 @@
    [clojure-shadcn.stories.helpers           :as helpers]
    [clojure-shadcn.ui.components.avatar      :as avatar]
    [clojure-shadcn.ui.components.button      :as button]
+   [clojure-shadcn.ui.components.card        :as card]
    [clojure-shadcn.ui.components.empty       :as sut]
    [clojure-shadcn.ui.components.input-group :as input-group]
    [reagent.core                             :as r])
@@ -303,6 +304,24 @@
        "Invite your team to collaborate on this project."]]
      [sut/empty-content {}
       (button/button {:size :sm} [:> Plus] "Invite Members")]]])))
+
+(defstory
+ EmptyCard
+ "Empty state nested in a Card, keeping the outer surface responsible for border and elevation."
+ []
+ (r/as-element (helpers/wrap-component
+                [card/card {:class "w-full max-w-xl"}
+                 [card/card-content {}
+                  [sut/empty {:class "min-h-72 border-0 p-0"}
+                   [sut/empty-header {}
+                    [sut/empty-media {:variant :icon}
+                     [:> Inbox]]
+                    [sut/empty-title {}
+                     "No messages"]
+                    [sut/empty-description {}
+                     "When a teammate contacts you, the conversation will appear here."]]
+                   [sut/empty-content {}
+                    (button/button {} [:> Plus] "New message")]]]])))
 
 (defstory EmptyCanonicalActions
           "Canonical actions — upstream primary, secondary, and inline-link action arrangements."

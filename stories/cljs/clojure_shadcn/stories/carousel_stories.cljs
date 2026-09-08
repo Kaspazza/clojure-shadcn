@@ -183,6 +183,8 @@
         "Default item spacing is 1rem (pl-4/pt-4). Override both carousel-content (-ml-*/-mt-*) and carousel-item (pl-*/pt-*) together."]
        [:li "The :orientation prop overrides any :axis value passed in :opts."]
        [:li
+        "The wrapper accepts Embla plugin instances through :plugins, but no plugin package (such as embla-carousel-autoplay) is installed in this project; a plugin story would not compile until that dependency is added."]
+       [:li
         "Arrow key events are captured — may interfere with other key handlers in parent components."]]]
      [:div {:class "border rounded-lg p-4 bg-muted/50"}
       [:h4 {:class "text-sm font-semibold mb-2"}
@@ -362,6 +364,23 @@
                                                   [slide-card idx]]))
                                          [sut/carousel-previous {}]
                                          [sut/carousel-next {}]]])))
+
+(defstory
+ CarouselRtl
+ "RTL carousel with Embla direction configured as well as DOM direction, so dragging and previous/next behavior follow reading order."
+ []
+ (r/as-element (helpers/wrap-component [:div {:dir "rtl"
+                                              :class "p-6"}
+                                        [sut/carousel {:opts {:direction "rtl"
+                                                              :align "start"}
+                                                       :class "w-full max-w-sm"}
+                                         (into [sut/carousel-content {}]
+                                               (for [idx (range 1 7)]
+                                                 [sut/carousel-item {:key idx
+                                                                     :class "basis-1/2"}
+                                                  [slide-card idx]]))
+                                         [sut/carousel-previous {:aria-label "الشريحة السابقة"}]
+                                         [sut/carousel-next {:aria-label "الشريحة التالية"}]]])))
 
 (defn ^:export CarouselEvents
   "Carousel with event listeners for scroll and settle.

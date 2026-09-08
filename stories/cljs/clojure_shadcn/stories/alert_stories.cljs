@@ -1,9 +1,10 @@
 (ns clojure-shadcn.stories.alert-stories
   (:require
-   ["lucide-react"                     :refer [CheckCircle2 CircleAlert]]
-   [clojure-shadcn.stories.helpers     :as helpers]
-   [clojure-shadcn.ui.components.alert :as sut]
-   [reagent.core                       :as r])
+   ["lucide-react"                      :refer [CheckCircle2 CircleAlert]]
+   [clojure-shadcn.stories.helpers      :as helpers]
+   [clojure-shadcn.ui.components.alert  :as sut]
+   [clojure-shadcn.ui.components.button :as button]
+   [reagent.core                        :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -25,9 +26,9 @@
  (r/as-element
   (helpers/wrap-component
    [helpers/api-component-card
-    {:component-name "alert / alert-title / alert-description"
+    {:component-name "alert / alert-title / alert-description / alert-action"
      :description
-     "Semantic alert layout. Props are normalized and forwarded to the underlying elements."
+     "Semantic alert layout with an optional trailing action. Props are normalized and forwarded to the underlying elements."
      :props [{:name ":variant"
               :type ":default | :destructive"
               :default ":default"
@@ -71,6 +72,20 @@
                             "Unable to continue"]
                            [sut/alert-description {}
                             "Resolve the validation errors and try again."]]])))
+
+(defstory AlertAction
+          "Alert with an action control."
+          []
+          (r/as-element (helpers/wrap-component
+                         [sut/alert {:class "max-w-md"}
+                          [sut/alert-title {}
+                           "Dark mode is now available"]
+                          [sut/alert-description {}
+                           "Enable it under your profile settings to get started."]
+                          [sut/alert-action {}
+                           [button/button {:variant :default
+                                           :size :xs}
+                            "Enable"]]])))
 
 (defstory
  AlertColors

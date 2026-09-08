@@ -43,7 +43,7 @@
          :data-size (name size)
          :class
          (merge-classes
-          "group/avatar relative flex size-8 shrink-0 rounded-full select-none data-[size=lg]:size-10 data-[size=sm]:size-6"
+          "group/avatar relative flex size-8 shrink-0 overflow-hidden rounded-full select-none data-[size=lg]:size-10 data-[size=sm]:size-6"
           class))
         (dissoc :class-name :size))]
      children)))
@@ -65,10 +65,7 @@
     [:>
      RadixAvatar/Image
      (-> props
-         (assoc :data-slot "avatar-image"
-                :class (merge-classes
-                        "aspect-square h-full w-full overflow-hidden rounded-[inherit]"
-                        class))
+         (assoc :data-slot "avatar-image" :class (merge-classes "aspect-square size-full" class))
          (dissoc :class-name))]))
 
 (defn avatar-fallback
@@ -98,6 +95,46 @@
           class))
         (dissoc :class-name))]
      children)))
+
+(defn avatar-group
+  "Groups overlapping avatars and adds the shared background ring.
+  Additional props are forwarded to the wrapping div."
+  [{:keys [class]
+    :as props}
+   &
+   children]
+  (into
+   [:div
+    (->
+      props
+      (assoc
+       :data-slot "avatar-group"
+       :class
+       (merge-classes
+        "group/avatar-group flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background"
+        class))
+      (dissoc :class-name))]
+   children))
+
+(defn avatar-group-count
+  "Displays an overflow count or icon at the end of an avatar group.
+  Its size follows the avatars in the containing avatar-group."
+  [{:keys [class]
+    :as props}
+   &
+   children]
+  (into
+   [:div
+    (->
+      props
+      (assoc
+       :data-slot "avatar-group-count"
+       :class
+       (merge-classes
+        "relative flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm text-muted-foreground ring-2 ring-background group-has-data-[size=lg]/avatar-group:size-10 group-has-data-[size=sm]/avatar-group:size-6 [&>svg]:size-4 group-has-data-[size=lg]/avatar-group:[&>svg]:size-5 group-has-data-[size=sm]/avatar-group:[&>svg]:size-3"
+        class))
+      (dissoc :class-name))]
+   children))
 
 (defn avatar-badge
   "Avatar badge component. Displays a badge indicator at the bottom right of the avatar.

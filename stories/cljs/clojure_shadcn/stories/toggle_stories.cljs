@@ -26,7 +26,7 @@
   (helpers/wrap-component
    [:div {:class "space-y-4 p-6 max-w-4xl"}
     [helpers/api-component-card
-     {:component-name "toggle"
+     {:component-name "toggle / toggle-variants"
       :link {:href "https://www.radix-ui.com/primitives/docs/components/toggle"
              :label "Radix Toggle Docs"}
       :description

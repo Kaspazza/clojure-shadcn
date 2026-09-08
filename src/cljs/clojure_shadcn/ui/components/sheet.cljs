@@ -15,6 +15,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
   (:require
    ["@radix-ui/react-dialog"    :as DialogPrimitive]
    ["lucide-react"              :refer [X]]
+   [clojure-shadcn.utils.props  :refer [normalize-props]]
    [clojure-shadcn.utils.styles :refer [merge-classes]]))
 
 ;; ============================================================================
@@ -44,8 +45,9 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
     [sheet-footer
      [button \"Save\"]]]]
   ```"
-  [props & children]
-  (into [:> (.-Root DialogPrimitive) props] children))
+  [raw-props & children]
+  (into [:> (.-Root DialogPrimitive) (assoc (normalize-props raw-props) :data-slot "sheet")]
+        children))
 
 (defn sheet-trigger
   "Trigger button that opens the sheet.
@@ -59,8 +61,10 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
   [sheet-trigger {:as-child true}
    [button {:variant :outline} \"Open Sheet\"]]
   ```"
-  [props & children]
-  (into [:> (.-Trigger DialogPrimitive) props] children))
+  [raw-props & children]
+  (into
+   [:> (.-Trigger DialogPrimitive) (assoc (normalize-props raw-props) :data-slot "sheet-trigger")]
+   children))
 
 (defn sheet-close
   "Button that closes the sheet.
@@ -73,8 +77,9 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
   [sheet-close {:as-child true}
    [button {:variant :outline} \"Close\"]]
   ```"
-  [props & children]
-  (into [:> (.-Close DialogPrimitive) props] children))
+  [raw-props & children]
+  (into [:> (.-Close DialogPrimitive) (assoc (normalize-props raw-props) :data-slot "sheet-close")]
+        children))
 
 (defn sheet-portal
   "Portal component that renders sheet content in a portal (outside DOM hierarchy).
@@ -83,8 +88,10 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
   - `:container` - DOM element to portal into (default: document.body)
   
   Note: Usually used internally by sheet-content, rarely needed directly."
-  [props & children]
-  (into [:> (.-Portal DialogPrimitive) props] children))
+  [raw-props & children]
+  (into
+   [:> (.-Portal DialogPrimitive) (assoc (normalize-props raw-props) :data-slot "sheet-portal")]
+   children))
 
 ;; ============================================================================
 ;; Sheet Overlay
@@ -202,39 +209,40 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
   [sheet-content {:side :top}
    [:div \"Important announcement\"]]
   ```"
-  [{:keys [class side]
-    :or {side :right}
-    :as props}
-   &
-   children]
-  [sheet-portal {}
-   [sheet-overlay {}]
-   [:>
-    (.-Content DialogPrimitive)
-    (-> props
-        (assoc :data-slot "sheet-content"
-               :class (merge-classes
-                       (str "fixed z-50 gap-4 bg-background p-6 shadow-lg "
-                            "transition ease-in-out "
-                            "data-[state=open]:animate-in data-[state=closed]:animate-out "
-                            "data-[state=closed]:duration-300 data-[state=open]:duration-500")
-                       (side-classes side)
-                       class))
-        (dissoc :class-name :side))
-    ;; Render children
-    (into [:<>] children)
-    ;; Built-in close button
-    [:>
-     (.-Close DialogPrimitive)
-     {:data-slot "sheet-close-button"
-      :class (str "absolute right-4 top-4 rounded-sm opacity-70 "
-                  "ring-offset-background transition-opacity "
-                  "hover:opacity-100 "
-                  "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 "
-                  "disabled:pointer-events-none " "data-[state=open]:bg-secondary")}
-     [:> X {:class "h-4 w-4"}]
-     [:span {:class "sr-only"}
-      "Close"]]]])
+  [{:as raw-props} & children]
+  (let [{:keys [class side show-close-button]
+         :or {side :right
+              show-close-button true}
+         :as props}
+        (normalize-props raw-props)]
+    [sheet-portal {}
+     [sheet-overlay {}]
+     (into
+      [:>
+       (.-Content DialogPrimitive)
+       (-> props
+           (assoc :data-slot "sheet-content"
+                  :class (merge-classes
+                          (str "fixed z-50 gap-4 bg-background p-6 shadow-lg "
+                               "transition ease-in-out "
+                               "data-[state=open]:animate-in data-[state=closed]:animate-out "
+                               "data-[state=closed]:duration-300 data-[state=open]:duration-500")
+                          (side-classes side)
+                          class))
+           (dissoc :class-name :side :show-close-button))]
+      (cond-> (vec children)
+        show-close-button
+        (conj [:>
+               (.-Close DialogPrimitive)
+               {:data-slot "sheet-close-button"
+                :class (str "absolute right-4 top-4 rounded-sm opacity-70 "
+                            "ring-offset-background transition-opacity "
+                            "hover:opacity-100 "
+                            "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 "
+                            "disabled:pointer-events-none " "data-[state=open]:bg-secondary")}
+               [:> X {:class "h-4 w-4"}]
+               [:span {:class "sr-only"}
+                "Close"]])))]))
 
 ;; ============================================================================
 ;; Layout Components

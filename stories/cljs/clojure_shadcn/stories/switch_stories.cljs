@@ -79,7 +79,9 @@
         "Use controlled mode (:checked + :on-checked-change) when external state drives related UI."]
        [:li
         "Switch includes built-in disabled styling; avoid layering custom pointer-events overrides unless needed."]
-       [:li "Associate with a label using matching :id and :html-for for better accessibility."]]]
+       [:li "Associate with a label using matching :id and :html-for for better accessibility."]
+       [:li
+        "The local Switch has one fixed visual size and does not consume a :size prop. Upstream size examples are unsupported until the component exposes size variants; use :class only for intentional one-off scaling."]]]
      [:div {:class "border rounded-lg p-4 bg-muted/50"}
       [:h4 {:class "text-sm font-semibold mb-2"}
        "Usage Example"]
