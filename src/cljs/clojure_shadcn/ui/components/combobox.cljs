@@ -80,7 +80,7 @@
         {:value context}
         (into [popover/popover popover-props] children)]))))
 
-(defn combobox-trigger
+(defn- combobox-trigger-view
   "Radix Popover trigger rendered as a shadcn Button. Children define trigger contents."
   [{:as raw-props} & children]
   (let [{:keys [class disabled]
@@ -108,7 +108,7 @@
                {:className "size-4 opacity-50"
                 :aria-hidden true}]]))]))
 
-(defn combobox-value
+(defn- combobox-value-view
   "Displays selection. :render receives the current value; :placeholder is used when empty."
   [{:keys [class placeholder render]
     :or {placeholder "Select an option…"}}]
@@ -173,7 +173,7 @@
   [props]
   [command/command-separator (assoc props :data-slot "combobox-separator")])
 
-(defn combobox-item
+(defn- combobox-item-view
   "Selectable cmdk item. :value is the application value; optional :text-value is its
   stable cmdk filtering string. In multiple mode selecting toggles membership."
   [{:keys [value text-value on-select class]
@@ -201,7 +201,7 @@
                      :className (merge-classes "size-4" (if checked? "opacity-100" "opacity-0"))
                      :aria-hidden true}]]))))
 
-(defn combobox-clear
+(defn- combobox-clear-view
   "Accessible clear button. In multiple mode resets to []; otherwise resets to nil."
   [{:keys [class label disabled]
     :or {label "Clear selection"}
@@ -227,6 +227,26 @@
       X
       {:className "size-3.5"
        :aria-hidden true}]]))
+
+(defn combobox-trigger
+  "Radix Popover trigger rendered as a shadcn Button. Children define trigger contents."
+  [props & children]
+  (into [:f> combobox-trigger-view props] children))
+
+(defn combobox-value
+  "Displays selection. :render receives the current value; :placeholder is used when empty."
+  [props]
+  [:f> combobox-value-view props])
+
+(defn combobox-item
+  "Selectable cmdk item. Selecting toggles membership in multiple mode."
+  [props & children]
+  (into [:f> combobox-item-view props] children))
+
+(defn combobox-clear
+  "Accessible clear button. In multiple mode resets to []; otherwise resets to nil."
+  [props]
+  [:f> combobox-clear-view props])
 
 (defn combobox-chip
   "Presentational selected-value chip. :on-remove adds an accessible remove button."
