@@ -105,11 +105,9 @@
 
 (def chart-config
   {:desktop {:label "Desktop"
-             :theme {:light "hsl(221 83% 53%)"
-                     :dark "hsl(217 91% 60%)"}}
+             :color "var(--chart-1)"}
    :mobile {:label "Mobile"
-            :theme {:light "hsl(160 84% 39%)"
-                    :dark "hsl(158 64% 52%)"}}})
+            :color "var(--chart-2)"}})
 
 (defstory
  BarChart
