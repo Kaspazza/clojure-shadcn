@@ -310,18 +310,9 @@
             :class "text-primary underline underline-offset-2"}
         "Button"]
        ". Use its Installation section to install npm dependencies and copy the source into your source root."]
+
       [:p {}
-       "Follow :require entries recursively: copy local namespaces and install their npm dependencies too. If you rename namespaces, update their requires consistently."]
-      [:p {}
-       "Find components on their pages and shared helpers in the "
-       [:a {:href "https://github.com/Kaspazza/clojure-shadcn/tree/HEAD/src/cljs/clojure_shadcn"
-            :target "_blank"
-            :rel "noopener noreferrer"
-            :class "text-primary underline underline-offset-2"}
-        "source browser"]
-       "."]
-      [:p {}
-       "Add any component-specific CSS listed in its Installation notes. For prose classes, optionally add the typography plugin:"]
+       "For prose classes, optionally add to css file the typography plugin:"]
       [code-snippet "npm install -D @tailwindcss/typography"]
       [code-snippet "@plugin \"@tailwindcss/typography\";"]]])))
 
