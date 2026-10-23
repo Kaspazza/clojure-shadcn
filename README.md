@@ -117,12 +117,179 @@ currently developed with:
 
 - ClojureScript compiled by `shadow-cljs`
 - Reagent 2
-- React 18
+- React 19 (the current `package.json` baseline)
 - Tailwind CSS 4
 - component-specific npm packages such as Radix UI primitives
 
 Treat these as the tested development baseline, not as a claim that every
 component requires every dependency listed in `package.json`.
+
+## Installation in your application
+
+Installing npm dependencies alone is **not enough**: the copied source needs
+Tailwind-generated CSS, semantic theme tokens, and a stylesheet loaded by your
+page. The steps below assume an existing, working ClojureScript/Reagent app.
+They are separate from running this repository's Storybook.
+
+### 1. Check your ClojureScript and React setup
+
+Ensure your source directory (for example, `src/cljs`) is on your compiler's
+source path, and add Reagent to your existing `deps.edn` dependencies if needed:
+
+```clojure
+reagent/reagent {:mvn/version "2.0.1"}
+```
+
+For a new app using the repository's React baseline:
+
+```bash
+npm install react@^19.2.0 react-dom@^19.2.0
+```
+
+Keep `react` and `react-dom` on matching versions. If your app already uses
+React, check compatibility before upgrading; copying a component should not
+silently replace your application's runtime setup. You do not need this
+repository's Storybook, Vite, or Babashka tooling to use the components.
+
+### 2. Copy a component and its dependencies
+
+For a first button, copy these files into matching paths under your source root:
+
+- [`ui/components/button.cljs`](src/cljs/clojure_shadcn/ui/components/button.cljs)
+- [`utils/props.cljs`](src/cljs/clojure_shadcn/utils/props.cljs)
+- [`utils/styles.cljs`](src/cljs/clojure_shadcn/utils/styles.cljs)
+
+Either preserve their `clojure-shadcn.*` namespaces and directory structure, or
+rename the namespaces **and all corresponding requires** to your own prefix.
+Install the button's npm dependencies, including the class-merging utility:
+
+```bash
+npm install @radix-ui/react-slot tailwind-merge@^3
+```
+
+For each additional component, follow its `:require` entries recursively:
+copy required local components, utilities, and hooks, and install the npm
+packages named by string requires. For example, a dialog needs
+`@radix-ui/react-dialog`, and a component importing `lucide-react` needs that
+package too. Consult [`package.json`](package.json) for the versions used
+here; do not install the entire catalogue just to use one component.
+
+### 3. Add a Tailwind CSS v4 build
+
+If your app already compiles Tailwind v4, keep that integration and continue to
+the stylesheet configuration below. Otherwise, the CLI is a simple option that
+works independently of your ClojureScript compiler:
+
+```bash
+npm install -D tailwindcss@^4 @tailwindcss/cli@^4 tw-animate-css
+```
+
+`tw-animate-css` supplies classes such as `animate-in` and `fade-in-0` used by
+animated components. It can be omitted only if you also omit its CSS import and
+do not use components that rely on those classes.
+
+Tailwind v4 uses CSS-first configuration. The setup below does not require a
+`tailwind.config.js`, the v3 `@tailwind` directives, or `autoprefixer`.
+If using Vite instead of the CLI, install `@tailwindcss/vite@^4`, register
+`tailwindcss()` in your Vite plugins, and import your CSS entry from the JS
+entry. Choose one CSS build integration rather than running both.
+
+### 4. Configure your CSS entry, tokens, and source scanning
+
+Create `resources/css/app.css` in your app with this header:
+
+```css
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Paths are relative to this stylesheet, not the project root. */
+@source "../../src";
+
+@custom-variant dark (&:is(.dark *));
+```
+
+Point `@source` at every directory containing your app's Hiccup and copied
+component source, including shared `.cljs` or `.cljc` files outside `src`.
+Tailwind scans source text, not the running Reagent tree: keep complete utility
+names in strings rather than constructing names such as `"bg-" + color`.
+
+Then copy these **complete blocks** from
+[`resources/css/app.css`](resources/css/app.css), after the header:
+
+| CSS block | Why it is needed |
+| --- | --- |
+| `:root` | Light-mode color, radius, font, spacing, and shadow variables |
+| `.dark` | Dark-mode values for those semantic tokens |
+| `@theme inline` | Maps tokens to Tailwind utilities such as `bg-primary`, `text-muted-foreground`, and `rounded-lg` |
+| `@layer base` | Default border/focus colors, page background/text, and button cursor |
+
+**Copying only `:root` is insufficient.** The `@theme inline` mapping is what
+makes the semantic utility classes available to Tailwind. This is the
+**design-token pattern**: components use semantic names while CSS owns their
+actual values. Change the values to brand your app without rewriting each
+component.
+
+Some components also need styles beyond the core theme:
+
+- Copy the `@utility` rules and `@keyframes` at the end of the same CSS file
+  when using components that reference them (for example, shimmer text,
+  scrolling helpers, and loading indicators). They are not built into Tailwind.
+- For components using `prose` classes, install
+  `npm install -D @tailwindcss/typography` and add
+  `@plugin "@tailwindcss/typography";` to your CSS entry.
+- The Google Fonts import, `[data-theme]` / `[data-base]` theme-gallery rules,
+  and `.showcase-fonts` rules are showcase features, not installation
+  requirements. Keep your own fonts and omit those blocks unless you want the
+  gallery behavior. If copying the whole file instead, its typography plugin
+  must be installed and its external font request should be reviewed.
+
+For class-based dark mode, toggle `dark` on the document's `<html>` element.
+Putting it only on an app container can leave portalled dialogs and menus
+outside the dark theme. No theme-switching npm package is required for this.
+
+### 5. Compile and load the stylesheet
+
+For the CLI setup, run this from your application root alongside your
+ClojureScript watcher (create the output directory if it does not exist):
+
+```bash
+npx @tailwindcss/cli -i ./resources/css/app.css -o ./resources/public/css/app.css --watch
+```
+
+If `resources/public` is your server's public root, include the generated file
+in your HTML page:
+
+```html
+<link rel="stylesheet" href="/css/app.css">
+```
+
+Adjust the output path and URL to your app's static-file setup. Do not serve
+the uncompiled CSS entry directly: the browser cannot process Tailwind's
+`@theme`, `@apply`, or package imports. Shadow CLJS compilation alone does not
+run the Tailwind CLI.
+
+Build production CSS before packaging your public assets:
+
+```bash
+npx @tailwindcss/cli -i ./resources/css/app.css -o ./resources/public/css/app.css --minify
+```
+
+### 6. Verify the integration
+
+Render the button from the [example above](#example) using your copied
+namespace, then check:
+
+- The button has spacing, a background color, and visible keyboard focus.
+- Adding `dark` to `<html>` changes the theme, including portalled overlays
+  when you add them.
+- Editing a utility class in a `.cljs` file updates the generated CSS.
+- A production build includes the generated stylesheet, not only development
+  watcher output.
+
+If layout utilities work but semantic colors do not, check the token blocks
+and `@theme inline`. If no utilities work, check the CSS URL, running build,
+and `@source` paths. If only animations or prose styling are missing, check
+the optional imports and component-specific styles above.
 
 ## Explore and develop locally
 
@@ -148,16 +315,25 @@ bb build-storybook   # build the static Storybook site
 bb clean             # remove generated build artifacts
 ```
 
+`bb build-storybook` (or `npm run build-storybook`) prepares the ClojureScript
+stories and builds the static web app into `storybook-static/`. Deploy the
+contents of that directory to a static web host; no Clojure runtime is needed
+on the host.
+
 ## Repository layout
 
 ```text
 src/cljs/clojure_shadcn/ui/components/  component source
 src/cljs/clojure_shadcn/utils/          shared prop and class utilities
 src/cljs/clojure_shadcn/ui/hooks/       reusable UI hooks
-stories/cljs/clojure_shadcn/stories/    Storybook examples and documentation
+src/cljs/stories/clojure_shadcn/stories/ Storybook examples and documentation
 resources/css/app.css                   Tailwind imports and design tokens
 docs/philosophy.md                      architectural rationale and boundaries
 ```
+
+Stories retain their `clojure-shadcn.stories.*` namespaces: `src/cljs/stories`
+is a separate source root in the development aliases, alongside `src/cljs`
+for component source and shared story helpers.
 
 ## Scope
 

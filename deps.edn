@@ -5,9 +5,9 @@
  :aliases
  {:cljs-dev
   {:extra-deps {thheller/shadow-cljs {:mvn/version "3.3.5"}}
-   :extra-paths ["src/cljs" "src/clj" "stories/cljs" "resources"]}
+   :extra-paths ["src/cljs" "src/clj" "src/cljs/stories" "resources"]}
 
   :dev
   {:extra-deps {nrepl/nrepl       {:mvn/version "1.5.2"}
                 cider/cider-nrepl {:mvn/version "0.58.0"}}
-   :extra-paths ["src/cljs" "src/clj" "resources"]}}}
+   :extra-paths ["src/cljs" "src/clj" "src/cljs/stories" "resources"]}}}

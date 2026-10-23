@@ -9,7 +9,7 @@
 
 (require '[clojure.java.io :as io] '[clojure.string :as str] '[clojure.pprint :as pprint])
 
-(def stories-dir "stories/cljs/clojure_shadcn/stories")
+(def stories-dir "src/cljs/stories/clojure_shadcn/stories")
 
 (def output-file "target/story-modules.edn")
 
