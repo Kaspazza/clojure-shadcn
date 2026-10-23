@@ -123,9 +123,10 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
    (-> props
        (assoc :data-slot "sheet-overlay"
               :class (merge-classes (str
-                                     "fixed inset-0 z-50 bg-black/80 "
+                                     "fixed inset-0 z-50 bg-black/80 duration-200 ease-in-out "
                                      "data-[state=open]:animate-in data-[state=closed]:animate-out "
-                                     "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0")
+                                     "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 "
+                                     "motion-reduce:animate-none")
                                     class))
        (dissoc :class-name))])
 
@@ -223,10 +224,10 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
        (-> props
            (assoc :data-slot "sheet-content"
                   :class (merge-classes
-                          (str "fixed z-50 gap-4 bg-background p-6 shadow-lg "
-                               "transition ease-in-out "
-                               "data-[state=open]:animate-in data-[state=closed]:animate-out "
-                               "data-[state=closed]:duration-300 data-[state=open]:duration-500")
+                          (str
+                           "fixed z-50 gap-4 bg-background p-6 shadow-lg duration-200 ease-in-out "
+                           "data-[state=open]:animate-in data-[state=closed]:animate-out "
+                           "motion-reduce:animate-none")
                           (side-classes side)
                           class))
            (dissoc :class-name :side :show-close-button))]

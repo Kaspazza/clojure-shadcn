@@ -83,11 +83,11 @@ Custom component implementation."
          is-dragging (.-isDragging sortable)
          listeners (.-listeners sortable)
          attributes (.-attributes sortable)
+         dnd-transition (if is-dragging
+                          (or transition "none")
+                          "transform 500ms cubic-bezier(0.4, 0, 0.2, 1), opacity 500ms ease-in-out")
          style #js {:transform (when transform (.. CSS -Transform (toString transform)))
-                    :transition
-                    (if is-dragging
-                      transition
-                      "transform 500ms cubic-bezier(0.4, 0, 0.2, 1), opacity 500ms ease-in-out")
+                    :transition (str "var(--dnd-row-transition, " dnd-transition ")")
                     :opacity (if is-dragging 0.8 1)
                     :zIndex (if is-dragging 1 0)
                     :position "relative"}]
@@ -96,6 +96,7 @@ Custom component implementation."
      [:<>
       [mateuszmazurczak-table/table-row {:ref set-node-ref
                                          :style style
+                                         :class "motion-reduce:[--dnd-row-transition:none]"
                                          :data-state (when (.getIsSelected ^js row) "selected")}
        (for [^js cell (.getVisibleCells ^js row)]
          ^{:key (.-id cell)}

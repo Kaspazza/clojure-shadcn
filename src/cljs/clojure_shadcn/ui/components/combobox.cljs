@@ -127,7 +127,9 @@
    &
    children]
   (into [popover/popover-content
-         (assoc props :data-slot "combobox-content" :class (merge-classes "w-[240px] p-0" class))]
+         (assoc props
+                :data-slot "combobox-content"
+                :class (merge-classes "w-[240px] p-0 duration-100" class))]
         children))
 
 (defn combobox-collection

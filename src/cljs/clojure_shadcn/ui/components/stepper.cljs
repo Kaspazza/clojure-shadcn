@@ -144,16 +144,18 @@ Documentation: https://ui.shadcn.com/docs/components"
                   :stroke "currentColor"
                   :stroke-width stroke-width
                   :class "text-muted-foreground"}]
-        [:circle {:cx (/ size 2)
-                  :cy (/ size 2)
-                  :r radius
-                  :fill "none"
-                  :stroke "currentColor"
-                  :stroke-width stroke-width
-                  :stroke-dasharray circumference
-                  :stroke-dashoffset dash-offset
-                  :class "text-primary transition-all duration-500 ease-in-out"
-                  :transform (str "rotate(-90 " (/ size 2) " " (/ size 2) ")")}]]
+        [:circle
+         {:cx (/ size 2)
+          :cy (/ size 2)
+          :r radius
+          :fill "none"
+          :stroke "currentColor"
+          :stroke-width stroke-width
+          :stroke-dasharray circumference
+          :stroke-dashoffset dash-offset
+          :class
+          "text-primary transition-all duration-500 ease-in-out motion-reduce:transition-none"
+          :transform (str "rotate(-90 " (/ size 2) " " (/ size 2) ")")}]]
        [:div {:class "absolute inset-0 flex items-center justify-center"}
         [:span {:class "text-sm font-medium"
                 :aria-live "polite"}
@@ -178,7 +180,7 @@ Documentation: https://ui.shadcn.com/docs/components"
                  "bg-muted"
                  "data-[state=completed]:bg-primary"
                  "data-[disabled]:opacity-50"
-                 "transition-all duration-300 ease-in-out"
+                 "transition-all duration-300 ease-in-out motion-reduce:transition-none"
                  (case (keyword orientation)
                    :horizontal "h-0.5 flex-1"
                    :vertical "h-full w-0.5"

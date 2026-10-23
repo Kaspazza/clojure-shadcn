@@ -55,7 +55,6 @@
                  :margin-left margin-left
                  :transform-origin transform-origin
                  :transform (str "rotate(" (* i 30) "deg)")
-                 :opacity 0
                  :animation-delay (str (* i 0.1) "s")
                  :height height
                  :width width}}]))))
@@ -223,7 +222,7 @@
   [props]
   (text-loader
    props
-   "bg-[linear-gradient(to_right,var(--muted-foreground)_40%,var(--foreground)_60%,var(--muted-foreground)_80%)] bg-size-[200%_auto] bg-clip-text font-medium text-transparent animate-[shimmer_4s_infinite_linear] motion-reduce:animate-none"))
+   "bg-[linear-gradient(to_right,var(--muted-foreground)_40%,var(--foreground)_60%,var(--muted-foreground)_80%)] bg-size-[200%_auto] bg-clip-text font-medium text-transparent animate-[shimmer_4s_infinite_linear] motion-reduce:animate-none motion-reduce:bg-none motion-reduce:text-foreground"))
 (defn text-dots-loader
   [props]
   (let [{:keys [text size]
@@ -240,10 +239,11 @@
                                     size))}
       text]
      [:span {:aria-hidden true
-             :class "inline-flex motion-reduce:hidden"}
+             :class "inline-flex"}
       (for [i (range 3)]
         ^{:key i}
-        [:span {:class "text-primary animate-[loading-dots_1.4s_infinite]"
+        [:span {:class
+                "text-primary animate-[loading-dots_1.4s_infinite] motion-reduce:animate-none"
                 :style (animation-delay (str (* (inc i) 0.2) "s"))}
          "."])]]))
 

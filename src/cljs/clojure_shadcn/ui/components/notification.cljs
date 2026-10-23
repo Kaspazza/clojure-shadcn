@@ -93,7 +93,10 @@ Custom component implementation."
                     :info (r/as-element [:> InfoIcon {:className "size-4"}])
                     :warning (r/as-element [:> TriangleAlertIcon {:className "size-4"}])
                     :error (r/as-element [:> OctagonXIcon {:className "size-4"}])
-                    :loading (r/as-element [:> Loader2Icon {:className "size-4 animate-spin"}])}
+                    :loading (r/as-element [:>
+                                            Loader2Icon
+                                            {:className
+                                             "size-4 animate-spin motion-reduce:animate-none"}])}
             :style {"--normal-bg" "var(--popover)"
                     "--normal-text" "var(--popover-foreground)"
                     "--normal-border" "var(--border)"

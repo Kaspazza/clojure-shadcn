@@ -63,7 +63,7 @@
       (when (some-> slot
                     .-hasFakeCaret)
         [:div {:class "pointer-events-none absolute inset-0 flex items-center justify-center"}
-         [:div {:class "h-4 w-px animate-pulse bg-foreground"}]])])))
+         [:div {:class "h-4 w-px animate-caret-blink bg-foreground duration-1000"}]])])))
 
 (defn input-otp-slot [props] (r/create-element input-otp-slot-root #js {:slotProps props}))
 

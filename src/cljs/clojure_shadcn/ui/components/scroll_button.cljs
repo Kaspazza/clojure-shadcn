@@ -44,7 +44,8 @@ Custom component implementation."
  (let [context (useStickToBottomContext)
        is-at-bottom? (.-isAtBottom context)
        scroll-to-bottom (.-scrollToBottom context)
-       base-classes "h-10 w-10 rounded-full transition-all duration-150 ease-out"
+       base-classes
+       "h-10 w-10 rounded-full transition-all duration-150 ease-out motion-reduce:transition-none"
        visibility-classes (if-not is-at-bottom?
                             "translate-y-0 scale-100 opacity-100"
                             "pointer-events-none translate-y-4 scale-95 opacity-0")
