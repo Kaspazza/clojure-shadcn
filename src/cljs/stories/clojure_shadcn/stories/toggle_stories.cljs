@@ -88,15 +88,19 @@
 
 
 (defstory
- TogglePlayground
+ Playground
  "Controlled Storybook playground using only safe scalar component props."
  {:args {:variant "outline"
          :size "default"}
-  :arg-types {:variant {:control {:type "select"}
+  :arg-types {:variant {:name "Variant"
+                                 :control {:type "select"}
                         :options ["default" "outline"]}
-              :size {:control {:type "select"}
+              :size {:name "Size"
+                              :control {:type "select"}
                      :options ["default" "sm" "lg"]}}
-  :parameters {:controls {:exclude ["children" "pressed" "default-pressed" "on-pressed-change"]}}
+  :parameters {:playground {:description "Explore toggle variant and size with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "pressed" "default-pressed" "on-pressed-change"]}}
   :decode-args (fn [{:keys [variant size]
                      :as args}]
                  (cond-> args

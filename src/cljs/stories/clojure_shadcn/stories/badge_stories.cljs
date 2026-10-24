@@ -68,14 +68,18 @@
        [:code "[badge {:variant :outline} \"Outline\"]"]]]]])))
 
 (defstory
- BadgeDemo
+ Playground
  "Interactive badge playground."
  {:args {:variant "default"
          :label "Badge"}
-  :arg-types {:variant {:control {:type "select"}
+  :arg-types {:variant {:name "Variant"
+                                 :control {:type "select"}
                         :options ["default" "secondary" "destructive" "outline" "ghost" "link"]}
-              :label {:control {:type "text"}}}
-  :parameters {:controls {:exclude ["class" "as-child" "on-click"]}}
+              :label {:name "Label"
+                               :control {:type "text"}}}
+  :parameters {:playground {:description "Explore badge variant and label with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class" "as-child" "on-click"]}}
   :decode-args (fn [{:keys [variant]
                      :as args}]
                  (cond-> args

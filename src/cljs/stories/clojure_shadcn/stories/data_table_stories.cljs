@@ -673,14 +673,17 @@
                                                             :empty-state empty-state}]]))))]))
 
 
-(defstory DataTablePlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:initial-page-size 5}
-           :arg-types {:initial-page-size {:control {:type "number"}
+           :arg-types {:initial-page-size {:name "Initial page size"
+                                           :control {:type "number"}
                                            :min 1
                                            :max 5
                                            :step 1}}
-           :parameters {:controls {:exclude ["columns" "data" "renderers" "on-row-click"]}}}
+           :parameters {:playground {:description "Explore data table initial page size with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["columns" "data" "renderers" "on-row-click"]}}}
           [args]
           (r/as-element (helpers/wrap-component
                          [(fn []

@@ -227,11 +227,14 @@
                  body]]]))]))))]))
 
 
-(defstory CollapsiblePlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:default-open false}
-           :arg-types {:default-open {:control {:type "boolean"}}}
-           :parameters {:controls {:exclude ["children" "open" "on-open-change"]}}}
+           :arg-types {:default-open {:name "Initially open"
+                                      :control {:type "boolean"}}}
+           :parameters {:playground {:description "Explore collapsible initially open with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "open" "on-open-change"]}}}
           [args]
           (r/as-element (helpers/wrap-component [sut/collapsible
                                                  (select-keys args [:default-open])

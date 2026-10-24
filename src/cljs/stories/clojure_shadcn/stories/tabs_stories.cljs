@@ -132,12 +132,15 @@
                         :class "rounded-md border p-4"}
       "اختيار إعدادات التنبيهات."]]])))
 
-(defstory TabsPlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:default-value "account"}
-           :arg-types {:default-value {:control {:type "select"}
+           :arg-types {:default-value {:name "Initial value"
+                                       :control {:type "select"}
                                        :options ["account" "password"]}}
-           :parameters {:controls {:exclude ["children" "value" "on-value-change"]}}}
+           :parameters {:playground {:description "Explore tabs initial value with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "value" "on-value-change"]}}}
           [args]
           (r/as-element (helpers/wrap-component [sut/tabs
                                                  (select-keys args [:default-value])

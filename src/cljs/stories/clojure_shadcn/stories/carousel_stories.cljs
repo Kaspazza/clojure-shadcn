@@ -392,12 +392,15 @@
   (r/as-element [carousel-events-example]))
 
 
-(defstory CarouselPlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:orientation "horizontal"}
-           :arg-types {:orientation {:control {:type "select"}
+           :arg-types {:orientation {:name "Orientation"
+                                     :control {:type "select"}
                                      :options ["horizontal" "vertical"]}}
-           :parameters {:controls {:exclude ["children" "opts" "plugins" "set-api"]}}
+           :parameters {:playground {:description "Explore carousel orientation with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "opts" "plugins" "set-api"]}}
            :decode-args (fn [{:keys [orientation]
                               :as args}]
                           (cond-> args

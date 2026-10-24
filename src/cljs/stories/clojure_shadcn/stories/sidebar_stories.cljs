@@ -668,12 +668,15 @@
                                              "Settings"]]]]]])))
 
 
-(defstory SidebarPlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:variant "sidebar"}
-           :arg-types {:variant {:control {:type "select"}
+           :arg-types {:variant {:name "Variant"
+                                 :control {:type "select"}
                                  :options ["sidebar" "floating" "inset"]}}
-           :parameters {:controls {:exclude ["children" "open?" "on-open-change" "is-mobile"]}}}
+           :parameters {:playground {:description "Explore sidebar variant with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "open?" "on-open-change" "is-mobile"]}}}
           [args]
           (r/as-element
            (helpers/wrap-component

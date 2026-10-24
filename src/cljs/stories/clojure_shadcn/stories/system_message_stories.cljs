@@ -77,18 +77,24 @@
        [:code
         "[system-message {:variant :action\n                 :icon [:span \"ℹ️\"]\n                 :fill true}\n \"Your workspace sync is up to date.\"]"]]]]])))
 
-(defstory SystemMessageDefault
+(defstory Playground
           "Interactive system-message playground."
           {:args {:variant "action"
                   :fill false
                   :icon-hidden? false
                   :message "This is an informational system message."}
-           :arg-types {:variant {:control {:type "select"}
+           :arg-types {:variant {:name "Variant"
+                                 :control {:type "select"}
                                  :options ["action" "error" "warning"]}
-                       :fill {:control {:type "boolean"}}
-                       :icon-hidden? {:control {:type "boolean"}}
-                       :message {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["class" "icon" "cta" "on-click"]}}
+                       :fill {:name "Fill background"
+                              :control {:type "boolean"}}
+                       :icon-hidden? {:name "Hide icon"
+                                      :control {:type "boolean"}}
+                       :message {:name "Message"
+                                 :control {:type "text"}}}
+           :parameters {:playground {:description "Explore system message variant, fill background, hide icon and message with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class" "icon" "cta" "on-click"]}}
            :decode-args (fn [{:keys [variant]
                               :as args}]
                           (cond-> args

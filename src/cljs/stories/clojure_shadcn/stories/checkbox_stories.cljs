@@ -441,15 +441,20 @@
                            priority]]))]]])))))]))
 
 
-(defstory CheckboxPlayground
+(defstory Playground
           "Interactive checkbox playground."
           {:args {:default-checked false
                   :disabled false
                   :required false}
-           :arg-types {:default-checked {:control {:type "boolean"}}
-                       :disabled {:control {:type "boolean"}}
-                       :required {:control {:type "boolean"}}}
-           :parameters {:controls {:exclude ["checked" "on-checked-change" "class"]}}}
+           :arg-types {:default-checked {:name "Initially checked"
+                                         :control {:type "boolean"}}
+                       :disabled {:name "Disabled"
+                                  :control {:type "boolean"}}
+                       :required {:name "Required"
+                                  :control {:type "boolean"}}}
+           :parameters {:playground {:description "Explore checkbox initially checked, disabled and required with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["checked" "on-checked-change" "class"]}}}
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "p-6"}
                                                  [sut/checkbox

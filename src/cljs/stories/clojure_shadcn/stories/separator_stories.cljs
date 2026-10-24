@@ -60,14 +60,18 @@
        [:code
         "[:div {:class \"space-y-3\"}\n [:p \"Section A\"]\n [separator {:orientation :horizontal}]\n [:p \"Section B\"]]"]]]]])))
 
-(defstory SeparatorDemo
+(defstory Playground
           "Interactive separator playground."
           {:args {:orientation "horizontal"
                   :decorative true}
-           :arg-types {:orientation {:control {:type "select"}
+           :arg-types {:orientation {:name "Orientation"
+                                     :control {:type "select"}
                                      :options ["horizontal" "vertical"]}
-                       :decorative {:control {:type "boolean"}}}
-           :parameters {:controls {:exclude ["class"]}}
+                       :decorative {:name "Decorative"
+                                    :control {:type "boolean"}}}
+           :parameters {:playground {:description "Explore separator orientation and decorative with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class"]}}
            :decode-args (fn [{:keys [orientation]
                               :as args}]
                           (cond-> args

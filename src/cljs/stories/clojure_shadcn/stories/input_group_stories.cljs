@@ -95,16 +95,21 @@
                                                     "⌘K"]]]])))
 
 
-(defstory InputGroupPlayground
+(defstory Playground
           "Interactive input-group playground."
           {:args {:placeholder "Search…"
                   :disabled false
                   :addon-align "inline-end"}
-           :arg-types {:placeholder {:control {:type "text"}}
-                       :disabled {:control {:type "boolean"}}
-                       :addon-align {:control {:type "select"}
+           :arg-types {:placeholder {:name "Placeholder"
+                                     :control {:type "text"}}
+                       :disabled {:name "Disabled"
+                                  :control {:type "boolean"}}
+                       :addon-align {:name "Addon align"
+                                     :control {:type "select"}
                                      :options ["inline-start" "inline-end"]}}
-           :parameters {:controls {:exclude ["on-click" "class"]}}
+           :parameters {:playground {:description "Explore input group placeholder, disabled and addon align with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["on-click" "class"]}}
            :decode-args (fn [{:keys [addon-align]
                               :as args}]
                           (update args :addon-align keyword))}

@@ -134,14 +134,18 @@
                                                                    #(reset! value %)}]]]]))))]))
 
 
-(defstory SpeechRecognitionPlayground
+(defstory Playground
           "Speech-recognition playground."
           {:args {:language "en-US"
                   :continuous true}
-           :arg-types {:language {:control {:type "select"}
+           :arg-types {:language {:name "Language"
+                                  :control {:type "select"}
                                   :options ["en-US" "pl-PL"]}
-                       :continuous {:control {:type "boolean"}}}
-           :parameters {:controls {:exclude ["on-transcript-change" "class"]}}}
+                       :continuous {:name "Continuous listening"
+                                    :control {:type "boolean"}}}
+           :parameters {:playground {:description "Explore speech recognition button language and continuous listening with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["on-transcript-change" "class"]}}}
           [args]
           (r/as-element (r/with-let
                          [value (r/atom "")]

@@ -107,16 +107,21 @@
         "   \"UN\"]\n"
         "  [avatar-badge {:class \"bg-green-600\"}]]"]]]]])))
 
-(defstory AvatarDemo
+(defstory Playground
           "Interactive avatar playground."
           {:args {:size "default"
                   :alt "Shadcn"
                   :fallback "CN"}
-           :arg-types {:size {:control {:type "select"}
+           :arg-types {:size {:name "Size"
+                              :control {:type "select"}
                               :options ["sm" "default" "lg"]}
-                       :alt {:control {:type "text"}}
-                       :fallback {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["class" "src"]}}
+                       :alt {:name "Alternative text"
+                             :control {:type "text"}}
+                       :fallback {:name "Fallback text"
+                                  :control {:type "text"}}}
+           :parameters {:playground {:description "Explore avatar size, alternative text and fallback text with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class" "src"]}}
            :decode-args (fn [{:keys [size]
                               :as args}]
                           (cond-> args

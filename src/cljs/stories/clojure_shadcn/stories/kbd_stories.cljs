@@ -49,15 +49,20 @@
                :default nil
                :description "Merged and forwarded to the kbd element."}]}]])))
 
-(defstory KbdDemo
+(defstory Playground
           "Interactive keyboard hint playground."
           {:args {:prefix "Press"
                   :key "K"
                   :suffix "to search"}
-           :arg-types {:prefix {:control {:type "text"}}
-                       :key {:control {:type "text"}}
-                       :suffix {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["class"]}}}
+           :arg-types {:prefix {:name "Prefix"
+                                :control {:type "text"}}
+                       :key {:name "Shortcut key"
+                             :control {:type "text"}}
+                       :suffix {:name "Suffix"
+                                :control {:type "text"}}}
+           :parameters {:playground {:description "Explore kbd prefix, shortcut key and suffix with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class"]}}}
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "flex items-center gap-2 text-sm"}
                                                  (:prefix args)

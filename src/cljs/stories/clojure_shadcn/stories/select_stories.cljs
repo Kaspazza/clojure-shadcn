@@ -312,17 +312,22 @@
                                            "Enterprise (contact us)"]]]])))
 
 
-(defstory SelectPlayground
+(defstory Playground
           "Interactive select playground."
           {:args {:default-value "banana"
                   :disabled false
                   :trigger-size "default"}
-           :arg-types {:default-value {:control {:type "select"}
+           :arg-types {:default-value {:name "Initial value"
+                                       :control {:type "select"}
                                        :options ["apple" "banana" "blueberry"]}
-                       :disabled {:control {:type "boolean"}}
-                       :trigger-size {:control {:type "select"}
+                       :disabled {:name "Disabled"
+                                  :control {:type "boolean"}}
+                       :trigger-size {:name "Trigger size"
+                                      :control {:type "select"}
                                       :options ["default" "sm"]}}
-           :parameters {:controls {:exclude ["value" "on-value-change" "class"]}}}
+           :parameters {:playground {:description "Explore select initial value, disabled and trigger size with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["value" "on-value-change" "class"]}}}
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "p-6"}
                                                  [sut/select

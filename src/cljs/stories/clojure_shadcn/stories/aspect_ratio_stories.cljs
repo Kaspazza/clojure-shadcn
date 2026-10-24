@@ -37,14 +37,17 @@
                                     :description "Merged classes."}]}])))
 
 (defstory
- AspectRatioBasic
+ Playground
  "Interactive aspect-ratio playground."
  {:args {:ratio 1.7778}
-  :arg-types {:ratio {:control {:type "number"}
+  :arg-types {:ratio {:name "Ratio"
+                               :control {:type "number"}
                       :min 0.5
                       :max 3
                       :step 0.1}}
-  :parameters {:controls {:exclude ["class"]}}}
+  :parameters {:playground {:description "Explore aspect ratio ratio with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class"]}}}
  [args]
  (r/as-element
   (helpers/wrap-component

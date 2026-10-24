@@ -155,13 +155,17 @@
       [button/button {:type "submit"}
        submit-label]]]))
 
-(defstory FormPlayground
+(defstory Playground
           "Interactive validation through the local React Hook Form facade."
           {:args {:email ""
                   :submit-label "Submit"}
-           :arg-types {:email {:control {:type "text"}}
-                       :submit-label {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["on-submit" "methods" "class"]}}}
+           :arg-types {:email {:name "Email"
+                               :control {:type "text"}}
+                       :submit-label {:name "Submit label"
+                                      :control {:type "text"}}}
+           :parameters {:playground {:description "Explore form email and submit label with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["on-submit" "methods" "class"]}}}
           [args]
           (r/as-element (helpers/wrap-component [:f> playground-form args])))
 

@@ -80,17 +80,22 @@
 (defstory DateRange [] (r/as-element (helpers/wrap-component [date-range-example])))
 
 
-(defstory CalendarPlayground
+(defstory Playground
           "Interactive calendar playground."
           {:args {:show-outside-days true
                   :caption-layout "label"
                   :number-of-months 1}
-           :arg-types {:show-outside-days {:control {:type "boolean"}}
-                       :caption-layout {:control {:type "select"}
+           :arg-types {:show-outside-days {:name "Show outside days"
+                                           :control {:type "boolean"}}
+                       :caption-layout {:name "Caption layout"
+                                        :control {:type "select"}
                                         :options ["label" "dropdown"]}
-                       :number-of-months {:control {:type "select"}
+                       :number-of-months {:name "Number of months"
+                                          :control {:type "select"}
                                           :options [1 2]}}
-           :parameters {:controls {:exclude ["selected" "on-select" "class" "class-names"]}}
+           :parameters {:playground {:description "Explore calendar show outside days, caption layout and number of months with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["selected" "on-select" "class" "class-names"]}}
            :decode-args (fn [{:keys [caption-layout]
                               :as args}]
                           (update args :caption-layout keyword))}

@@ -114,14 +114,17 @@
                              [:p {:class "text-sm text-muted-foreground"}
                               "مكوّنات مصممة بعناية يمكنك نسخها وتخصيصها."]]]]])))
 
-(defstory HoverCardPlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:open-delay 700}
-           :arg-types {:open-delay {:control {:type "number"}
+           :arg-types {:open-delay {:name "Open delay"
+                                    :control {:type "number"}
                                     :min 0
                                     :max 2000
                                     :step 100}}
-           :parameters {:controls {:exclude ["children" "open" "default-open" "on-open-change"]}}}
+           :parameters {:playground {:description "Explore hover card open delay with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "open" "default-open" "on-open-change"]}}}
           [args]
           (r/as-element (helpers/wrap-component [sut/hover-card
                                                  (select-keys args [:open-delay])

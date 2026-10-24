@@ -375,20 +375,26 @@
               "Review summary and confirm action."]]]]))))]))
 
 
-(defstory StepperPlayground
+(defstory Playground
           "Interactive stepper playground."
           {:args {:current-step "details"
                   :variant "horizontal"
                   :label-orientation "horizontal"
                   :reverse-progress false}
-           :arg-types {:current-step {:control {:type "select"}
+           :arg-types {:current-step {:name "Current step"
+                                      :control {:type "select"}
                                       :options ["details" "billing" "confirm"]}
-                       :variant {:control {:type "select"}
+                       :variant {:name "Variant"
+                                 :control {:type "select"}
                                  :options ["horizontal" "vertical" "circle"]}
-                       :label-orientation {:control {:type "select"}
+                       :label-orientation {:name "Label orientation"
+                                           :control {:type "select"}
                                            :options ["horizontal" "vertical"]}
-                       :reverse-progress {:control {:type "boolean"}}}
-           :parameters {:controls {:exclude ["on-step-change" "class"]}}
+                       :reverse-progress {:name "Reverse progress"
+                                          :control {:type "boolean"}}}
+           :parameters {:playground {:description "Explore stepper current step, variant, label orientation and reverse progress with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["on-step-change" "class"]}}
            :decode-args (fn [{:keys [current-step variant label-orientation reverse-progress]
                               :as args}]
                           (-> args

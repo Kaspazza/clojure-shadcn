@@ -321,12 +321,15 @@
                  (button/button {:variant :outline} "إلغاء")]
                 (button/button {} "حفظ التغييرات")]]]])))
 
-(defstory SheetPlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:side "right"}
-           :arg-types {:side {:control {:type "select"}
+           :arg-types {:side {:name "Side"
+                              :control {:type "select"}
                               :options ["top" "right" "bottom" "left"]}}
-           :parameters {:controls {:exclude ["children" "open" "default-open" "on-open-change"]}}
+           :parameters {:playground {:description "Explore sheet side with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "open" "default-open" "on-open-change"]}}
            :decode-args (fn [{:keys [side]
                               :as args}]
                           (cond-> args

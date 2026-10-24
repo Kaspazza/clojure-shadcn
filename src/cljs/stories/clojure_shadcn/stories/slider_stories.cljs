@@ -65,20 +65,27 @@
                                                                              "Maximum price"]}]])))
 
 
-(defstory SliderPlayground
+(defstory Playground
           "Interactive slider playground."
           {:args {:default-value [40]
                   :min 0
                   :max 100
                   :step 1
                   :disabled false}
-           :arg-types {:default-value {:control {:type "number"}}
-                       :min {:control {:type "number"}}
-                       :max {:control {:type "number"}}
-                       :step {:control {:type "number"}}
-                       :disabled {:control {:type "boolean"}}}
-           :parameters {:controls
-                        {:exclude
+           :arg-types {:default-value {:name "Initial value"
+                                       :control {:type "number"}}
+                       :min {:name "Min"
+                             :control {:type "number"}}
+                       :max {:name "Max"
+                             :control {:type "number"}}
+                       :step {:name "Step"
+                              :control {:type "number"}}
+                       :disabled {:name "Disabled"
+                                  :control {:type "boolean"}}}
+           :parameters {:playground {:description "Explore slider initial value, min, max, step and disabled with a live preview."}
+                        :controls
+                        {:expanded false
+                                   :exclude
                          ["value" "on-value-change" "on-value-commit" "class" "thumb-class"]}}
            :decode-args (fn [{:keys [default-value]
                               :as args}]

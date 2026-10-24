@@ -284,19 +284,26 @@
           []
           (r/as-element (helpers/wrap-component [rtl-example])))
 
-(defstory DatePickerPlayground
+(defstory Playground
           "Legacy native date-picker playground retained for existing consumers."
           {:args {:default-value "2026-03-01"
                   :disabled false
                   :required false
                   :min "2026-01-01"
                   :max "2026-12-31"}
-           :arg-types {:default-value {:control {:type "text"}}
-                       :disabled {:control {:type "boolean"}}
-                       :required {:control {:type "boolean"}}
-                       :min {:control {:type "text"}}
-                       :max {:control {:type "text"}}}
-           :parameters {:controls {:exclude
+           :arg-types {:default-value {:name "Initial value"
+                                       :control {:type "text"}}
+                       :disabled {:name "Disabled"
+                                  :control {:type "boolean"}}
+                       :required {:name "Required"
+                                  :control {:type "boolean"}}
+                       :min {:name "Min"
+                             :control {:type "text"}}
+                       :max {:name "Max"
+                             :control {:type "text"}}}
+           :parameters {:playground {:description "Explore date picker initial value, disabled, required, min and max with a live preview."}
+                        :controls {:expanded false
+                                   :exclude
                                    ["value" "on-change" "class" "wrapper-class" "icon-class"]}}}
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "max-w-sm p-6"}

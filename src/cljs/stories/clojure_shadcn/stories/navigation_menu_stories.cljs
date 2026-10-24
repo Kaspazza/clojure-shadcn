@@ -194,11 +194,14 @@
                                                      "A non-viewport menu link"]]]]])))
 
 
-(defstory NavigationMenuPlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:viewport true}
-           :arg-types {:viewport {:control {:type "boolean"}}}
-           :parameters {:controls {:exclude
+           :arg-types {:viewport {:name "Viewport"
+                                  :control {:type "boolean"}}}
+           :parameters {:playground {:description "Explore navigation menu viewport with a live preview."}
+                        :controls {:expanded false
+                                   :exclude
                                    ["children" "value" "default-value" "on-value-change"]}}}
           [args]
           (r/as-element (helpers/wrap-component [sut/navigation-menu

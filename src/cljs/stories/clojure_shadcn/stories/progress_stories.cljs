@@ -55,14 +55,17 @@
                                                                 :aria-label "Upload complete"}]])))
 
 
-(defstory ProgressPlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:value 60}
-           :arg-types {:value {:control {:type "range"}
+           :arg-types {:value {:name "Value"
+                               :control {:type "range"}
                                :min 0
                                :max 100
                                :step 1}}
-           :parameters {:controls {:exclude ["children"]}}}
+           :parameters {:playground {:description "Explore progress value with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children"]}}}
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "w-80"}
                                                  [sut/progress (select-keys args [:value])]])))

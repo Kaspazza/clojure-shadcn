@@ -67,9 +67,13 @@
   {:heading "The Taxonomy of Type"
    :body
    "Typography should communicate hierarchy without coupling content to a page-specific stylesheet."}
-  :arg-types {:heading {:control {:type "text"}}
-              :body {:control {:type "text"}}}
-  :parameters {:controls {:exclude ["class"]}}}
+  :arg-types {:heading {:name "Heading"
+                                 :control {:type "text"}}
+              :body {:name "Body"
+                              :control {:type "text"}}}
+  :parameters {:playground {:description "Explore typography heading and body with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class"]}}}
  [args]
  (r/as-element (helpers/wrap-component [:article {:class "max-w-2xl"}
                                         [sut/h1 {}

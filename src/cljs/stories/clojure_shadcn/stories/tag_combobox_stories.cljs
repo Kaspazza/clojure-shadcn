@@ -253,13 +253,17 @@
 
 
 (defstory
- TagComboboxPlayground
+ Playground
  "Interactive tag-combobox playground."
  {:args {:placeholder "+ Add tag"
          :allow-create true}
-  :arg-types {:placeholder {:control {:type "text"}}
-              :allow-create {:control {:type "boolean"}}}
-  :parameters {:controls {:exclude ["tags" "selected-tag" "on-select" "on-create" "class"]}}}
+  :arg-types {:placeholder {:name "Placeholder"
+                                     :control {:type "text"}}
+              :allow-create {:name "Allow new tags"
+                                      :control {:type "boolean"}}}
+  :parameters {:playground {:description "Explore tag combobox placeholder and allow new tags with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["tags" "selected-tag" "on-select" "on-create" "class"]}}}
  [args]
  (r/as-element (r/with-let [tags (r/atom #{"bug" "feature" "urgent"}) selected (r/atom nil)]
                            (helpers/wrap-component [:div {:class "p-6"}

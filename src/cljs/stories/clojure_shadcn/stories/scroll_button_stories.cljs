@@ -74,11 +74,15 @@
           "Interactive scroll-button playground."
           {:args {:variant "outline"
                   :size "sm"}
-           :arg-types {:variant {:control {:type "select"}
+           :arg-types {:variant {:name "Variant"
+                                 :control {:type "select"}
                                  :options ["default" "outline" "secondary" "ghost"]}
-                       :size {:control {:type "select"}
+                       :size {:name "Size"
+                              :control {:type "select"}
                               :options ["xs" "sm" "default" "lg" "icon" "icon-sm"]}}
-           :parameters {:controls {:exclude ["class" "on-click"]}}
+           :parameters {:playground {:description "Explore scroll button variant and size with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class" "on-click"]}}
            :decode-args (fn [{:keys [variant size]
                               :as args}]
                           (cond-> args

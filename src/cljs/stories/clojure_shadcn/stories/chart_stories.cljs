@@ -463,11 +463,14 @@
         :fill "var(--color-mobile)"}]]]])))
 
 (defstory
- ChartPlayground
+ Playground
  "Controlled Storybook playground using only safe scalar component props."
  {:args {:class "min-h-[260px] w-full"}
-  :arg-types {:class {:control {:type "text"}}}
-  :parameters {:controls {:exclude ["children" "config" "data" "content" "tick-formatter"]}}}
+  :arg-types {:class {:name "CSS classes"
+                               :control {:type "text"}}}
+  :parameters {:playground {:description "Explore chart css classes with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "config" "data" "content" "tick-formatter"]}}}
  [args]
  (r/as-element (helpers/wrap-component [:div {:class "w-[560px] rounded-xl border bg-card p-6"}
                                         [sut/chart-container {:config chart-config

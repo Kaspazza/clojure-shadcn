@@ -81,15 +81,19 @@
                 "Muted, small variant"]]]])))
 
 
-(defstory ItemPlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:variant "outline"
                   :size "default"}
-           :arg-types {:variant {:control {:type "select"}
+           :arg-types {:variant {:name "Variant"
+                                 :control {:type "select"}
                                  :options ["default" "outline" "muted"]}
-                       :size {:control {:type "select"}
+                       :size {:name "Size"
+                              :control {:type "select"}
                               :options ["default" "sm"]}}
-           :parameters {:controls {:exclude ["children" "as-child?"]}}
+           :parameters {:playground {:description "Explore item variant and size with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "as-child?"]}}
            :decode-args (fn [{:keys [variant size]
                               :as args}]
                           (cond-> args

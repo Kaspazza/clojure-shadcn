@@ -114,16 +114,21 @@
                                 (for [index (range 3 6)]
                                   ^{:key index} [sut/input-otp-slot {:index index}]))])))
 
-(defstory InputOtpPlayground
+(defstory Playground
           "Interactive OTP playground."
           {:args {:max-length 6
                   :disabled false
                   :placeholder "○"}
-           :arg-types {:max-length {:control {:type "select"}
+           :arg-types {:max-length {:name "Max length"
+                                    :control {:type "select"}
                                     :options [4 6]}
-                       :disabled {:control {:type "boolean"}}
-                       :placeholder {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["value" "on-change" "class" "container-class"]}}}
+                       :disabled {:name "Disabled"
+                                  :control {:type "boolean"}}
+                       :placeholder {:name "Placeholder"
+                                     :control {:type "text"}}}
+           :parameters {:playground {:description "Explore input otp max length, disabled and placeholder with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["value" "on-change" "class" "container-class"]}}}
           [args]
           (r/as-element (helpers/wrap-component [sut/input-otp {:max-length (:max-length args)
                                                                 :disabled (:disabled args)

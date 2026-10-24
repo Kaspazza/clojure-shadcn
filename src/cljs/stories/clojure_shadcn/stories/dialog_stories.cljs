@@ -420,11 +420,14 @@
                 (button/button {} "حفظ التغييرات")]]]])))
 
 
-(defstory DialogPlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:modal true}
-           :arg-types {:modal {:control {:type "boolean"}}}
-           :parameters {:controls {:exclude ["children" "open" "default-open" "on-open-change"]}}}
+           :arg-types {:modal {:name "Modal"
+                               :control {:type "boolean"}}}
+           :parameters {:playground {:description "Explore dialog modal with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "open" "default-open" "on-open-change"]}}}
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "p-6"}
                                                  [sut/dialog

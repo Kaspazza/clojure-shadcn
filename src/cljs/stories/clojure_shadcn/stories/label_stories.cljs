@@ -58,13 +58,17 @@
        [:code
         "[:div {:class \"space-y-2\"}\n [label {:html-for \"email\"} \"Email\"]\n [input {:id \"email\" :type \"email\" :placeholder \"you@example.com\"}]]"]]]]])))
 
-(defstory LabelDemo
+(defstory Playground
           "Interactive label playground."
           {:args {:label "Accept terms and conditions"
                   :disabled false}
-           :arg-types {:label {:control {:type "text"}}
-                       :disabled {:control {:type "boolean"}}}
-           :parameters {:controls {:exclude ["class" "html-for" "id" "on-checked-change"]}}}
+           :arg-types {:label {:name "Label"
+                               :control {:type "text"}}
+                       :disabled {:name "Disabled"
+                                  :control {:type "boolean"}}}
+           :parameters {:playground {:description "Explore label label and disabled with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class" "html-for" "id" "on-checked-change"]}}}
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "p-6"}
                                                  [:div {:class "flex items-center gap-2"}

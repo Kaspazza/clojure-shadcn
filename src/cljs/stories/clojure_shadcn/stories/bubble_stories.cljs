@@ -56,13 +56,18 @@
                   :align "start"
                   :content "Can you send the latest report?"}
            :arg-types {:variant
-                       {:control {:type "select"}
+                       {:name "Variant"
+                                 :control {:type "select"}
                         :options
                         ["default" "secondary" "muted" "tinted" "outline" "ghost" "destructive"]}
-                       :align {:control {:type "select"}
+                       :align {:name "Align"
+                               :control {:type "select"}
                                :options ["start" "end"]}
-                       :content {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["class" "as-child?"]}}
+                       :content {:name "Content"
+                                 :control {:type "text"}}}
+           :parameters {:playground {:description "Explore bubble variant, align and content with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class" "as-child?"]}}
            :decode-args (fn [{:keys [variant align]
                               :as args}]
                           (cond-> args

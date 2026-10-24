@@ -88,7 +88,7 @@
          "[:div {:class \"flex items-center gap-2\"}\n [button {:variant :default\n          :on-click #(js/console.log \"continue\")}\n  \"Continue\"]\n [button {:variant :outline\n          :size :icon\n          :aria-label \"Open settings\"}\n  [:> ArrowUpRight]]\n [button {:as-child true}\n  [:a {:href \"/docs\"} \"Documentation\"]]]"]]]]]])))
 
 (defstory
- ButtonDefault
+ Playground
  "Interactive Button playground for primary actions.
 
   Radix primitive: @radix-ui/react-slot (for :as-child polymorphism)
@@ -99,13 +99,19 @@
          :variant "default"
          :size "default"
          :disabled false}
-  :arg-types {:label {:control {:type "text"}}
-              :variant {:control {:type "select"}
+  :arg-types {:label {:name "Label"
+                               :control {:type "text"}}
+              :variant {:name "Variant"
+                                 :control {:type "select"}
                         :options ["default" "destructive" "outline" "secondary" "ghost" "link"]}
-              :size {:control {:type "select"}
+              :size {:name "Size"
+                              :control {:type "select"}
                      :options ["xs" "sm" "default" "lg" "icon" "icon-xs" "icon-sm" "icon-lg"]}
-              :disabled {:control {:type "boolean"}}}
-  :parameters {:controls {:exclude ["on-click" "as-child" "class"]}}
+              :disabled {:name "Disabled"
+                                  :control {:type "boolean"}}}
+  :parameters {:playground {:description "Explore button label, variant, size and disabled with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["on-click" "as-child" "class"]}}
   :decode-args (fn [{:keys [variant size]
                      :as args}]
                  (cond-> args

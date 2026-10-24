@@ -65,15 +65,20 @@
     [:div {:class "rounded-lg border bg-muted/50 p-4 text-xs text-muted-foreground"}
      "Card size belongs on the card root. The root publishes data-size and shared spacing; header, title, description, action, content, and footer retain their compositional APIs while responding to the root size."]])))
 
-(defstory CardDemo
+(defstory Playground
           "Interactive card playground."
           {:args {:title "Create project"
                   :description "Deploy a new project in one click."
                   :action-label "Deploy"}
-           :arg-types {:title {:control {:type "text"}}
-                       :description {:control {:type "text"}}
-                       :action-label {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["class" "on-click"]}}}
+           :arg-types {:title {:name "Title"
+                               :control {:type "text"}}
+                       :description {:name "Description"
+                                     :control {:type "text"}}
+                       :action-label {:name "Action label"
+                                      :control {:type "text"}}}
+           :parameters {:playground {:description "Explore card title, description and action label with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class" "on-click"]}}}
           [args]
           (r/as-element (helpers/wrap-component [sut/card {:class "w-full max-w-sm"}
                                                  [sut/card-header {}

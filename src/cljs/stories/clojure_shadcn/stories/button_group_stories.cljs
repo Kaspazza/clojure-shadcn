@@ -74,16 +74,21 @@
                :default nil
                :description "Merged/forwarded to the Separator component."}]}]])))
 
-(defstory ButtonGroupDemo
+(defstory Playground
           "Interactive button-group playground."
           {:args {:orientation "horizontal"
                   :first-label "Back"
                   :second-label "Next"}
-           :arg-types {:orientation {:control {:type "select"}
+           :arg-types {:orientation {:name "Orientation"
+                                     :control {:type "select"}
                                      :options ["horizontal" "vertical"]}
-                       :first-label {:control {:type "text"}}
-                       :second-label {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["class" "role"]}}
+                       :first-label {:name "First label"
+                                     :control {:type "text"}}
+                       :second-label {:name "Second label"
+                                      :control {:type "text"}}}
+           :parameters {:playground {:description "Explore button group orientation, first label and second label with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class" "role"]}}
            :decode-args (fn [{:keys [orientation firstLabel secondLabel]
                               :as args}]
                           (cond-> (-> args

@@ -395,11 +395,14 @@
                   "Dismiss all"]]]))))
 
 
-(defstory NotificationPlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:message "Changes saved"}
-           :arg-types {:message {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["options" "on-dismiss" "on-auto-close" "on-click"]}}}
+           :arg-types {:message {:name "Message"
+                                 :control {:type "text"}}}
+           :parameters {:playground {:description "Explore notification message with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["options" "on-dismiss" "on-auto-close" "on-click"]}}}
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "p-6"}
                                                  [sut/toaster {}]

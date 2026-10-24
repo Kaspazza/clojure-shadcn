@@ -176,12 +176,15 @@
         [:div {:class "grid h-full place-items-center bg-muted/30"}
          "Handle"]]]]]])))
 
-(defstory ResizablePlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:orientation "horizontal"}
-           :arg-types {:orientation {:control {:type "select"}
+           :arg-types {:orientation {:name "Orientation"
+                                     :control {:type "select"}
                                      :options ["horizontal" "vertical"]}}
-           :parameters {:controls {:exclude ["children" "on-layout"]}}
+           :parameters {:playground {:description "Explore resizable orientation with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "on-layout"]}}
            :decode-args (fn [{:keys [orientation]
                               :as args}]
                           (cond-> args

@@ -142,16 +142,21 @@
        [:code
         "[message {:class \"items-start gap-3\"}\n [message-avatar {:src \"https://placehold.co/40x40\" :alt \"Assistant\" :fallback \"AI\"}]\n [:div {:class \"space-y-2\"}\n  [message-content {:markdown? true} \"**Hello** from the assistant\"]\n  [message-actions {}\n   [message-action {:tooltip \"Copy\"} [button {:size :icon} [:> Copy]]]]]]"]]]]])))
 
-(defstory MessageBasic
+(defstory Playground
           "Interactive message playground."
           {:args {:align "start"
                   :content "Hello! This is a basic message."
                   :fallback "JD"}
-           :arg-types {:align {:control {:type "select"}
+           :arg-types {:align {:name "Align"
+                               :control {:type "select"}
                                :options ["start" "end"]}
-                       :content {:control {:type "text"}}
-                       :fallback {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["class" "src" "alt" "on-click"]}}
+                       :content {:name "Content"
+                                 :control {:type "text"}}
+                       :fallback {:name "Fallback text"
+                                  :control {:type "text"}}}
+           :parameters {:playground {:description "Explore message align, content and fallback text with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class" "src" "alt" "on-click"]}}
            :decode-args (fn [{:keys [align]
                               :as args}]
                           (cond-> args

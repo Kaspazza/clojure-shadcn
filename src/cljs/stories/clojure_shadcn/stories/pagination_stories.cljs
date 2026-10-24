@@ -183,11 +183,14 @@
         [sut/pagination-previous {:href "#previous"
                                   :aria-label "الصفحة السابقة"}]]]]]])))
 
-(defstory PaginationPlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:class ""}
-           :arg-types {:class {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["children" "on-click"]}}}
+           :arg-types {:class {:name "CSS classes"
+                               :control {:type "text"}}}
+           :parameters {:playground {:description "Explore pagination css classes with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "on-click"]}}}
           [args]
           (r/as-element (helpers/wrap-component [sut/pagination
                                                  (select-keys args [:class])

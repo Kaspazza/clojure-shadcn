@@ -66,14 +66,17 @@
        [:code
         "[:div {:class \"space-y-2 w-64\"}\n [skeleton {:class \"h-4 w-40\"}]\n [skeleton {:class \"h-4 w-full\"}]\n [skeleton {:class \"h-4 w-5/6\" :role \"status\" :aria-label \"Loading profile\"}]]"]]]]])))
 
-(defstory SkeletonDemo
+(defstory Playground
           "Interactive skeleton playground."
           {:args {:class "h-4 w-[250px] rounded-md"}
-           :arg-types {:class {:control {:type "select"}
+           :arg-types {:class {:name "CSS classes"
+                               :control {:type "select"}
                                :options ["h-4 w-[250px] rounded-md"
                                          "h-12 w-12 rounded-full"
                                          "h-24 w-full rounded-lg"]}}
-           :parameters {:controls {:exclude ["role" "aria-label" "aria-live"]}}}
+           :parameters {:playground {:description "Explore skeleton css classes with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["role" "aria-label" "aria-live"]}}}
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "p-6"}
                                                  [sut/skeleton (select-keys args [:class])]])))

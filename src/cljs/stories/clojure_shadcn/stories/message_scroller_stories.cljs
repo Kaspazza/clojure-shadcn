@@ -78,10 +78,14 @@
           "Interactive message-scroller playground."
           {:args {:scroll-anchor true
                   :direction "end"}
-           :arg-types {:scroll-anchor {:control {:type "boolean"}}
-                       :direction {:control {:type "select"}
+           :arg-types {:scroll-anchor {:name "Anchor last message"
+                                       :control {:type "boolean"}}
+                       :direction {:name "Direction"
+                                   :control {:type "select"}
                                    :options ["start" "end"]}}
-           :parameters {:controls {:exclude ["class" "render"]}}}
+           :parameters {:playground {:description "Explore message scroller anchor last message and direction with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class" "render"]}}}
           [args]
           (r/as-element (helpers/wrap-component
                          [:div {:class "h-80 max-w-xl rounded-lg border"}

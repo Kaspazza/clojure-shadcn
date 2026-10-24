@@ -88,15 +88,15 @@
   [{:name "Accordion"
     :preview accordion/AccordionBasic}
    {:name "Alert"
-    :preview alert/AlertBasic}
+    :preview alert/Playground}
    {:name "Alert Dialog"
     :preview alert-dialog/AlertDialogBasic}
    {:name "Aspect Ratio"
-    :preview aspect-ratio/AspectRatioBasic}
+    :preview aspect-ratio/Playground}
    {:name "Attachment"
     :preview attachment/Playground}
    {:name "Avatar"
-    :preview avatar/AvatarDemo}
+    :preview avatar/Playground}
    {:name "Badge"
     :preview badge/BadgeVariants}
    {:name "Breadcrumb"
@@ -106,11 +106,11 @@
    {:name "Button"
     :preview button/ButtonSize}
    {:name "Button Group"
-    :preview button-group/ButtonGroupDemo}
+    :preview button-group/Playground}
    {:name "Calendar"
     :preview calendar/SingleDate}
    {:name "Card"
-    :preview card/CardDemo}
+    :preview card/Playground}
    {:name "Carousel"
     :preview carousel/CarouselDemo}
    {:name "Chart"
@@ -144,7 +144,7 @@
     :preview dropdown-menu/DropdownMenuDemo}
    {:name "Empty"
     :docs-id "empty-state"
-    :preview empty/EmptyDemo}
+    :preview empty/Playground}
    {:name "Field"
     :preview field/FieldWithInput}
    {:name "Form"
@@ -160,9 +160,9 @@
    {:name "Item"
     :preview item/ItemVariants}
    {:name "Kbd"
-    :preview kbd/KbdDemo}
+    :preview kbd/Playground}
    {:name "Label"
-    :preview label/LabelDemo}
+    :preview label/Playground}
    {:name "Loader"
     :preview loader/LoaderAllVariants}
    {:name "Markdown"
@@ -200,7 +200,7 @@
    {:name "Select"
     :preview select/SelectDemo}
    {:name "Separator"
-    :preview separator/SeparatorDemo}
+    :preview separator/Playground}
    {:name "Sheet"
     :preview sheet/SheetDemo}
    {:name "Sidebar"
@@ -218,7 +218,7 @@
    {:name "Switch"
     :preview switch/SwitchDemo}
    {:name "System Message"
-    :preview system-message/SystemMessageDefault}
+    :preview system-message/Playground}
    {:name "Table"
     :preview table/TableDemo}
    {:name "Tabs"

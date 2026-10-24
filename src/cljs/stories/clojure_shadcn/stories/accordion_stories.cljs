@@ -233,13 +233,16 @@
                                                     "Cannot be opened."]]]])))
 
 (defstory
- AccordionPlayground
+ Playground
  "Toggle whether the open item may be closed. When disabled, opening an item means one item must remain open."
  {:args {:collapsible true}
-  :arg-types {:collapsible {:control {:type "boolean"}
+  :arg-types {:collapsible {:name "Collapsible"
+                                     :control {:type "boolean"}
                             :description
                             "Allow the open item to be closed, leaving every item closed."}}
-  :parameters {:controls {:exclude ["children" "on-value-change" "value" "default-value"]}}}
+  :parameters {:playground {:description "Explore accordion collapsible with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "on-value-change" "value" "default-value"]}}}
  [args]
  (r/as-element (helpers/wrap-component
                 [sut/accordion {:type "single"

@@ -58,11 +58,14 @@
        [:code
         "[:div {:class \"flex items-center gap-2\"}\n [spinner {:class \"size-4\"}]\n [:span \"Loading data...\"]]"]]]]])))
 
-(defstory SpinnerBasic
+(defstory Playground
           "Interactive spinner playground."
           {:args {:class "size-4"}
-           :arg-types {:class {:control {:type "select"}
-                               :options ["size-3" "size-4" "size-6" "size-8"]}}}
+           :arg-types {:class {:name "CSS classes"
+                               :control {:type "select"}
+                               :options ["size-3" "size-4" "size-6" "size-8"]}}
+           :parameters {:playground {:description "Explore spinner css classes with a live preview."}
+                        :controls {:expanded false}}}
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "p-6"}
                                                  [sut/spinner (select-keys args [:class])]])))

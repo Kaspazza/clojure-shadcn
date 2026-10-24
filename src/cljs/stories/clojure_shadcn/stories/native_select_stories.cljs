@@ -86,19 +86,25 @@
                                                    "Disabled"]]])))
 
 
-(defstory NativeSelectPlayground
+(defstory Playground
           "Interactive native-select playground."
           {:args {:default-value "reagent"
                   :size "default"
                   :disabled false
                   :required false}
-           :arg-types {:default-value {:control {:type "select"}
+           :arg-types {:default-value {:name "Initial value"
+                                       :control {:type "select"}
                                        :options ["reagent" "react" "clojure"]}
-                       :size {:control {:type "select"}
+                       :size {:name "Size"
+                              :control {:type "select"}
                               :options ["default" "sm"]}
-                       :disabled {:control {:type "boolean"}}
-                       :required {:control {:type "boolean"}}}
-           :parameters {:controls {:exclude ["value" "on-change" "class"]}}
+                       :disabled {:name "Disabled"
+                                  :control {:type "boolean"}}
+                       :required {:name "Required"
+                                  :control {:type "boolean"}}}
+           :parameters {:playground {:description "Explore native select initial value, size, disabled and required with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["value" "on-change" "class"]}}
            :decode-args (fn [{:keys [size]
                               :as args}]
                           (update args :size keyword))}

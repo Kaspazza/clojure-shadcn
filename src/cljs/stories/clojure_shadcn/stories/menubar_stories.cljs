@@ -208,11 +208,14 @@
               [:> Mail {:aria-hidden true}]
               "إشعارات البريد"]]]]))))]))
 
-(defstory MenubarPlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:class ""}
-           :arg-types {:class {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["children" "on-value-change" "on-checked-change"]}}}
+           :arg-types {:class {:name "CSS classes"
+                               :control {:type "text"}}}
+           :parameters {:playground {:description "Explore menubar css classes with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "on-value-change" "on-checked-change"]}}}
           [args]
           (r/as-element (helpers/wrap-component [sut/menubar
                                                  (select-keys args [:class])

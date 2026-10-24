@@ -390,13 +390,17 @@
                                             "Open settings"]]]]])))
 
 
-(defstory CommandPlayground
+(defstory Playground
           "Interactive command playground."
           {:args {:placeholder "Type a command…"
                   :loop false}
-           :arg-types {:placeholder {:control {:type "text"}}
-                       :loop {:control {:type "boolean"}}}
-           :parameters {:controls {:exclude ["value" "onValueChange" "filter" "class"]}}}
+           :arg-types {:placeholder {:name "Placeholder"
+                                     :control {:type "text"}}
+                       :loop {:name "Loop keyboard navigation"
+                              :control {:type "boolean"}}}
+           :parameters {:playground {:description "Explore command placeholder and loop keyboard navigation with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["value" "onValueChange" "filter" "class"]}}}
           [args]
           (r/as-element (helpers/wrap-component
                          [:div {:class "p-6"}

@@ -566,12 +566,15 @@
                                   [sut/drawer-close {:as-child true}
                                    (button/button {:variant :outline} "Close")]]]])]))})))]))
 
-(defstory DrawerPlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:direction "bottom"}
-           :arg-types {:direction {:control {:type "select"}
+           :arg-types {:direction {:name "Direction"
+                                   :control {:type "select"}
                                    :options ["top" "right" "bottom" "left"]}}
-           :parameters {:controls {:exclude ["children" "open" "default-open" "on-open-change"]}}
+           :parameters {:playground {:description "Explore drawer direction with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "open" "default-open" "on-open-change"]}}
            :decode-args (fn [{:keys [direction]
                               :as args}]
                           (cond-> args

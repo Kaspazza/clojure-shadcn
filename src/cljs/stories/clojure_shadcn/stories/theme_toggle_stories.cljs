@@ -149,11 +149,14 @@
                            [controlled-toggle]]])))
 
 
-(defstory ThemeTogglePlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:class ""}
-           :arg-types {:class {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["theme" "on-toggle"]}}}
+           :arg-types {:class {:name "CSS classes"
+                               :control {:type "text"}}}
+           :parameters {:playground {:description "Explore theme toggle css classes with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["theme" "on-toggle"]}}}
           [args]
           (r/as-element
            (helpers/wrap-component

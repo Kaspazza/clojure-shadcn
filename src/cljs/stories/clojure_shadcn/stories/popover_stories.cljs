@@ -303,12 +303,15 @@
                               [:p {:class "text-sm"}
                                (str "Content aligned to the " align " edge.")]]])])))
 
-(defstory PopoverPlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:side "bottom"}
-           :arg-types {:side {:control {:type "select"}
+           :arg-types {:side {:name "Side"
+                              :control {:type "select"}
                               :options ["top" "right" "bottom" "left"]}}
-           :parameters {:controls {:exclude ["children" "open" "default-open" "on-open-change"]}}}
+           :parameters {:playground {:description "Explore popover side with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "open" "default-open" "on-open-change"]}}}
           [args]
           (r/as-element (helpers/wrap-component
                          [sut/popover {}

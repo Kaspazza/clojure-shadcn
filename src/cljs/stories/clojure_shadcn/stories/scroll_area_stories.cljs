@@ -92,11 +92,14 @@
    [:div {:class "max-w-lg rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm"}
     "The public scroll-bar can render only under a Radix Root, while scroll-area nests all children in its Viewport. Use :orientation for the managed vertical or horizontal bar; dual-axis or custom sibling composition requires a root/viewport API change."])))
 
-(defstory ScrollAreaPlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:class "h-48 w-72 rounded-md border"}
-           :arg-types {:class {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["children"]}}}
+           :arg-types {:class {:name "CSS classes"
+                               :control {:type "text"}}}
+           :parameters {:playground {:description "Explore scroll area css classes with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children"]}}}
           [args]
           (r/as-element (helpers/wrap-component [sut/scroll-area
                                                  (select-keys args [:class])

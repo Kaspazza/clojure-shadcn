@@ -343,11 +343,14 @@
        [sut/table-cell {:class "text-left"}
         "١٥٠٫٠٠ ر.س"]]]]])))
 
-(defstory TablePlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:class ""}
-           :arg-types {:class {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["children"]}}}
+           :arg-types {:class {:name "CSS classes"
+                               :control {:type "text"}}}
+           :parameters {:playground {:description "Explore table css classes with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children"]}}}
           [args]
           (r/as-element (helpers/wrap-component [sut/table
                                                  (select-keys args [:class])

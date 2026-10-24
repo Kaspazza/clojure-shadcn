@@ -108,12 +108,15 @@
                            [:f> direction-reader {:override :ltr}]]])))
 
 (defstory
- DirectionPlayground
+ Playground
  "Interactive provider direction; native dir is mirrored because the provider itself renders no DOM."
  {:args {:dir "ltr"}
-  :arg-types {:dir {:control {:type "select"}
+  :arg-types {:dir {:name "Text direction"
+                             :control {:type "select"}
                     :options ["ltr" "rtl"]}}
-  :parameters {:controls {:exclude ["children"]}}}
+  :parameters {:playground {:description "Explore direction text direction with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children"]}}}
  [args]
  (r/as-element (helpers/wrap-component [sut/direction-provider
                                         (select-keys args [:dir])

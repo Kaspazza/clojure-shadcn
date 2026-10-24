@@ -392,11 +392,14 @@
                    "Close"]]]]]]]]]))))]))
 
 
-(defstory BreadcrumbPlayground
+(defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
           {:args {:class ""}
-           :arg-types {:class {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["children"]}}}
+           :arg-types {:class {:name "CSS classes"
+                               :control {:type "text"}}}
+           :parameters {:playground {:description "Explore breadcrumb css classes with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children"]}}}
           [args]
           (r/as-element (helpers/wrap-component [sut/breadcrumb
                                                  (select-keys args [:class])

@@ -223,20 +223,27 @@
                                                 (str "Current value: " @value)]]))))]))
 
 
-(defstory InputPlayground
+(defstory Playground
           "Interactive native input playground."
           {:args {:type "email"
                   :placeholder "you@example.com"
                   :default-value ""
                   :disabled false
                   :required false}
-           :arg-types {:type {:control {:type "select"}
+           :arg-types {:type {:name "Type"
+                              :control {:type "select"}
                               :options ["text" "email" "password" "search"]}
-                       :placeholder {:control {:type "text"}}
-                       :default-value {:control {:type "text"}}
-                       :disabled {:control {:type "boolean"}}
-                       :required {:control {:type "boolean"}}}
-           :parameters {:controls {:exclude ["value" "on-change" "class"]}}}
+                       :placeholder {:name "Placeholder"
+                                     :control {:type "text"}}
+                       :default-value {:name "Initial value"
+                                       :control {:type "text"}}
+                       :disabled {:name "Disabled"
+                                  :control {:type "boolean"}}
+                       :required {:name "Required"
+                                  :control {:type "boolean"}}}
+           :parameters {:playground {:description "Explore input type, placeholder, initial value, disabled and required with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["value" "on-change" "class"]}}}
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "max-w-sm p-6"}
                                                  [sut/input args]])))

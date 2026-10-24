@@ -76,15 +76,19 @@
        [:code
         "[chat-container-root {:class \"h-64 border rounded-md\"}\n [chat-container-content {:class \"p-4 space-y-2\"}\n  [:div \"Message 1\"]\n  [:div \"Message 2\"]\n  [chat-container-scroll-anchor {}]]\n [scroll-button {:class \"absolute bottom-4 right-4\"}]]"]]]]])))
 
-(defstory ChatContainerBasic
+(defstory Playground
           "Interactive chat-container playground."
           {:args {:resize "smooth"
                   :initial "instant"}
-           :arg-types {:resize {:control {:type "select"}
+           :arg-types {:resize {:name "Resize scroll behavior"
+                                :control {:type "select"}
                                 :options ["smooth" "instant"]}
-                       :initial {:control {:type "select"}
+                       :initial {:name "Initial scroll behavior"
+                                 :control {:type "select"}
                                  :options ["instant" "smooth"]}}
-           :parameters {:controls {:exclude ["class"]}}}
+           :parameters {:playground {:description "Explore chat container resize scroll behavior and initial scroll behavior with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class"]}}}
           [args]
           (r/as-element
            (helpers/wrap-component

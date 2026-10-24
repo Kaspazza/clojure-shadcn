@@ -99,12 +99,17 @@
           {:args {:language "clojure"
                   :theme "github-light"
                   :code "(defn greet [name]\n  (str \"Hello, \" name \"!\"))"}
-           :arg-types {:language {:control {:type "select"}
+           :arg-types {:language {:name "Language"
+                                  :control {:type "select"}
                                   :options ["clojure" "javascript" "python"]}
-                       :theme {:control {:type "select"}
+                       :theme {:name "Theme"
+                               :control {:type "select"}
                                :options ["github-light" "github-dark" "one-dark-pro"]}
-                       :code {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["class"]}}}
+                       :code {:name "Code"
+                              :control {:type "text"}}}
+           :parameters {:playground {:description "Explore code block language, theme and code with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class"]}}}
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-xl"}
                                                  [sut/code-block {}

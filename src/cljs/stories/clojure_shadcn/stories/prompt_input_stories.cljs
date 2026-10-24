@@ -229,15 +229,20 @@
                                                    [:> Send {:class "size-4"}])]]]]))))]))
 
 
-(defstory PromptInputPlayground
+(defstory Playground
           "Interactive prompt-input playground."
           {:args {:placeholder "Type your message…"
                   :disabled false
                   :max-height 240}
-           :arg-types {:placeholder {:control {:type "text"}}
-                       :disabled {:control {:type "boolean"}}
-                       :max-height {:control {:type "number"}}}
-           :parameters {:controls {:exclude ["value" "on-value-change" "on-submit" "class"]}}}
+           :arg-types {:placeholder {:name "Placeholder"
+                                     :control {:type "text"}}
+                       :disabled {:name "Disabled"
+                                  :control {:type "boolean"}}
+                       :max-height {:name "Max height"
+                                    :control {:type "number"}}}
+           :parameters {:playground {:description "Explore prompt input placeholder, disabled and max height with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["value" "on-value-change" "on-submit" "class"]}}}
           [args]
           (r/as-element (r/with-let [value (r/atom "")]
                                     (helpers/wrap-component

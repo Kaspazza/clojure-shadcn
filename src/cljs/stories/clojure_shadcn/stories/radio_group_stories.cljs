@@ -260,19 +260,25 @@
                                      "Yearly"]]]]))))]))
 
 
-(defstory RadioGroupPlayground
+(defstory Playground
           "Interactive radio-group playground."
           {:args {:default-value "comfortable"
                   :orientation "vertical"
                   :disabled false
                   :required false}
-           :arg-types {:default-value {:control {:type "select"}
+           :arg-types {:default-value {:name "Initial value"
+                                       :control {:type "select"}
                                        :options ["default" "comfortable" "compact"]}
-                       :orientation {:control {:type "select"}
+                       :orientation {:name "Orientation"
+                                     :control {:type "select"}
                                      :options ["vertical" "horizontal"]}
-                       :disabled {:control {:type "boolean"}}
-                       :required {:control {:type "boolean"}}}
-           :parameters {:controls {:exclude ["value" "on-value-change" "class"]}}
+                       :disabled {:name "Disabled"
+                                  :control {:type "boolean"}}
+                       :required {:name "Required"
+                                  :control {:type "boolean"}}}
+           :parameters {:playground {:description "Explore radio group initial value, orientation, disabled and required with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["value" "on-value-change" "class"]}}
            :decode-args (fn [args] (update args :orientation keyword))}
           [args]
           (r/as-element (helpers/wrap-component

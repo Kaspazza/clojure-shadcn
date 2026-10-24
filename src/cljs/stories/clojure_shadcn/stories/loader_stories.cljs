@@ -272,12 +272,13 @@
                                                      :text "Loading"
                                                      :size :md}]])))
 
-(defstory LoaderComponent
+(defstory Playground
           "Interactive unified loader playground."
           {:args {:variant "circular"
                   :size "md"
                   :text "Thinking"}
-           :arg-types {:variant {:control {:type "select"}
+           :arg-types {:variant {:name "Variant"
+                                 :control {:type "select"}
                                  :options ["circular"
                                            "classic"
                                            "pulse"
@@ -290,10 +291,14 @@
                                            "text-blink"
                                            "text-shimmer"
                                            "loading-dots"]}
-                       :size {:control {:type "select"}
+                       :size {:name "Size"
+                              :control {:type "select"}
                               :options ["sm" "md" "lg"]}
-                       :text {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["class"]}}
+                       :text {:name "Text"
+                              :control {:type "text"}}}
+           :parameters {:playground {:description "Explore loader variant, size and text with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class"]}}
            :decode-args (fn [{:keys [variant size]
                               :as args}]
                           (cond-> args

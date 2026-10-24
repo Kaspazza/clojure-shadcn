@@ -43,10 +43,14 @@
           "Interactive marker playground."
           {:args {:variant "default"
                   :content "Deployment completed"}
-           :arg-types {:variant {:control {:type "select"}
+           :arg-types {:variant {:name "Variant"
+                                 :control {:type "select"}
                                  :options ["default" "separator" "border"]}
-                       :content {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["class" "as-child?"]}}
+                       :content {:name "Content"
+                                 :control {:type "text"}}}
+           :parameters {:playground {:description "Explore marker variant and content with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class" "as-child?"]}}
            :decode-args (fn [{:keys [variant]
                               :as args}]
                           (cond-> args

@@ -210,11 +210,14 @@
 
 
 (defstory
- ContextMenuPlayground
+ Playground
  "Controlled Storybook playground using only safe scalar component props."
  {:args {:class ""}
-  :arg-types {:class {:control {:type "text"}}}
-  :parameters {:controls {:exclude ["children" "on-select" "on-value-change" "on-checked-change"]}}}
+  :arg-types {:class {:name "CSS classes"
+                               :control {:type "text"}}}
+  :parameters {:playground {:description "Explore context menu css classes with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "on-select" "on-value-change" "on-checked-change"]}}}
  [args]
  (r/as-element (helpers/wrap-component
                 [sut/context-menu {}

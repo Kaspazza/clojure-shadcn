@@ -38,16 +38,21 @@
               :default nil
               :description "Merged Tailwind classes."}]}])))
 
-(defstory AlertBasic
+(defstory Playground
           "Interactive alert playground."
           {:args {:variant "default"
                   :title "Success"
                   :description "Your changes have been saved."}
-           :arg-types {:variant {:control {:type "select"}
+           :arg-types {:variant {:name "Variant"
+                                 :control {:type "select"}
                                  :options ["default" "destructive"]}
-                       :title {:control {:type "text"}}
-                       :description {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["class" "role"]}}
+                       :title {:name "Title"
+                               :control {:type "text"}}
+                       :description {:name "Description"
+                                     :control {:type "text"}}}
+           :parameters {:playground {:description "Explore alert variant, title and description with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class" "role"]}}
            :decode-args (fn [{:keys [variant]
                               :as args}]
                           (cond-> args

@@ -117,18 +117,24 @@
        [:code
         "[empty {}\n [empty-header {}\n  [empty-media {:variant :icon} [:> Inbox]]\n  [empty-title {} \"No invoices yet\"]\n  [empty-description {} \"Create your first invoice to get started.\"]]\n [empty-content {}\n  [button {} \"Create invoice\"]]]"]]]]])))
 
-(defstory EmptyDemo
+(defstory Playground
           "Interactive empty-state playground."
           {:args {:media-variant "icon"
                   :title "No Projects Yet"
                   :description "You haven't created any projects yet."
                   :action-label "Create Project"}
-           :arg-types {:media-variant {:control {:type "select"}
+           :arg-types {:media-variant {:name "Media variant"
+                                       :control {:type "select"}
                                        :options ["default" "icon"]}
-                       :title {:control {:type "text"}}
-                       :description {:control {:type "text"}}
-                       :action-label {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["class" "on-click"]}}
+                       :title {:name "Title"
+                               :control {:type "text"}}
+                       :description {:name "Description"
+                                     :control {:type "text"}}
+                       :action-label {:name "Action label"
+                                      :control {:type "text"}}}
+           :parameters {:playground {:description "Explore empty media variant, title, description and action label with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class" "on-click"]}}
            :decode-args (fn [{:keys [mediaVariant actionLabel]
                               :as args}]
                           (cond-> (-> args

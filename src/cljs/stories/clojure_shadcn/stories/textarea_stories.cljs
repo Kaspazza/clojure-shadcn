@@ -185,19 +185,26 @@
                                          "Your message will be routed to the support team."]])))
 
 
-(defstory TextareaPlayground
+(defstory Playground
           "Interactive native textarea playground."
           {:args {:placeholder "Type your message…"
                   :default-value ""
                   :rows 4
                   :disabled false
                   :auto-size true}
-           :arg-types {:placeholder {:control {:type "text"}}
-                       :default-value {:control {:type "text"}}
-                       :rows {:control {:type "number"}}
-                       :disabled {:control {:type "boolean"}}
-                       :auto-size {:control {:type "boolean"}}}
-           :parameters {:controls {:exclude ["value" "on-change" "class"]}}
+           :arg-types {:placeholder {:name "Placeholder"
+                                     :control {:type "text"}}
+                       :default-value {:name "Initial value"
+                                       :control {:type "text"}}
+                       :rows {:name "Rows"
+                              :control {:type "number"}}
+                       :disabled {:name "Disabled"
+                                  :control {:type "boolean"}}
+                       :auto-size {:name "Auto size"
+                                   :control {:type "boolean"}}}
+           :parameters {:playground {:description "Explore textarea placeholder, initial value, rows, disabled and auto size with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["value" "on-change" "class"]}}
            :decode-args (fn [{:keys [auto-size]
                               :as args}]
                           (assoc (dissoc args :auto-size) :auto-size? auto-size))}

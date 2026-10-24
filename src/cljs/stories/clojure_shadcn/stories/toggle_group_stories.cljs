@@ -110,11 +110,14 @@
 
 
 (defstory
- ToggleGroupPlayground
+ Playground
  "Controlled Storybook playground using only safe scalar component props."
  {:args {:disabled false}
-  :arg-types {:disabled {:control {:type "boolean"}}}
-  :parameters {:controls {:exclude ["children" "value" "default-value" "on-value-change"]}}}
+  :arg-types {:disabled {:name "Disabled"
+                                  :control {:type "boolean"}}}
+  :parameters {:playground {:description "Explore toggle group disabled with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["children" "value" "default-value" "on-value-change"]}}}
  [args]
  (r/as-element
   (helpers/wrap-component

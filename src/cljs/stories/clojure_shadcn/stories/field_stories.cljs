@@ -276,16 +276,21 @@
                       :placeholder "94105"}]]]]]])))
 
 
-(defstory FieldPlayground
+(defstory Playground
           "Interactive field-layout playground."
           {:args {:orientation "vertical"
                   :placeholder "Jane Doe"
                   :disabled false}
-           :arg-types {:orientation {:control {:type "select"}
+           :arg-types {:orientation {:name "Orientation"
+                                     :control {:type "select"}
                                      :options ["vertical" "horizontal" "responsive"]}
-                       :placeholder {:control {:type "text"}}
-                       :disabled {:control {:type "boolean"}}}
-           :parameters {:controls {:exclude ["class"]}}
+                       :placeholder {:name "Placeholder"
+                                     :control {:type "text"}}
+                       :disabled {:name "Disabled"
+                                  :control {:type "boolean"}}}
+           :parameters {:playground {:description "Explore field orientation, placeholder and disabled with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class"]}}
            :decode-args (fn [{:keys [orientation]
                               :as args}]
                           (update args :orientation keyword))}

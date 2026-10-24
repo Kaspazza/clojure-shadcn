@@ -76,8 +76,11 @@
 (defstory MarkdownHeadings
           "Interactive markdown playground."
           {:args {:children "# Heading 1\n\n## Heading 2\n\n**Bold** and _italic_ text."}
-           :arg-types {:children {:control {:type "text"}}}
-           :parameters {:controls {:exclude
+           :arg-types {:children {:name "Markdown source"
+                                  :control {:type "text"}}}
+           :parameters {:playground {:description "Explore markdown markdown source with a live preview."}
+                        :controls {:expanded false
+                                   :exclude
                                    ["class" "components" "remark-plugins" "rehype-plugins"]}}}
           [args]
           (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-xl"}
