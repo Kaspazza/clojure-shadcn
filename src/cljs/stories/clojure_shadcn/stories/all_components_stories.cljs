@@ -268,7 +268,7 @@
             :target "_top"
             :class "underline-offset-4 hover:text-primary hover:underline"}
         name]]]
-     [:div {:class (str "min-w-0 overflow-x-auto [&>.relative]:hidden " preview-class)}
+     [:div {:class (str "min-w-0 overflow-x-auto " preview-class)}
       (if-some [args (.-args story)]
         [:> story (js->clj args :keywordize-keys true)]
         [:> story])]]))
