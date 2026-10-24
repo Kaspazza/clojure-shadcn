@@ -43,12 +43,54 @@
     :priority "medium"
     :assignee "Jane Smith"}])
 
+(defn make-overview-task-data
+  []
+  (into (make-task-data)
+        (map-indexed
+         (fn [idx title]
+           (let [task-number (+ idx 6)]
+             {:id (str "TASK-" (when (< task-number 10) "0") "0" task-number)
+              :title title
+              :status (nth ["todo" "in-progress" "done"] (mod idx 3))
+              :priority (nth ["high" "medium" "low"] (mod (quot idx 3) 3))
+              :assignee (nth ["John Doe" "Jane Smith" "Bob Johnson"] (mod idx 3))}))
+         ["Improve keyboard navigation"
+          "Add loading skeletons"
+          "Review error messages"
+          "Optimize image delivery"
+          "Audit color contrast"
+          "Build account settings"
+          "Validate signup form"
+          "Add search shortcuts"
+          "Document API endpoints"
+          "Fix mobile menu overflow"
+          "Update empty states"
+          "Add notification preferences"
+          "Improve dashboard performance"
+          "Test password recovery"
+          "Implement activity history"
+          "Review dependency updates"
+          "Add export to CSV"
+          "Fix timezone formatting"
+          "Polish onboarding flow"
+          "Add team invitations"
+          "Handle expired sessions"
+          "Improve table accessibility"
+          "Add billing summary"
+          "Test offline behavior"
+          "Update help articles"
+          "Add profile image upload"
+          "Simplify filter controls"
+          "Fix tooltip positioning"
+          "Review responsive layouts"
+          "Prepare release checklist"])))
+
 (defn make-checkbox-column
   []
   #js {:id "select"
        :header (fn [^js ctx]
                  (let [table (.-table ctx)]
-                   [checkbox/checkbox {:checked (or (and (.getIsAllPageRowsSelected table) "all")
+                   [checkbox/checkbox {:checked (or (.getIsAllPageRowsSelected table)
                                                     (and (.getIsSomePageRowsSelected table)
                                                          "indeterminate")
                                                     false)
@@ -112,7 +154,8 @@
                                              :default)}
                      status]))
           :filterFn (fn [^js row _column-id filter-value]
-                      (some #(= % (aget (.-original row) "status")) (js->clj filter-value)))}
+                      (boolean (some #(= % (aget (.-original row) "status"))
+                                     (js->clj filter-value))))}
      #js {:accessorKey "priority"
           :header (fn [^js ctx] [sut/column-header-ui
                                  {:title "Priority"
@@ -129,7 +172,8 @@
                                      "")}
                      priority]))
           :filterFn (fn [^js row _column-id filter-value]
-                      (some #(= % (aget (.-original row) "priority")) (js->clj filter-value)))}
+                      (boolean (some #(= % (aget (.-original row) "priority"))
+                                     (js->clj filter-value))))}
      #js {:accessorKey "assignee"
           :header "Assignee"
           :cell (fn [^js ctx] (.getValue ctx))}
@@ -402,7 +446,7 @@
  []
  (r/as-element
   [(fn []
-     (let [data (r/atom (clj->js (make-task-data)))
+     (let [data (r/atom (clj->js (make-overview-task-data)))
            columns (r/atom (make-columns))]
        (fn []
          (helpers/wrap-component

@@ -342,8 +342,8 @@ Custom component implementation."
          :or {text-placeholder "Filter items..."
               is-filtered? false}}
         (normalize-props raw-props)]
-    [:div {:class "flex items-center justify-between"}
-     [:div {:class "flex flex-1 items-center gap-2"}
+    [:div {:class "flex flex-wrap items-center justify-between gap-2"}
+     [:div {:class "flex min-w-0 flex-1 flex-wrap items-center gap-2"}
       (when on-text-filter-change
         [mateuszmazurczak-input/input {:placeholder text-placeholder
                                        :value (or text-filter-value "")
@@ -452,18 +452,19 @@ Custom component implementation."
        (render-sub-component row)]])])
 
 (defn- plain-table-body
-  [{:keys [rows render-sub-component]}]
+  [{:keys [rows row-selection render-sub-component]}]
   ;; Components must return Hiccup, not a bare lazy sequence. Otherwise React
   ;; iterates each Hiccup vector as raw children (function, props map, ...).
   (into [:<>]
         (map (fn [^js row]
                ^{:key (.-id row)}
                [standard-row {:row row
+                              :row-selection row-selection
                               :render-sub-component render-sub-component}]))
         rows))
 
 (defn- sortable-table-body
-  [{:keys [row-entries render-sub-component]}]
+  [{:keys [row-entries row-selection render-sub-component]}]
   [:>
    SortableContext
    {:items (clj->js (mapv :id row-entries))
@@ -471,6 +472,7 @@ Custom component implementation."
    (for [{:keys [id row]} row-entries]
      ^{:key id}
      [draggable-row {:row row
+                     :row-selection row-selection
                      :row-id id
                      :render-sub-component render-sub-component}])])
 
@@ -492,6 +494,7 @@ Custom component implementation."
   [{:as raw-props}]
   (let [{:keys [header-groups
                 rows
+                row-selection
                 empty-state
                 no-results-state
                 on-reset-filters
@@ -517,8 +520,10 @@ Custom component implementation."
           [mateuszmazurczak-table/table-body {}
            (if dnd-row-entries
              [sortable-table-body {:row-entries dnd-row-entries
+                                   :row-selection row-selection
                                    :render-sub-component render-sub-component}]
              [plain-table-body {:rows rows
+                                :row-selection row-selection
                                 :render-sub-component render-sub-component}])]]]
         ;; Empty state - render outside table structure
         [:div {:class "flex min-h-0 flex-1 flex-col rounded-md border"}
@@ -552,7 +557,7 @@ Custom component implementation."
 
   Displays:
   - Selected rows count (left side)
-  - Rows per page selector (10, 20, 25, 30, 40, 50)
+  - Rows per page selector (10, 20, 25, 30, 40, 50, plus the current page size)
   - Current page number and total pages
   - Navigation buttons (first, previous, next, last)
 
@@ -588,15 +593,15 @@ Custom component implementation."
                 on-last-page]
          :or {selected-count 0}}
         (normalize-props raw-props)]
-    [:div {:class "flex items-center justify-between px-2"}
-     [:div {:class "text-muted-foreground flex-1 text-sm"}
+    [:div {:class "flex flex-wrap items-center justify-between gap-4 px-2"}
+     [:div {:class "text-muted-foreground whitespace-nowrap text-sm"}
       selected-count
       " of "
       total-count
       " row(s) selected."]
-     [:div {:class "flex items-center space-x-6 lg:space-x-8"}
-      [:div {:class "flex items-center space-x-2"}
-       [:p {:class "text-sm font-medium"}
+     [:div {:class "flex min-w-0 flex-wrap items-center gap-4"}
+      [:div {:class "flex shrink-0 items-center gap-2"}
+       [:p {:class "whitespace-nowrap text-sm font-medium"}
         "Rows per page"]
        [mateuszmazurczak-select/select {:value (str page-size)
                                         :onValueChange (fn [value]
@@ -606,14 +611,14 @@ Custom component implementation."
         [mateuszmazurczak-select/select-trigger {:class "h-8 w-[70px]"}
          [mateuszmazurczak-select/select-value {:placeholder page-size}]]
         [mateuszmazurczak-select/select-content {:side "top"}
-         (for [size [10 20 25 30 40 50]]
+         (for [size (sort (conj #{10 20 25 30 40 50} page-size))]
            ^{:key size}
            [mateuszmazurczak-select/select-item {:value (str size)}
             size])]]]
-      [:div {:class "flex w-[100px] items-center justify-center text-sm font-medium"}
+      [:div {:class "flex shrink-0 items-center justify-center whitespace-nowrap text-sm font-medium"}
        "Page " (inc page-index)
        " of " page-count]
-      [:div {:class "flex items-center space-x-2"}
+      [:div {:class "flex shrink-0 items-center gap-2"}
        [mateuszmazurczak-button/button {:variant :outline
                                         :size :icon
                                         :class "hidden size-8 lg:flex"
@@ -649,7 +654,7 @@ Custom component implementation."
 
 (defn- data-table-content
   [{:keys [toolbar-data table-data pagination-data]}]
-  [:div {:class "flex min-h-0 flex-1 flex-col gap-4"}
+  [:div {:class "flex min-h-0 min-w-0 flex-1 flex-col gap-4"}
    (when toolbar-data [toolbar-ui toolbar-data])
    [table-ui table-data]
    [pagination-ui pagination-data]])

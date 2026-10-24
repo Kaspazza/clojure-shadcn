@@ -92,7 +92,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/select"
                                           class))
              (dissoc :class-name :size))]
         (concat children
-                [[:> RadixSelect/Icon {:asChild true} (r/as-element [chevron-down-icon])]])))
+                [[:> RadixSelect/Icon {:asChild true} (chevron-down-icon)]])))
 
 (defn select-scroll-up-button
   [{:as raw-props}]
