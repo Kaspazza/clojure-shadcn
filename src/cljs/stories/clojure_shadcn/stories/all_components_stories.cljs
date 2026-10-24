@@ -94,7 +94,7 @@
    {:name "Aspect Ratio"
     :preview aspect-ratio/AspectRatioBasic}
    {:name "Attachment"
-    :preview attachment/AttachmentStates}
+    :preview attachment/Playground}
    {:name "Avatar"
     :preview avatar/AvatarDemo}
    {:name "Badge"

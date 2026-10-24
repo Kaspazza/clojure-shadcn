@@ -50,20 +50,28 @@
                         :type "boolean"
                         :default "false"}]}]])))
 
-(defstory AttachmentStates
-          "Interactive attachment playground."
+(defstory Playground
+          "Explore attachment state, size, orientation, and filename with live controls."
           {:args {:state "done"
                   :size "default"
                   :orientation "horizontal"
                   :title "invoice.pdf"}
-           :arg-types {:state {:control {:type "select"}
+           :arg-types {:state {:name "State"
+                               :control {:type "select"}
                                :options ["idle" "uploading" "processing" "error" "done"]}
-                       :size {:control {:type "select"}
+                       :size {:name "Size"
+                              :control {:type "select"}
                               :options ["xs" "sm" "default"]}
-                       :orientation {:control {:type "select"}
+                       :orientation {:name "Layout"
+                                     :control {:type "select"}
                                      :options ["horizontal" "vertical"]}
-                       :title {:control {:type "text"}}}
-           :parameters {:controls {:exclude ["class" "on-click"]}}
+                       :title {:name "Filename"
+                               :control {:type "text"}}}
+           :parameters {:playground
+                        {:description
+                         "Explore attachment states, sizes, and layouts with a live preview."}
+                        :controls {:expanded false
+                                   :exclude ["class" "on-click"]}}
            :decode-args (fn [{:keys [state size orientation]
                               :as args}]
                           (cond-> args

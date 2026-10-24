@@ -1,0 +1,189 @@
+.docs-playground {
+  margin-bottom: 2rem;
+}
+
+.docs-playground .docs-playground-description {
+  margin: 0 0 1.25rem;
+  color: color-mix(in srgb, currentColor 70%, transparent);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.docs-playground-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+  /* Let the Storybook docs surface show through in either docs theme.
+     Library --card is intentionally cream and is not a docs chrome token. */
+  --playground-border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+  background: transparent;
+}
+
+.docs-playground-preview,
+.docs-playground-controls {
+  min-width: 0;
+  padding: 1rem;
+}
+
+/* Native Canvas owns source/copy state. Flatten only its layout wrappers so
+   preview + controls share a frame, while source + actions span below it. */
+.docs-playground-preview,
+.docs-playground-preview > .sbdocs-preview {
+  display: contents;
+}
+
+.docs-playground-preview > .sbdocs-preview > .docs-story {
+  grid-area: 1 / 1;
+  min-height: 8rem;
+  min-width: 0;
+  padding: 1rem;
+  border: var(--playground-border);
+  border-bottom: 0;
+  border-radius: 4px 4px 0 0;
+}
+
+/* Canvas inserts this id-bearing source panel only when expanded. */
+.docs-playground-preview > .sbdocs-preview > div[id] {
+  grid-row: 3;
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.docs-playground-preview > .sbdocs-preview-actions {
+  grid-row: 4;
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin: 0;
+}
+
+.docs-playground-preview .sb-story {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.docs-playground-controls {
+  grid-area: 2 / 1;
+  border: var(--playground-border);
+  border-radius: 0 0 4px 4px;
+}
+
+.docs-playground .docs-playground-controls-title {
+  margin: 0;
+  color: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.docs-playground-controls .docblock-argstable {
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  table-layout: fixed;
+}
+
+/* Native ArgsTable paints its cells and shadows tbody, not just the table. */
+.docs-playground-controls .docblock-argstable tbody {
+  filter: none;
+}
+
+.docs-playground-controls .docblock-argstable tbody > tr > :is(td, th) {
+  background: transparent;
+  border-inline: 0;
+  border-radius: 0;
+}
+
+/* Storybook 10.6 Docs Controls does not forward compact or controls.expanded
+   to ArgsTable. Keep this fallback local to its native four-column table;
+   preserve the last (Control) column, including its native reset action. */
+.docs-playground-controls .docblock-argstable :is(th, td):nth-child(2),
+.docs-playground-controls .docblock-argstable :is(th, td):nth-child(3) {
+  display: none;
+}
+
+.docs-playground-controls .docblock-argstable :is(th, td):first-child {
+  width: 30%;
+  padding-left: 0;
+}
+
+.docs-playground-controls .docblock-argstable :is(th, td):last-child {
+  width: 70%;
+  padding-right: 0;
+}
+
+/* Outrank ArgsTable's generated cell selectors, including :last-of-type.
+   Keep the header: its positioned native reset remains accessible. */
+.docs-playground .docs-playground-controls .docblock-argstable thead > tr > th {
+  height: 2rem;
+  padding: 0.25rem 0.375rem;
+  font-size: 0.6875rem;
+  line-height: 1.25;
+}
+
+.docs-playground .docs-playground-controls .docblock-argstable tbody > tr > td {
+  padding: 0.25rem 0.375rem;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  vertical-align: middle;
+}
+
+.docs-playground .docs-playground-controls .docblock-argstable tr > :first-child {
+  padding-left: 0;
+  overflow-wrap: anywhere;
+}
+
+.docs-playground .docs-playground-controls .docblock-argstable tr > :last-child {
+  padding-right: 0;
+}
+
+.docs-playground-controls .docblock-argstable :is(input, select, textarea) {
+  min-width: 0;
+  max-width: 100%;
+  min-height: 2rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  box-shadow: none;
+}
+
+.docs-playground-controls .docblock-argstable :is(input:not([type='checkbox']):not([type='radio']), select) {
+  height: 2rem;
+}
+
+.docs-playground-controls .docblock-argstable textarea {
+  min-height: 2rem;
+  height: 2rem;
+  resize: vertical;
+}
+
+@media (min-width: 960px) {
+  .docs-playground-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 20rem);
+  }
+
+  .docs-playground-preview > .sbdocs-preview > .docs-story {
+    border-bottom: var(--playground-border);
+    border-right: 0;
+    border-radius: 4px 0 0 4px;
+  }
+
+  .docs-playground-controls {
+    grid-area: 1 / 2;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .docs-playground-preview > .sbdocs-preview > div[id] {
+    grid-row: 2;
+  }
+
+  .docs-playground-preview > .sbdocs-preview-actions {
+    grid-row: 3;
+  }
+}

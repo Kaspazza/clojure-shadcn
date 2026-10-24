@@ -1,9 +1,12 @@
 // Import the library's Tailwind stylesheet so all Tailwind/design-token
 // classes are available inside the Storybook canvas.
 import '../resources/css/app.css';
+import './playground.css';
 
 import { withThemeByClassName } from '@storybook/addon-themes';
 import {
+  Canvas,
+  Controls,
   Description,
   DocsContext,
   DocsStory,
@@ -39,12 +42,41 @@ const DocsSections = () => {
     section('Installation', installation),
     section('API reference', apiReference),
     examples.length > 0 && createElement(Subheading, null, 'Examples'),
-    ...examples.map((story) => createElement(DocsStory, {
-      key: story.id,
-      of: story.moduleExport,
-      expanded: true,
-      __forceInitialArgs: true,
-    })),
+    ...examples.map((story) => story.parameters?.playground
+      ? createElement(
+        'section',
+        { key: story.id, className: 'docs-playground', 'aria-label': story.name },
+        createElement(Subheading, null, story.name),
+        createElement('p', { className: 'docs-playground-description' }, story.parameters.playground.description),
+        createElement(
+          'div',
+          { className: 'docs-playground-layout' },
+          createElement(
+            'div',
+            { className: 'docs-playground-preview' },
+            createElement(Canvas, {
+              of: story.moduleExport,
+              // Live, inline args keep this preview synchronized with Controls.
+              story: { inline: true, __forceInitialArgs: false },
+              source: { __forceInitialArgs: false },
+              layout: 'centered',
+              withToolbar: false,
+            }),
+          ),
+          createElement(
+            'div',
+            { className: 'docs-playground-controls' },
+            createElement('h3', { className: 'docs-playground-controls-title' }, 'Customize'),
+            createElement(Controls, { of: story.moduleExport }),
+          ),
+        ),
+      )
+      : createElement(DocsStory, {
+        key: story.id,
+        of: story.moduleExport,
+        expanded: true,
+        __forceInitialArgs: true,
+      })),
   );
 };
 
