@@ -58,11 +58,11 @@ Documentation: https://ui.shadcn.com/docs/components"
               label-orientation :horizontal
               reverse-progress? false}}
         (normalize-props raw-props)]
-    (let [context (clj->js {:currentStep current-step
-                            :onStepChange on-step-change
-                            :variant (name variant)
-                            :labelOrientation (name label-orientation)
-                            :reverseProgress reverse-progress?})]
+    (let [context #js {:currentStep current-step
+                       :onStepChange on-step-change
+                       :variant (name variant)
+                       :labelOrientation (name label-orientation)
+                       :reverseProgress reverse-progress?}]
       (into [:>
              (.-Provider stepper-context)
              {:value context}

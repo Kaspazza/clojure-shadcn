@@ -79,13 +79,13 @@ Custom component implementation."
                                                  (.focus textarea))
                                                (when on-click (on-click e))))
                                            [interaction-disabled? on-click])
-         context-value (clj->js {:isLoading is-loading?
-                                 :value (or value internal-value)
-                                 :setValue (or on-value-change handle-change)
-                                 :maxHeight max-height
-                                 :onSubmit on-submit
-                                 :disabled interaction-disabled?
-                                 :textareaRef textarea-ref})]
+         context-value #js {:isLoading is-loading?
+                            :value (or value internal-value)
+                            :setValue (or on-value-change handle-change)
+                            :maxHeight max-height
+                            :onSubmit on-submit
+                            :disabled interaction-disabled?
+                            :textareaRef textarea-ref}]
      [:>
       mateuszmazurczak-tooltip/tooltip-provider-component
       {}

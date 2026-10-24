@@ -55,7 +55,7 @@
     (r/as-element
      [:>
       (.-Provider chart-context)
-      {:value config}
+      #js {:value config}
       [:div
        (->
          props

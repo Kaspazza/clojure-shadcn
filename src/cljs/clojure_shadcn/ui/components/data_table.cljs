@@ -108,6 +108,26 @@ Custom component implementation."
                                              :class "p-0"}
           (render-sub-component row)]])])))
 
+(defn- faceted-option-values
+  "Indexes original option values by their row-compatible JS encoding.
+  Rejects ambiguous identities rather than silently choosing an option."
+  [column-id options]
+  (reduce (fn [values {:keys [value]}]
+            (let [wire-value (clj->js value)]
+              (when-not (or (nil? wire-value)
+                            (string? wire-value)
+                            (number? wire-value)
+                            (boolean? wire-value))
+                (throw (js/Error. "data-table faceted option values must encode to JS primitives")))
+              (when (and (contains? values wire-value)
+                         (not= (get values wire-value) value))
+                (throw (js/Error.
+                        (str "data-table faceted options for " column-id
+                             " have ambiguous JS encoding: " (pr-str wire-value)))))
+              (assoc values wire-value value)))
+          {}
+          options))
+
 (defn- extract-toolbar-data
   "Extracts toolbar state and callbacks from table instance and config.
 
@@ -133,13 +153,16 @@ Custom component implementation."
         (vec
          (for [filter-config (:faceted-filters toolbar-config)]
            (let [column-id (:column-id filter-config)
+                 option-values (faceted-option-values column-id (:options filter-config))
+                 original-value (fn [value] (get option-values value value))
                  ^js column (.getColumn table-instance column-id)
                  filter-value (when column (or (.getFilterValue column) #js []))
-                 selected-values (set (js->clj filter-value))
+                 selected-values (into #{} (map original-value) (js->clj filter-value))
                  facets (when column (.getFacetedUniqueValues column))
                  facet-counts (when facets
                                 (into {}
-                                      (map (fn [^js entry] [(aget entry 0) (aget entry 1)])
+                                      (map (fn [^js entry]
+                                             [(original-value (aget entry 0)) (aget entry 1)])
                                            (js/Array.from facets))))]
              {:title (:title filter-config)
               :options (:options filter-config)
@@ -147,10 +170,10 @@ Custom component implementation."
               :facet-counts facet-counts
               :on-change (fn [new-selected-set]
                            (when column
-                             (let [filter-values (vec new-selected-set)]
+                             (let [filter-values (mapv clj->js new-selected-set)]
                                (.setFilterValue column
                                                 (if (seq filter-values)
-                                                  (clj->js filter-values)
+                                                  (into-array filter-values)
                                                   js/undefined)))))})))]
     {:text-filter-value text-filter-value
      :on-text-filter-change (fn [value] (when text-column (.setFilterValue text-column value)))
@@ -707,6 +730,14 @@ Custom component implementation."
                       :options [{:label 'Done' :value 'done'}]}]
    :toolbar-end (fn [table] ...)}              ; Optional custom content on right
   ```
+
+  Faceted option values should be strings. Keywords are also supported: filters
+  use the same `clj->js` encoding as rows, while UI selections and counts retain
+  the original option values. Distinct options with the same encoding (such as
+  :status/done, :task/done, and the string done) are rejected within a filter.
+  Row values that collapse to the same JS value cannot be distinguished; use
+  unique strings in the source data when those identities must remain distinct.
+  Custom accessors must return the same JS primitive encoding as the options.
 
   Drag-and-drop config shape:
   ```clojure
