@@ -89,12 +89,8 @@
            :parameters {:playground {:description "Explore button group orientation, first label and second label with a live preview."}
                         :controls {:expanded false
                                    :exclude ["class" "role"]}}
-           :decode-args (fn [{:keys [orientation firstLabel secondLabel]
-                              :as args}]
-                          (cond-> (-> args
-                                      (assoc :first-label firstLabel :second-label secondLabel)
-                                      (dissoc :firstLabel :secondLabel))
-                            orientation (update :orientation keyword)))}
+           :decode-args (fn [args]
+                          (update args :orientation keyword))}
           [args]
           (r/as-element (helpers/wrap-component [sut/button-group
                                                  (select-keys args [:orientation])
