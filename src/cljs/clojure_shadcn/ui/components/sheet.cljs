@@ -217,7 +217,7 @@ Documentation: https://www.radix-ui.com/primitives/docs/components/dialog"
          :as props}
         (normalize-props raw-props)]
     [sheet-portal {}
-     [sheet-overlay {}]
+     (sheet-overlay {})
      (into
       [:>
        (.-Content DialogPrimitive)
