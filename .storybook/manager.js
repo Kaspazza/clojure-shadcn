@@ -4,6 +4,9 @@ import { create } from 'storybook/theming';
 // Brand the Storybook manager (sidebar/toolbar chrome) to match the
 // library's design tokens. Canvas styling lives in preview.js.
 addons.setConfig({
+  layout: {
+    showPanel: false,
+  },
   theme: create({
     base: 'light',
     brandTitle: 'clojure-shadcn',
