@@ -106,16 +106,7 @@
                                :on-select #(reset! selected-tag %)
                                :on-create (fn [new-tag]
                                             (swap! available-tags conj new-tag)
-                                            (reset! selected-tag new-tag))}]]
-           [:div {:class "mt-6 p-4 bg-muted rounded-md"}
-            [:p {:class "text-sm font-medium"}
-             "State:"]
-            [:pre {:class "text-xs mt-2"}
-             (str "Selected: "
-                  (pr-str @selected-tag)
-                  "\n"
-                  "Available: "
-                  (pr-str @available-tags))]]]))))]))
+                                            (reset! selected-tag new-tag))}]]]))))]))
 
 (defstory TagWithCustomPlaceholder
           "Tag combobox with custom placeholder text."
