@@ -108,8 +108,8 @@
    [sut/bubble-group {:class "max-w-2xl"}
     [sut/bubble {:variant :muted}
      [sut/bubble-content {}
-      [markdown/markdown {}
-       "### Build summary\n\n- **18** tests passed\n- `release.jar` created\n\n[Open artifacts](https://example.com)"]]]])))
+      [markdown/markdown
+       {:children "### Build summary\n\n- **18** tests passed\n- `release.jar` created\n\n[Open artifacts](https://example.com)"}]]]])))
 
 (defstory BubbleGroupWithReactions
           "A grouped exchange with reactions positioned on opposite bubble edges."
