@@ -52,25 +52,26 @@
         child (.-child react-props)
         generated (react/useId)
         chart-id (str "chart-" (str/replace generated ":" ""))]
-    (r/as-element
-     [:>
-      (.-Provider chart-context)
-      #js {:value config}
+    ;;Create the provider directly so its value also retains the Clojure config map.
+    (r/create-element
+     (.-Provider chart-context)
+     #js {:value config}
+     (r/as-element
       [:div
        (->
-         props
-         (assoc
-          :data-slot "chart"
-          :data-chart chart-id
-          :style (merge (chart-color-vars config) (:style props))
-          :class
-          (merge-classes
-           "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line]:stroke-border/50 [&_.recharts-tooltip-cursor]:stroke-border [&_.recharts-layer]:outline-hidden [&_.recharts-surface]:outline-hidden"
-           class))
-         (dissoc :config :class-name :initial-dimension))
+        props
+        (assoc
+         :data-slot "chart"
+         :data-chart chart-id
+         :style (merge (chart-color-vars config) (:style props))
+         :class
+         (merge-classes
+          "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line]:stroke-border/50 [&_.recharts-tooltip-cursor]:stroke-border [&_.recharts-layer]:outline-hidden [&_.recharts-surface]:outline-hidden"
+          class))
+        (dissoc :config :class-name :initial-dimension))
        [chart-style {:id chart-id
                      :config config}]
-       [:> recharts/ResponsiveContainer {:initialDimension (clj->js initial-dimension)} child]]])))
+       [:> recharts/ResponsiveContainer {:initialDimension (clj->js initial-dimension)} child]]))))
 
 (defn chart-container
   [props child]
