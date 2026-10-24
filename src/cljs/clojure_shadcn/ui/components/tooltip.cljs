@@ -50,11 +50,6 @@
   [props & children]
   (into [:> primitive/Trigger (radix-props props "tooltip-trigger")] children))
 
-(defn tooltip-portal
-  "Radix Tooltip.Portal. `:container` and `:force-mount` are forwarded upstream."
-  [props & children]
-  (into [:> primitive/Portal (radix-props props "tooltip-portal")] children))
-
 (defn tooltip-content
   "Styled Radix Tooltip.Content. Positioning, collision, event, and DOM props are forwarded."
   [raw-props & children]
@@ -68,6 +63,19 @@
                (assoc :side-offset side-offset :class (merge-classes content-classes class))
                (dissoc :class-name))]
           children)))
+
+(defn tooltip-portal
+  "Radix Tooltip.Portal. `:container` and `:force-mount` are forwarded upstream.
+  Direct tooltip-content children are expanded so Radix can attach its DOM ref
+  to Content rather than to a Reagent component instance. Custom child components
+  must likewise forward their ref to the underlying DOM element."
+  [props & children]
+  (into [:> primitive/Portal (radix-props props "tooltip-portal")]
+        (map (fn [child]
+               (if (and (vector? child) (= tooltip-content (first child)))
+                 (apply tooltip-content (rest child))
+                 child)))
+        children))
 
 (defn tooltip-arrow
   "Styled Radix Tooltip.Arrow. Size, styling, and SVG props are forwarded."
