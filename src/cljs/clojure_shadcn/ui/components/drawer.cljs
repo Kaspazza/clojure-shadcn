@@ -106,7 +106,7 @@ Custom component implementation."
          :as props}
         (normalize-props raw-props)]
     [drawer-portal {}
-     [drawer-overlay {}]
+     (drawer-overlay {})
      (into
       [:>
        drawer-content-primitive
