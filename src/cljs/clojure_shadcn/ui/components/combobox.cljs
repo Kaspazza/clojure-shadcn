@@ -38,47 +38,48 @@
          :as props}
         (normalize-props raw-props)]
     (r/with-let
-     [internal-value
-      (r/atom (if (some? default-value) default-value (when multiple? [])))
-      internal-open
-      (r/atom default-open)]
-     (let [controlled-value? (contains? props :value)
-           controlled-open? (contains? props :open)
-           current-value (if controlled-value? value @internal-value)
-           current-open (if controlled-open? open @internal-open)
-           change-value! (fn [next-value]
-                           (when-not controlled-value? (reset! internal-value next-value))
-                           (when on-value-change (on-value-change next-value)))
-           change-open! (fn [next-open]
-                          (when-not controlled-open? (reset! internal-open next-open))
-                          (when on-open-change (on-open-change next-open)))
-           select! (fn [candidate]
-                     (when-not disabled?
-                       (if multiple?
-                         (change-value! (if (selected? current-value candidate true)
-                                          (vec (remove #(= candidate %) current-value))
-                                          (conj (vec (or current-value [])) candidate)))
-                         (do (change-value! candidate) (change-open! false)))))
-           context (clj->js {:value current-value
-                             :open current-open
-                             :multiple multiple?
-                             :disabled disabled?
-                             :setValue change-value!
-                             :setOpen change-open!
-                             :select select!})
-           popover-props (-> props
-                             (dissoc :value
-                                     :default-value
-                                     :on-value-change
-                                     :default-open
-                                     :multiple?
-                                     :disabled?
-                                     :dir)
-                             (assoc :open current-open :on-open-change change-open!))]
-       [:>
-        (.-Provider combobox-context)
-        {:value context}
-        (into [popover/popover popover-props] children)]))))
+      [internal-value
+       (r/atom (if (some? default-value) default-value (when multiple? [])))
+       internal-open
+       (r/atom default-open)]
+      (let [controlled-value? (contains? props :value)
+            controlled-open? (contains? props :open)
+            current-value (if controlled-value? value @internal-value)
+            current-open (if controlled-open? open @internal-open)
+            change-value! (fn [next-value]
+                            (when-not controlled-value? (reset! internal-value next-value))
+                            (when on-value-change (on-value-change next-value)))
+            change-open! (fn [next-open]
+                           (when-not controlled-open? (reset! internal-open next-open))
+                           (when on-open-change (on-open-change next-open)))
+            select! (fn [candidate]
+                      (when-not disabled?
+                        (if multiple?
+                          (change-value! (if (selected? current-value candidate true)
+                                           (vec (remove #(= candidate %) current-value))
+                                           (conj (vec (or current-value [])) candidate)))
+                          (do (change-value! candidate) (change-open! false)))))
+            ;; #js instead of clj->js because we need values to be unchanged 
+            context #js {:value current-value
+                         :open current-open
+                         :multiple multiple?
+                         :disabled disabled?
+                         :setValue change-value!
+                         :setOpen change-open!
+                         :select select!}
+            popover-props (-> props
+                              (dissoc :value
+                                      :default-value
+                                      :on-value-change
+                                      :default-open
+                                      :multiple?
+                                      :disabled?
+                                      :dir)
+                              (assoc :open current-open :on-open-change change-open!))]
+        [:>
+         (.-Provider combobox-context)
+         {:value context}
+         (into [popover/popover popover-props] children)]))))
 
 (defn- combobox-trigger-view
   "Radix Popover trigger rendered as a shadcn Button. Children define trigger contents."
@@ -90,16 +91,22 @@
         open? (context-value context "open")
         disabled? (or disabled (context-value context "disabled"))]
     [popover/popover-trigger {:as-child true}
-     (into [button/button
+     (into [:button
             (-> props
+                (dissoc :variant :size)
                 (assoc :data-slot "combobox-trigger"
                        :type (or (:type props) "button")
-                       :variant (or (:variant props) :outline)
+                       :data-variant (name (or (:variant props) :outline))
+                       :data-size (name (or (:size props) :default))
                        :role "combobox"
                        :aria-haspopup "listbox"
                        :aria-expanded open?
                        :disabled disabled?
-                       :class (merge-classes "w-[240px] justify-between font-normal" class)))]
+                       :class (button/button-variants
+                               {:variant (or (:variant props) :outline)
+                                :size (or (:size props) :default)
+                                :class (merge-classes "w-[240px] justify-between font-normal"
+                                                      class)})))]
            (if (seq children)
              children
              [[:span "Select an option…"]

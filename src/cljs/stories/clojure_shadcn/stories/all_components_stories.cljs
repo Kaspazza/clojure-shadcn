@@ -124,7 +124,8 @@
    {:name "Collapsible"
     :preview collapsible/CollapsibleBasic}
    {:name "Combobox"
-    :preview combobox/Basic}
+    :preview combobox/Basic
+    :preview-class "p-6"}
    {:name "Command"
     :preview command/CommandDemo}
    {:name "Context Menu"
@@ -254,7 +255,7 @@
       (str/replace #"\s+" "-")))
 
 (defn- component-card
-  [{:keys [docs-id name preview]}]
+  [{:keys [docs-id name preview preview-class]}]
   (let [id (component-id name)
         ^js story preview]
     [:section
@@ -267,7 +268,7 @@
             :target "_top"
             :class "underline-offset-4 hover:text-primary hover:underline"}
         name]]]
-     [:div {:class "min-w-0 overflow-x-auto [&>.relative]:hidden"}
+     [:div {:class (str "min-w-0 overflow-x-auto [&>.relative]:hidden " preview-class)}
       (if-some [args (.-args story)]
         [:> story (js->clj args :keywordize-keys true)]
         [:> story])]]))
