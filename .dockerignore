@@ -1,0 +1,17 @@
+.git
+.github
+.clj-kondo
+.cpcache
+.lsp
+.shadow-cljs
+node_modules
+cljs-stories
+storybook-static
+target
+.DS_Store
+**/.DS_Store
+.env
+.env.*
+!.env.example
+*.log
+npm-debug.log*

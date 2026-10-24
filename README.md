@@ -320,6 +320,56 @@ stories and builds the static web app into `storybook-static/`. Deploy the
 contents of that directory to a static web host; no Clojure runtime is needed
 on the host.
 
+## Deploy the interactive documentation with Docker
+
+The Docker image publishes the complete static Storybook site: component
+previews, interactive controls, API notes, and source examples. It is not the
+Storybook development server. A multi-stage build keeps Node.js, the JDK,
+Clojure CLI, Babashka, and source files out of the final Nginx image.
+
+With Docker running, execute these commands from the repository root:
+
+```bash
+docker build -t manufaktura-docs:local .
+docker run --detach --name manufaktura-docs --publish 8081:8080 --restart unless-stopped manufaktura-docs:local
+```
+
+Open <http://localhost:8080>. Docker is the only local prerequisite; all
+compilation happens inside the build container. The first build downloads npm
+and Maven dependencies and may take several minutes. Subsequent builds reuse
+cached dependency layers and downloads. Builds need internet access to the
+container registry, npm, and Maven repositories.
+
+Useful operations:
+
+```bash
+docker logs manufaktura-docs
+docker inspect --format '{{.State.Health.Status}}' manufaktura-docs
+docker stop manufaktura-docs
+docker rm manufaktura-docs
+```
+
+For hosting, build and push the image to your container registry, then deploy
+it using your platform's normal container workflow. Configure the platform's
+HTTP target port as **8080**, and use `/index.html` as its health-check path.
+The container runs Nginx as a non-root user and needs no database, application
+secrets, or persistent volume. Rebuild and redeploy the image whenever stories
+or components change; runtime environment variables do not modify the compiled
+site.
+
+Serve the site at the domain root (for example, `https://ui.example.com/`).
+Subpath hosting such as `/docs/` is not configured by this Dockerfile. Terminate
+HTTPS at your hosting platform or reverse proxy; the container itself serves
+HTTP. When using a reverse proxy on the same machine, bind the published port
+to loopback (`--publish 127.0.0.1:8080:8080`) instead of exposing it publicly.
+
+This publishes every story, source example, and documentation page included in
+the build, so review the catalogue before making it public. Some examples also
+use external resources or browser APIs; containerizing the site does not make
+those resources available offline or remove browser permission requirements.
+Base images use maintained tags; pin them to reviewed digests if your deployment
+requires immutable toolchain versions, and rebuild regularly for security fixes.
+
 ## Repository layout
 
 ```text
