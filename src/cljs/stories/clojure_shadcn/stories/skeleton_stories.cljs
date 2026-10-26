@@ -1,10 +1,16 @@
 (ns clojure-shadcn.stories.skeleton-stories
   "Storybook stories for the Skeleton component. Ported from mateuszmazurczak.portfolio.ui-components.skeleton."
   (:require
-   [clojure-shadcn.stories.helpers        :as helpers]
-   [clojure-shadcn.ui.components.card     :as card]
-   [clojure-shadcn.ui.components.skeleton :as sut]
-   [reagent.core                          :as r])
+   [clojure-shadcn.stories.helpers                        :as helpers]
+   [clojure-shadcn.stories.skeleton.playground            :as example-playground]
+   [clojure-shadcn.stories.skeleton.skeleton-card         :as example-skeleton-card]
+   [clojure-shadcn.stories.skeleton.skeleton-form         :as example-skeleton-form]
+   [clojure-shadcn.stories.skeleton.skeleton-grid         :as example-skeleton-grid]
+   [clojure-shadcn.stories.skeleton.skeleton-identity-row :as example-skeleton-identity-row]
+   [clojure-shadcn.stories.skeleton.skeleton-real-card    :as example-skeleton-real-card]
+   [clojure-shadcn.stories.skeleton.skeleton-rtl          :as example-skeleton-rtl]
+   [clojure-shadcn.stories.skeleton.skeleton-table        :as example-skeleton-table]
+   [reagent.core                                          :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -66,20 +72,20 @@
        [:code
         "[:div {:class \"space-y-2 w-64\"}\n [skeleton {:class \"h-4 w-40\"}]\n [skeleton {:class \"h-4 w-full\"}]\n [skeleton {:class \"h-4 w-5/6\" :role \"status\" :aria-label \"Loading profile\"}]]"]]]]])))
 
-(defstory Playground
-          "Interactive skeleton playground."
-          {:args {:class "h-4 w-[250px] rounded-md"}
-           :arg-types {:class {:name "CSS classes"
-                               :control {:type "select"}
-                               :options ["h-4 w-[250px] rounded-md"
-                                         "h-12 w-12 rounded-full"
-                                         "h-24 w-full rounded-lg"]}}
-           :parameters {:playground {:description "Explore skeleton css classes with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["role" "aria-label" "aria-live"]}}}
-          [args]
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/skeleton (select-keys args [:class])]])))
+(defstory
+ Playground
+ "Interactive skeleton playground."
+ {:args {:class "h-4 w-[250px] rounded-md"}
+  :arg-types
+  {:class {:name "CSS classes"
+           :control {:type "select"}
+           :options ["h-4 w-[250px] rounded-md" "h-12 w-12 rounded-full" "h-24 w-full rounded-lg"]}}
+  :parameters {:playground {:description "Explore skeleton css classes with a live preview."}
+               :controls {:expanded false
+                          :exclude ["role" "aria-label" "aria-live"]}}
+  :source-code (embed-source "clojure-shadcn.stories.skeleton.playground")}
+ [args]
+ (r/as-element (helpers/wrap-component [example-playground/example args])))
 
 (defstory
  SkeletonCard
@@ -88,13 +94,9 @@
   Native element: <div>
 
   Use for cards, previews, or media blocks."
+ {:source-code (embed-source "clojure-shadcn.stories.skeleton.skeleton-card")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [:div {:class "flex flex-col space-y-3"}
-                                         [sut/skeleton {:class "h-[125px] w-[250px] rounded-xl"}]
-                                         [:div {:class "space-y-2"}
-                                          [sut/skeleton {:class "h-4 w-[250px]"}]
-                                          [sut/skeleton {:class "h-4 w-[200px]"}]]]])))
+ (r/as-element (helpers/wrap-component [example-skeleton-card/example])))
 
 (defstory
  SkeletonGrid
@@ -103,78 +105,37 @@
   Native element: <div>
 
   Useful for list or gallery loading states."
+ {:source-code (embed-source "clojure-shadcn.stories.skeleton.skeleton-grid")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 grid gap-4 sm:grid-cols-3"}
-                                        (for [idx (range 6)]
-                                          ^{:key idx}
-                                          [sut/skeleton {:class "h-24 w-full rounded-lg"}])])))
+ (r/as-element (helpers/wrap-component [example-skeleton-grid/example])))
 
 (defstory SkeletonIdentityRow
           "Identity row — upstream avatar-and-copy placeholder sized to the eventual content."
+          {:source-code (embed-source "clojure-shadcn.stories.skeleton.skeleton-identity-row")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "flex w-80 items-center gap-4"}
-                                                 [sut/skeleton {:class
-                                                                "size-12 shrink-0 rounded-full"}]
-                                                 [:div {:class "flex-1 space-y-2"}
-                                                  [sut/skeleton {:class "h-4 w-32"}]
-                                                  [sut/skeleton {:class "h-3 w-48"}]]])))
+          (r/as-element (helpers/wrap-component [example-skeleton-identity-row/example])))
 
 (defstory
  SkeletonRealCard
  "Card — real Card composition preserves the final component's regions while content loads."
+ {:source-code (embed-source "clojure-shadcn.stories.skeleton.skeleton-real-card")}
  []
- (r/as-element (helpers/wrap-component [card/card {:class "w-full max-w-sm"
-                                                   :aria-busy true
-                                                   :aria-label "Loading project"}
-                                        [card/card-header {}
-                                         [sut/skeleton {:class "h-6 w-40"}]
-                                         [sut/skeleton {:class "h-4 w-64"}]]
-                                        [card/card-content {:class "space-y-3"}
-                                         [sut/skeleton {:class "aspect-video w-full rounded-lg"}]
-                                         [sut/skeleton {:class "h-4 w-full"}]]
-                                        [card/card-footer {}
-                                         [sut/skeleton {:class "h-9 w-full"}]]])))
+ (r/as-element (helpers/wrap-component [example-skeleton-real-card/example])))
 
 (defstory SkeletonForm
           "Form — realistic labels and controls minimize layout shift during form loading."
+          {:source-code (embed-source "clojure-shadcn.stories.skeleton.skeleton-form")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "w-full max-w-md space-y-5 rounded-lg border p-6"
-                                :aria-busy true
-                                :aria-label "Loading form"}
-                          (for [width ["w-24" "w-32" "w-20"]]
-                            ^{:key width}
-                            [:div {:class "space-y-2"}
-                             [sut/skeleton {:class (str "h-4 " width)}]
-                             [sut/skeleton {:class "h-9 w-full"}]])
-                          [sut/skeleton {:class "h-9 w-28"}]])))
+          (r/as-element (helpers/wrap-component [example-skeleton-form/example])))
 
 (defstory SkeletonTable
           "Table — upstream row-and-column placeholder mirrors a compact data table."
+          {:source-code (embed-source "clojure-shadcn.stories.skeleton.skeleton-table")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [:div {:class "w-full max-w-2xl overflow-hidden rounded-lg border"
-                   :aria-busy true
-                   :aria-label "Loading invoices"}
-             [:div {:class "grid grid-cols-[1fr_8rem_6rem] gap-4 border-b bg-muted/50 p-3"}
-              [sut/skeleton {:class "h-4 w-24"}]
-              [sut/skeleton {:class "h-4 w-16"}]
-              [sut/skeleton {:class "h-4 w-12"}]]
-             (for [row (range 4)]
-               ^{:key row}
-               [:div {:class "grid grid-cols-[1fr_8rem_6rem] gap-4 border-b p-3 last:border-0"}
-                [sut/skeleton {:class "h-4 w-40"}]
-                [sut/skeleton {:class "h-4 w-20"}]
-                [sut/skeleton {:class "h-4 w-14"}]])])))
+          (r/as-element (helpers/wrap-component [example-skeleton-table/example])))
 
 (defstory SkeletonRTL
           "RTL — identity and text placeholders align with right-to-left content."
+          {:source-code (embed-source "clojure-shadcn.stories.skeleton.skeleton-rtl")}
           []
-          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
-                                                       :class "flex w-80 items-center gap-4"}
-                                                 [sut/skeleton {:class
-                                                                "size-12 shrink-0 rounded-full"}]
-                                                 [:div {:class "flex-1 space-y-2"}
-                                                  [sut/skeleton {:class "ms-auto h-4 w-32"}]
-                                                  [sut/skeleton {:class "ms-auto h-3 w-48"}]]])))
+          (r/as-element (helpers/wrap-component [example-skeleton-rtl/example])))

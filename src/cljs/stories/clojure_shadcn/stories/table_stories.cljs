@@ -1,13 +1,13 @@
 (ns clojure-shadcn.stories.table-stories
   "Storybook stories for the Table component. Ported from mateuszmazurczak.portfolio.ui-components.table."
   (:require
-   [clojure-shadcn.stories.helpers             :as helpers]
-   [clojure-shadcn.ui.components.badge         :as badge]
-   [clojure-shadcn.ui.components.button        :as button]
-   [clojure-shadcn.ui.components.dropdown-menu :as dropdown-menu]
-   [clojure-shadcn.ui.components.table         :as sut]
-   [clojure.string                             :as str]
-   [reagent.core                               :as r])
+   [clojure-shadcn.stories.helpers                  :as helpers]
+   [clojure-shadcn.stories.table.playground         :as example-playground]
+   [clojure-shadcn.stories.table.table-demo         :as example-table-demo]
+   [clojure-shadcn.stories.table.table-rtl          :as example-table-rtl]
+   [clojure-shadcn.stories.table.table-with-actions :as example-table-with-actions]
+   [clojure-shadcn.stories.table.typography-table   :as example-typography-table]
+   [reagent.core                                    :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -143,69 +143,9 @@
   Native elements: <table>, <thead>, <tbody>, <tfoot>
 
   Use for structured data with semantic table markup."
+ {:source-code (embed-source "clojure-shadcn.stories.table.table-demo")}
  []
- (r/as-element
-  (let [invoices [{:id "INV001"
-                   :status "Paid"
-                   :method "Credit Card"
-                   :amount "$250.00"}
-                  {:id "INV002"
-                   :status "Pending"
-                   :method "PayPal"
-                   :amount "$150.00"}
-                  {:id "INV003"
-                   :status "Unpaid"
-                   :method "Bank Transfer"
-                   :amount "$350.00"}
-                  {:id "INV004"
-                   :status "Paid"
-                   :method "Credit Card"
-                   :amount "$450.00"}
-                  {:id "INV005"
-                   :status "Paid"
-                   :method "PayPal"
-                   :amount "$550.00"}
-                  {:id "INV006"
-                   :status "Pending"
-                   :method "Bank Transfer"
-                   :amount "$200.00"}
-                  {:id "INV007"
-                   :status "Unpaid"
-                   :method "Credit Card"
-                   :amount "$300.00"}]]
-    (helpers/wrap-component
-     [:div {:class "p-6"}
-      [sut/table {}
-       [sut/table-caption {}
-        "A list of your recent invoices."]
-       [sut/table-header {}
-        [sut/table-row {}
-         [sut/table-head {:class "w-[120px]"}
-          "Invoice"]
-         [sut/table-head {}
-          "Status"]
-         [sut/table-head {}
-          "Method"]
-         [sut/table-head {:class "text-right"}
-          "Amount"]]]
-       [sut/table-body {}
-        (for [{:keys [id status method amount]} invoices]
-          ^{:key id}
-          [sut/table-row {}
-           [sut/table-cell {:class "font-medium"}
-            id]
-           [sut/table-cell {}
-            status]
-           [sut/table-cell {}
-            method]
-           [sut/table-cell {:class "text-right"}
-            amount]])]
-       [sut/table-footer {}
-        [sut/table-row {}
-         [sut/table-cell {:col-span 3}
-          "Total"]
-         [sut/table-cell {:class "text-right"}
-          "$2,500.00"]]]]]))))
+ (r/as-element (helpers/wrap-component [example-table-demo/example])))
 
 (defstory
  TypographyTable
@@ -214,34 +154,9 @@
   Native elements: <table>
 
   This example mirrors the typography docs table layout."
+ {:source-code (embed-source "clojure-shadcn.stories.table.typography-table")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [:div {:class "my-6 w-full overflow-y-auto"}
-     [:table {:class "w-full"}
-      [:thead
-       [:tr {:class "even:bg-muted m-0 border-t p-0"}
-        [:th {:class "border px-4 py-2 text-left font-bold"}
-         "King's Treasury"]
-        [:th {:class "border px-4 py-2 text-left font-bold"}
-         "People's happiness"]]]
-      [:tbody
-       [:tr {:class "even:bg-muted m-0 border-t p-0"}
-        [:td {:class "border px-4 py-2 text-left"}
-         "Empty"]
-        [:td {:class "border px-4 py-2 text-left"}
-         "Overflowing"]]
-       [:tr {:class "even:bg-muted m-0 border-t p-0"}
-        [:td {:class "border px-4 py-2 text-left"}
-         "Modest"]
-        [:td {:class "border px-4 py-2 text-left"}
-         "Satisfied"]]
-       [:tr {:class "even:bg-muted m-0 border-t p-0"}
-        [:td {:class "border px-4 py-2 text-left"}
-         "Full"]
-        [:td {:class "border px-4 py-2 text-left"}
-         "Ecstatic"]]]]]])))
+ (r/as-element (helpers/wrap-component [example-typography-table/example])))
 
 (defstory
  TableWithActions
@@ -250,98 +165,17 @@
   Shows how to combine badge and dropdown menu inside table cells.
 
   Useful for admin dashboards and data management."
+ {:source-code (embed-source "clojure-shadcn.stories.table.table-with-actions")}
  []
- (r/as-element
-  (let [rows [{:id "PRJ-104"
-               :title "Marketing Site"
-               :status :active}
-              {:id "PRJ-105"
-               :title "Mobile App"
-               :status :paused}
-              {:id "PRJ-106"
-               :title "Data Pipeline"
-               :status :blocked}]
-        row->view (fn [{:keys [id title status]}]
-                    [sut/table-row {:key id}
-                     [sut/table-cell {}
-                      [:div {:class "font-medium"}
-                       title]
-                      [:div {:class "text-xs text-muted-foreground"}
-                       id]]
-                     [sut/table-cell {}
-                      [badge/badge {:variant (case status
-                                               :active :default
-                                               :paused :secondary
-                                               :blocked :destructive
-                                               :default)}
-                       (str/capitalize (name status))]]
-                     [sut/table-cell {:class "text-right"}
-                      [dropdown-menu/dropdown-menu {}
-                       [dropdown-menu/dropdown-menu-trigger {:as-child true}
-                        (button/button {:variant :ghost
-                                        :size :icon
-                                        :aria-label (str "Actions for " title)}
-                                       [:span {:aria-hidden true}
-                                        "⋯"])]
-                       [dropdown-menu/dropdown-menu-content {:align "end"}
-                        [dropdown-menu/dropdown-menu-item {}
-                         "View"]
-                        [dropdown-menu/dropdown-menu-item {}
-                         "Edit"]
-                        [dropdown-menu/dropdown-menu-item {}
-                         "Archive"]]]]])]
-    (helpers/wrap-component [:div {:class "p-6"}
-                             [sut/table {}
-                              [sut/table-header {}
-                               [sut/table-row {}
-                                [sut/table-head {}
-                                 "Project"]
-                                [sut/table-head {}
-                                 "Status"]
-                                [sut/table-head {:class "text-right"}
-                                 "Actions"]]]
-                              (into [sut/table-body {}]
-                                    (map row->view rows))]]))))
+ (r/as-element (helpers/wrap-component [example-table-with-actions/example])))
 
 
 (defstory
  TableRtl
  "Semantic RTL table. Direction and logical text alignment are supplied through forwarded native props and classes."
+ {:source-code (embed-source "clojure-shadcn.stories.table.table-rtl")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/table {:dir "rtl"
-                :class "text-right"
-                :aria-label "الفواتير الأخيرة"}
-     [sut/table-caption {}
-      "قائمة بأحدث الفواتير."]
-     [sut/table-header {}
-      [sut/table-row {}
-       [sut/table-head {:scope "col"
-                        :class "text-right"}
-        "الفاتورة"]
-       [sut/table-head {:scope "col"
-                        :class "text-right"}
-        "الحالة"]
-       [sut/table-head {:scope "col"
-                        :class "text-left"}
-        "المبلغ"]]]
-     [sut/table-body {}
-      [sut/table-row {}
-       [sut/table-cell {}
-        "INV-101"]
-       [sut/table-cell {}
-        "مدفوعة"]
-       [sut/table-cell {:class "text-left"}
-        "٢٥٠٫٠٠ ر.س"]]
-      [sut/table-row {}
-       [sut/table-cell {}
-        "INV-102"]
-       [sut/table-cell {}
-        "قيد الانتظار"]
-       [sut/table-cell {:class "text-left"}
-        "١٥٠٫٠٠ ر.س"]]]]])))
+ (r/as-element (helpers/wrap-component [example-table-rtl/example])))
 
 (defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
@@ -350,19 +184,7 @@
                                :control {:type "text"}}}
            :parameters {:playground {:description "Explore table css classes with a live preview."}
                         :controls {:expanded false
-                                   :exclude ["children"]}}}
+                                   :exclude ["children"]}}
+           :source-code (embed-source "clojure-shadcn.stories.table.playground")}
           [args]
-          (r/as-element (helpers/wrap-component [sut/table
-                                                 (select-keys args [:class])
-                                                 [sut/table-header {}
-                                                  [sut/table-row {}
-                                                   [sut/table-head {}
-                                                    "Name"]
-                                                   [sut/table-head {}
-                                                    "Status"]]]
-                                                 [sut/table-body {}
-                                                  [sut/table-row {}
-                                                   [sut/table-cell {}
-                                                    "Acme Inc."]
-                                                   [sut/table-cell {}
-                                                    "Active"]]]])))
+          (r/as-element (helpers/wrap-component [example-playground/example args])))

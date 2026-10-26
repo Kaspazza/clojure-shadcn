@@ -1,10 +1,17 @@
 (ns clojure-shadcn.stories.collapsible-stories
   "Storybook stories for the Collapsible component. Ported from mateuszmazurczak.portfolio.ui-components.collapsible."
   (:require
-   [clojure-shadcn.stories.helpers           :as helpers]
-   [clojure-shadcn.ui.components.button      :as button]
-   [clojure-shadcn.ui.components.collapsible :as sut]
-   [reagent.core                             :as r])
+   [clojure-shadcn.stories.collapsible.collapsible-basic           :as collapsible-basic]
+   [clojure-shadcn.stories.collapsible.collapsible-default-open    :as collapsible-default-open]
+   [clojure-shadcn.stories.collapsible.collapsible-disabled        :as collapsible-disabled]
+   [clojure-shadcn.stories.collapsible.collapsible-file-tree       :as collapsible-file-tree]
+   [clojure-shadcn.stories.collapsible.collapsible-multiple        :as collapsible-multiple]
+   [clojure-shadcn.stories.collapsible.collapsible-rtl             :as collapsible-rtl]
+   [clojure-shadcn.stories.collapsible.collapsible-settings        :as collapsible-settings]
+   [clojure-shadcn.stories.collapsible.collapsible-summary-details :as collapsible-summary-details]
+   [clojure-shadcn.stories.collapsible.playground                  :as playground]
+   [clojure-shadcn.stories.helpers                                 :as helpers]
+   [reagent.core                                                   :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -117,114 +124,31 @@
 
 (defstory
  CollapsibleBasic
- "Collapsible content with toggle.
-
-  Radix primitive: @radix-ui/react-collapsible
-
-  Use to reveal secondary details without leaving the page."
+ "Collapsible content with toggle.\n\n  Radix primitive: @radix-ui/react-collapsible\n\n  Use to reveal secondary details without leaving the page."
+ {:source-code (embed-source "clojure-shadcn.stories.collapsible.collapsible-basic")}
  []
- ;; NOTE: Storybook renders the story's return value directly, so the
- ;; story must return a React element — not a bare render fn. Wrapping the
- ;; Form-2 component in a vector lets Reagent own the component (atom
- ;; created once per mount, reactive re-renders). `(r/as-element (let
- ;; [...] (fn [] ...)))` would return a bare fn, which React rejects as a
- ;; child.
- (r/as-element [(fn []
-                  (let [open? (r/atom false)]
-                    (fn []
-                      (helpers/wrap-component
-                       [:div {:class "p-6"}
-                        [sut/collapsible {:open @open?
-                                          :on-open-change #(reset! open? %)}
-                         ;; :as-child avoids nested <button>: trigger behavior is
-                         ;; merged onto the child button via Radix Slot.
-                         [sut/collapsible-trigger {:as-child true}
-                          (button/button {:variant :outline}
-                                         (if @open? "Hide details" "Show details"))]
-                         [sut/collapsible-content {:class "mt-4"}
-                          [:div {:class "rounded-md border bg-muted p-4 text-sm"}
-                           "This content expands and collapses."]]]]))))]))
+ (r/as-element (helpers/wrap-component [collapsible-basic/example])))
 
 (defstory
  CollapsibleDefaultOpen
- "Collapsible starting in the open state.
-
-  Radix primitive: @radix-ui/react-collapsible
-
-  Use :default-open for uncontrolled open state."
+ "Collapsible starting in the open state.\n\n  Radix primitive: @radix-ui/react-collapsible\n\n  Use :default-open for uncontrolled open state."
+ {:source-code (embed-source "clojure-shadcn.stories.collapsible.collapsible-default-open")}
  []
- (r/as-element (helpers/wrap-component
-                [:div {:class "p-6"}
-                 [sut/collapsible {:default-open true}
-                  [sut/collapsible-trigger {:as-child true}
-                   (button/button {:variant :outline} "Toggle details")]
-                  [sut/collapsible-content {:class "mt-4"}
-                   [:div {:class "rounded-md border bg-muted p-4 text-sm"}
-                    "Starts expanded without external state management."]]]])))
+ (r/as-element (helpers/wrap-component [collapsible-default-open/example])))
 
 (defstory
  CollapsibleDisabled
- "Disabled collapsible trigger.
-
-  Radix primitive: @radix-ui/react-collapsible
-
-  Use :disabled to lock the collapsible state."
+ "Disabled collapsible trigger.\n\n  Radix primitive: @radix-ui/react-collapsible\n\n  Use :disabled to lock the collapsible state."
+ {:source-code (embed-source "clojure-shadcn.stories.collapsible.collapsible-disabled")}
  []
- (r/as-element (helpers/wrap-component
-                [:div {:class "p-6"}
-                 [sut/collapsible {:open true
-                                   :disabled true}
-                  [sut/collapsible-trigger {:as-child true}
-                   (button/button {:variant :outline
-                                   :disabled true}
-                                  "Locked")]
-                  [sut/collapsible-content {:class "mt-4"}
-                   [:div {:class "rounded-md border bg-muted p-4 text-sm"}
-                    "Disabled collapsible remains open and cannot be toggled."]]]])))
+ (r/as-element (helpers/wrap-component [collapsible-disabled/example])))
 
 (defstory
  CollapsibleMultiple
- "Multiple collapsibles in a list.
-
-  Radix primitive: @radix-ui/react-collapsible
-
-  Useful for FAQ sections or grouped settings."
+ "Multiple collapsibles in a list.\n\n  Radix primitive: @radix-ui/react-collapsible\n\n  Useful for FAQ sections or grouped settings."
+ {:source-code (embed-source "clojure-shadcn.stories.collapsible.collapsible-multiple")}
  []
- ;; See CollapsibleBasic for why the Form-2 component is wrapped in a
- ;; vector.
- (r/as-element
-  [(fn []
-     (let [open-ids (r/atom #{:one})
-           set-open! (fn [id next-open?]
-                       (swap! open-ids (fn [current]
-                                         (if next-open? (conj current id) (disj current id)))))]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-6 space-y-4"}
-           ;; doall: @open-ids is derefed while realizing the seq; a
-           ;; lazy seq would realize outside the reactive context and
-           ;; not re-render.
-           (doall
-            (for [{:keys [id title body]} [{:id :one
-                                            :title "Shipping"
-                                            :body
-                                            "Shipping details and estimated delivery windows."}
-                                           {:id :two
-                                            :title "Returns"
-                                            :body "Return policy and refund timeline."}
-                                           {:id :three
-                                            :title "Support"
-                                            :body "Contact information and support hours."}]]
-              ^{:key id}
-              [sut/collapsible {:open (contains? @open-ids id)
-                                :on-open-change (fn [next-open?] (set-open! id next-open?))}
-               [sut/collapsible-trigger {:as-child true}
-                (button/button {:variant :outline
-                                :class "w-full justify-between"}
-                               title)]
-               [sut/collapsible-content {:class "mt-2"}
-                [:div {:class "rounded-md border bg-muted p-4 text-sm"}
-                 body]]]))]))))]))
+ (r/as-element (helpers/wrap-component [collapsible-multiple/example])))
 
 
 (defstory Playground
@@ -232,112 +156,38 @@
           {:args {:default-open false}
            :arg-types {:default-open {:name "Initially open"
                                       :control {:type "boolean"}}}
-           :parameters {:playground {:description "Explore collapsible initially open with a live preview."}
+           :parameters {:playground {:description
+                                     "Explore collapsible initially open with a live preview."}
                         :controls {:expanded false
-                                   :exclude ["children" "open" "on-open-change"]}}}
+                                   :exclude ["children" "open" "on-open-change"]}}
+           :source-code (embed-source "clojure-shadcn.stories.collapsible.playground")}
           [args]
-          (r/as-element (helpers/wrap-component [sut/collapsible
-                                                 (select-keys args [:default-open])
-                                                 [sut/collapsible-trigger
-                                                  {:class "rounded-md border px-3 py-2"}
-                                                  "Toggle details"]
-                                                 [sut/collapsible-content {:class "pt-2 text-sm"}
-                                                  "This content can be expanded."]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))
 
 (defstory
  CollapsibleSummaryDetails
  "Summary / details — compares the native HTML disclosure with the styled Radix Collapsible pattern."
+ {:source-code (embed-source "clojure-shadcn.stories.collapsible.collapsible-summary-details")}
  []
- (r/as-element (helpers/wrap-component
-                [:div {:class "grid max-w-2xl gap-6 md:grid-cols-2"}
-                 [:details {:class "rounded-lg border p-4"}
-                  [:summary {:class "cursor-pointer font-medium"}
-                   "Native details"]
-                  [:p {:class "pt-3 text-sm text-muted-foreground"}
-                   "Use when native disclosure semantics and minimal styling are sufficient."]]
-                 [sut/collapsible {:default-open true
-                                   :class "rounded-lg border p-4"}
-                  [sut/collapsible-trigger {:class
-                                            "flex w-full items-center justify-between font-medium"}
-                   "Radix Collapsible"
-                   [:span {:aria-hidden true}
-                    "+"]]
-                  [sut/collapsible-content {:class "pt-3 text-sm text-muted-foreground"}
-                   "Use when controlled state and Radix behavior are required."]]])))
+ (r/as-element (helpers/wrap-component [collapsible-summary-details/example])))
 
 (defstory
  CollapsibleSettings
  "Settings — state-aware rows expose their current open/closed label and data-state styling."
+ {:source-code (embed-source "clojure-shadcn.stories.collapsible.collapsible-settings")}
  []
- (r/as-element
-  [(fn []
-     (let [open? (r/atom true)]
-       (fn []
-         (helpers/wrap-component
-          [sut/collapsible {:open @open?
-                            :on-open-change #(reset! open? %)
-                            :class "w-full max-w-md rounded-lg border"}
-           [sut/collapsible-trigger {:as-child true}
-            (button/button {:variant :ghost
-                            :class "w-full justify-between rounded-b-none px-4"}
-                           "Advanced settings"
-                           [:span {:class "text-xs text-muted-foreground"}
-                            (if @open? "Hide" "Show")])]
-           [sut/collapsible-content {:class "space-y-3 border-t p-4 text-sm"}
-            [:label {:class "flex items-center justify-between gap-4"}
-             "Usage analytics"
-             [:input {:type "checkbox"
-                      :default-checked true}]]
-            [:label {:class "flex items-center justify-between gap-4"}
-             "Beta updates"
-             [:input {:type "checkbox"}]]]]))))]))
+ (r/as-element (helpers/wrap-component [collapsible-settings/example])))
 
-(defn- file-tree-node
-  [{:keys [name children]}]
-  (if (seq children)
-    [sut/collapsible {:default-open true
-                      :class "ps-3"}
-     [sut/collapsible-trigger {:class "flex w-full items-center gap-2 py-1 text-sm hover:underline"}
-      [:span {:aria-hidden true}
-       "▾"]
-      [:span name]]
-     [sut/collapsible-content {:class "border-s ps-3"}
-      (doall (map-indexed (fn [index child] ^{:key (str name "-" index)} [file-tree-node child])
-                          children))]]
-    [:div {:class "flex items-center gap-2 py-1 ps-8 text-sm text-muted-foreground"}
-     [:span {:aria-hidden true}
-      "•"]
-     name]))
+
 
 (defstory CollapsibleFileTree
           "Recursive file tree — nested Collapsible nodes model independently expandable folders."
+          {:source-code (embed-source "clojure-shadcn.stories.collapsible.collapsible-file-tree")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "w-full max-w-sm rounded-lg border p-3 font-mono"}
-                          [file-tree-node {:name "src"
-                                           :children [{:name "components"
-                                                       :children [{:name "button.cljs"}
-                                                                  {:name "card.cljs"}]}
-                                                      {:name "stories"
-                                                       :children [{:name "accordion_stories.cljs"}]}
-                                                      {:name "core.cljs"}]}]])))
+          (r/as-element (helpers/wrap-component [collapsible-file-tree/example])))
 
 (defstory CollapsibleRTL
           "RTL — state-aware Basic disclosure and alignment in right-to-left content."
+          {:source-code (embed-source "clojure-shadcn.stories.collapsible.collapsible-rtl")}
           []
-          (r/as-element [(fn []
-                           (let [open? (r/atom false)]
-                             (fn []
-                               (helpers/wrap-component
-                                [:div {:dir "rtl"
-                                       :class "max-w-md text-right"}
-                                 [sut/collapsible {:open @open?
-                                                   :on-open-change #(reset! open? %)}
-                                  [sut/collapsible-trigger {:as-child true}
-                                   (button/button {:variant :outline
-                                                   :class "w-full justify-between"}
-                                                  "تفاصيل إضافية"
-                                                  (if @open? "إخفاء" "عرض"))]
-                                  [sut/collapsible-content {:class
-                                                            "pt-3 text-sm text-muted-foreground"}
-                                   "يمكن إظهار هذا المحتوى أو إخفاؤه دون مغادرة الصفحة."]]]))))]))
+          (r/as-element (helpers/wrap-component [collapsible-rtl/example])))

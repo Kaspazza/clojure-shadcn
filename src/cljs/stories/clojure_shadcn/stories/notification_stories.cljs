@@ -1,10 +1,28 @@
 (ns clojure-shadcn.stories.notification-stories
   "Storybook stories for the Notification component. Ported from mateuszmazurczak.portfolio.ui-components.notification."
   (:require
-   [clojure-shadcn.stories.helpers            :as helpers]
-   [clojure-shadcn.ui.components.button       :as button]
-   [clojure-shadcn.ui.components.notification :as sut]
-   [reagent.core                              :as r])
+   [clojure-shadcn.stories.helpers                                                      :as helpers]
+   [clojure-shadcn.stories.notification.notification-all-types
+    :as notification-all-types]
+   [clojure-shadcn.stories.notification.notification-cancel-custom-callbacks-and-config
+    :as notification-cancel-custom-callbacks-and-config]
+   [clojure-shadcn.stories.notification.notification-loading-update-dismiss
+    :as notification-loading-update-dismiss]
+   [clojure-shadcn.stories.notification.notification-positions
+    :as notification-positions]
+   [clojure-shadcn.stories.notification.notification-promise
+    :as notification-promise]
+   [clojure-shadcn.stories.notification.playground                                      :as
+                                                                                        playground]
+   [clojure-shadcn.stories.notification.toast-basic                                     :as
+                                                                                        toast-basic]
+   [clojure-shadcn.stories.notification.toast-duration
+    :as toast-duration]
+   [clojure-shadcn.stories.notification.toast-with-action
+    :as toast-with-action]
+   [clojure-shadcn.stories.notification.toast-with-description
+    :as toast-with-description]
+   [reagent.core                                                                        :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -237,175 +255,75 @@
   Uses Sonner for toast rendering.
 
   Call show-toast with a simple message."
+ {:source-code (embed-source "clojure-shadcn.stories.notification.toast-basic")}
  []
- (r/as-element (helpers/wrap-component
-                [:div {:class "p-6 space-y-4"}
-                 [sut/toaster]
-                 (button/button {:on-click (fn [] (sut/show-toast "Event has been created"))}
-                                "Show Toast")])))
+ (r/as-element (helpers/wrap-component [toast-basic/example])))
 
 (defstory ToastWithDescription
           "Toast with description text.
   Use :description to provide context."
+          {:source-code (embed-source "clojure-shadcn.stories.notification.toast-with-description")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "p-6 space-y-4"}
-                                                 [sut/toaster]
-                                                 (button/button
-                                                  {:on-click (fn []
-                                                               (sut/show-toast
-                                                                "Event created"
-                                                                {:description
-                                                                 "Sunday, December 3 at 9:00 AM"}))}
-                                                  "Show Detailed Toast")])))
+          (r/as-element (helpers/wrap-component [toast-with-description/example])))
 
 (defstory ToastWithAction
           "Toast with action button.
   Use :action for undo or follow-up steps."
+          {:source-code (embed-source "clojure-shadcn.stories.notification.toast-with-action")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "p-6 space-y-4"}
-                          [sut/toaster]
-                          (button/button
-                           {:on-click (fn []
-                                        (sut/show-toast
-                                         "File deleted"
-                                         {:action {:label "Undo"
-                                                   :on-click (fn [] (js/console.log "undo"))}}))}
-                           "Show Action Toast")])))
+          (r/as-element (helpers/wrap-component [toast-with-action/example])))
 
 (defstory ToastDuration
           "Toast with custom duration. Use :duration for longer or shorter visibility."
+          {:source-code (embed-source "clojure-shadcn.stories.notification.toast-duration")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "p-6 space-y-4"}
-                          [sut/toaster]
-                          (button/button {:on-click #(sut/show-toast "Auto closes in 10 seconds"
-                                                                     {:duration 10000})}
-                                         "Show Long Toast")])))
+          (r/as-element (helpers/wrap-component [toast-duration/example])))
 
-(defstory
- NotificationPositions
- "Trigger every supported Sonner viewport position."
- []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "flex max-w-xl flex-wrap gap-2 p-6"}
-    [sut/toaster]
-    (for [position
-          ["top-left" "top-center" "top-right" "bottom-left" "bottom-center" "bottom-right"]]
-      ^{:key position}
-      [button/button {:variant :outline
-                      :on-click #(sut/show-toast position {:position position})}
-       position])])))
+(defstory NotificationPositions
+          "Trigger every supported Sonner viewport position."
+          {:source-code (embed-source "clojure-shadcn.stories.notification.notification-positions")}
+          []
+          (r/as-element (helpers/wrap-component [notification-positions/example])))
 
 (defstory NotificationAllTypes
           "Generic, success, info, warning, error, and loading notifications."
+          {:source-code (embed-source "clojure-shadcn.stories.notification.notification-all-types")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "flex flex-wrap gap-2 p-6"}
-                                                 [sut/toaster {:rich-colors true}]
-                                                 (for [[label notify] [["Default" sut/show-toast]
-                                                                       ["Success" sut/show-success]
-                                                                       ["Info" sut/show-info]
-                                                                       ["Warning" sut/show-warning]
-                                                                       ["Error" sut/show-error]
-                                                                       ["Loading"
-                                                                        sut/show-loading]]]
-                                                   ^{:key label}
-                                                   [button/button {:variant :outline
-                                                                   :on-click #(notify label)}
-                                                    label])])))
+          (r/as-element (helpers/wrap-component [notification-all-types/example])))
 
 (defstory
  NotificationPromise
  "Promise notifications transition from loading to success or error using the current show-promise API."
+ {:source-code (embed-source "clojure-shadcn.stories.notification.notification-promise")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "flex gap-2 p-6"}
-    [sut/toaster]
-    [button/button {:on-click (fn []
-                                (sut/show-promise (js/Promise. (fn [resolve _]
-                                                                 (js/setTimeout #(resolve "done")
-                                                                                1200)))
-                                                  {:loading "Saving…"
-                                                   :success "Saved"
-                                                   :error "Save failed"}))}
-     "Resolve promise"]
-    [button/button {:variant :destructive
-                    :on-click (fn []
-                                (sut/show-promise (js/Promise. (fn [_ reject]
-                                                                 (js/setTimeout #(reject (js/Error.
-                                                                                          "failed"))
-                                                                                1200)))
-                                                  {:loading "Saving…"
-                                                   :success "Saved"
-                                                   :error "Save failed"}))}
-     "Reject promise"]])))
+ (r/as-element (helpers/wrap-component [notification-promise/example])))
 
 (defstory NotificationLoadingUpdateDismiss
           "A stable id updates a loading toast in place, while another control dismisses it."
+          {:source-code (embed-source
+                         "clojure-shadcn.stories.notification.notification-loading-update-dismiss")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "flex gap-2 p-6"}
-                          [sut/toaster]
-                          [button/button {:on-click
-                                          (fn []
-                                            (sut/show-loading "Uploading…" {:id "upload-demo"})
-                                            (js/setTimeout #(sut/show-success "Upload complete"
-                                                                              {:id "upload-demo"})
-                                                           1400))}
-                           "Load then update"]
-                          [button/button {:variant :outline
-                                          :on-click #(sut/dismiss-toast "upload-demo")}
-                           "Dismiss"]])))
+          (r/as-element (helpers/wrap-component [notification-loading-update-dismiss/example])))
 
 (defstory
  NotificationCancelCustomCallbacksAndConfig
  "Cancel/action callbacks, custom Hiccup content, lifecycle callbacks, and Toaster configuration."
+ {:source-code
+  (embed-source
+   "clojure-shadcn.stories.notification.notification-cancel-custom-callbacks-and-config")}
  []
- (r/as-element
-  (r/with-let [event (r/atom "No callback yet")]
-              (helpers/wrap-component
-               [:div {:class "space-y-3 p-6"}
-                [sut/toaster {:position "bottom-center"
-                              :close-button true
-                              :visible-toasts 4}]
-                [:output {:class "block text-sm text-muted-foreground"}
-                 @event]
-                [:div {:class "flex flex-wrap gap-2"}
-                 [button/button {:on-click (fn []
-                                             (sut/show-toast
-                                              "Delete draft?"
-                                              {:action {:label "Delete"
-                                                        :on-click #(reset! event "Action clicked")}
-                                               :cancel {:label "Cancel"
-                                                        :on-click #(reset! event "Cancelled")}
-                                               :on-dismiss #(reset! event "Dismissed")
-                                               :on-auto-close #(reset! event "Auto-closed")}))}
-                  "Callbacks"]
-                 [button/button {:variant :outline
-                                 :on-click #(sut/custom-toast
-                                             [:div {:class "flex items-center gap-2 font-medium"}
-                                              [:span "🚀"]
-                                              [:span "Custom release content"]]
-                                             {:duration 4000})}
-                  "Custom content"]
-                 [button/button {:variant :ghost
-                                 :on-click sut/dismiss-toast}
-                  "Dismiss all"]]]))))
+ (r/as-element (helpers/wrap-component [notification-cancel-custom-callbacks-and-config/example])))
 
 
 (defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
-          {:args {:message "Changes saved"}
+          {:source-code (embed-source "clojure-shadcn.stories.notification.playground")
+           :args {:message "Changes saved"}
            :arg-types {:message {:name "Message"
                                  :control {:type "text"}}}
-           :parameters {:playground {:description "Explore notification message with a live preview."}
+           :parameters {:playground {:description
+                                     "Explore notification message with a live preview."}
                         :controls {:expanded false
                                    :exclude ["options" "on-dismiss" "on-auto-close" "on-click"]}}}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/toaster {}]
-                                                 [button/button {:on-click #(sut/show-success
-                                                                             (:message args))}
-                                                  "Show success toast"]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))

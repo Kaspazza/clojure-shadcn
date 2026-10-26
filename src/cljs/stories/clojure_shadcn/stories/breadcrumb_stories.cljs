@@ -1,12 +1,16 @@
 (ns clojure-shadcn.stories.breadcrumb-stories
-  "Storybook stories for the Breadcrumb component. Ported from mateuszmazurczak.portfolio.ui-components.breadcrumb."
   (:require
-   ["lucide-react"                             :refer [ChevronDown Slash]]
-   [clojure-shadcn.stories.helpers             :as helpers]
-   [clojure-shadcn.ui.components.breadcrumb    :as sut]
-   [clojure-shadcn.ui.components.drawer        :as drawer]
-   [clojure-shadcn.ui.components.dropdown-menu :as dropdown-menu]
-   [reagent.core                               :as r])
+   [clojure-shadcn.stories.breadcrumb.breadcrumb-custom-link :as breadcrumb-custom-link]
+   [clojure-shadcn.stories.breadcrumb.breadcrumb-demo        :as breadcrumb-demo]
+   [clojure-shadcn.stories.breadcrumb.breadcrumb-dropdown    :as breadcrumb-dropdown]
+   [clojure-shadcn.stories.breadcrumb.breadcrumb-ellipsis    :as breadcrumb-ellipsis]
+   [clojure-shadcn.stories.breadcrumb.breadcrumb-responsive  :as breadcrumb-responsive]
+   [clojure-shadcn.stories.breadcrumb.breadcrumb-rtl         :as breadcrumb-rtl]
+   [clojure-shadcn.stories.breadcrumb.breadcrumb-separator   :as breadcrumb-separator]
+   [clojure-shadcn.stories.breadcrumb.breadcrumb-simple      :as breadcrumb-simple]
+   [clojure-shadcn.stories.breadcrumb.playground             :as playground]
+   [clojure-shadcn.stories.helpers                           :as helpers]
+   [reagent.core                                             :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -113,37 +117,9 @@
   Radix primitives: @radix-ui/react-dropdown-menu, @radix-ui/react-separator
 
   Useful for long navigation paths."
+ {:source-code (embed-source "clojure-shadcn.stories.breadcrumb.breadcrumb-demo")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/breadcrumb {}
-     [sut/breadcrumb-list {}
-      [sut/breadcrumb-item {}
-       [sut/breadcrumb-link {:href "#"}
-        "Home"]]
-      [sut/breadcrumb-separator {}]
-      [sut/breadcrumb-item {}
-       [dropdown-menu/dropdown-menu {}
-        [dropdown-menu/dropdown-menu-trigger {:class "flex items-center gap-1 cursor-pointer"}
-         [sut/breadcrumb-ellipsis {:class "size-4"}]
-         [:span {:class "sr-only"}
-          "Toggle menu"]]
-        [dropdown-menu/dropdown-menu-content {:align "start"}
-         [dropdown-menu/dropdown-menu-item {:class "cursor-pointer"}
-          "Documentation"]
-         [dropdown-menu/dropdown-menu-item {:class "cursor-pointer"}
-          "Themes"]
-         [dropdown-menu/dropdown-menu-item {:class "cursor-pointer"}
-          "GitHub"]]]]
-      [sut/breadcrumb-separator {}]
-      [sut/breadcrumb-item {}
-       [sut/breadcrumb-link {:href "#"}
-        "Components"]]
-      [sut/breadcrumb-separator {}]
-      [sut/breadcrumb-item {}
-       [sut/breadcrumb-page {}
-        "Breadcrumb"]]]]])))
+ (r/as-element (helpers/wrap-component [breadcrumb-demo/example])))
 
 (defstory
  BreadcrumbCustomLink
@@ -152,19 +128,9 @@
   Radix primitive: @radix-ui/react-slot
 
   Use :as-child when a router link or custom anchor must retain its own props."
+ {:source-code (embed-source "clojure-shadcn.stories.breadcrumb.breadcrumb-custom-link")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/breadcrumb {}
-                                         [sut/breadcrumb-list {}
-                                          [sut/breadcrumb-item {}
-                                           [sut/breadcrumb-link {:as-child true}
-                                            [:a {:href "#guides"
-                                                 :data-router-link true}
-                                             "Guides"]]]
-                                          [sut/breadcrumb-separator {}]
-                                          [sut/breadcrumb-item {}
-                                           [sut/breadcrumb-page {}
-                                            "Routing"]]]]])))
+ (r/as-element (helpers/wrap-component [breadcrumb-custom-link/example])))
 
 (defstory
  BreadcrumbRtl
@@ -173,26 +139,9 @@
   Pattern: WAI-ARIA Breadcrumb
 
   Set direction on the navigation region and choose a separator that follows reading order."
+ {:source-code (embed-source "clojure-shadcn.stories.breadcrumb.breadcrumb-rtl")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"
-          :dir "rtl"}
-    [sut/breadcrumb {}
-     [sut/breadcrumb-list {}
-      [sut/breadcrumb-item {}
-       [sut/breadcrumb-link {:href "#"}
-        "الرئيسية"]]
-      [sut/breadcrumb-separator {}
-       [:span "‹"]]
-      [sut/breadcrumb-item {}
-       [sut/breadcrumb-link {:href "#"}
-        "المكونات"]]
-      [sut/breadcrumb-separator {}
-       [:span "‹"]]
-      [sut/breadcrumb-item {}
-       [sut/breadcrumb-page {}
-        "مسار التنقل"]]]]])))
+ (r/as-element (helpers/wrap-component [breadcrumb-rtl/example])))
 
 (defstory
  BreadcrumbSimple
@@ -201,21 +150,9 @@
   Radix primitive: @radix-ui/react-separator
 
   Use breadcrumb-link for navigable segments and breadcrumb-page for current."
+ {:source-code (embed-source "clojure-shadcn.stories.breadcrumb.breadcrumb-simple")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/breadcrumb {}
-                                         [sut/breadcrumb-list {}
-                                          [sut/breadcrumb-item {}
-                                           [sut/breadcrumb-link {:href "#"}
-                                            "Home"]]
-                                          [sut/breadcrumb-separator {}]
-                                          [sut/breadcrumb-item {}
-                                           [sut/breadcrumb-link {:href "#"}
-                                            "Components"]]
-                                          [sut/breadcrumb-separator {}]
-                                          [sut/breadcrumb-item {}
-                                           [sut/breadcrumb-page {}
-                                            "Breadcrumb"]]]]])))
+ (r/as-element (helpers/wrap-component [breadcrumb-simple/example])))
 
 (defstory
  BreadcrumbEllipsis
@@ -224,26 +161,9 @@
   Radix primitives: @radix-ui/react-separator
 
   Use the ellipsis when intermediate items are hidden."
+ {:source-code (embed-source "clojure-shadcn.stories.breadcrumb.breadcrumb-ellipsis")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/breadcrumb {}
-     [sut/breadcrumb-list {}
-      [sut/breadcrumb-item {}
-       [sut/breadcrumb-link {:href "#"}
-        "Home"]]
-      [sut/breadcrumb-separator {}]
-      [sut/breadcrumb-item {}
-       [sut/breadcrumb-ellipsis {}]]
-      [sut/breadcrumb-separator {}]
-      [sut/breadcrumb-item {}
-       [sut/breadcrumb-link {:href "#"}
-        "Components"]]
-      [sut/breadcrumb-separator {}]
-      [sut/breadcrumb-item {}
-       [sut/breadcrumb-page {}
-        "Breadcrumb"]]]]])))
+ (r/as-element (helpers/wrap-component [breadcrumb-ellipsis/example])))
 
 (defstory
  BreadcrumbSeparator
@@ -252,23 +172,9 @@
   Radix primitives: @radix-ui/react-separator
 
   Custom separators can be inserted per segment."
+ {:source-code (embed-source "clojure-shadcn.stories.breadcrumb.breadcrumb-separator")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/breadcrumb {}
-                                         [sut/breadcrumb-list {}
-                                          [sut/breadcrumb-item {}
-                                           [sut/breadcrumb-link {:href "#"}
-                                            "Home"]]
-                                          [sut/breadcrumb-separator {}
-                                           [:> Slash]]
-                                          [sut/breadcrumb-item {}
-                                           [sut/breadcrumb-link {:href "#"}
-                                            "Components"]]
-                                          [sut/breadcrumb-separator {}
-                                           [:> Slash]]
-                                          [sut/breadcrumb-item {}
-                                           [sut/breadcrumb-page {}
-                                            "Breadcrumb"]]]]])))
+ (r/as-element (helpers/wrap-component [breadcrumb-separator/example])))
 
 (defstory
  BreadcrumbDropdown
@@ -277,35 +183,9 @@
   Radix primitives: @radix-ui/react-dropdown-menu, @radix-ui/react-separator
 
   Dropdowns can replace intermediate links."
+ {:source-code (embed-source "clojure-shadcn.stories.breadcrumb.breadcrumb-dropdown")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/breadcrumb {}
-     [sut/breadcrumb-list {}
-      [sut/breadcrumb-item {}
-       [sut/breadcrumb-link {:href "#"}
-        "Home"]]
-      [sut/breadcrumb-separator {}
-       [:> Slash]]
-      [sut/breadcrumb-item {}
-       [dropdown-menu/dropdown-menu {}
-        [dropdown-menu/dropdown-menu-trigger {:as-child true}
-         [:button {:class "flex items-center gap-1"}
-          "Components"
-          [:> ChevronDown {:class "size-3.5"}]]]
-        [dropdown-menu/dropdown-menu-content {:align "start"}
-         [dropdown-menu/dropdown-menu-item {}
-          "Documentation"]
-         [dropdown-menu/dropdown-menu-item {}
-          "Themes"]
-         [dropdown-menu/dropdown-menu-item {}
-          "GitHub"]]]]
-      [sut/breadcrumb-separator {}
-       [:> Slash]]
-      [sut/breadcrumb-item {}
-       [sut/breadcrumb-page {}
-        "Breadcrumb"]]]]])))
+ (r/as-element (helpers/wrap-component [breadcrumb-dropdown/example])))
 
 (defstory
  BreadcrumbResponsive
@@ -314,100 +194,19 @@
   Radix primitives: @radix-ui/react-dropdown-menu, @radix-ui/react-dialog
 
   This example shows both desktop (dropdown) and mobile (drawer) patterns."
+ {:source-code (embed-source "clojure-shadcn.stories.breadcrumb.breadcrumb-responsive")}
  []
- (r/as-element
-  [(fn []
-     (let [dropdown-open? (r/atom false)
-           drawer-open? (r/atom false)
-           items [{:href "#"
-                   :label "Home"}
-                  {:href "#"
-                   :label "Documentation"}
-                  {:href "#"
-                   :label "Building Your Application"}
-                  {:href "#"
-                   :label "Data Fetching"}
-                  {:label "Caching and Revalidating"}]]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-6 space-y-6"}
-           [:div {:class "hidden md:block"}
-            [sut/breadcrumb {}
-             [sut/breadcrumb-list {}
-              [sut/breadcrumb-item {}
-               [sut/breadcrumb-link {:href (:href (first items))}
-                (:label (first items))]]
-              [sut/breadcrumb-separator {}]
-              [sut/breadcrumb-item {}
-               [dropdown-menu/dropdown-menu {:open @dropdown-open?
-                                             :on-open-change #(reset! dropdown-open? %)}
-                [dropdown-menu/dropdown-menu-trigger {:as-child true}
-                 [:button {:class "flex items-center gap-1"
-                           :aria-label "Toggle menu"}
-                  [sut/breadcrumb-ellipsis {}]]]
-                [dropdown-menu/dropdown-menu-content {:align "start"}
-                 (for [{:keys [href label]} (subvec (vec items) 1 3)]
-                   ^{:key label}
-                   [dropdown-menu/dropdown-menu-item {}
-                    [:a {:href (or href "#")}
-                     label]])]]]
-              [sut/breadcrumb-separator {}]
-              [sut/breadcrumb-item {}
-               [sut/breadcrumb-link {:href "#"
-                                     :class "max-w-20 truncate"}
-                "Data Fetching"]]
-              [sut/breadcrumb-separator {}]
-              [sut/breadcrumb-item {}
-               [sut/breadcrumb-page {:class "max-w-20 truncate"}
-                "Caching and Revalidating"]]]]]
-           [:div {:class "md:hidden"}
-            [sut/breadcrumb {}
-             [sut/breadcrumb-list {}
-              [sut/breadcrumb-item {}
-               [sut/breadcrumb-link {:href (:href (first items))}
-                (:label (first items))]]
-              [sut/breadcrumb-separator {}]
-              [sut/breadcrumb-item {}
-               [drawer/drawer {:open @drawer-open?
-                               :on-open-change #(reset! drawer-open? %)}
-                [drawer/drawer-trigger {:class "cursor-pointer"
-                                        :aria-label "Toggle menu"}
-                 [sut/breadcrumb-ellipsis {}]]
-                [drawer/drawer-content {}
-                 [drawer/drawer-header {:class "text-left"}
-                  [drawer/drawer-title {}
-                   "Navigate to"]
-                  [drawer/drawer-description {}
-                   "Select a page to navigate to."]]
-                 [:div {:class "grid gap-1 px-4"}
-                  (for [{:keys [href label]} (subvec (vec items) 1 3)]
-                    ^{:key label}
-                    [:a {:href (or href "#")
-                         :class "py-1 text-sm"}
-                     label])]
-                 [drawer/drawer-footer {:class "pt-4"}
-                  [drawer/drawer-close
-                   {:class
-                    "inline-flex h-10 w-full items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"}
-                   "Close"]]]]]]]]]))))]))
-
+ (r/as-element (helpers/wrap-component [breadcrumb-responsive/example])))
 
 (defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
-          {:args {:class ""}
+          {:source-code (embed-source "clojure-shadcn.stories.breadcrumb.playground")
+           :args {:class ""}
            :arg-types {:class {:name "CSS classes"
                                :control {:type "text"}}}
-           :parameters {:playground {:description "Explore breadcrumb css classes with a live preview."}
+           :parameters {:playground {:description
+                                     "Explore breadcrumb css classes with a live preview."}
                         :controls {:expanded false
                                    :exclude ["children"]}}}
           [args]
-          (r/as-element (helpers/wrap-component [sut/breadcrumb
-                                                 (select-keys args [:class])
-                                                 [sut/breadcrumb-list {}
-                                                  [sut/breadcrumb-item {}
-                                                   [sut/breadcrumb-link {:href "#"}
-                                                    "Home"]]
-                                                  [sut/breadcrumb-separator {}]
-                                                  [sut/breadcrumb-item {}
-                                                   [sut/breadcrumb-page {}
-                                                    "Components"]]]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))

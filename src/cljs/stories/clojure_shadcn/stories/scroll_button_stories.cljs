@@ -1,10 +1,12 @@
 (ns clojure-shadcn.stories.scroll-button-stories
   "Storybook stories for the Scroll Button component. Ported from mateuszmazurczak.portfolio.ui-components.scroll_button."
   (:require
-   [clojure-shadcn.stories.helpers              :as helpers]
-   [clojure-shadcn.ui.components.chat-container :as chat-container]
-   [clojure-shadcn.ui.components.scroll-button  :as sut]
-   [reagent.core                                :as r])
+   [clojure-shadcn.stories.helpers                                :as helpers]
+   [clojure-shadcn.stories.scroll-button.scroll-button-chat       :as example-scroll-button-chat]
+   [clojure-shadcn.stories.scroll-button.scroll-button-custom     :as example-scroll-button-custom]
+   [clojure-shadcn.stories.scroll-button.scroll-button-standalone :as
+                                                                  example-scroll-button-standalone]
+   [reagent.core                                                  :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -80,57 +82,30 @@
                        :size {:name "Size"
                               :control {:type "select"}
                               :options ["xs" "sm" "default" "lg" "icon" "icon-sm"]}}
-           :parameters {:playground {:description "Explore scroll button variant and size with a live preview."}
+           :parameters {:playground {:description
+                                     "Explore scroll button variant and size with a live preview."}
                         :controls {:expanded false
                                    :exclude ["class" "on-click"]}}
            :decode-args (fn [{:keys [variant size]
                               :as args}]
                           (cond-> args
                             variant (update :variant keyword)
-                            size (update :size keyword)))}
+                            size (update :size keyword)))
+           :source-code (embed-source "clojure-shadcn.stories.scroll-button.scroll-button-chat")}
           [args]
-          (r/as-element
-           (helpers/wrap-component
-            [:div {:class "p-6"}
-             [chat-container/chat-container-root {:class "relative h-64 w-full rounded-md border"}
-              [chat-container/chat-container-content {:class "p-4 space-y-3"}
-               (for [idx (range 1 20)]
-                 ^{:key idx}
-                 [:div {:class "rounded-lg bg-muted px-3 py-2 text-sm"}
-                  (str "Line " idx)])
-               [chat-container/chat-container-scroll-anchor {}]]
-              [sut/scroll-button
-               (assoc (select-keys args [:variant :size]) :class "absolute bottom-4 right-4")]]])))
+          (r/as-element (helpers/wrap-component [example-scroll-button-chat/example args])))
 
 (defstory ScrollButtonCustom
           "Scroll button with custom styling.
   Use class overrides for position or style changes."
+          {:source-code (embed-source "clojure-shadcn.stories.scroll-button.scroll-button-custom")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [:div {:class "p-6"}
-             [chat-container/chat-container-root {:class "relative h-64 w-full rounded-md border"}
-              [chat-container/chat-container-content {:class "p-4 space-y-3"}
-               (for [idx (range 1 16)]
-                 ^{:key idx}
-                 [:div {:class "rounded-lg bg-muted px-3 py-2 text-sm"}
-                  (str "Message " idx)])
-               [chat-container/chat-container-scroll-anchor {}]]
-              [sut/scroll-button
-               {:class "absolute bottom-4 right-4 bg-primary text-primary-foreground"}]]])))
+          (r/as-element (helpers/wrap-component [example-scroll-button-custom/example])))
 
 (defstory ScrollButtonStandalone
           "Scroll button placement in custom layout.
   Place inside any stick-to-bottom container."
+          {:source-code (embed-source
+                         "clojure-shadcn.stories.scroll-button.scroll-button-standalone")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "p-6"}
-                          [chat-container/chat-container-root
-                           {:class "relative h-40 w-full rounded-md border"}
-                           [chat-container/chat-container-content {:class "p-4 space-y-3"}
-                            (for [idx (range 1 12)]
-                              ^{:key idx}
-                              [:div {:class "rounded-lg bg-muted px-3 py-2 text-sm"}
-                               (str "Update " idx)])
-                            [chat-container/chat-container-scroll-anchor {}]]
-                           [sut/scroll-button {:class "absolute bottom-3 right-3"}]]])))
+          (r/as-element (helpers/wrap-component [example-scroll-button-standalone/example])))

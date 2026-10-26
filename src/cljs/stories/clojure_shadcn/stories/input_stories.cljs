@@ -1,14 +1,25 @@
 (ns clojure-shadcn.stories.input-stories
   "Storybook stories for the Input component. Ported from mateuszmazurczak.portfolio.ui-components.input."
   (:require
-   [clojure-shadcn.stories.helpers            :as helpers]
-   [clojure-shadcn.ui.components.badge        :as badge]
-   [clojure-shadcn.ui.components.button       :as button]
-   [clojure-shadcn.ui.components.button-group :as button-group]
-   [clojure-shadcn.ui.components.field        :as field]
-   [clojure-shadcn.ui.components.input        :as sut]
-   [clojure-shadcn.ui.components.label        :as label]
-   [reagent.core                              :as r])
+   [clojure-shadcn.stories.helpers                         :as helpers]
+   [clojure-shadcn.stories.input.input-badge-label         :as input-badge-label]
+   [clojure-shadcn.stories.input.input-controlled          :as input-controlled]
+   [clojure-shadcn.stories.input.input-demo                :as input-demo]
+   [clojure-shadcn.stories.input.input-disabled            :as input-disabled]
+   [clojure-shadcn.stories.input.input-field-disabled      :as input-field-disabled]
+   [clojure-shadcn.stories.input.input-field-group-actions :as input-field-group-actions]
+   [clojure-shadcn.stories.input.input-file                :as input-file]
+   [clojure-shadcn.stories.input.input-file-guidance       :as input-file-guidance]
+   [clojure-shadcn.stories.input.input-invalid             :as input-invalid]
+   [clojure-shadcn.stories.input.input-joined-button-group :as input-joined-button-group]
+   [clojure-shadcn.stories.input.input-required            :as input-required]
+   [clojure-shadcn.stories.input.input-rtl                 :as input-rtl]
+   [clojure-shadcn.stories.input.input-two-column-grid     :as input-two-column-grid]
+   [clojure-shadcn.stories.input.input-with-button         :as input-with-button]
+   [clojure-shadcn.stories.input.input-with-label          :as input-with-label]
+   [clojure-shadcn.stories.input.input-with-text           :as input-with-text]
+   [clojure-shadcn.stories.input.playground                :as playground]
+   [reagent.core                                           :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -102,10 +113,9 @@
   Native element: <input>
 
   Our wrapper accepts all standard input props with Tailwind defaults."
+ {:source-code (embed-source "clojure-shadcn.stories.input.input-demo")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-sm"}
-                                        [sut/input {:type "email"
-                                                    :placeholder "Email"}]])))
+ (r/as-element (helpers/wrap-component [input-demo/example])))
 
 (defstory
  InputFile
@@ -114,12 +124,9 @@
   Native element: <input type='file'>
 
   File inputs retain the same base styling for consistency."
+ {:source-code (embed-source "clojure-shadcn.stories.input.input-file")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
-                                        [label/label {:html-for "resume"}
-                                         "Resume"]
-                                        [sut/input {:id "resume"
-                                                    :type "file"}]])))
+ (r/as-element (helpers/wrap-component [input-file/example])))
 
 (defstory
  InputDisabled
@@ -128,11 +135,9 @@
   Native element: <input>
 
   Disabled inputs are visually muted and non-interactive."
+ {:source-code (embed-source "clojure-shadcn.stories.input.input-disabled")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-sm"}
-                                        [sut/input {:disabled true
-                                                    :type "email"
-                                                    :placeholder "Email"}]])))
+ (r/as-element (helpers/wrap-component [input-disabled/example])))
 
 (defstory
  InputInvalid
@@ -141,16 +146,9 @@
   Native element: <input>
 
   Use :aria-invalid true and helper/error text for validation feedback."
+ {:source-code (embed-source "clojure-shadcn.stories.input.input-invalid")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
-                                        [label/label {:html-for "email-invalid"}
-                                         "Email"]
-                                        [sut/input {:id "email-invalid"
-                                                    :type "email"
-                                                    :aria-invalid true
-                                                    :default-value "not-an-email"}]
-                                        [:p {:class "text-destructive text-sm"}
-                                         "Please enter a valid email address."]])))
+ (r/as-element (helpers/wrap-component [input-invalid/example])))
 
 (defstory
  InputWithLabel
@@ -159,13 +157,9 @@
   Native element: <input>
 
   Use labels for accessible form controls."
+ {:source-code (embed-source "clojure-shadcn.stories.input.input-with-label")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
-                                        [label/label {:html-for "contact-email"}
-                                         "Email"]
-                                        [sut/input {:id "contact-email"
-                                                    :type "email"
-                                                    :placeholder "Email"}]])))
+ (r/as-element (helpers/wrap-component [input-with-label/example])))
 
 (defstory
  InputWithButton
@@ -174,14 +168,9 @@
   Native element: <input>
 
   Useful for newsletter signups or quick actions."
+ {:source-code (embed-source "clojure-shadcn.stories.input.input-with-button")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [:div {:class "flex w-full max-w-sm items-center gap-2"}
-                                         [sut/input {:type "email"
-                                                     :placeholder "Email"}]
-                                         (button/button {:type "submit"
-                                                         :variant :outline}
-                                                        "Subscribe")]])))
+ (r/as-element (helpers/wrap-component [input-with-button/example])))
 
 (defstory
  InputWithText
@@ -190,15 +179,9 @@
   Native element: <input>
 
   Helper text clarifies validation or intent."
+ {:source-code (embed-source "clojure-shadcn.stories.input.input-with-text")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
-                                        [label/label {:html-for "support-email"}
-                                         "Email"]
-                                        [sut/input {:id "support-email"
-                                                    :type "email"
-                                                    :placeholder "Email"}]
-                                        [:p {:class "text-muted-foreground text-sm"}
-                                         "Enter your support email address."]])))
+ (r/as-element (helpers/wrap-component [input-with-text/example])))
 
 (defstory
  InputControlled
@@ -207,161 +190,84 @@
   Demonstrates how to keep input value in app state.
 
   Use controlled inputs when you need validation or formatting."
+ {:source-code (embed-source "clojure-shadcn.stories.input.input-controlled")}
  []
- (r/as-element [(fn []
-                  (let [value (r/atom "hello@company.com")]
-                    (fn []
-                      (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
-                                               [label/label {:html-for "controlled-email"}
-                                                "Contact"]
-                                               [sut/input {:id "controlled-email"
-                                                           :type "email"
-                                                           :value @value
-                                                           :on-change
-                                                           #(reset! value (.. % -target -value))}]
-                                               [:p {:class "text-muted-foreground text-sm"}
-                                                (str "Current value: " @value)]]))))]))
+ (r/as-element (helpers/wrap-component [input-controlled/example])))
 
 
-(defstory Playground
-          "Interactive native input playground."
-          {:args {:type "email"
-                  :placeholder "you@example.com"
-                  :default-value ""
-                  :disabled false
-                  :required false}
-           :arg-types {:type {:name "Type"
-                              :control {:type "select"}
-                              :options ["text" "email" "password" "search"]}
-                       :placeholder {:name "Placeholder"
-                                     :control {:type "text"}}
-                       :default-value {:name "Initial value"
-                                       :control {:type "text"}}
-                       :disabled {:name "Disabled"
-                                  :control {:type "boolean"}}
-                       :required {:name "Required"
-                                  :control {:type "boolean"}}}
-           :parameters {:playground {:description "Explore input type, placeholder, initial value, disabled and required with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["value" "on-change" "class"]}}}
-          [args]
-          (r/as-element (helpers/wrap-component [:div {:class "max-w-sm p-6"}
-                                                 [sut/input args]])))
+(defstory
+ Playground
+ "Interactive native input playground."
+ {:source-code (embed-source "clojure-shadcn.stories.input.playground")
+  :args {:type "email"
+         :placeholder "you@example.com"
+         :default-value ""
+         :disabled false
+         :required false}
+  :arg-types {:type {:name "Type"
+                     :control {:type "select"}
+                     :options ["text" "email" "password" "search"]}
+              :placeholder {:name "Placeholder"
+                            :control {:type "text"}}
+              :default-value {:name "Initial value"
+                              :control {:type "text"}}
+              :disabled {:name "Disabled"
+                         :control {:type "boolean"}}
+              :required {:name "Required"
+                         :control {:type "boolean"}}}
+  :parameters
+  {:playground
+   {:description
+    "Explore input type, placeholder, initial value, disabled and required with a live preview."}
+   :controls {:expanded false
+              :exclude ["value" "on-change" "class"]}}}
+ [args]
+ (r/as-element (helpers/wrap-component [playground/example args])))
 
 (defstory InputFieldGroupActions
           "FieldGroup form with native reset and submit actions. Based on shadcn/ui Input — Field."
+          {:source-code (embed-source "clojure-shadcn.stories.input.input-field-group-actions")}
           []
-          (r/as-element (helpers/wrap-component [:form {:class "max-w-md p-6"
-                                                        :on-submit #(.preventDefault %)}
-                                                 [field/field-group {}
-                                                  [field/field {}
-                                                   [field/field-label {:html-for "profile-name"}
-                                                    "Display name"]
-                                                   [sut/input {:id "profile-name"
-                                                               :name "display-name"
-                                                               :default-value "Ada Lovelace"}]]
-                                                  [:div {:class "flex gap-2"}
-                                                   (button/button {:type "reset"
-                                                                   :variant :outline}
-                                                                  "Reset")
-                                                   (button/button {:type "submit"} "Save")]]])))
+          (r/as-element (helpers/wrap-component [input-field-group-actions/example])))
 
 (defstory InputFieldDisabled
           "Disabled control inside a disabled Field. Based on shadcn/ui Input — Field Disabled."
+          {:source-code (embed-source "clojure-shadcn.stories.input.input-field-disabled")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "max-w-sm p-6"}
-                                                 [field/field {:data-disabled true}
-                                                  [field/field-label {:html-for "company-managed"}
-                                                   "Organization"]
-                                                  [sut/input {:id "company-managed"
-                                                              :disabled true
-                                                              :value "Acme Inc."
-                                                              :read-only true}]
-                                                  [field/field-description {}
-                                                   "Managed by your administrator."]]])))
+          (r/as-element (helpers/wrap-component [input-field-disabled/example])))
 
 (defstory InputFileGuidance
           "File input with format guidance. Based on shadcn/ui Input — File."
+          {:source-code (embed-source "clojure-shadcn.stories.input.input-file-guidance")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "max-w-sm p-6"}
-                                                 [field/field {}
-                                                  [field/field-label {:html-for "avatar-upload"}
-                                                   "Profile image"]
-                                                  [sut/input {:id "avatar-upload"
-                                                              :name "avatar"
-                                                              :type "file"
-                                                              :accept "image/png,image/jpeg"}]
-                                                  [field/field-description {}
-                                                   "PNG or JPG, up to 2 MB."]]])))
+          (r/as-element (helpers/wrap-component [input-file-guidance/example])))
 
 (defstory InputTwoColumnGrid
           "Responsive two-column form grid. Based on shadcn/ui Input — Grid."
+          {:source-code (embed-source "clojure-shadcn.stories.input.input-two-column-grid")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class
-                                                       "grid max-w-xl gap-4 p-6 sm:grid-cols-2"}
-                                                 [field/field {}
-                                                  [field/field-label {:html-for "first-name"}
-                                                   "First name"]
-                                                  [sut/input {:id "first-name"
-                                                              :autocomplete "given-name"}]]
-                                                 [field/field {}
-                                                  [field/field-label {:html-for "last-name"}
-                                                   "Last name"]
-                                                  [sut/input {:id "last-name"
-                                                              :autocomplete "family-name"}]]])))
+          (r/as-element (helpers/wrap-component [input-two-column-grid/example])))
 
 (defstory InputRequired
           "Required marker with native required semantics. Based on shadcn/ui Input — Required."
+          {:source-code (embed-source "clojure-shadcn.stories.input.input-required")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "max-w-sm p-6"}
-                                                 [field/field {}
-                                                  [field/field-label {:html-for "required-email"}
-                                                   "Email "
-                                                   [:span {:aria-hidden true
-                                                           :class "text-destructive"}
-                                                    "*"]]
-                                                  [sut/input {:id "required-email"
-                                                              :type "email"
-                                                              :required true
-                                                              :aria-required true}]]])))
+          (r/as-element (helpers/wrap-component [input-required/example])))
 
 (defstory InputBadgeLabel
           "Label metadata with Badge. Based on shadcn/ui Input — Badge."
+          {:source-code (embed-source "clojure-shadcn.stories.input.input-badge-label")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "max-w-sm p-6"}
-                                                 [field/field {}
-                                                  [field/field-label {:html-for "work-email"}
-                                                   "Work email"
-                                                   [badge/badge {:variant :secondary}
-                                                    "Recommended"]]
-                                                  [sut/input {:id "work-email"
-                                                              :type "email"
-                                                              :placeholder "you@company.com"}]]])))
+          (r/as-element (helpers/wrap-component [input-badge-label/example])))
 
 (defstory InputJoinedButtonGroup
           "Joined input and action. Based on shadcn/ui Input — Button Group."
+          {:source-code (embed-source "clojure-shadcn.stories.input.input-joined-button-group")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "w-full max-w-md p-6"}
-                                                 [label/label {:html-for "site-url"
-                                                               :class "mb-2"}
-                                                  "Website"]
-                                                 [button-group/button-group {:class "w-full"}
-                                                  [sut/input {:id "site-url"
-                                                              :type "url"
-                                                              :placeholder "https://example.com"}]
-                                                  (button/button {:type "button"
-                                                                  :variant :outline}
-                                                                 "Copy")]])))
+          (r/as-element (helpers/wrap-component [input-joined-button-group/example])))
 
 (defstory InputRtl
           "Right-to-left labeled input. Based on shadcn/ui Input — RTL."
+          {:source-code (embed-source "clojure-shadcn.stories.input.input-rtl")}
           []
-          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
-                                                       :class "max-w-sm p-6"}
-                                                 [field/field {}
-                                                  [field/field-label {:html-for "name-rtl"}
-                                                   "الاسم الكامل"]
-                                                  [sut/input {:id "name-rtl"
-                                                              :placeholder "اكتب اسمك"}]
-                                                  [field/field-description {}
-                                                   "كما يظهر في هويتك."]]])))
+          (r/as-element (helpers/wrap-component [input-rtl/example])))

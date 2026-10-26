@@ -1,10 +1,14 @@
 (ns clojure-shadcn.stories.marker-stories
   (:require
-   ["lucide-react"                      :refer [CheckCircle Clock Info]]
-   [clojure-shadcn.stories.helpers      :as helpers]
-   [clojure-shadcn.ui.components.loader :as loader]
-   [clojure-shadcn.ui.components.marker :as sut]
-   [reagent.core                        :as r])
+   [clojure-shadcn.stories.helpers                                  :as helpers]
+   [clojure-shadcn.stories.marker.marker-aggregate                  :as marker-aggregate]
+   [clojure-shadcn.stories.marker.marker-as-child-links-and-buttons
+    :as marker-as-child-links-and-buttons]
+   [clojure-shadcn.stories.marker.marker-shimmer-and-spinner-status
+    :as marker-shimmer-and-spinner-status]
+   [clojure-shadcn.stories.marker.marker-timeline                   :as marker-timeline]
+   [clojure-shadcn.stories.marker.marker-variants                   :as marker-variants]
+   [reagent.core                                                    :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -41,14 +45,16 @@
 
 (defstory MarkerVariants
           "Interactive marker playground."
-          {:args {:variant "default"
+          {:source-code (embed-source "clojure-shadcn.stories.marker.marker-variants")
+           :args {:variant "default"
                   :content "Deployment completed"}
            :arg-types {:variant {:name "Variant"
                                  :control {:type "select"}
                                  :options ["default" "separator" "border"]}
                        :content {:name "Content"
                                  :control {:type "text"}}}
-           :parameters {:playground {:description "Explore marker variant and content with a live preview."}
+           :parameters {:playground {:description
+                                     "Explore marker variant and content with a live preview."}
                         :controls {:expanded false
                                    :exclude ["class" "as-child?"]}}
            :decode-args (fn [{:keys [variant]
@@ -56,88 +62,30 @@
                           (cond-> args
                             variant (update :variant keyword)))}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "max-w-lg"}
-                                                 [sut/marker
-                                                  (select-keys args [:variant])
-                                                  [sut/marker-icon {}
-                                                   [:> CheckCircle]]
-                                                  [sut/marker-content {}
-                                                   (:content args)]]])))
+          (r/as-element (helpers/wrap-component [marker-variants/example args])))
 
 (defstory MarkerAggregate
           "All marker primitives and variants in one comparison."
+          {:source-code (embed-source "clojure-shadcn.stories.marker.marker-aggregate")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "w-full max-w-xl space-y-5"}
-                          (for [[variant copy icon]
-                                [[:default "Informational marker" [:> Info]]
-                                 [:separator "Separated milestone" [:> CheckCircle]]
-                                 [:border "Bordered status row" [:> Clock]]]]
-                            ^{:key variant}
-                            [sut/marker {:variant variant}
-                             [sut/marker-icon {}
-                              icon]
-                             [sut/marker-content {}
-                              copy]])])))
+          (r/as-element (helpers/wrap-component [marker-aggregate/example])))
 
 (defstory MarkerTimeline
           "Timeline composition using border markers and semantic status text."
+          {:source-code (embed-source "clojure-shadcn.stories.marker.marker-timeline")}
           []
-          (r/as-element (helpers/wrap-component [:ol {:class "max-w-lg"}
-                                                 (for [[copy time] [["Build started" "09:30"]
-                                                                    ["Tests passed" "09:32"]
-                                                                    ["Deployed" "09:35"]]]
-                                                   ^{:key copy}
-                                                   [:li
-                                                    [sut/marker {:variant :border
-                                                                 :class "py-3"}
-                                                     [sut/marker-icon {}
-                                                      [:> CheckCircle]]
-                                                     [sut/marker-content
-                                                      {:class "flex flex-1 justify-between"}
-                                                      [:span copy]
-                                                      [:time time]]]])])))
+          (r/as-element (helpers/wrap-component [marker-timeline/example])))
 
 (defstory
  MarkerAsChildLinksAndButtons
  "Slot-based polymorphism: the marker classes and data attributes are applied to one link or button child."
+ {:source-code (embed-source "clojure-shadcn.stories.marker.marker-as-child-links-and-buttons")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "max-w-lg space-y-3"}
-    [sut/marker {:as-child? true}
-     [:a {:href "https://example.com"
-          :target "_blank"
-          :rel "noreferrer"}
-      [sut/marker-icon {}
-       [:> Info]]
-      [sut/marker-content {}
-       "Open deployment details"]]]
-    [sut/marker {:as-child? true
-                 :variant :border}
-     [:button {:type "button"
-               :on-click #(js/alert "Retry requested")}
-      [sut/marker-icon {}
-       [:> Clock]]
-      [sut/marker-content {}
-       "Retry deployment"]]]])))
+ (r/as-element (helpers/wrap-component [marker-as-child-links-and-buttons/example])))
 
 (defstory MarkerShimmerAndSpinnerStatus
           "Markers can compose loading visuals while the content supplies readable status text."
+          {:source-code (embed-source
+                         "clojure-shadcn.stories.marker.marker-shimmer-and-spinner-status")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "max-w-lg space-y-4"}
-                          [sut/marker {:variant :separator}
-                           [sut/marker-icon {}
-                            [loader/loader {:variant :circular
-                                            :size :sm
-                                            :label "Syncing"}]]
-                           [sut/marker-content {}
-                            "Syncing records"]]
-                          [sut/marker {:variant :border}
-                           [sut/marker-icon {}
-                            [loader/loader {:variant :pulse-dot
-                                            :size :sm
-                                            :label "Indexing"}]]
-                           [sut/marker-content {:class "animate-pulse motion-reduce:animate-none"}
-                            "Indexing search data"]]])))
+          (r/as-element (helpers/wrap-component [marker-shimmer-and-spinner-status/example])))

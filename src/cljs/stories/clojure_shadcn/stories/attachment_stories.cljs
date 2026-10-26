@@ -1,9 +1,12 @@
 (ns clojure-shadcn.stories.attachment-stories
   (:require
-   ["lucide-react"                          :refer [FileText X]]
-   [clojure-shadcn.stories.helpers          :as helpers]
-   [clojure-shadcn.ui.components.attachment :as sut]
-   [reagent.core                            :as r])
+   [clojure-shadcn.stories.attachment.playground :as playground]
+   [clojure-shadcn.stories.attachment.attachment-image-state-matrix :as attachment-image-state-matrix]
+   [clojure-shadcn.stories.attachment.attachment-size-gallery :as attachment-size-gallery]
+   [clojure-shadcn.stories.attachment.attachment-overflow-group :as attachment-overflow-group]
+   [clojure-shadcn.stories.attachment.attachment-full-card-trigger :as attachment-full-card-trigger]
+   [clojure-shadcn.stories.helpers :as helpers]
+   [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -52,7 +55,8 @@
 
 (defstory Playground
           "Explore attachment state, size, orientation, and filename with live controls."
-          {:args {:state "done"
+          {:source-code (embed-source "clojure-shadcn.stories.attachment.playground")
+           :args {:state "done"
                   :size "default"
                   :orientation "horizontal"
                   :title "invoice.pdf"}
@@ -79,106 +83,28 @@
                             size (update :size keyword)
                             orientation (update :orientation keyword)))}
           [args]
-          (r/as-element
-           (helpers/wrap-component
-            [sut/attachment-group {}
-             [sut/attachment
-              (select-keys args [:state :size :orientation])
-              [sut/attachment-media {}
-               [:> FileText]]
-              [sut/attachment-content {}
-               [sut/attachment-title {}
-                (:title args)]
-               [sut/attachment-description {}
-                (let [state (:state args)]
-                  (cond
-                    (keyword? state) (name state)
-                    (some? state) (str state)
-                    :else ""))]]
-              [sut/attachment-actions {}
-               [sut/attachment-action {:aria-label "Remove"}
-                [:> X]]]]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))
 
-(defstory
- AttachmentImageStateMatrix
+(defstory AttachmentImageStateMatrix
  "Image attachments across every supported lifecycle state."
+ {:source-code (embed-source "clojure-shadcn.stories.attachment.attachment-image-state-matrix")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "grid gap-4 sm:grid-cols-2 lg:grid-cols-5"}
-    (for [state [:idle :uploading :processing :error :done]]
-      ^{:key state}
-      [sut/attachment {:state state
-                       :orientation :vertical}
-       [sut/attachment-media {:variant :image}
-        [:img {:src
-               "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=160&h=160&fit=crop"
-               :alt "Mountain landscape"}]]
-       [sut/attachment-content {}
-        [sut/attachment-title {}
-         "landscape.jpg"]
-        [sut/attachment-description {}
-         (name state)]]
-       [sut/attachment-actions {}
-        [sut/attachment-action {:aria-label "Remove landscape.jpg"}
-         [:> X]]]])])))
+ (r/as-element (helpers/wrap-component [attachment-image-state-matrix/example])))
 
-(defstory
- AttachmentSizeGallery
+(defstory AttachmentSizeGallery
  "All supported sizes in the same file-row composition, making density and action hit areas comparable."
+ {:source-code (embed-source "clojure-shadcn.stories.attachment.attachment-size-gallery")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "grid max-w-2xl gap-4 sm:grid-cols-3"}
-    (for [[size label] [[:default "Default"] [:sm "Small"] [:xs "Extra small"]]]
-      ^{:key size}
-      [:div {:class "space-y-2"}
-       [:p {:class "text-xs font-medium text-muted-foreground"}
-        label]
-       [sut/attachment {:size size}
-        [sut/attachment-media {}
-         [:> FileText]]
-        [sut/attachment-content {}
-         [sut/attachment-title {}
-          "roadmap.pdf"]
-         [sut/attachment-description {}
-          "PDF · 840 KB"]]
-        [sut/attachment-actions {}
-         [sut/attachment-action {:aria-label (str "Remove " label " attachment")}
-          [:> X]]]]])])))
+ (r/as-element (helpers/wrap-component [attachment-size-gallery/example])))
 
 (defstory AttachmentOverflowGroup
-          "A horizontally scrollable attachment group for narrow layouts and long filenames."
-          []
-          (r/as-element (helpers/wrap-component [sut/attachment-group {:class "max-w-md"
-                                                                       :aria-label "Project files"}
-                                                 (for [index (range 1 8)]
-                                                   ^{:key index}
-                                                   [sut/attachment {:size :sm}
-                                                    [sut/attachment-media {}
-                                                     [:> FileText]]
-                                                    [sut/attachment-content {}
-                                                     [sut/attachment-title {}
-                                                      (str "quarterly-report-final-" index ".pdf")]
-                                                     [sut/attachment-description {}
-                                                      "2.4 MB"]]])])))
-
-(defstory
- AttachmentFullCardTrigger
- "The overlay trigger makes the full card openable while actions remain independently clickable."
+ "A horizontally scrollable attachment group for narrow layouts and long filenames."
+ {:source-code (embed-source "clojure-shadcn.stories.attachment.attachment-overflow-group")}
  []
- (r/as-element (helpers/wrap-component
-                [sut/attachment {}
-                 [sut/attachment-trigger {:aria-label "Open project brief"
-                                          :on-click #(js/console.log "open project brief")}]
-                 [sut/attachment-media {}
-                  [:> FileText]]
-                 [sut/attachment-content {}
-                  [sut/attachment-title {}
-                   "project-brief.pdf"]
-                  [sut/attachment-description {}
-                   "Click anywhere to open"]]
-                 [sut/attachment-actions {}
-                  [sut/attachment-action {:aria-label "Remove project brief"
-                                          :on-click #(js/console.log "remove project brief")}
-                   [:> X]]]])))
+ (r/as-element (helpers/wrap-component [attachment-overflow-group/example])))
+
+(defstory AttachmentFullCardTrigger
+ "The overlay trigger makes the full card openable while actions remain independently clickable."
+ {:source-code (embed-source "clojure-shadcn.stories.attachment.attachment-full-card-trigger")}
+ []
+ (r/as-element (helpers/wrap-component [attachment-full-card-trigger/example])))

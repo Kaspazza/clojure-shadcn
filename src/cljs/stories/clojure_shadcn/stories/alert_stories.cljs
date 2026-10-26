@@ -1,9 +1,11 @@
 (ns clojure-shadcn.stories.alert-stories
   (:require
-   ["lucide-react"                      :refer [CheckCircle2 CircleAlert]]
-   [clojure-shadcn.stories.helpers      :as helpers]
-   [clojure-shadcn.ui.components.alert  :as sut]
-   [clojure-shadcn.ui.components.button :as button]
+   [clojure-shadcn.stories.alert.playground :as playground]
+   [clojure-shadcn.stories.alert.alert-destructive :as alert-destructive]
+   [clojure-shadcn.stories.alert.alert-action :as alert-action]
+   [clojure-shadcn.stories.alert.alert-colors :as alert-colors]
+   [clojure-shadcn.stories.alert.alert-rtl :as alert-rtl]
+   [clojure-shadcn.stories.helpers :as helpers]
    [reagent.core                        :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
@@ -40,7 +42,8 @@
 
 (defstory Playground
           "Interactive alert playground."
-          {:args {:variant "default"
+          {:source-code (embed-source "clojure-shadcn.stories.alert.playground")
+           :args {:variant "default"
                   :title "Success"
                   :description "Your changes have been saved."}
            :arg-types {:variant {:name "Variant"
@@ -58,77 +61,28 @@
                           (cond-> args
                             variant (update :variant keyword)))}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "max-w-xl p-6"}
-                                                 [sut/alert
-                                                  (select-keys args [:variant])
-                                                  [:> CheckCircle2]
-                                                  [sut/alert-title {}
-                                                   (:title args)]
-                                                  [sut/alert-description {}
-                                                   (:description args)]]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))
 
 (defstory AlertDestructive
+          {:source-code (embed-source "clojure-shadcn.stories.alert.alert-destructive")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "max-w-xl p-6"}
-                          [sut/alert {:variant :destructive}
-                           [:> CircleAlert]
-                           [sut/alert-title {}
-                            "Unable to continue"]
-                           [sut/alert-description {}
-                            "Resolve the validation errors and try again."]]])))
+          (r/as-element (helpers/wrap-component [alert-destructive/example])))
 
 (defstory AlertAction
           "Alert with an action control."
+          {:source-code (embed-source "clojure-shadcn.stories.alert.alert-action")}
           []
-          (r/as-element (helpers/wrap-component
-                         [sut/alert {:class "max-w-md"}
-                          [sut/alert-title {}
-                           "Dark mode is now available"]
-                          [sut/alert-description {}
-                           "Enable it under your profile settings to get started."]
-                          [sut/alert-action {}
-                           [button/button {:variant :default
-                                           :size :xs}
-                            "Enable"]]])))
+          (r/as-element (helpers/wrap-component [alert-action/example])))
 
 (defstory
  AlertColors
  "Colors — upstream class-based color treatments without inventing alert variants."
+ {:source-code (embed-source "clojure-shadcn.stories.alert.alert-colors")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "grid max-w-2xl gap-3"}
-    [sut/alert
-     {:class
-      "border-emerald-600/40 text-emerald-700 dark:text-emerald-400 [&>svg]:text-emerald-600"}
-     [:> CheckCircle2]
-     [sut/alert-title {}
-      "Deployment complete"]
-     [sut/alert-description {}
-      "The production release is now available."]]
-    [sut/alert {:class
-                "border-amber-600/40 text-amber-800 dark:text-amber-300 [&>svg]:text-amber-600"}
-     [:> CircleAlert]
-     [sut/alert-title {}
-      "Maintenance scheduled"]
-     [sut/alert-description {}
-      "Editing will be unavailable for approximately five minutes."]]
-    [sut/alert {:class "border-sky-600/40 text-sky-800 dark:text-sky-300 [&>svg]:text-sky-600"}
-     [:> CircleAlert]
-     [sut/alert-title {}
-      "New workspace policy"]
-     [sut/alert-description {}
-      "Review the updated access requirements before Friday."]]])))
+ (r/as-element (helpers/wrap-component [alert-colors/example])))
 
 (defstory AlertRTL
           "RTL — alert icon and copy follow right-to-left document direction."
+          {:source-code (embed-source "clojure-shadcn.stories.alert.alert-rtl")}
           []
-          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
-                                                       :class "max-w-xl text-right"}
-                                                 [sut/alert {}
-                                                  [:> CheckCircle2]
-                                                  [sut/alert-title {}
-                                                   "تم حفظ التغييرات"]
-                                                  [sut/alert-description {}
-                                                   "تم تحديث إعدادات حسابك بنجاح."]]])))
+          (r/as-element (helpers/wrap-component [alert-rtl/example])))

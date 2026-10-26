@@ -1,8 +1,11 @@
 (ns clojure-shadcn.stories.input-otp-stories
   (:require
-   [clojure-shadcn.stories.helpers         :as helpers]
-   [clojure-shadcn.ui.components.input-otp :as sut]
-   [reagent.core                           :as r])
+   [clojure-shadcn.stories.helpers                      :as helpers]
+   [clojure-shadcn.stories.input-otp.input-otp-disabled :as input-otp-disabled]
+   [clojure-shadcn.stories.input-otp.input-otp-patterns :as input-otp-patterns]
+   [clojure-shadcn.stories.input-otp.playground         :as playground]
+   [clojure-shadcn.stories.input-otp.six-digits         :as six-digits]
+   [reagent.core                                        :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -81,42 +84,22 @@
         :description
         "Forwarded to the separator div; role and data-slot are set by the component."}]}]])))
 
-(defn- otp-example
-  []
-  (r/with-let [value (r/atom "")]
-              [sut/input-otp {:max-length 6
-                              :value @value
-                              :on-change #(reset! value %)
-                              :aria-label "Six-digit verification code"}
-               (into [sut/input-otp-group {}]
-                     (for [index (range 3)]
-                       ^{:key index} [sut/input-otp-slot {:index index}]))
-               [sut/input-otp-separator {}]
-               (into [sut/input-otp-group {}]
-                     (for [index (range 3 6)]
-                       ^{:key index} [sut/input-otp-slot {:index index}]))]))
 
-(defstory SixDigits [] (r/as-element (helpers/wrap-component [otp-example])))
+(defstory SixDigits
+          {:source-code (embed-source "clojure-shadcn.stories.input-otp.six-digits")}
+          []
+          (r/as-element (helpers/wrap-component [six-digits/example])))
 
 (defstory InputOtpDisabled
           "Disabled OTP state. Based on shadcn/ui Input OTP — Disabled."
+          {:source-code (embed-source "clojure-shadcn.stories.input-otp.input-otp-disabled")}
           []
-          (r/as-element (helpers/wrap-component
-                         [sut/input-otp {:max-length 6
-                                         :disabled true
-                                         :value "482913"
-                                         :aria-label "Disabled verification code"}
-                          (into [sut/input-otp-group {}]
-                                (for [index (range 3)]
-                                  ^{:key index} [sut/input-otp-slot {:index index}]))
-                          [sut/input-otp-separator {}]
-                          (into [sut/input-otp-group {}]
-                                (for [index (range 3 6)]
-                                  ^{:key index} [sut/input-otp-slot {:index index}]))])))
+          (r/as-element (helpers/wrap-component [input-otp-disabled/example])))
 
 (defstory Playground
           "Interactive OTP playground."
-          {:args {:max-length 6
+          {:source-code (embed-source "clojure-shadcn.stories.input-otp.playground")
+           :args {:max-length 6
                   :disabled false
                   :placeholder "○"}
            :arg-types {:max-length {:name "Max length"
@@ -126,86 +109,19 @@
                                   :control {:type "boolean"}}
                        :placeholder {:name "Placeholder"
                                      :control {:type "text"}}}
-           :parameters {:playground {:description "Explore input otp max length, disabled and placeholder with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["value" "on-change" "class" "container-class"]}}}
+           :parameters
+           {:playground
+            {:description
+             "Explore input otp max length, disabled and placeholder with a live preview."}
+            :controls {:expanded false
+                       :exclude ["value" "on-change" "class" "container-class"]}}}
           [args]
-          (r/as-element (helpers/wrap-component [sut/input-otp {:max-length (:max-length args)
-                                                                :disabled (:disabled args)
-                                                                :aria-label "Verification code"}
-                                                 (into [sut/input-otp-group {}]
-                                                       (for [index (range (:max-length args))]
-                                                         ^{:key index}
-                                                         [sut/input-otp-slot
-                                                          {:index index
-                                                           :placeholder (:placeholder args)}]))])))
+          (r/as-element (helpers/wrap-component [playground/example args])))
 
-(defn- otp-slots
-  [n]
-  (into [sut/input-otp-group {}]
-        (for [index (range n)]
-          ^{:key index} [sut/input-otp-slot {:index index}])))
-
-(defn- otp-patterns-example
-  []
-  (r/with-let
-   [code (r/atom "")]
-   [:div {:class "grid gap-7"}
-    [:section {:class "grid gap-2"}
-     [:label {:class "text-sm font-medium"}
-      "Numeric code"]
-     [sut/input-otp {:max-length 4
-                     :pattern "[0-9]*"
-                     :input-mode "numeric"
-                     :value @code
-                     :on-change #(reset! code %)
-                     :aria-label "Four digit code"}
-      [otp-slots 4]]
-     [:output {:class "text-sm text-muted-foreground"
-               :aria-live "polite"}
-      "Controlled value: "
-      (if (seq @code) @code "empty")]]
-    [:section {:class "grid gap-2"}
-     [:label {:class "text-sm font-medium"}
-      "Alphanumeric code"]
-     [sut/input-otp {:max-length 6
-                     :pattern "[A-Za-z0-9]*"
-                     :aria-label "Six character code"}
-      [otp-slots 3]
-      [sut/input-otp-separator {}]
-      (into [sut/input-otp-group {}]
-            (for [index (range 3 6)]
-              ^{:key index} [sut/input-otp-slot {:index index}]))]]
-    [:form {:class "grid gap-2"
-            :on-submit #(.preventDefault %)}
-     [:label {:class "text-sm font-medium"}
-      "Invalid form value"]
-     [sut/input-otp {:max-length 6
-                     :name "verification-code"
-                     :required true
-                     :aria-label "Verification code"
-                     :aria-invalid true}
-      (into [sut/input-otp-group {}]
-            (for [index (range 6)]
-              ^{:key index}
-              [sut/input-otp-slot {:index index
-                                   :aria-invalid true}]))]
-     [:p {:class "text-sm text-destructive"}
-      "Enter all six digits."]
-     [:button {:type "submit"
-               :class "h-9 rounded-md bg-primary px-4 text-primary-foreground"}
-      "Verify"]]
-    [:section {:dir "rtl"
-               :class "grid gap-2"}
-     [:label {:class "text-sm font-medium"}
-      "رمز التحقق"]
-     [sut/input-otp {:max-length 4
-                     :input-mode "numeric"
-                     :aria-label "رمز التحقق"}
-      [otp-slots 4]]]]))
 
 (defstory
  InputOtpPatterns
  "Numeric and alphanumeric patterns, controlled output, invalid form integration, and RTL context."
+ {:source-code (embed-source "clojure-shadcn.stories.input-otp.input-otp-patterns")}
  []
- (r/as-element (helpers/wrap-component [otp-patterns-example])))
+ (r/as-element (helpers/wrap-component [input-otp-patterns/example])))

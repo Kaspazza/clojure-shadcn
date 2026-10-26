@@ -1,12 +1,21 @@
 (ns clojure-shadcn.stories.drawer-stories
   "Storybook stories for the Drawer component. Ported from mateuszmazurczak.portfolio.ui-components.drawer."
   (:require
-   [clojure-shadcn.stories.helpers      :as helpers]
-   [clojure-shadcn.ui.components.button :as button]
-   [clojure-shadcn.ui.components.dialog :as dialog]
-   [clojure-shadcn.ui.components.drawer :as sut]
-   [clojure-shadcn.ui.components.input  :as input]
-   [reagent.core                        :as r])
+   [clojure-shadcn.stories.drawer.bottom-drawer            :as bottom-drawer]
+   [clojure-shadcn.stories.drawer.drawer-no-scale          :as drawer-no-scale]
+   [clojure-shadcn.stories.drawer.drawer-rtl               :as drawer-rtl]
+   [clojure-shadcn.stories.drawer.drawer-with-scroll       :as drawer-with-scroll]
+   [clojure-shadcn.stories.drawer.left-drawer-non-modal    :as left-drawer-non-modal]
+   [clojure-shadcn.stories.drawer.nested-drawer            :as nested-drawer]
+   [clojure-shadcn.stories.drawer.playground               :as playground]
+   [clojure-shadcn.stories.drawer.responsive-drawer-dialog :as responsive-drawer-dialog]
+   [clojure-shadcn.stories.drawer.right-drawer             :as right-drawer]
+   [clojure-shadcn.stories.drawer.snap-points-drawer       :as snap-points-drawer]
+   [clojure-shadcn.stories.drawer.stateful-goal-drawer     :as stateful-goal-drawer]
+   [clojure-shadcn.stories.drawer.swipe-handle-only        :as swipe-handle-only]
+   [clojure-shadcn.stories.drawer.top-drawer               :as top-drawer]
+   [clojure-shadcn.stories.helpers                         :as helpers]
+   [reagent.core                                           :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -159,412 +168,84 @@
 
 (defstory
  BottomDrawer
- "Bottom drawer with form example.
-   
-   Common use case for mobile: a drawer that slides up from the bottom
-   with form fields or actions."
+ "Bottom drawer with form example.\n   \n   Common use case for mobile: a drawer that slides up from the bottom\n   with form fields or actions."
+ {:source-code (embed-source "clojure-shadcn.stories.drawer.bottom-drawer")}
  []
- (r/as-element
-  [(fn []
-     (let [open? (r/atom false)]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-4"}
-           [sut/drawer {:open @open?
-                        :on-open-change #(reset! open? %)
-                        :direction :bottom}
-            [sut/drawer-trigger {:as-child true}
-             (button/button {:variant :outline} "Open Bottom Drawer")]
-            [sut/drawer-content {}
-             [sut/drawer-header {}
-              [sut/drawer-title {}
-               "Edit Profile"]
-              [sut/drawer-description {}
-               "Make changes to your profile here. Click save when you're done."]]
-             [:div {:class "p-4 space-y-4"}
-              [:div {:class "space-y-2"}
-               [:label {:class "text-sm font-medium"}
-                "Name"]
-               [input/input {:placeholder "Enter your name"}]]
-              [:div {:class "space-y-2"}
-               [:label {:class "text-sm font-medium"}
-                "Email"]
-               [input/input {:type "email"
-                             :placeholder "Enter your email"}]]]
-             [sut/drawer-footer {}
-              (button/button {:on-click #(reset! open? false)} "Save Changes")
-              (button/button {:variant :outline
-                              :on-click #(reset! open? false)}
-                             "Cancel")]]]]))))]))
+ (r/as-element (helpers/wrap-component [bottom-drawer/example])))
 
 (defstory RightDrawer
           "Right-side drawer with an independently scrollable body and persistent footer."
+          {:source-code (embed-source "clojure-shadcn.stories.drawer.right-drawer")}
           []
-          (r/as-element
-           [(fn []
-              (let [open? (r/atom false)
-                    sections ["Overview"
-                              "Activity"
-                              "Members"
-                              "Integrations"
-                              "Billing"
-                              "Security"
-                              "Notifications"
-                              "Automation"
-                              "Exports"
-                              "Advanced"]]
-                (fn []
-                  (helpers/wrap-component
-                   [:div {:class "p-4"}
-                    [sut/drawer {:open @open?
-                                 :on-open-change #(reset! open? %)
-                                 :direction :right}
-                     [sut/drawer-trigger {:as-child true}
-                      (button/button {:variant :outline} "Open project settings")]
-                     [sut/drawer-content {:class "w-80 overflow-hidden"}
-                      [sut/drawer-header {:class "shrink-0 border-b"}
-                       [sut/drawer-title {}
-                        "Project settings"]
-                       [sut/drawer-description {}
-                        "Choose a section to configure."]]
-                      [:nav {:class "min-h-0 flex-1 space-y-2 overflow-y-auto p-4"
-                             :aria-label "Project settings sections"}
-                       (for [item sections]
-                         ^{:key item}
-                         [:button {:type "button"
-                                   :class "w-full rounded-md px-3 py-3 text-left hover:bg-accent"}
-                          item])]
-                      [sut/drawer-footer {:class "shrink-0 border-t bg-background"}
-                       [sut/drawer-close {:as-child true}
-                        (button/button {:variant :outline
-                                        :class "w-full"}
-                                       "Close settings")]]]]]))))]))
+          (r/as-element (helpers/wrap-component [right-drawer/example])))
 
 (defstory
  DrawerWithScroll
- "Bottom drawer with scrollable content.
-   
-   Shows how the drawer handles overflow content with max-height."
+ "Bottom drawer with scrollable content.\n   \n   Shows how the drawer handles overflow content with max-height."
+ {:source-code (embed-source "clojure-shadcn.stories.drawer.drawer-with-scroll")}
  []
- (r/as-element
-  [(fn []
-     (let [open? (r/atom false)]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-4"}
-           [sut/drawer {:open @open?
-                        :on-open-change #(reset! open? %)
-                        :direction :bottom}
-            [sut/drawer-trigger {:as-child true}
-             (button/button {:variant :outline} "Open Scrollable Drawer")]
-            [sut/drawer-content {}
-             [sut/drawer-header {}
-              [sut/drawer-title {}
-               "Terms and Conditions"]
-              [sut/drawer-description {}
-               "Please read through the terms before continuing"]]
-             [:div {:class "p-4 overflow-y-auto"}
-              (for [i (range 20)]
-                ^{:key i}
-                [:p {:class "mb-4 text-sm text-muted-foreground"}
-                 (str "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-                      "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
-                      "Section "
-                      (inc i)
-                      " of the terms.")])]
-             [sut/drawer-footer {}
-              (button/button {:on-click #(reset! open? false)} "I Accept")
-              (button/button {:variant :outline
-                              :on-click #(reset! open? false)}
-                             "Decline")]]]]))))]))
+ (r/as-element (helpers/wrap-component [drawer-with-scroll/example])))
 
 (defstory
  DrawerNoScale
- "Drawer without background scaling.
-   
-   By default, the background scales down slightly when drawer opens.
-   This example shows how to disable that effect."
+ "Drawer without background scaling.\n   \n   By default, the background scales down slightly when drawer opens.\n   This example shows how to disable that effect."
+ {:source-code (embed-source "clojure-shadcn.stories.drawer.drawer-no-scale")}
  []
- (r/as-element
-  [(fn []
-     (let [open? (r/atom false)]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-4"}
-           [sut/drawer {:open @open?
-                        :on-open-change #(reset! open? %)
-                        :direction :bottom
-                        :should-scale-background false}
-            [sut/drawer-trigger {:as-child true}
-             (button/button {:variant :outline} "Open (No Scale)")]
-            [sut/drawer-content {}
-             [sut/drawer-header {}
-              [sut/drawer-title {}
-               "No Background Scaling"]
-              [sut/drawer-description {}
-               "Notice the background doesn't scale when this opens"]]
-             [:div {:class "p-4"}
-              [:p {:class "text-sm text-muted-foreground"}
-               "This drawer is configured with :should-scale-background false"]]
-             [sut/drawer-footer {}
-              (button/button {:on-click #(reset! open? false)} "Close")]]]]))))]))
+ (r/as-element (helpers/wrap-component [drawer-no-scale/example])))
 
 (defstory
  TopDrawer
- "Top drawer variant.
-
-  Useful for non-critical announcements or quick filters sliding from top."
+ "Top drawer variant.\n\n  Useful for non-critical announcements or quick filters sliding from top."
+ {:source-code (embed-source "clojure-shadcn.stories.drawer.top-drawer")}
  []
- (r/as-element
-  [(fn []
-     (let [open? (r/atom false)]
-       (fn []
-         (helpers/wrap-component [:div {:class "p-4"}
-                                  [sut/drawer {:open @open?
-                                               :on-open-change #(reset! open? %)
-                                               :direction :top}
-                                   [sut/drawer-trigger {:as-child true}
-                                    (button/button {:variant :outline} "Open Top Drawer")]
-                                   [sut/drawer-content {}
-                                    [sut/drawer-header {}
-                                     [sut/drawer-title {}
-                                      "Quick Filters"]
-                                     [sut/drawer-description {}
-                                      "Apply fast filters without leaving current context."]]
-                                    [sut/drawer-footer {}
-                                     (button/button {:on-click #(reset! open? false)}
-                                                    "Apply")]]]]))))]))
+ (r/as-element (helpers/wrap-component [top-drawer/example])))
 
 (defstory
  LeftDrawerNonModal
- "Left drawer with non-modal behavior.
-
-  Demonstrates :direction :left and :modal false for side-by-side workflows."
+ "Left drawer with non-modal behavior.\n\n  Demonstrates :direction :left and :modal false for side-by-side workflows."
+ {:source-code (embed-source "clojure-shadcn.stories.drawer.left-drawer-non-modal")}
  []
- (r/as-element
-  [(fn []
-     (let [open? (r/atom false)]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-4"}
-           [sut/drawer {:open @open?
-                        :on-open-change #(reset! open? %)
-                        :direction :left
-                        :modal false}
-            [sut/drawer-trigger {:as-child true}
-             (button/button {:variant :outline} "Open Left Non-Modal")]
-            [sut/drawer-content {:class "w-80"}
-             [sut/drawer-header {}
-              [sut/drawer-title {}
-               "Inspector"]
-              [sut/drawer-description {}
-               "Background stays interactive while this panel is open."]]
-             [sut/drawer-footer {}
-              (button/button {:variant :outline
-                              :on-click #(reset! open? false)}
-                             "Close")]]]]))))]))
+ (r/as-element (helpers/wrap-component [left-drawer-non-modal/example])))
 
 
 (defstory StatefulGoalDrawer
           "Stateful mobile-style drawer for adjusting and saving a daily activity goal."
+          {:source-code (embed-source "clojure-shadcn.stories.drawer.stateful-goal-drawer")}
           []
-          (r/as-element
-           [(fn []
-              (let [open? (r/atom false)
-                    goal (r/atom 350)]
-                (fn []
-                  (helpers/wrap-component
-                   [:div {:class "p-4"}
-                    [sut/drawer {:open @open?
-                                 :on-open-change #(reset! open? %)
-                                 :direction :bottom}
-                     [sut/drawer-trigger {:as-child true}
-                      (button/button {:variant :outline} "Set daily goal")]
-                     [sut/drawer-content {}
-                      [sut/drawer-header {:class "text-center"}
-                       [sut/drawer-title {}
-                        "Daily activity goal"]
-                       [sut/drawer-description {}
-                        "Choose how many calories you want to burn each day."]]
-                      [:div
-                       {:class
-                        "mx-auto flex w-full max-w-sm items-center justify-center gap-6 px-4 py-6"}
-                       (button/button {:variant :outline
-                                       :size :icon
-                                       :aria-label "Decrease daily goal"
-                                       :disabled (<= @goal 100)
-                                       :on-click #(swap! goal (fn [value] (max 100 (- value 10))))}
-                                      "−")
-                       [:div {:class "min-w-28 text-center"}
-                        [:div {:class "text-5xl font-bold tabular-nums"}
-                         @goal]
-                        [:div {:class "text-sm text-muted-foreground"}
-                         "calories per day"]]
-                       (button/button {:variant :outline
-                                       :size :icon
-                                       :aria-label "Increase daily goal"
-                                       :disabled (>= @goal 1000)
-                                       :on-click #(swap! goal (fn [value] (min 1000 (+ value 10))))}
-                                      "+")]
-                      [sut/drawer-footer {:class "mx-auto w-full max-w-sm"}
-                       (button/button {:on-click #(reset! open? false)} "Save goal")
-                       [sut/drawer-close {:as-child true}
-                        (button/button {:variant :outline} "Cancel")]]]]]))))]))
+          (r/as-element (helpers/wrap-component [stateful-goal-drawer/example])))
 
 (defstory DrawerRtl
           "Right-to-left drawer with localized labels and direction-aware alignment."
+          {:source-code (embed-source "clojure-shadcn.stories.drawer.drawer-rtl")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [:div {:class "p-4"
-                   :dir "rtl"}
-             [sut/drawer {:direction :right}
-              [sut/drawer-trigger {:as-child true}
-               (button/button {:variant :outline} "فتح الإعدادات")]
-              [sut/drawer-content {:class "w-80"
-                                   :dir "rtl"}
-               [sut/drawer-header {:class "text-right"}
-                [sut/drawer-title {}
-                 "إعدادات الحساب"]
-                [sut/drawer-description {}
-                 "حدّث تفضيلات حسابك."]]
-               [:div {:class "flex-1 px-4 text-right text-sm text-muted-foreground"}
-                "تُطبّق التغييرات بعد الحفظ."]
-               [sut/drawer-footer {}
-                [sut/drawer-close {:as-child true}
-                 (button/button {:variant :outline} "إلغاء")]
-                [sut/drawer-close {:as-child true}
-                 (button/button {} "حفظ")]]]]])))
+          (r/as-element (helpers/wrap-component [drawer-rtl/example])))
 
 (defstory
  NestedDrawer
  "A Vaul nested root inside its parent content. Opening the child lets Vaul transform the parent as a stack."
+ {:source-code (embed-source "clojure-shadcn.stories.drawer.nested-drawer")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-4"}
-    [sut/drawer {}
-     [sut/drawer-trigger {:as-child true}
-      (button/button {:variant :outline} "Open parent drawer")]
-     [sut/drawer-content {}
-      [sut/drawer-header {}
-       [sut/drawer-title {}
-        "Parent drawer"]
-       [sut/drawer-description {}
-        "The nested root must remain inside this content."]]
-      [:div {:class "p-4"}
-       [sut/drawer-nested-root {}
-        [sut/drawer-trigger {:as-child true}
-         (button/button {} "Open nested drawer")]
-        [sut/drawer-content {:class "min-h-[45vh]"}
-         [sut/drawer-header {}
-          [sut/drawer-title {}
-           "Nested drawer"]
-          [sut/drawer-description {}
-           "Vaul coordinates this drawer with its parent."]]
-         [sut/drawer-footer {}
-          [sut/drawer-close {:as-child true}
-           (button/button {:variant :outline} "Close nested drawer")]]]]]
-      [sut/drawer-footer {}
-       [sut/drawer-close {:as-child true}
-        (button/button {:variant :outline} "Close parent drawer")]]]]])))
+ (r/as-element (helpers/wrap-component [nested-drawer/example])))
 
 (defstory SnapPointsDrawer
           "Controlled snap points. Drag or click the Vaul handle to move between stops."
+          {:source-code (embed-source "clojure-shadcn.stories.drawer.snap-points-drawer")}
           []
-          (r/as-element
-           [(fn []
-              (let [snap-points ["148px" "355px" 1]
-                    active-snap-point (r/atom (first snap-points))]
-                (fn []
-                  (helpers/wrap-component
-                   [:div {:class "p-4"}
-                    [sut/drawer {:snap-points snap-points
-                                 :active-snap-point @active-snap-point
-                                 :set-active-snap-point #(reset! active-snap-point %)
-                                 :fade-from-index 1}
-                     [sut/drawer-trigger {:as-child true}
-                      (button/button {:variant :outline} "Open snap-point drawer")]
-                     [sut/drawer-content {:show-handle? false
-                                          :class "h-full max-h-[97vh]"}
-                      [sut/drawer-handle {}]
-                      [sut/drawer-header {}
-                       [sut/drawer-title {}
-                        "Three snap points"]
-                       [sut/drawer-description {}
-                        (str "Active stop: " @active-snap-point)]]
-                      [:div {:class "overflow-y-auto px-4 pb-8 text-sm text-muted-foreground"}
-                       "Swipe to resize. Clicking the handle cycles through snap points."]]]]))))]))
+          (r/as-element (helpers/wrap-component [snap-points-drawer/example])))
 
 (defstory
  SwipeHandleOnly
  "Only the explicit Vaul handle starts a swipe; content interactions do not drag the drawer."
+ {:source-code (embed-source "clojure-shadcn.stories.drawer.swipe-handle-only")}
  []
- (r/as-element (helpers/wrap-component
-                [:div {:class "p-4"}
-                 [sut/drawer {:handle-only true}
-                  [sut/drawer-trigger {:as-child true}
-                   (button/button {:variant :outline} "Open handle-only drawer")]
-                  [sut/drawer-content {:show-handle? false}
-                   [sut/drawer-handle {:prevent-cycle true}]
-                   [sut/drawer-header {}
-                    [sut/drawer-title {}
-                     "Swipe the handle"]
-                    [sut/drawer-description {}
-                     "Dragging is restricted to the visible handle; click cycling is disabled."]]
-                   [:div {:class "p-4"}
-                    [input/input {:placeholder "Interacting here will not drag the drawer"}]]]]])))
+ (r/as-element (helpers/wrap-component [swipe-handle-only/example])))
 
 (defstory
  ResponsiveDrawerDialog
  "The same controlled workflow uses a dialog from 768px upward and a bottom drawer below it."
+ {:source-code (embed-source "clojure-shadcn.stories.drawer.responsive-drawer-dialog")}
  []
- (r/as-element
-  [(fn []
-     (let [open? (r/atom false)
-           desktop? (r/atom false)
-           media-query (atom nil)
-           update-layout! #(reset! desktop? (.-matches %))]
-       (r/create-class
-        {:display-name "responsive-drawer-dialog-story"
-         :component-did-mount (fn []
-                                (let [query (js/window.matchMedia "(min-width: 768px)")]
-                                  (reset! media-query query)
-                                  (reset! desktop? (.-matches query))
-                                  (.addEventListener query "change" update-layout!)))
-         :component-will-unmount (fn []
-                                   (when-let [query @media-query]
-                                     (.removeEventListener query "change" update-layout!)))
-         :reagent-render (fn []
-                           (helpers/wrap-component
-                            [:div {:class "p-4"}
-                             (if @desktop?
-                               [dialog/dialog {:open @open?
-                                               :on-open-change #(reset! open? %)}
-                                [dialog/dialog-trigger {:as-child true}
-                                 (button/button {:variant :outline} "Edit profile")]
-                                [dialog/dialog-content {}
-                                 [dialog/dialog-header {}
-                                  [dialog/dialog-title {}
-                                   "Edit profile"]
-                                  [dialog/dialog-description {}
-                                   "Desktop uses Radix Dialog; mobile uses Vaul."]]
-                                 [dialog/dialog-footer {}
-                                  [dialog/dialog-close {:as-child true}
-                                   (button/button {:variant :outline} "Close")]]]]
-                               [sut/drawer {:open @open?
-                                            :on-open-change #(reset! open? %)}
-                                [sut/drawer-trigger {:as-child true}
-                                 (button/button {:variant :outline} "Edit profile")]
-                                [sut/drawer-content {}
-                                 [sut/drawer-header {}
-                                  [sut/drawer-title {}
-                                   "Edit profile"]
-                                  [sut/drawer-description {}
-                                   "Desktop uses Radix Dialog; mobile uses Vaul."]]
-                                 [sut/drawer-footer {}
-                                  [sut/drawer-close {:as-child true}
-                                   (button/button {:variant :outline} "Close")]]]])]))})))]))
+ (r/as-element (helpers/wrap-component [responsive-drawer-dialog/example])))
 
 (defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
@@ -578,17 +259,7 @@
            :decode-args (fn [{:keys [direction]
                               :as args}]
                           (cond-> args
-                            direction (update :direction keyword)))}
+                            direction (update :direction keyword)))
+           :source-code (embed-source "clojure-shadcn.stories.drawer.playground")}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/drawer
-                                                  (select-keys args [:direction])
-                                                  [sut/drawer-trigger {:as-child true}
-                                                   [button/button {:variant :outline}
-                                                    "Open drawer"]]
-                                                  [sut/drawer-content {}
-                                                   [sut/drawer-header {}
-                                                    [sut/drawer-title {}
-                                                     "Move goal"]
-                                                    [sut/drawer-description {}
-                                                     "Set your daily activity goal."]]]]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))

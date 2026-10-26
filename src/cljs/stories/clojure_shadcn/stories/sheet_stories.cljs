@@ -1,12 +1,14 @@
 (ns clojure-shadcn.stories.sheet-stories
   "Storybook stories for the Sheet component. Ported from mateuszmazurczak.portfolio.ui-components.sheet."
   (:require
-   [clojure-shadcn.stories.helpers      :as helpers]
-   [clojure-shadcn.ui.components.button :as button]
-   [clojure-shadcn.ui.components.input  :as input]
-   [clojure-shadcn.ui.components.label  :as label]
-   [clojure-shadcn.ui.components.sheet  :as sut]
-   [reagent.core                        :as r])
+   [clojure-shadcn.stories.helpers                          :as helpers]
+   [clojure-shadcn.stories.sheet.playground                 :as example-playground]
+   [clojure-shadcn.stories.sheet.sheet-demo                 :as example-sheet-demo]
+   [clojure-shadcn.stories.sheet.sheet-rtl                  :as example-sheet-rtl]
+   [clojure-shadcn.stories.sheet.sheet-scrollable           :as example-sheet-scrollable]
+   [clojure-shadcn.stories.sheet.sheet-side                 :as example-sheet-side]
+   [clojure-shadcn.stories.sheet.sheet-without-close-button :as example-sheet-without-close-button]
+   [reagent.core                                            :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -173,55 +175,16 @@
   All exported sheet components are ordinary Reagent wrapper functions.
 
   Sheets slide in from an edge to reveal secondary content."
+ {:source-code (embed-source "clojure-shadcn.stories.sheet.sheet-demo")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/sheet {}
-     [sut/sheet-trigger {:as-child true}
-      (button/button {:variant :outline} "Open")]
-     [sut/sheet-content {}
-      [sut/sheet-header {}
-       [sut/sheet-title {}
-        "Edit profile"]
-       [sut/sheet-description {}
-        "Make changes to your profile here. Click save when you're done."]]
-      [:div {:class "grid flex-1 auto-rows-min gap-6 px-4"}
-       [:div {:class "grid gap-3"}
-        [label/label {:html-for "sheet-demo-name"}
-         "Name"]
-        [input/input {:id "sheet-demo-name"
-                      :default-value "Pedro Duarte"}]]
-       [:div {:class "grid gap-3"}
-        [label/label {:html-for "sheet-demo-username"}
-         "Username"]
-        [input/input {:id "sheet-demo-username"
-                      :default-value "@peduarte"}]]]
-      [sut/sheet-footer {}
-       (button/button {:type "submit"} "Save changes")
-       [sut/sheet-close {:as-child true}
-        (button/button {:variant :outline} "Close")]]]]])))
+ (r/as-element (helpers/wrap-component [example-sheet-demo/example])))
 
 (defstory
  SheetWithoutCloseButton
  "Sheet without the generated corner close button. An explicit footer action remains available for dismissal."
+ {:source-code (embed-source "clojure-shadcn.stories.sheet.sheet-without-close-button")}
  []
- (r/as-element (helpers/wrap-component
-                [:div {:class "p-6"}
-                 [sut/sheet {}
-                  [sut/sheet-trigger {:as-child true}
-                   (button/button {:variant :outline} "Open without corner close")]
-                  [sut/sheet-content {:show-close-button false}
-                   [sut/sheet-header {}
-                    [sut/sheet-title {}
-                     "Review changes"]
-                    [sut/sheet-description {}
-                     "This sheet uses only its explicit dismissal action."]]
-                   [:div {:class "grid flex-1 gap-4 px-4 text-sm text-muted-foreground"}
-                    "Confirm the details before returning to the page."]
-                   [sut/sheet-footer {}
-                    [sut/sheet-close {:as-child true}
-                     (button/button {:variant :outline} "Done")]]]]])))
+ (r/as-element (helpers/wrap-component [example-sheet-without-close-button/example])))
 
 (defstory
  SheetSide
@@ -230,39 +193,9 @@
   Radix primitive: @radix-ui/react-dialog
 
   Use :side to control where the sheet appears."
+ {:source-code (embed-source "clojure-shadcn.stories.sheet.sheet-side")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6 grid grid-cols-2 gap-2"}
-    (for [side [:top :right :bottom :left]]
-      ^{:key side}
-      [sut/sheet {}
-       [sut/sheet-trigger {:as-child true}
-        (button/button {:variant :outline} (name side))]
-       [sut/sheet-content {:side side}
-        [sut/sheet-header {}
-         [sut/sheet-title {}
-          "Edit profile"]
-         [sut/sheet-description {}
-          "Make changes to your profile here. Click save when you're done."]]
-        [:div {:class "grid gap-4 py-4"}
-         [:div {:class "grid grid-cols-4 items-center gap-4"}
-          [label/label {:html-for (str "sheet-name-" (name side))
-                        :class "text-right"}
-           "Name"]
-          [input/input {:id (str "sheet-name-" (name side))
-                        :default-value "Pedro Duarte"
-                        :class "col-span-3"}]]
-         [:div {:class "grid grid-cols-4 items-center gap-4"}
-          [label/label {:html-for (str "sheet-username-" (name side))
-                        :class "text-right"}
-           "Username"]
-          [input/input {:id (str "sheet-username-" (name side))
-                        :default-value "@peduarte"
-                        :class "col-span-3"}]]]
-        [sut/sheet-footer {}
-         [sut/sheet-close {:as-child true}
-          (button/button {:type "submit"} "Save changes")]]]])])))
+ (r/as-element (helpers/wrap-component [example-sheet-side/example])))
 
 (defstory
  SheetScrollable
@@ -271,55 +204,16 @@
   Radix primitive: @radix-ui/react-dialog
 
   Use overflow classes to handle long content in sheets."
+ {:source-code (embed-source "clojure-shadcn.stories.sheet.sheet-scrollable")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/sheet {}
-     [sut/sheet-trigger {:as-child true}
-      (button/button {:variant :outline} "Open Scrollable")]
-     [sut/sheet-content {:class "overflow-y-auto"}
-      [sut/sheet-header {}
-       [sut/sheet-title {}
-        "Release Notes"]
-       [sut/sheet-description {}
-        "Review recent changes before continuing."]]
-      [:div {:class "space-y-3 px-4"}
-       (for [idx (range 1 16)]
-         ^{:key idx}
-         [:p {:class "text-sm text-muted-foreground"}
-          (str "Release item " idx ": Updated feature details and fixes.")])]
-      [sut/sheet-footer {}
-       [sut/sheet-close {:as-child true}
-        (button/button {:variant :outline} "Close")]]]]])))
+ (r/as-element (helpers/wrap-component [example-sheet-scrollable/example])))
 
 
 (defstory SheetRtl
           "Right-to-left sheet content with localized labels and explicit close action."
+          {:source-code (embed-source "clojure-shadcn.stories.sheet.sheet-rtl")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [:div {:class "p-6"
-                   :dir "rtl"}
-             [sut/sheet {}
-              [sut/sheet-trigger {:as-child true}
-               (button/button {:variant :outline} "فتح الملف الشخصي")]
-              [sut/sheet-content {:side :right
-                                  :dir "rtl"}
-               [sut/sheet-header {:class "text-right sm:text-right"}
-                [sut/sheet-title {}
-                 "تعديل الملف الشخصي"]
-                [sut/sheet-description {}
-                 "حدّث بياناتك ثم احفظ التغييرات."]]
-               [:div {:class "grid flex-1 gap-3 px-4"}
-                [label/label {:html-for "sheet-rtl-name"}
-                 "الاسم"]
-                [input/input {:id "sheet-rtl-name"
-                              :default-value "ليلى أحمد"}]]
-               [sut/sheet-footer {:class "sm:justify-start sm:space-x-0 sm:gap-2"}
-                [sut/sheet-close {:as-child true}
-                 (button/button {:variant :outline} "إلغاء")]
-                (button/button {} "حفظ التغييرات")]]]])))
+          (r/as-element (helpers/wrap-component [example-sheet-rtl/example])))
 
 (defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
@@ -333,17 +227,7 @@
            :decode-args (fn [{:keys [side]
                               :as args}]
                           (cond-> args
-                            side (update :side keyword)))}
+                            side (update :side keyword)))
+           :source-code (embed-source "clojure-shadcn.stories.sheet.playground")}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/sheet {}
-                                                  [sut/sheet-trigger {:as-child true}
-                                                   [button/button {:variant :outline}
-                                                    "Open sheet"]]
-                                                  [sut/sheet-content
-                                                   (select-keys args [:side])
-                                                   [sut/sheet-header {}
-                                                    [sut/sheet-title {}
-                                                     "Edit profile"]
-                                                    [sut/sheet-description {}
-                                                     "Make changes to your profile here."]]]]])))
+          (r/as-element (helpers/wrap-component [example-playground/example args])))

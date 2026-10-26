@@ -1,13 +1,14 @@
 (ns clojure-shadcn.stories.popover-stories
   "Storybook stories for the Popover component. Ported from mateuszmazurczak.portfolio.ui-components.popover."
   (:require
-   [clojure-shadcn.stories.helpers       :as helpers]
-   [clojure-shadcn.ui.components.button  :as button]
-   [clojure-shadcn.ui.components.command :as command]
-   [clojure-shadcn.ui.components.input   :as input]
-   [clojure-shadcn.ui.components.label   :as label]
-   [clojure-shadcn.ui.components.popover :as sut]
-   [reagent.core                         :as r])
+   [clojure-shadcn.stories.helpers                    :as helpers]
+   [clojure-shadcn.stories.popover.combobox-popover   :as example-combobox-popover]
+   [clojure-shadcn.stories.popover.playground         :as example-playground]
+   [clojure-shadcn.stories.popover.popover-alignments :as example-popover-alignments]
+   [clojure-shadcn.stories.popover.popover-demo       :as example-popover-demo]
+   [clojure-shadcn.stories.popover.popover-rtl        :as example-popover-rtl]
+   [clojure-shadcn.stories.popover.popover-text-only  :as example-popover-text-only]
+   [reagent.core                                      :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -152,45 +153,9 @@
   Radix primitive: @radix-ui/react-popover
 
   Useful for lightweight edits or inline settings."
+ {:source-code (embed-source "clojure-shadcn.stories.popover.popover-demo")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/popover {}
-     [sut/popover-trigger {:as-child true}
-      (button/button {:variant :outline} "Open popover")]
-     [sut/popover-content {:class "w-80"}
-      [:div {:class "grid gap-4"}
-       [sut/popover-header {}
-        [sut/popover-title {}
-         "Dimensions"]
-        [sut/popover-description {}
-         "Set the dimensions for the layer."]]
-       [:div {:class "grid gap-2"}
-        [:div {:class "grid grid-cols-3 items-center gap-4"}
-         [label/label {:html-for "width"}
-          "Width"]
-         [input/input {:id "width"
-                       :default-value "100%"
-                       :class "col-span-2 h-8"}]]
-        [:div {:class "grid grid-cols-3 items-center gap-4"}
-         [label/label {:html-for "max-width"}
-          "Max. width"]
-         [input/input {:id "max-width"
-                       :default-value "300px"
-                       :class "col-span-2 h-8"}]]
-        [:div {:class "grid grid-cols-3 items-center gap-4"}
-         [label/label {:html-for "height"}
-          "Height"]
-         [input/input {:id "height"
-                       :default-value "25px"
-                       :class "col-span-2 h-8"}]]
-        [:div {:class "grid grid-cols-3 items-center gap-4"}
-         [label/label {:html-for "max-height"}
-          "Max. height"]
-         [input/input {:id "max-height"
-                       :default-value "none"
-                       :class "col-span-2 h-8"}]]]]]]])))
+ (r/as-element (helpers/wrap-component [example-popover-demo/example])))
 
 (defstory
  ComboboxPopover
@@ -199,49 +164,9 @@
   Radix primitives: @radix-ui/react-popover, @radix-ui/react-dialog
 
   Use popover + command for searchable selections."
+ {:source-code (embed-source "clojure-shadcn.stories.popover.combobox-popover")}
  []
- (r/as-element
-  [(fn []
-     (let [open? (r/atom false)
-           selected (r/atom nil)
-           statuses [{:value "backlog"
-                      :label "Backlog"}
-                     {:value "todo"
-                      :label "Todo"}
-                     {:value "in-progress"
-                      :label "In Progress"}
-                     {:value "done"
-                      :label "Done"}
-                     {:value "canceled"
-                      :label "Canceled"}]]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-6 flex items-center gap-4"}
-           [:p {:class "text-muted-foreground text-sm"}
-            "Status"]
-           [sut/popover {:open @open?
-                         :on-open-change #(reset! open? %)}
-            [sut/popover-trigger {:as-child true}
-             (button/button {:variant :outline
-                             :class "w-[160px] justify-start"}
-                            (or (:label @selected) "+ Set status"))]
-            [sut/popover-content {:class "p-0"
-                                  :side "right"
-                                  :align "start"}
-             [command/command {}
-              [command/command-input {:placeholder "Change status..."}]
-              [command/command-list {}
-               [command/command-empty {}
-                "No results found."]
-               [command/command-group {}
-                (for [{:keys [value label]} statuses]
-                  ^{:key value}
-                  [command/command-item {:value value
-                                         :on-select (fn [_]
-                                                      (reset! selected {:value value
-                                                                        :label label})
-                                                      (reset! open? false))}
-                   label])]]]]]]))))]))
+ (r/as-element (helpers/wrap-component [example-combobox-popover/example])))
 
 (defstory
  PopoverTextOnly
@@ -250,58 +175,23 @@
   Radix primitive: @radix-ui/react-popover
 
   Good for quick hints or short explanations."
+ {:source-code (embed-source "clojure-shadcn.stories.popover.popover-text-only")}
  []
- (r/as-element (helpers/wrap-component
-                [:div {:class "p-6"}
-                 [sut/popover {}
-                  [sut/popover-trigger {:as-child true}
-                   (button/button {:variant :outline} "Why this matters")]
-                  [sut/popover-content {:class "w-72"}
-                   [:p {:class "text-sm text-muted-foreground"}
-                    "Popover content can be lightweight explanatory text or callouts."]]]])))
+ (r/as-element (helpers/wrap-component [example-popover-text-only/example])))
 
 
 (defstory
  PopoverRtl
  "Localized form popover in right-to-left reading order. This verifies forwarded directionality and start alignment."
+ {:source-code (embed-source "clojure-shadcn.stories.popover.popover-rtl")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"
-          :dir "rtl"}
-    [sut/popover {}
-     [sut/popover-trigger {:as-child true}
-      (button/button {:variant :outline} "تعديل الملف")]
-     [sut/popover-content {:align "start"
-                           :class "w-80"
-                           :dir "rtl"}
-      [sut/popover-header {}
-       [sut/popover-title {}
-        "بيانات الحساب"]
-       [sut/popover-description {}
-        "حدّث الاسم الظاهر في ملفك الشخصي."]]
-      [:div {:class "mt-4 grid gap-2"}
-       [label/label {:html-for "rtl-display-name"}
-        "الاسم"]
-       [input/input {:id "rtl-display-name"
-                     :default-value "مريم"}]]]]])))
+ (r/as-element (helpers/wrap-component [example-popover-rtl/example])))
 
 (defstory PopoverAlignments
           "Start, center, and end alignment using the existing content primitive."
+          {:source-code (embed-source "clojure-shadcn.stories.popover.popover-alignments")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "flex flex-wrap items-start justify-center gap-16 p-16"}
-                          (for [align ["start" "center" "end"]]
-                            ^{:key align}
-                            [sut/popover {}
-                             [sut/popover-trigger {:as-child true}
-                              (button/button {:variant :outline
-                                              :aria-label (str "Open " align " aligned popover")}
-                                             align)]
-                             [sut/popover-content {:align align
-                                                   :class "w-56"}
-                              [:p {:class "text-sm"}
-                               (str "Content aligned to the " align " edge.")]]])])))
+          (r/as-element (helpers/wrap-component [example-popover-alignments/example])))
 
 (defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
@@ -311,11 +201,7 @@
                               :options ["top" "right" "bottom" "left"]}}
            :parameters {:playground {:description "Explore popover side with a live preview."}
                         :controls {:expanded false
-                                   :exclude ["children" "open" "default-open" "on-open-change"]}}}
+                                   :exclude ["children" "open" "default-open" "on-open-change"]}}
+           :source-code (embed-source "clojure-shadcn.stories.popover.playground")}
           [args]
-          (r/as-element (helpers/wrap-component
-                         [sut/popover {}
-                          [sut/popover-trigger {:as-child true}
-                           [button/button {:variant :outline}
-                            "Open popover"]]
-                          [sut/popover-content (select-keys args [:side]) "Place content here."]])))
+          (r/as-element (helpers/wrap-component [example-playground/example args])))

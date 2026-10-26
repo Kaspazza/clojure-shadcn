@@ -1,12 +1,15 @@
 (ns clojure-shadcn.stories.avatar-stories
-  "Storybook stories for the Avatar component. Ported from mateuszmazurczak.portfolio.ui-components.avatar."
   (:require
-   ["lucide-react"                             :refer [ChevronsUpDown LogOut Plus Settings]]
-   [clojure-shadcn.stories.helpers             :as helpers]
-   [clojure-shadcn.ui.components.avatar        :as sut]
-   [clojure-shadcn.ui.components.button        :as button]
-   [clojure-shadcn.ui.components.dropdown-menu :as dropdown]
-   [reagent.core                               :as r])
+   [clojure-shadcn.stories.avatar.avatar-badge-with-icon :as avatar-badge-with-icon]
+   [clojure-shadcn.stories.avatar.avatar-custom-sizes    :as avatar-custom-sizes]
+   [clojure-shadcn.stories.avatar.avatar-dropdown        :as avatar-dropdown]
+   [clojure-shadcn.stories.avatar.avatar-group-rtl       :as avatar-group-rtl]
+   [clojure-shadcn.stories.avatar.avatar-with-badge      :as avatar-with-badge]
+   [clojure-shadcn.stories.avatar.empty-avatar           :as empty-avatar]
+   [clojure-shadcn.stories.avatar.empty-avatar-group     :as empty-avatar-group]
+   [clojure-shadcn.stories.avatar.playground             :as playground]
+   [clojure-shadcn.stories.helpers                       :as helpers]
+   [reagent.core                                         :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -109,7 +112,8 @@
 
 (defstory Playground
           "Interactive avatar playground."
-          {:args {:size "default"
+          {:source-code (embed-source "clojure-shadcn.stories.avatar.playground")
+           :args {:size "default"
                   :alt "Shadcn"
                   :fallback "CN"}
            :arg-types {:size {:name "Size"
@@ -119,22 +123,18 @@
                              :control {:type "text"}}
                        :fallback {:name "Fallback text"
                                   :control {:type "text"}}}
-           :parameters {:playground {:description "Explore avatar size, alternative text and fallback text with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["class" "src"]}}
+           :parameters
+           {:playground
+            {:description
+             "Explore avatar size, alternative text and fallback text with a live preview."}
+            :controls {:expanded false
+                       :exclude ["class" "src"]}}
            :decode-args (fn [{:keys [size]
                               :as args}]
                           (cond-> args
                             size (update :size keyword)))}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/avatar
-                                                  (select-keys args [:size])
-                                                  [sut/avatar-image {:src
-                                                                     "https://github.com/shadcn.png"
-                                                                     :alt (:alt args)}]
-                                                  [sut/avatar-fallback {}
-                                                   (:fallback args)]]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))
 
 (defstory
  EmptyAvatar
@@ -143,14 +143,9 @@
   Radix primitive: @radix-ui/react-avatar
 
   Use a grayscale avatar as the empty media."
+ {:source-code (embed-source "clojure-shadcn.stories.avatar.empty-avatar")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/avatar {:size :lg}
-                                         [sut/avatar-image {:src "https://github.com/shadcn.png"
-                                                            :alt "@shadcn"
-                                                            :class "grayscale"}]
-                                         [sut/avatar-fallback {}
-                                          "LR"]]])))
+ (r/as-element (helpers/wrap-component [empty-avatar/example])))
 
 (defstory
  EmptyAvatarGroup
@@ -159,50 +154,16 @@
   Based on shadcn/ui Avatar Group — current new-york-v4.
 
   Use the count when more members exist than the interface can display."
+ {:source-code (embed-source "clojure-shadcn.stories.avatar.empty-avatar-group")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/avatar-group {}
-     [sut/avatar {:size :lg
-                  :class "grayscale"}
-      [sut/avatar-image {:src "https://github.com/shadcn.png"
-                         :alt "@shadcn"}]
-      [sut/avatar-fallback {}
-       "CN"]]
-     [sut/avatar {:size :lg
-                  :class "grayscale"}
-      [sut/avatar-image {:src "https://github.com/maxleiter.png"
-                         :alt "@maxleiter"}]
-      [sut/avatar-fallback {}
-       "ML"]]
-     [sut/avatar {:size :lg
-                  :class "grayscale"}
-      [sut/avatar-image {:src "https://github.com/evilrabbit.png"
-                         :alt "@evilrabbit"}]
-      [sut/avatar-fallback {}
-       "ER"]]
-     [sut/avatar-group-count {:aria-label "5 more members"}
-      "+5"]]])))
+ (r/as-element (helpers/wrap-component [empty-avatar-group/example])))
 
 (defstory
  AvatarGroupRtl
  "Avatar group in a right-to-left container. The DOM order and overlap remain observable independently of the localized count label."
+ {:source-code (embed-source "clojure-shadcn.stories.avatar.avatar-group-rtl")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"
-                                              :dir "rtl"}
-                                        [sut/avatar-group {:aria-label "فريق المشروع"}
-                                         [sut/avatar {}
-                                          [sut/avatar-fallback {}
-                                           "س"]]
-                                         [sut/avatar {}
-                                          [sut/avatar-fallback {}
-                                           "م"]]
-                                         [sut/avatar {}
-                                          [sut/avatar-fallback {}
-                                           "ل"]]
-                                         [sut/avatar-group-count {:aria-label "ثلاثة أعضاء آخرون"}
-                                          "+٣"]]])))
+ (r/as-element (helpers/wrap-component [avatar-group-rtl/example])))
 
 (defstory
  AvatarCustomSizes
@@ -211,17 +172,9 @@
   Radix primitive: @radix-ui/react-avatar
 
   Use the :size prop for consistent sizing."
+ {:source-code (embed-source "clojure-shadcn.stories.avatar.avatar-custom-sizes")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 flex items-center gap-4"}
-                                        [sut/avatar {:size :sm}
-                                         [sut/avatar-fallback {}
-                                          "SM"]]
-                                        [sut/avatar {:size :default}
-                                         [sut/avatar-fallback {}
-                                          "MD"]]
-                                        [sut/avatar {:size :lg}
-                                         [sut/avatar-fallback {}
-                                          "LG"]]])))
+ (r/as-element (helpers/wrap-component [avatar-custom-sizes/example])))
 
 (defstory
  AvatarWithBadge
@@ -230,15 +183,9 @@
   Radix primitive: @radix-ui/react-avatar
 
   Use badge to indicate online/offline status or other states."
+ {:source-code (embed-source "clojure-shadcn.stories.avatar.avatar-with-badge")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/avatar {}
-                                         [sut/avatar-image {:src "https://github.com/shadcn.png"
-                                                            :alt "@shadcn"}]
-                                         [sut/avatar-fallback {}
-                                          "CN"]
-                                         [sut/avatar-badge {:class
-                                                            "bg-green-600 dark:bg-green-800"}]]])))
+ (r/as-element (helpers/wrap-component [avatar-with-badge/example])))
 
 (defstory
  AvatarBadgeWithIcon
@@ -247,45 +194,13 @@
   Radix primitive: @radix-ui/react-avatar
 
   Use icon inside badge for actions or enhanced status indicators."
+ {:source-code (embed-source "clojure-shadcn.stories.avatar.avatar-badge-with-icon")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/avatar {:class "grayscale"}
-                                         [sut/avatar-image {:src "https://github.com/pranathip.png"
-                                                            :alt "@pranathip"}]
-                                         [sut/avatar-fallback {}
-                                          "PP"]
-                                         [sut/avatar-badge {}
-                                          [:> Plus]]]])))
+ (r/as-element (helpers/wrap-component [avatar-badge-with-icon/example])))
 
 (defstory
  AvatarDropdown
  "Dropdown — the upstream account-menu composition uses a single avatar trigger; no avatar-group API is implied."
+ {:source-code (embed-source "clojure-shadcn.stories.avatar.avatar-dropdown")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [dropdown/dropdown-menu {}
-    [dropdown/dropdown-menu-trigger {:as-child true}
-     (button/button {:variant :ghost
-                     :class "h-auto gap-3 px-2 py-1.5"}
-                    [sut/avatar {:size :sm}
-                     [sut/avatar-image {:src "https://github.com/shadcn.png"
-                                        :alt "@shadcn"}]
-                     [sut/avatar-fallback {}
-                      "CN"]]
-                    [:span {:class "grid text-left text-sm leading-tight"}
-                     [:span {:class "font-medium"}
-                      "shadcn"]
-                     [:span {:class "text-xs text-muted-foreground"}
-                      "m@example.com"]]
-                    [:> ChevronsUpDown {:class "size-4 text-muted-foreground"}])]
-    [dropdown/dropdown-menu-content {:align "end"
-                                     :class "w-56"}
-     [dropdown/dropdown-menu-label {}
-      "My account"]
-     [dropdown/dropdown-menu-separator {}]
-     [dropdown/dropdown-menu-item {}
-      [:> Settings]
-      "Settings"]
-     [dropdown/dropdown-menu-item {}
-      [:> LogOut]
-      "Log out"]]])))
+ (r/as-element (helpers/wrap-component [avatar-dropdown/example])))

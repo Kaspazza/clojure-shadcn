@@ -1,14 +1,18 @@
 (ns clojure-shadcn.stories.spinner-stories
   "Storybook stories for the Spinner component. Ported from mateuszmazurczak.portfolio.ui-components.spinner."
   (:require
-   [clojure-shadcn.stories.helpers           :as helpers]
-   [clojure-shadcn.ui.components.badge       :as badge]
-   [clojure-shadcn.ui.components.button      :as button]
-   [clojure-shadcn.ui.components.empty       :as empty]
-   [clojure-shadcn.ui.components.input-group :as input-group]
-   [clojure-shadcn.ui.components.item        :as item]
-   [clojure-shadcn.ui.components.spinner     :as sut]
-   [reagent.core                             :as r])
+   [clojure-shadcn.stories.helpers                     :as helpers]
+   [clojure-shadcn.stories.spinner.playground          :as example-playground]
+   [clojure-shadcn.stories.spinner.spinner-badge       :as example-spinner-badge]
+   [clojure-shadcn.stories.spinner.spinner-button      :as example-spinner-button]
+   [clojure-shadcn.stories.spinner.spinner-color       :as example-spinner-color]
+   [clojure-shadcn.stories.spinner.spinner-demo        :as example-spinner-demo]
+   [clojure-shadcn.stories.spinner.spinner-empty       :as example-spinner-empty]
+   [clojure-shadcn.stories.spinner.spinner-input-group :as example-spinner-input-group]
+   [clojure-shadcn.stories.spinner.spinner-item        :as example-spinner-item]
+   [clojure-shadcn.stories.spinner.spinner-rtl         :as example-spinner-rtl]
+   [clojure-shadcn.stories.spinner.spinner-size        :as example-spinner-size]
+   [reagent.core                                       :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -64,11 +68,12 @@
            :arg-types {:class {:name "CSS classes"
                                :control {:type "select"}
                                :options ["size-3" "size-4" "size-6" "size-8"]}}
-           :parameters {:playground {:description "Explore spinner css classes with a live preview."}
-                        :controls {:expanded false}}}
+           :parameters {:playground {:description
+                                     "Explore spinner css classes with a live preview."}
+                        :controls {:expanded false}}
+           :source-code (embed-source "clojure-shadcn.stories.spinner.playground")}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/spinner (select-keys args [:class])]])))
+          (r/as-element (helpers/wrap-component [example-playground/example args])))
 
 (defstory
  SpinnerSize
@@ -77,12 +82,9 @@
   Icon: lucide-react Loader2
 
   Adjust size via Tailwind size classes."
+ {:source-code (embed-source "clojure-shadcn.stories.spinner.spinner-size")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 flex items-center gap-6"}
-                                        [sut/spinner {:class "size-3"}]
-                                        [sut/spinner {:class "size-4"}]
-                                        [sut/spinner {:class "size-6"}]
-                                        [sut/spinner {:class "size-8"}]])))
+ (r/as-element (helpers/wrap-component [example-spinner-size/example])))
 
 (defstory
  SpinnerButton
@@ -91,22 +93,9 @@
   Icon: lucide-react Loader2
 
   Combine with buttons to show in-progress actions."
+ {:source-code (embed-source "clojure-shadcn.stories.spinner.spinner-button")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 flex flex-col items-start gap-4"}
-                                        (button/button {:disabled true
-                                                        :size :sm}
-                                                       [sut/spinner {}]
-                                                       "Loading...")
-                                        (button/button {:variant :outline
-                                                        :disabled true
-                                                        :size :sm}
-                                                       [sut/spinner {}]
-                                                       "Please wait")
-                                        (button/button {:variant :secondary
-                                                        :disabled true
-                                                        :size :sm}
-                                                       [sut/spinner {}]
-                                                       "Processing")])))
+ (r/as-element (helpers/wrap-component [example-spinner-button/example])))
 
 (defstory
  SpinnerBadge
@@ -115,17 +104,9 @@
   Icon: lucide-react Loader2
 
   Useful for background status updates."
+ {:source-code (embed-source "clojure-shadcn.stories.spinner.spinner-badge")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 flex items-center gap-4"}
-                                        [badge/badge {}
-                                         [sut/spinner {}]
-                                         "Syncing"]
-                                        [badge/badge {:variant :secondary}
-                                         [sut/spinner {}]
-                                         "Updating"]
-                                        [badge/badge {:variant :outline}
-                                         [sut/spinner {}]
-                                         "Processing"]])))
+ (r/as-element (helpers/wrap-component [example-spinner-badge/example])))
 
 (defstory
  SpinnerColor
@@ -134,13 +115,9 @@
   Icon: lucide-react Loader2
 
   Color via text utility classes."
+ {:source-code (embed-source "clojure-shadcn.stories.spinner.spinner-color")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 flex items-center gap-6"}
-                                        [sut/spinner {:class "size-6 text-red-500"}]
-                                        [sut/spinner {:class "size-6 text-green-500"}]
-                                        [sut/spinner {:class "size-6 text-blue-500"}]
-                                        [sut/spinner {:class "size-6 text-yellow-500"}]
-                                        [sut/spinner {:class "size-6 text-purple-500"}]])))
+ (r/as-element (helpers/wrap-component [example-spinner-color/example])))
 
 (defstory
  SpinnerDemo
@@ -149,68 +126,32 @@
   Icon: lucide-react Loader2
 
   Demonstrates inline usage in a row layout."
+ {:source-code (embed-source "clojure-shadcn.stories.spinner.spinner-demo")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [:div {:class
-           "flex w-full max-w-xs items-center justify-between rounded-lg border bg-muted/50 p-4"}
-     [:div {:class "flex items-center gap-3"}
-      [sut/spinner {}]
-      [:div {:class "text-sm font-medium"}
-       "Processing payment..."]]
-     [:span {:class "text-sm tabular-nums"}
-      "$100.00"]]])))
+ (r/as-element (helpers/wrap-component [example-spinner-demo/example])))
 
 (defstory
  SpinnerItem
  "Spinner used as Item media, with status semantics and text owned by the composed item rather than the decorative icon."
+ {:source-code (embed-source "clojure-shadcn.stories.spinner.spinner-item")}
  []
- (r/as-element (helpers/wrap-component [item/item {:variant :outline
-                                                   :class "max-w-md"
-                                                   :role "status"}
-                                        [item/item-media {:variant :icon}
-                                         [sut/spinner {:class "size-5 text-primary"}]]
-                                        [item/item-content {}
-                                         [item/item-title {}
-                                          "Importing workspace"]
-                                         [item/item-description {}
-                                          "Checking files and resolving dependencies."]]])))
+ (r/as-element (helpers/wrap-component [example-spinner-item/example])))
 
 (defstory SpinnerInputGroup
           "Input Group — upstream loading field pairs a visual spinner with explicit status text."
+          {:source-code (embed-source "clojure-shadcn.stories.spinner.spinner-input-group")}
           []
-          (r/as-element (helpers/wrap-component [:div {:role "status"
-                                                       :class "max-w-sm"}
-                                                 [input-group/input-group {}
-                                                  [input-group/input-group-addon {}
-                                                   [sut/spinner {}]]
-                                                  [input-group/input-group-input
-                                                   {:disabled true
-                                                    :value "Searching repositories…"
-                                                    :aria-label "Repository search"}]]
-                                                 [:span {:class "sr-only"}
-                                                  "Searching repositories"]])))
+          (r/as-element (helpers/wrap-component [example-spinner-input-group/example])))
 
 (defstory
  SpinnerEmpty
  "Empty — upstream loading empty-state composition uses explicit copy for the accessible status."
+ {:source-code (embed-source "clojure-shadcn.stories.spinner.spinner-empty")}
  []
- (r/as-element (helpers/wrap-component [empty/empty {:role "status"
-                                                     :class "border"}
-                                        [empty/empty-header {}
-                                         [empty/empty-media {}
-                                          [sut/spinner {:class "size-8"}]]
-                                         [empty/empty-title {}
-                                          "Loading results"]
-                                         [empty/empty-description {}
-                                          "This may take a moment."]]])))
+ (r/as-element (helpers/wrap-component [example-spinner-empty/example])))
 
 (defstory SpinnerRTL
           "RTL — visual spinner accompanies explicit right-to-left loading text."
+          {:source-code (embed-source "clojure-shadcn.stories.spinner.spinner-rtl")}
           []
-          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
-                                                       :role "status"
-                                                       :class "flex items-center gap-2 text-sm"}
-                                                 [sut/spinner {}]
-                                                 [:span "جارٍ تحميل البيانات…"]])))
+          (r/as-element (helpers/wrap-component [example-spinner-rtl/example])))

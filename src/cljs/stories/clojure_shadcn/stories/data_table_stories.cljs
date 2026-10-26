@@ -1,202 +1,31 @@
 (ns clojure-shadcn.stories.data-table-stories
   "Storybook stories for the Data Table component. Ported from mateuszmazurczak.portfolio.ui-components.data_table."
   (:require
-   ["lucide-react"                             :refer [ChevronDown MoreHorizontal]]
-   [clojure-shadcn.stories.helpers             :as helpers]
-   [clojure-shadcn.ui.components.badge         :as badge]
-   [clojure-shadcn.ui.components.button        :as button]
-   [clojure-shadcn.ui.components.checkbox      :as checkbox]
-   [clojure-shadcn.ui.components.data-table    :as sut]
-   [clojure-shadcn.ui.components.dropdown-menu :as dropdown-menu]
-   [reagent.core                               :as r])
+   [clojure-shadcn.stories.data-table.basic-data-table              :as basic-data-table]
+   [clojure-shadcn.stories.data-table.playground                    :as playground]
+   [clojure-shadcn.stories.data-table.table-empty-state             :as table-empty-state]
+   [clojure-shadcn.stories.data-table.table-with-dnd-and-expandable :as
+                                                                    table-with-dnd-and-expandable]
+   [clojure-shadcn.stories.data-table.table-with-drag-and-drop      :as table-with-drag-and-drop]
+   [clojure-shadcn.stories.data-table.table-with-expandable-rows    :as table-with-expandable-rows]
+   [clojure-shadcn.stories.data-table.table-with-toolbar            :as table-with-toolbar]
+   [clojure-shadcn.stories.helpers                                  :as helpers]
+   [reagent.core                                                    :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
   #js {:title "Components/Data Table"
        :parameters #js {:layout "padded"}})
 
-(defn make-task-data
-  []
-  [{:id "TASK-001"
-    :title "Fix navigation bug"
-    :status "in-progress"
-    :priority "high"
-    :assignee "John Doe"}
-   {:id "TASK-002"
-    :title "Update documentation"
-    :status "todo"
-    :priority "medium"
-    :assignee "Jane Smith"}
-   {:id "TASK-003"
-    :title "Refactor API calls"
-    :status "in-progress"
-    :priority "high"
-    :assignee "John Doe"}
-   {:id "TASK-004"
-    :title "Design new landing page"
-    :status "done"
-    :priority "low"
-    :assignee "Bob Johnson"}
-   {:id "TASK-005"
-    :title "Add unit tests"
-    :status "todo"
-    :priority "medium"
-    :assignee "Jane Smith"}])
 
-(defn make-overview-task-data
-  []
-  (into (make-task-data)
-        (map-indexed
-         (fn [idx title]
-           (let [task-number (+ idx 6)]
-             {:id (str "TASK-" (when (< task-number 10) "0") "0" task-number)
-              :title title
-              :status (nth ["todo" "in-progress" "done"] (mod idx 3))
-              :priority (nth ["high" "medium" "low"] (mod (quot idx 3) 3))
-              :assignee (nth ["John Doe" "Jane Smith" "Bob Johnson"] (mod idx 3))}))
-         ["Improve keyboard navigation"
-          "Add loading skeletons"
-          "Review error messages"
-          "Optimize image delivery"
-          "Audit color contrast"
-          "Build account settings"
-          "Validate signup form"
-          "Add search shortcuts"
-          "Document API endpoints"
-          "Fix mobile menu overflow"
-          "Update empty states"
-          "Add notification preferences"
-          "Improve dashboard performance"
-          "Test password recovery"
-          "Implement activity history"
-          "Review dependency updates"
-          "Add export to CSV"
-          "Fix timezone formatting"
-          "Polish onboarding flow"
-          "Add team invitations"
-          "Handle expired sessions"
-          "Improve table accessibility"
-          "Add billing summary"
-          "Test offline behavior"
-          "Update help articles"
-          "Add profile image upload"
-          "Simplify filter controls"
-          "Fix tooltip positioning"
-          "Review responsive layouts"
-          "Prepare release checklist"])))
 
-(defn make-checkbox-column
-  []
-  #js {:id "select"
-       :header (fn [^js ctx]
-                 (let [table (.-table ctx)]
-                   [checkbox/checkbox {:checked (or (.getIsAllPageRowsSelected table)
-                                                    (and (.getIsSomePageRowsSelected table)
-                                                         "indeterminate")
-                                                    false)
-                                       :on-checked-change #(.toggleAllPageRowsSelected table %)
-                                       :aria-label "Select all"}]))
-       :cell (fn [^js ctx]
-               (let [row (.-row ctx)]
-                 [checkbox/checkbox {:checked (.getIsSelected row)
-                                     :on-checked-change #(.toggleSelected row %)
-                                     :aria-label "Select row"}]))
-       :enableSorting false
-       :enableHiding false})
 
-(defn- adapt-reagent-renderers
-  "Converts Reagent Hiccup returned by TanStack column renderers to React elements."
-  [columns]
-  (doseq [^js column columns
-          property ["header" "cell"]]
-    (when-let [renderer (aget column property)]
-      (when (fn? renderer)
-        (aset column property (fn [context] (r/as-element (renderer context)))))))
-  columns)
 
-(defn make-columns
-  []
-  (adapt-reagent-renderers
-   #js
-    [(make-checkbox-column)
-     #js {:accessorKey "id"
-          :header (fn [^js ctx] [sut/column-header-ui
-                                 {:title "ID"
-                                  :can-sort? true
-                                  :sort-state (.getIsSorted (.-column ctx))
-                                  :on-toggle-sort #(.toggleSorting (.-column ctx) %)
-                                  :on-clear-sort #(.clearSorting (.-column ctx))
-                                  :on-toggle-visibility #(.toggleVisibility (.-column ctx) false)}])
-          :cell (fn [^js ctx] [:div {:class "font-mono text-xs"}
-                               (.getValue ctx)])}
-     #js {:accessorKey "title"
-          :header (fn [^js ctx] [sut/column-header-ui
-                                 {:title "Title"
-                                  :can-sort? true
-                                  :sort-state (.getIsSorted (.-column ctx))
-                                  :on-toggle-sort #(.toggleSorting (.-column ctx) %)
-                                  :on-clear-sort #(.clearSorting (.-column ctx))
-                                  :on-toggle-visibility #(.toggleVisibility (.-column ctx) false)}])
-          :cell (fn [^js ctx] (.getValue ctx))}
-     #js {:accessorKey "status"
-          :header (fn [^js ctx] [sut/column-header-ui
-                                 {:title "Status"
-                                  :can-sort? true
-                                  :sort-state (.getIsSorted (.-column ctx))
-                                  :on-toggle-sort #(.toggleSorting (.-column ctx) %)
-                                  :on-clear-sort #(.clearSorting (.-column ctx))}])
-          :cell (fn [^js ctx]
-                  (let [status (.getValue ctx)]
-                    [badge/badge {:variant (case status
-                                             "done" :default
-                                             "in-progress" :secondary
-                                             "todo" :outline
-                                             :default)}
-                     status]))
-          :filterFn (fn [^js row _column-id filter-value]
-                      (boolean (some #(= % (aget (.-original row) "status"))
-                                     (js->clj filter-value))))}
-     #js {:accessorKey "priority"
-          :header (fn [^js ctx] [sut/column-header-ui
-                                 {:title "Priority"
-                                  :can-sort? true
-                                  :sort-state (.getIsSorted (.-column ctx))
-                                  :on-toggle-sort #(.toggleSorting (.-column ctx) %)
-                                  :on-clear-sort #(.clearSorting (.-column ctx))}])
-          :cell (fn [^js ctx]
-                  (let [priority (.getValue ctx)]
-                    [:span {:class (case priority
-                                     "high" "text-red-600 font-medium"
-                                     "medium" "text-yellow-600"
-                                     "low" "text-green-600"
-                                     "")}
-                     priority]))
-          :filterFn (fn [^js row _column-id filter-value]
-                      (boolean (some #(= % (aget (.-original row) "priority"))
-                                     (js->clj filter-value))))}
-     #js {:accessorKey "assignee"
-          :header "Assignee"
-          :cell (fn [^js ctx] (.getValue ctx))}
-     #js {:id "actions"
-          :cell (fn [^js _ctx] [dropdown-menu/dropdown-menu {}
-                                [dropdown-menu/dropdown-menu-trigger {:as-child true}
-                                 (button/button {:variant :ghost
-                                                 :size :icon
-                                                 :class "h-8 w-8"
-                                                 :aria-label "Open row actions"}
-                                                [:>
-                                                 MoreHorizontal
-                                                 {:class "h-4 w-4"
-                                                  :aria-hidden true}])]
-                                [dropdown-menu/dropdown-menu-content {:align "end"}
-                                 [dropdown-menu/dropdown-menu-label {}
-                                  "Actions"]
-                                 [dropdown-menu/dropdown-menu-item {}
-                                  "Edit"]
-                                 [dropdown-menu/dropdown-menu-item {}
-                                  "Delete"]]])
-          :enableSorting false
-          :enableHiding false}]))
+
+
+
+
+
 
 (defdoc
  Installation
@@ -440,281 +269,44 @@
 
 (defstory
  BasicDataTable
- "Basic data table with sorting and pagination.
-   
-   Click column headers to sort, use pagination controls at the bottom."
+ "Basic data table with sorting and pagination.\n   \n   Click column headers to sort, use pagination controls at the bottom."
+ {:source-code (embed-source "clojure-shadcn.stories.data-table.basic-data-table")}
  []
- (r/as-element
-  [(fn []
-     (let [data (r/atom (clj->js (make-overview-task-data)))
-           columns (r/atom (make-columns))]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-8"}
-           [:h3 {:class "text-lg font-semibold mb-4"}
-            "Tasks"]
-           [:p {:class "mb-4 text-sm text-muted-foreground"}
-            "A single TanStack Table v8 model drives sorting, filtering, pagination, visibility, and row selection."]
-           [sut/data-table
-            {:columns @columns
-             :data @data
-             :initial-page-size 5
-             :get-row-id (fn [row] (.-id row))
-             :initial-column-visibility {}
-             :toolbar-config {:text-filter {:column-id "title"
-                                            :placeholder "Search tasks..."}
-                              :faceted-filters [{:column-id "status"
-                                                 :title "Status"
-                                                 :options [{:label "Todo"
-                                                            :value "todo"}
-                                                           {:label "In Progress"
-                                                            :value "in-progress"}
-                                                           {:label "Done"
-                                                            :value "done"}]}
-                                                {:column-id "priority"
-                                                 :title "Priority"
-                                                 :options [{:label "High"
-                                                            :value "high"}
-                                                           {:label "Medium"
-                                                            :value "medium"}
-                                                           {:label "Low"
-                                                            :value "low"}]}]}}]]))))]))
+ (r/as-element (helpers/wrap-component [basic-data-table/example])))
 
 (defstory
  TableWithToolbar
- "Data table with search and filters.
-   
-   Use the search box to filter by title, or use the faceted filters
-   for status and priority."
+ "Data table with search and filters.\n   \n   Use the search box to filter by title, or use the faceted filters\n   for status and priority."
+ {:source-code (embed-source "clojure-shadcn.stories.data-table.table-with-toolbar")}
  []
- (r/as-element
-  [(fn []
-     (let [data (r/atom (clj->js (make-task-data)))
-           columns (r/atom (make-columns))
-           toolbar-config {:text-filter {:column-id "title"
-                                         :placeholder "Search tasks..."}
-                           :faceted-filters [{:column-id "status"
-                                              :title "Status"
-                                              :options [{:label "Todo"
-                                                         :value "todo"}
-                                                        {:label "In Progress"
-                                                         :value "in-progress"}
-                                                        {:label "Done"
-                                                         :value "done"}]}
-                                             {:column-id "priority"
-                                              :title "Priority"
-                                              :options [{:label "High"
-                                                         :value "high"}
-                                                        {:label "Medium"
-                                                         :value "medium"}
-                                                        {:label "Low"
-                                                         :value "low"}]}]}]
-       (fn []
-         (helpers/wrap-component [:div {:class "p-8"}
-                                  [:h3 {:class "text-lg font-semibold mb-4"}
-                                   "Tasks with Filters"]
-                                  [sut/data-table {:columns @columns
-                                                   :data @data
-                                                   :toolbar-config toolbar-config
-                                                   :initial-page-size 5}]]))))]))
+ (r/as-element (helpers/wrap-component [table-with-toolbar/example])))
 
 (defstory
  TableWithExpandableRows
- "Data table with expandable rows.
-   
-   NEW FEATURE: Click the chevron to expand rows and see additional details."
+ "Data table with expandable rows.\n   \n   NEW FEATURE: Click the chevron to expand rows and see additional details."
+ {:source-code (embed-source "clojure-shadcn.stories.data-table.table-with-expandable-rows")}
  []
- (r/as-element
-  [(fn []
-     (let [data (r/atom (clj->js (make-task-data)))
-           expand-column #js {:id "expand"
-                              :header ""
-                              :cell (fn [^js ctx]
-                                      (let [row (.-row ctx)]
-                                        (when (.getCanExpand row)
-                                          (button/button {:variant :ghost
-                                                          :size :icon
-                                                          :class "h-8 w-8"
-                                                          :on-click #(.toggleExpanded row)}
-                                                         [:>
-                                                          ChevronDown
-                                                          {:class (str
-                                                                   "h-4 w-4 transition-transform "
-                                                                   (when (.getIsExpanded row)
-                                                                     "rotate-180"))}]))))
-                              :enableSorting false
-                              :enableHiding false}
-           columns (r/atom (into-array (cons expand-column (make-columns))))
-           render-sub-component (fn [^js row]
-                                  (let [task (js->clj (.-original row) :keywordize-keys true)]
-                                    [:div {:class "p-4 bg-muted"}
-                                     [:h4 {:class "font-semibold mb-2"}
-                                      "Task Details"]
-                                     [:div {:class "space-y-2 text-sm"}
-                                      [:p [:strong "ID: "] (:id task)]
-                                      [:p
-                                       [:strong "Description: "]
-                                       "Lorem ipsum dolor sit amet, consectetur adipiscing elit."]
-                                      [:p [:strong "Created: "] "2024-01-15"]
-                                      [:p [:strong "Due date: "] "2024-02-01"]]]))]
-       (fn []
-         (helpers/wrap-component [:div {:class "p-8"}
-                                  [:h3 {:class "text-lg font-semibold mb-4"}
-                                   "Expandable Rows"]
-                                  [:p {:class "text-sm text-muted-foreground mb-4"}
-                                   "Click the chevron icon to expand a row and see more details"]
-                                  [sut/data-table {:columns @columns
-                                                   :data @data
-                                                   :render-sub-component render-sub-component
-                                                   :initial-page-size 5}]]))))]))
+ (r/as-element (helpers/wrap-component [table-with-expandable-rows/example])))
 
 (defstory
  TableWithDragAndDrop
- "Data table with drag-and-drop reordering.
-   
-   NEW FEATURE: Drag rows by the handle on the left to reorder them."
+ "Data table with drag-and-drop reordering.\n   \n   NEW FEATURE: Drag rows by the handle on the left to reorder them."
+ {:source-code (embed-source "clojure-shadcn.stories.data-table.table-with-drag-and-drop")}
  []
- (r/as-element
-  [(fn []
-     (let [data (r/atom (make-task-data))
-           drag-handle-column (fn []
-                                #js {:id "drag-handle"
-                                     :header ""
-                                     :cell (fn [^js ctx]
-                                             (let [row (.-row ctx)
-                                                   listeners (aget row "dndListeners")
-                                                   attributes (aget row "dndAttributes")]
-                                               (when (and listeners attributes)
-                                                 [sut/drag-handle-cell-ui {:listeners listeners
-                                                                           :attributes
-                                                                           attributes}])))
-                                     :size 40
-                                     :enableSorting false
-                                     :enableHiding false})
-           columns (r/atom (into-array (cons (drag-handle-column) (make-columns))))
-           move-row (fn [active-id over-id]
-                      (swap! data
-                        (fn [tasks]
-                          (let [old-index (.findIndex (clj->js tasks)
-                                                      (fn [task] (= (.-id task) active-id)))
-                                new-index (.findIndex (clj->js tasks)
-                                                      (fn [task] (= (.-id task) over-id)))]
-                            (when (and (>= old-index 0) (>= new-index 0))
-                              (let [tasks-vec (vec tasks)
-                                    item (nth tasks-vec old-index)
-                                    without (vec (concat (subvec tasks-vec 0 old-index)
-                                                         (subvec tasks-vec (inc old-index))))]
-                                (vec (concat (subvec without 0 new-index)
-                                             [item]
-                                             (subvec without new-index)))))))))]
-       (fn []
-         (helpers/wrap-component [:div {:class "p-8"}
-                                  [:h3 {:class "text-lg font-semibold mb-4"}
-                                   "Drag-and-Drop Reordering"]
-                                  [:p {:class "text-sm text-muted-foreground mb-4"}
-                                   "Grab the handle (⋮⋮) on the left and drag to reorder rows"]
-                                  [sut/data-table {:columns @columns
-                                                   :data (clj->js @data)
-                                                   :get-row-id (fn [row] (.-id row))
-                                                   :dnd-config {:on-drag-end move-row}
-                                                   :initial-page-size 10}]]))))]))
+ (r/as-element (helpers/wrap-component [table-with-drag-and-drop/example])))
 
 (defstory
  TableWithDndAndExpandable
- "Data table with BOTH drag-and-drop AND expandable rows.
-   
-   Demonstrates using both new features together."
+ "Data table with BOTH drag-and-drop AND expandable rows.\n   \n   Demonstrates using both new features together."
+ {:source-code (embed-source "clojure-shadcn.stories.data-table.table-with-dnd-and-expandable")}
  []
- (r/as-element
-  [(fn []
-     (let [data (r/atom (make-task-data))
-           drag-handle-column (fn []
-                                #js {:id "drag-handle"
-                                     :header ""
-                                     :cell (fn [^js ctx]
-                                             (let [row (.-row ctx)
-                                                   listeners (aget row "dndListeners")
-                                                   attributes (aget row "dndAttributes")]
-                                               (when (and listeners attributes)
-                                                 [sut/drag-handle-cell-ui {:listeners listeners
-                                                                           :attributes
-                                                                           attributes}])))
-                                     :size 40
-                                     :enableSorting false
-                                     :enableHiding false})
-           expand-column #js {:id "expand"
-                              :header ""
-                              :cell (fn [^js ctx]
-                                      (let [row (.-row ctx)]
-                                        (when (.getCanExpand row)
-                                          (button/button {:variant :ghost
-                                                          :size :icon
-                                                          :class "h-8 w-8"
-                                                          :on-click #(.toggleExpanded row)}
-                                                         [:>
-                                                          ChevronDown
-                                                          {:class (str
-                                                                   "h-4 w-4 transition-transform "
-                                                                   (when (.getIsExpanded row)
-                                                                     "rotate-180"))}]))))
-                              :enableSorting false
-                              :enableHiding false}
-           columns (r/atom (into-array (concat [(drag-handle-column) expand-column]
-                                               (make-columns))))
-           render-sub-component
-           (fn [_row] [:div {:class "p-4 bg-muted"}
-                       [:h4 {:class "font-semibold mb-2"}
-                        "Task Details"]
-                       [:div {:class "space-y-2 text-sm"}
-                        [:p
-                         [:strong "Full Description: "]
-                         "This is a detailed description of the task. "
-                         "Lorem ipsum dolor sit amet, consectetur adipiscing elit."]
-                        [:p [:strong "Notes: "] "Additional notes and context about this task."]]])
-           move-row (fn [active-id over-id]
-                      (swap! data
-                        (fn [tasks]
-                          (let [old-index (.findIndex (clj->js tasks)
-                                                      (fn [task] (= (.-id task) active-id)))
-                                new-index (.findIndex (clj->js tasks)
-                                                      (fn [task] (= (.-id task) over-id)))]
-                            (when (and (>= old-index 0) (>= new-index 0))
-                              (let [tasks-vec (vec tasks)
-                                    item (nth tasks-vec old-index)
-                                    without (vec (concat (subvec tasks-vec 0 old-index)
-                                                         (subvec tasks-vec (inc old-index))))]
-                                (vec (concat (subvec without 0 new-index)
-                                             [item]
-                                             (subvec without new-index)))))))))]
-       (fn []
-         (helpers/wrap-component [:div {:class "p-8"}
-                                  [:h3 {:class "text-lg font-semibold mb-4"}
-                                   "Full-Featured Table"]
-                                  [:p {:class "text-sm text-muted-foreground mb-4"}
-                                   "Drag to reorder AND expand for details"]
-                                  [sut/data-table {:columns @columns
-                                                   :data (clj->js @data)
-                                                   :render-sub-component render-sub-component
-                                                   :get-row-id (fn [row] (.-id row))
-                                                   :dnd-config {:on-drag-end move-row}
-                                                   :initial-page-size 10}]]))))]))
+ (r/as-element (helpers/wrap-component [table-with-dnd-and-expandable/example])))
 
 (defstory TableEmptyState
           "Data table with custom empty state."
+          {:source-code (embed-source "clojure-shadcn.stories.data-table.table-empty-state")}
           []
-          (r/as-element
-           [(fn []
-              (let [columns (r/atom (make-columns))
-                    empty-state [:div {:class "py-12 text-center"}
-                                 [:p {:class "text-muted-foreground"}
-                                  "No tasks found. Create your first task to get started."]]]
-                (fn []
-                  (helpers/wrap-component [:div {:class "p-8"}
-                                           [:h3 {:class "text-lg font-semibold mb-4"}
-                                            "Empty State"]
-                                           [sut/data-table {:columns @columns
-                                                            :data #js []
-                                                            :empty-state empty-state}]]))))]))
+          (r/as-element (helpers/wrap-component [table-empty-state/example])))
 
 
 (defstory Playground
@@ -725,16 +317,10 @@
                                            :min 1
                                            :max 5
                                            :step 1}}
-           :parameters {:playground {:description "Explore data table initial page size with a live preview."}
+           :parameters {:playground {:description
+                                     "Explore data table initial page size with a live preview."}
                         :controls {:expanded false
-                                   :exclude ["columns" "data" "renderers" "on-row-click"]}}}
+                                   :exclude ["columns" "data" "renderers" "on-row-click"]}}
+           :source-code (embed-source "clojure-shadcn.stories.data-table.playground")}
           [args]
-          (r/as-element (helpers/wrap-component
-                         [(fn []
-                            (let [data (r/atom (clj->js (make-task-data)))
-                                  columns (r/atom (make-columns))]
-                              (fn [] [:div {:class "p-6"}
-                                      [sut/data-table
-                                       (assoc (select-keys args [:initial-page-size])
-                                              :columns @columns
-                                              :data @data)]])))])))
+          (r/as-element (helpers/wrap-component [playground/example args])))

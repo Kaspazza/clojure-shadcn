@@ -1,9 +1,12 @@
 (ns clojure-shadcn.stories.alert-dialog-stories
   (:require
-   ["lucide-react"                            :refer [TriangleAlert]]
-   [clojure-shadcn.stories.helpers            :as helpers]
-   [clojure-shadcn.ui.components.alert-dialog :as sut]
-   [clojure-shadcn.ui.components.button       :as button]
+   [clojure-shadcn.stories.alert-dialog.alert-dialog-basic :as alert-dialog-basic]
+   [clojure-shadcn.stories.alert-dialog.alert-dialog-destructive :as alert-dialog-destructive]
+   [clojure-shadcn.stories.alert-dialog.alert-dialog-controlled :as alert-dialog-controlled]
+   [clojure-shadcn.stories.alert-dialog.alert-dialog-with-media :as alert-dialog-with-media]
+   [clojure-shadcn.stories.alert-dialog.alert-dialog-small :as alert-dialog-small]
+   [clojure-shadcn.stories.alert-dialog.alert-dialog-rtl :as alert-dialog-rtl]
+   [clojure-shadcn.stories.helpers :as helpers]
    [reagent.core                              :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
@@ -86,165 +89,38 @@
       [:li
        "Place alert-dialog-media inside alert-dialog-header so the header's data-slot selectors activate the media-aware layout."]]]])))
 
-(defstory
- AlertDialogBasic
+(defstory AlertDialogBasic
  "The canonical confirmation pattern from shadcn: a clear consequence and a safe escape path."
+ {:source-code (embed-source "clojure-shadcn.stories.alert-dialog.alert-dialog-basic")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/alert-dialog {}
-     [sut/alert-dialog-trigger {:as-child true}
-      (button/button {:variant :outline} "Show dialog")]
-     [sut/alert-dialog-content {}
-      [sut/alert-dialog-header {}
-       [sut/alert-dialog-title {}
-        "Are you absolutely sure?"]
-       [sut/alert-dialog-description {}
-        "This action cannot be undone. This will permanently delete your account and remove your data from our servers."]]
-      [sut/alert-dialog-footer {}
-       [sut/alert-dialog-cancel {}
-        "Cancel"]
-       [sut/alert-dialog-action {}
-        "Continue"]]]]])))
+ (r/as-element (helpers/wrap-component [alert-dialog-basic/example])))
 
-(defstory
- AlertDialogDestructive
+(defstory AlertDialogDestructive
  "A destructive confirmation tied to visible domain context. The action names the object being deleted instead of using a vague “Continue” label."
+ {:source-code (embed-source "clojure-shadcn.stories.alert-dialog.alert-dialog-destructive")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "max-w-md space-y-4 p-6"}
-    [:div {:class "rounded-lg border p-4"}
-     [:div {:class "flex items-start justify-between gap-4"}
-      [:div {:class "space-y-1"}
-       [:h3 {:class "font-medium"}
-        "website-redesign"]
-       [:p {:class "text-sm text-muted-foreground"}
-        "Production project · 12 collaborators"]]
-      [sut/alert-dialog {}
-       [sut/alert-dialog-trigger {:as-child true}
-        (button/button {:variant :destructive
-                        :size :sm}
-                       "Delete project")]
-       [sut/alert-dialog-content {}
-        [sut/alert-dialog-header {}
-         [sut/alert-dialog-title {}
-          "Delete website-redesign?"]
-         [sut/alert-dialog-description {}
-          "The project, its deployments, environment variables, and activity history will be permanently deleted. This cannot be undone."]]
-        [sut/alert-dialog-footer {}
-         [sut/alert-dialog-cancel {}
-          "Keep project"]
-         [sut/alert-dialog-action {:variant :destructive}
-          "Delete project"]]]]]]])))
+ (r/as-element (helpers/wrap-component [alert-dialog-destructive/example])))
 
-(defstory
- AlertDialogControlled
+(defstory AlertDialogControlled
  "A controlled alert dialog for an application workflow. Confirming updates both dialog state and the surrounding interface."
+ {:source-code (embed-source "clojure-shadcn.stories.alert-dialog.alert-dialog-controlled")}
  []
- (r/as-element
-  [(fn []
-     (let [open? (r/atom false)
-           published? (r/atom false)]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "max-w-md space-y-4 p-6"}
-           [:div {:class "rounded-lg border p-4"}
-            [:div {:class "flex items-center justify-between gap-4"}
-             [:div
-              [:h3 {:class "font-medium"}
-               "Version 2.4.0"]
-              [:p {:class "text-sm text-muted-foreground"}
-               (if @published? "Published to all customers" "Draft · ready to publish")]]
-             [:span {:class (if @published?
-                              "text-sm font-medium text-emerald-600"
-                              "text-sm text-muted-foreground")}
-              (if @published? "Published" "Draft")]]]
-           (if @published?
-             (button/button {:variant :outline
-                             :disabled true}
-                            "Release published")
-             [sut/alert-dialog {:open @open?
-                                :on-open-change #(reset! open? %)}
-              [sut/alert-dialog-trigger {:as-child true}
-               (button/button {} "Publish release")]
-              [sut/alert-dialog-content {}
-               [sut/alert-dialog-header {}
-                [sut/alert-dialog-title {}
-                 "Publish version 2.4.0?"]
-                [sut/alert-dialog-description {}
-                 "All customers will immediately receive this release. Rollbacks require a new deployment."]]
-               [sut/alert-dialog-footer {}
-                [sut/alert-dialog-cancel {}
-                 "Review again"]
-                [sut/alert-dialog-action {:on-click #(reset! published? true)}
-                 "Publish now"]]]])]))))]))
+ (r/as-element (helpers/wrap-component [alert-dialog-controlled/example])))
 
-(defstory
- AlertDialogWithMedia
+(defstory AlertDialogWithMedia
  "Media-aware confirmation layout. The icon is structural context, while title and description retain the accessible decision text."
+ {:source-code (embed-source "clojure-shadcn.stories.alert-dialog.alert-dialog-with-media")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/alert-dialog {}
-     [sut/alert-dialog-trigger {:as-child true}
-      (button/button {:variant :destructive} "Revoke access")]
-     [sut/alert-dialog-content {}
-      [sut/alert-dialog-header {}
-       [sut/alert-dialog-media {}
-        [:> TriangleAlert {:aria-hidden true}]]
-       [sut/alert-dialog-title {}
-        "Revoke API access?"]
-       [sut/alert-dialog-description {}
-        "All active credentials for this integration will stop working immediately."]]
-      [sut/alert-dialog-footer {}
-       [sut/alert-dialog-cancel {}
-        "Keep access"]
-       [sut/alert-dialog-action {:variant :destructive}
-        "Revoke access"]]]]])))
+ (r/as-element (helpers/wrap-component [alert-dialog-with-media/example])))
 
 (defstory AlertDialogSmall
           "Compact small-size confirmation. Its footer becomes an equal two-column action grid."
+          {:source-code (embed-source "clojure-shadcn.stories.alert-dialog.alert-dialog-small")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/alert-dialog {}
-                                                  [sut/alert-dialog-trigger {:as-child true}
-                                                   (button/button {:variant :outline}
-                                                                  "Discard draft")]
-                                                  [sut/alert-dialog-content {:size :sm}
-                                                   [sut/alert-dialog-header {}
-                                                    [sut/alert-dialog-title {}
-                                                     "Discard draft?"]
-                                                    [sut/alert-dialog-description {}
-                                                     "Your unsaved edits will be lost."]]
-                                                   [sut/alert-dialog-footer {}
-                                                    [sut/alert-dialog-cancel {}
-                                                     "Cancel"]
-                                                    [sut/alert-dialog-action {}
-                                                     "Discard"]]]]])))
+          (r/as-element (helpers/wrap-component [alert-dialog-small/example])))
 
 (defstory AlertDialogRtl
           "Right-to-left alert dialog with localized action order and media-aware alignment."
+          {:source-code (embed-source "clojure-shadcn.stories.alert-dialog.alert-dialog-rtl")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [:div {:class "p-6"
-                   :dir "rtl"}
-             [sut/alert-dialog {}
-              [sut/alert-dialog-trigger {:as-child true}
-               (button/button {:variant :outline} "حذف المشروع")]
-              [sut/alert-dialog-content {:dir "rtl"}
-               [sut/alert-dialog-header {}
-                [sut/alert-dialog-media {}
-                 [:> TriangleAlert {:aria-hidden true}]]
-                [sut/alert-dialog-title {}
-                 "هل تريد حذف المشروع؟"]
-                [sut/alert-dialog-description {}
-                 "لا يمكن التراجع عن هذا الإجراء بعد التأكيد."]]
-               [sut/alert-dialog-footer {}
-                [sut/alert-dialog-cancel {}
-                 "إلغاء"]
-                [sut/alert-dialog-action {:variant :destructive}
-                 "حذف"]]]]])))
+          (r/as-element (helpers/wrap-component [alert-dialog-rtl/example])))

@@ -1,8 +1,13 @@
 (ns clojure-shadcn.stories.resizable-stories
   (:require
-   [clojure-shadcn.stories.helpers         :as helpers]
-   [clojure-shadcn.ui.components.resizable :as sut]
-   [reagent.core                           :as r])
+   [clojure-shadcn.stories.helpers                           :as helpers]
+   [clojure-shadcn.stories.resizable.horizontal              :as example-horizontal]
+   [clojure-shadcn.stories.resizable.nested                  :as example-nested]
+   [clojure-shadcn.stories.resizable.playground              :as example-playground]
+   [clojure-shadcn.stories.resizable.resizable-handle-states :as example-resizable-handle-states]
+   [clojure-shadcn.stories.resizable.rtl                     :as example-rtl]
+   [clojure-shadcn.stories.resizable.vertical                :as example-vertical]
+   [reagent.core                                             :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -74,107 +79,38 @@
                :description "Forwarded after wrapper-only props are removed."}]}]])))
 
 (defstory Horizontal
+          {:source-code (embed-source "clojure-shadcn.stories.resizable.horizontal")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "h-48 w-[600px] overflow-hidden rounded-lg border"}
-                          [sut/panel-group {:orientation :horizontal}
-                           [sut/panel {:defaultSize 35}
-                            [:div {:class "grid h-full place-items-center"}
-                             "Navigation"]]
-                           [sut/handle {:with-handle? true}]
-                           [sut/panel {:defaultSize 65}
-                            [:div {:class "grid h-full place-items-center"}
-                             "Content"]]]])))
+          (r/as-element (helpers/wrap-component [example-horizontal/example])))
 
 
 (defstory
  Vertical
  "Dedicated top/bottom split. The group owns vertical keyboard and pointer resize semantics."
+ {:source-code (embed-source "clojure-shadcn.stories.resizable.vertical")}
  []
- (r/as-element (helpers/wrap-component
-                [:div {:class "h-[420px] w-[520px] overflow-hidden rounded-lg border"}
-                 [sut/panel-group {:orientation :vertical}
-                  [sut/panel {:defaultSize 35
-                              :minSize 20}
-                   [:div {:class "grid h-full place-items-center bg-muted/30"}
-                    "Preview"]]
-                  [sut/handle {:with-handle? true
-                               :aria-label "Resize preview and console"}]
-                  [sut/panel {:defaultSize 65
-                              :minSize 25}
-                   [:div {:class "grid h-full place-items-center"}
-                    "Console"]]]])))
+ (r/as-element (helpers/wrap-component [example-vertical/example])))
 
 (defstory
  Nested
  "Nested panel groups: a horizontal workspace containing an independent vertical detail split."
+ {:source-code (embed-source "clojure-shadcn.stories.resizable.nested")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "h-[420px] w-[720px] overflow-hidden rounded-lg border"}
-    [sut/panel-group {:orientation :horizontal}
-     [sut/panel {:defaultSize 28
-                 :minSize 18}
-      [:div {:class "grid h-full place-items-center bg-muted/30"}
-       "Files"]]
-     [sut/handle {:with-handle? true
-                  :aria-label "Resize files and workspace"}]
-     [sut/panel {:defaultSize 72}
-      [sut/panel-group {:orientation :vertical}
-       [sut/panel {:defaultSize 70}
-        [:div {:class "grid h-full place-items-center"}
-         "Editor"]]
-       [sut/handle {:with-handle? true
-                    :aria-label "Resize editor and terminal"}]
-       [sut/panel {:defaultSize 30
-                   :minSize 15}
-        [:div {:class "grid h-full place-items-center bg-muted/30"}
-         "Terminal"]]]]]])))
+ (r/as-element (helpers/wrap-component [example-nested/example])))
 
 (defstory
  Rtl
  "RTL document direction with panels ordered from the inline start; resize behavior remains library-owned."
+ {:source-code (embed-source "clojure-shadcn.stories.resizable.rtl")}
  []
- (r/as-element (helpers/wrap-component [:div {:dir "rtl"
-                                              :class
-                                              "h-48 w-[600px] overflow-hidden rounded-lg border"}
-                                        [sut/panel-group {:orientation :horizontal}
-                                         [sut/panel {:defaultSize 35}
-                                          [:div {:class "grid h-full place-items-center"}
-                                           "التنقل"]]
-                                         [sut/handle {:with-handle? true
-                                                      :aria-label "تغيير حجم اللوحات"}]
-                                         [sut/panel {:defaultSize 65}
-                                          [:div {:class "grid h-full place-items-center"}
-                                           "المحتوى"]]]])))
+ (r/as-element (helpers/wrap-component [example-rtl/example])))
 
 (defstory
  ResizableHandleStates
  "Separators remain interactive without a grip icon; the second example exposes the focus-visible treatment for documentation."
+ {:source-code (embed-source "clojure-shadcn.stories.resizable.resizable-handle-states")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "grid gap-6"}
-    [:div {:class "h-32 w-[520px] overflow-hidden rounded-lg border"}
-     [sut/panel-group {:orientation :horizontal}
-      [sut/panel {:defaultSize 40}
-       [:div {:class "grid h-full place-items-center"}
-        "No icon"]]
-      [sut/handle {:aria-label "Resize plain panels"}]
-      [sut/panel {:defaultSize 60}
-       [:div {:class "grid h-full place-items-center bg-muted/30"}
-        "Still draggable"]]]
-     [:div {:class "h-32 w-[520px] overflow-hidden rounded-lg border"}
-      [sut/panel-group {:orientation :horizontal}
-       [sut/panel {:defaultSize 40}
-        [:div {:class "grid h-full place-items-center"}
-         "Focused"]]
-       [sut/handle {:with-handle? true
-                    :aria-label "Resize focused panels"
-                    :class "ring-[3px] ring-ring/50 border-ring"}]
-       [sut/panel {:defaultSize 60}
-        [:div {:class "grid h-full place-items-center bg-muted/30"}
-         "Handle"]]]]]])))
+ (r/as-element (helpers/wrap-component [example-resizable-handle-states/example])))
 
 (defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
@@ -182,22 +118,14 @@
            :arg-types {:orientation {:name "Orientation"
                                      :control {:type "select"}
                                      :options ["horizontal" "vertical"]}}
-           :parameters {:playground {:description "Explore resizable orientation with a live preview."}
+           :parameters {:playground {:description
+                                     "Explore resizable orientation with a live preview."}
                         :controls {:expanded false
                                    :exclude ["children" "on-layout"]}}
            :decode-args (fn [{:keys [orientation]
                               :as args}]
                           (cond-> args
-                            orientation (update :orientation keyword)))}
+                            orientation (update :orientation keyword)))
+           :source-code (embed-source "clojure-shadcn.stories.resizable.playground")}
           [args]
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "h-48 w-[600px] overflow-hidden rounded-lg border"}
-                          [sut/panel-group
-                           (select-keys args [:orientation])
-                           [sut/panel {:defaultSize 40}
-                            [:div {:class "grid h-full place-items-center"}
-                             "Navigation"]]
-                           [sut/handle {:with-handle? true}]
-                           [sut/panel {:defaultSize 60}
-                            [:div {:class "grid h-full place-items-center"}
-                             "Content"]]]])))
+          (r/as-element (helpers/wrap-component [example-playground/example args])))

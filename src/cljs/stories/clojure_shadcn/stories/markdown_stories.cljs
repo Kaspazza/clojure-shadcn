@@ -1,9 +1,16 @@
 (ns clojure-shadcn.stories.markdown-stories
   "Storybook stories for the Markdown component. Ported from mateuszmazurczak.portfolio.ui-components.markdown."
   (:require
-   [clojure-shadcn.stories.helpers        :as helpers]
-   [clojure-shadcn.ui.components.markdown :as sut]
-   [reagent.core                          :as r])
+   [clojure-shadcn.stories.helpers                             :as helpers]
+   [clojure-shadcn.stories.markdown.markdown-code-blocks       :as markdown-code-blocks]
+   [clojure-shadcn.stories.markdown.markdown-combined          :as markdown-combined]
+   [clojure-shadcn.stories.markdown.markdown-headings          :as markdown-headings]
+   [clojure-shadcn.stories.markdown.markdown-line-breaks       :as markdown-line-breaks]
+   [clojure-shadcn.stories.markdown.markdown-links-lists       :as markdown-links-lists]
+   [clojure-shadcn.stories.markdown.markdown-plugin-override   :as markdown-plugin-override]
+   [clojure-shadcn.stories.markdown.markdown-raw-html-safety   :as markdown-raw-html-safety]
+   [clojure-shadcn.stories.markdown.markdown-single-line-fence :as markdown-single-line-fence]
+   [reagent.core                                               :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -75,87 +82,58 @@
 
 (defstory MarkdownHeadings
           "Interactive markdown playground."
-          {:args {:children "# Heading 1\n\n## Heading 2\n\n**Bold** and _italic_ text."}
+          {:source-code (embed-source "clojure-shadcn.stories.markdown.markdown-headings")
+           :args {:children "# Heading 1\n\n## Heading 2\n\n**Bold** and _italic_ text."}
            :arg-types {:children {:name "Markdown source"
                                   :control {:type "text"}}}
-           :parameters {:playground {:description "Explore markdown markdown source with a live preview."}
-                        :controls {:expanded false
-                                   :exclude
-                                   ["class" "components" "remark-plugins" "rehype-plugins"]}}}
+           :parameters
+           {:playground {:description "Explore markdown markdown source with a live preview."}
+            :controls {:expanded false
+                       :exclude ["class" "components" "remark-plugins" "rehype-plugins"]}}}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-xl"}
-                                                 [sut/markdown (select-keys args [:children])]])))
+          (r/as-element (helpers/wrap-component [markdown-headings/example args])))
 
-(defstory
- MarkdownCodeBlocks
- "Markdown with fenced code blocks.
+(defstory MarkdownCodeBlocks
+          "Markdown with fenced code blocks.
   Code blocks are highlighted via Shiki."
- []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6 max-w-xl"}
-    [sut/markdown
-     {:children
-      "```clojure\n(defn hello []\n  (println \"Hello\"))\n```\n\n```javascript\nconsole.log('Hello')\n```"}]])))
+          {:source-code (embed-source "clojure-shadcn.stories.markdown.markdown-code-blocks")}
+          []
+          (r/as-element (helpers/wrap-component [markdown-code-blocks/example])))
 
-(defstory
- MarkdownLinksLists
- "Markdown lists and links.
+(defstory MarkdownLinksLists
+          "Markdown lists and links.
   Links receive underline styles via markdown component."
- []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6 max-w-xl"}
-    [sut/markdown
-     {:children
-      "- Item one\n- Item two\n- Item three\n\nVisit [our docs](https://ui.shadcn.com)."}]])))
+          {:source-code (embed-source "clojure-shadcn.stories.markdown.markdown-links-lists")}
+          []
+          (r/as-element (helpers/wrap-component [markdown-links-lists/example])))
 
 (defstory
  MarkdownCombined
  "Full enabled-GFM example: table, task list, strikethrough, autolink, hard break, and code."
+ {:source-code (embed-source "clojure-shadcn.stories.markdown.markdown-combined")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6 max-w-2xl"}
-    [sut/markdown
-     {:children
-      "# Release Notes\n\n- [x] Tables\n- [ ] Shipping\n\n| Feature | State |\n| --- | --- |\n| GFM | **ready** |\n\n~~Removed~~ and https://example.com\nfirst line\nsecond line\n\n```clojure\n(defn ready? [] true)\n```"}]])))
+ (r/as-element (helpers/wrap-component [markdown-combined/example])))
 
 (defstory MarkdownPluginOverride
           "A supported :components override replaces the default anchor renderer."
+          {:source-code (embed-source "clojure-shadcn.stories.markdown.markdown-plugin-override")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "p-6 max-w-xl"}
-                          [sut/markdown
-                           {:children "Read the [component guide](https://example.com)."
-                            :components
-                            {:a (fn [props]
-                                  (r/as-element
-                                   [:a {:href (.-href props)
-                                        :class
-                                        "rounded bg-primary px-2 py-1 text-primary-foreground"}
-                                    (.-children props)]))}}]])))
+          (r/as-element (helpers/wrap-component [markdown-plugin-override/example])))
 
 (defstory MarkdownRawHtmlSafety
           "Raw HTML is escaped by default because no raw-HTML rehype plugin is enabled."
+          {:source-code (embed-source "clojure-shadcn.stories.markdown.markdown-raw-html-safety")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [:div {:class "p-6 max-w-xl"}
-             [sut/markdown
-              {:children
-               "Before <script>alert('unsafe')</script> <b>not interpreted</b> after"}]])))
+          (r/as-element (helpers/wrap-component [markdown-raw-html-safety/example])))
 
 (defstory MarkdownLineBreaks
           "Single newlines become hard line breaks through the default remark-breaks plugin."
+          {:source-code (embed-source "clojure-shadcn.stories.markdown.markdown-line-breaks")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-xl"}
-                                                 [sut/markdown
-                                                  {:children "Line one\nLine two\nLine three"}]])))
+          (r/as-element (helpers/wrap-component [markdown-line-breaks/example])))
 
 (defstory MarkdownSingleLineFence
           "A one-line fenced block exercises fence detection without relying on multiline content."
+          {:source-code (embed-source "clojure-shadcn.stories.markdown.markdown-single-line-fence")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-xl"}
-                                                 [sut/markdown {:children
-                                                                "```clojure\n(+ 1 2)\n```"}]])))
+          (r/as-element (helpers/wrap-component [markdown-single-line-fence/example])))

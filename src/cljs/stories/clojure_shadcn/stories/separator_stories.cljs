@@ -1,11 +1,15 @@
 (ns clojure-shadcn.stories.separator-stories
   "Storybook stories for the Separator component. Ported from mateuszmazurczak.portfolio.ui-components.separator."
   (:require
-   ["lucide-react"                          :refer [Slash]]
-   [clojure-shadcn.stories.helpers          :as helpers]
-   [clojure-shadcn.ui.components.breadcrumb :as breadcrumb]
-   [clojure-shadcn.ui.components.separator  :as sut]
-   [reagent.core                            :as r])
+   [clojure-shadcn.stories.helpers                             :as helpers]
+   [clojure-shadcn.stories.separator.breadcrumb-separator      :as example-breadcrumb-separator]
+   [clojure-shadcn.stories.separator.playground                :as example-playground]
+   [clojure-shadcn.stories.separator.separator-custom          :as example-separator-custom]
+   [clojure-shadcn.stories.separator.separator-list            :as example-separator-list]
+   [clojure-shadcn.stories.separator.separator-responsive-menu :as
+                                                               example-separator-responsive-menu]
+   [clojure-shadcn.stories.separator.separator-rtl             :as example-separator-rtl]
+   [reagent.core                                               :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -69,22 +73,18 @@
                                      :options ["horizontal" "vertical"]}
                        :decorative {:name "Decorative"
                                     :control {:type "boolean"}}}
-           :parameters {:playground {:description "Explore separator orientation and decorative with a live preview."}
+           :parameters {:playground
+                        {:description
+                         "Explore separator orientation and decorative with a live preview."}
                         :controls {:expanded false
                                    :exclude ["class"]}}
            :decode-args (fn [{:keys [orientation]
                               :as args}]
                           (cond-> args
-                            orientation (update :orientation keyword)))}
+                            orientation (update :orientation keyword)))
+           :source-code (embed-source "clojure-shadcn.stories.separator.playground")}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "flex h-16 items-center gap-4"}
-                                                 [:span "First"]
-                                                 [sut/separator
-                                                  (assoc (select-keys args
-                                                                      [:orientation :decorative])
-                                                         :class
-                                                         "data-[orientation=vertical]:h-full")]
-                                                 [:span "Second"]])))
+          (r/as-element (helpers/wrap-component [example-playground/example args])))
 
 (defstory
  BreadcrumbSeparator
@@ -93,23 +93,9 @@
   Radix primitive: @radix-ui/react-separator
 
   Custom separators can be inserted between breadcrumb items."
+ {:source-code (embed-source "clojure-shadcn.stories.separator.breadcrumb-separator")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [breadcrumb/breadcrumb {}
-                                         [breadcrumb/breadcrumb-list {}
-                                          [breadcrumb/breadcrumb-item {}
-                                           [breadcrumb/breadcrumb-link {:href "#"}
-                                            "Home"]]
-                                          [breadcrumb/breadcrumb-separator {}
-                                           [:> Slash]]
-                                          [breadcrumb/breadcrumb-item {}
-                                           [breadcrumb/breadcrumb-link {:href "#"}
-                                            "Components"]]
-                                          [breadcrumb/breadcrumb-separator {}
-                                           [:> Slash]]
-                                          [breadcrumb/breadcrumb-item {}
-                                           [breadcrumb/breadcrumb-page {}
-                                            "Separator"]]]]])))
+ (r/as-element (helpers/wrap-component [example-breadcrumb-separator/example])))
 
 (defstory
  SeparatorCustom
@@ -118,78 +104,25 @@
   Radix primitive: @radix-ui/react-separator
 
   Add classes to adjust thickness or color."
+ {:source-code (embed-source "clojure-shadcn.stories.separator.separator-custom")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 space-y-3"}
-                                        [:p {:class "text-sm"}
-                                         "Primary accent"]
-                                        [sut/separator {:class "bg-primary h-[2px]"}]
-                                        [:p {:class "text-sm"}
-                                         "Muted divider"]
-                                        [sut/separator {:class "bg-muted h-[2px]"}]])))
+ (r/as-element (helpers/wrap-component [example-separator-custom/example])))
 
 (defstory
  SeparatorResponsiveMenu
  "Responsive menu — upstream navigation recipe switches between horizontal and vertical dividers."
+ {:source-code (embed-source "clojure-shadcn.stories.separator.separator-responsive-menu")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:nav
-    {:aria-label "Account sections"
-     :class
-     "flex flex-col rounded-lg border p-4 sm:h-6 sm:flex-row sm:items-center sm:gap-4 sm:border-0 sm:p-0"}
-    [:a {:href "#profile"
-         :class "py-2 text-sm font-medium sm:py-0"}
-     "Profile"]
-    [sut/separator {:class "sm:hidden"}]
-    [sut/separator {:orientation :vertical
-                    :class "hidden sm:block sm:h-full"}]
-    [:a {:href "#billing"
-         :class "py-2 text-sm font-medium sm:py-0"}
-     "Billing"]
-    [sut/separator {:class "sm:hidden"}]
-    [sut/separator {:orientation :vertical
-                    :class "hidden sm:block sm:h-full"}]
-    [:a {:href "#team"
-         :class "py-2 text-sm font-medium sm:py-0"}
-     "Team"]])))
+ (r/as-element (helpers/wrap-component [example-separator-responsive-menu/example])))
 
 (defstory SeparatorList
           "List — semantic separators divide related content rows without becoming list items."
+          {:source-code (embed-source "clojure-shadcn.stories.separator.separator-list")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [:div {:class "max-w-md rounded-lg border px-4"}
-             [:div {:class "py-4"}
-              [:p {:class "font-medium"}
-               "Notifications"]
-              [:p {:class "text-sm text-muted-foreground"}
-               "Email and push preferences"]]
-             [sut/separator {:decorative false}]
-             [:div {:class "py-4"}
-              [:p {:class "font-medium"}
-               "Privacy"]
-              [:p {:class "text-sm text-muted-foreground"}
-               "Visibility and data sharing"]]
-             [sut/separator {:decorative false}]
-             [:div {:class "py-4"}
-              [:p {:class "font-medium"}
-               "Security"]
-              [:p {:class "text-sm text-muted-foreground"}
-               "Password and active sessions"]]])))
+          (r/as-element (helpers/wrap-component [example-separator-list/example])))
 
 (defstory SeparatorRTL
           "RTL — logical spacing and vertical dividers in right-to-left navigation."
+          {:source-code (embed-source "clojure-shadcn.stories.separator.separator-rtl")}
           []
-          (r/as-element (helpers/wrap-component [:nav {:dir "rtl"
-                                                       :aria-label "أقسام الحساب"
-                                                       :class "flex h-6 items-center gap-4 text-sm"}
-                                                 [:a {:href "#profile"}
-                                                  "الملف الشخصي"]
-                                                 [sut/separator {:orientation :vertical
-                                                                 :class "h-full"}]
-                                                 [:a {:href "#billing"}
-                                                  "الفواتير"]
-                                                 [sut/separator {:orientation :vertical
-                                                                 :class "h-full"}]
-                                                 [:a {:href "#team"}
-                                                  "الفريق"]])))
+          (r/as-element (helpers/wrap-component [example-separator-rtl/example])))

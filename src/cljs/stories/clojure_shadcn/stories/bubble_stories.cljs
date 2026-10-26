@@ -1,13 +1,13 @@
 (ns clojure-shadcn.stories.bubble-stories
   (:require
-   [clojure-shadcn.stories.helpers           :as helpers]
-   [clojure-shadcn.ui.components.bubble      :as sut]
-   [clojure-shadcn.ui.components.button      :as button]
-   [clojure-shadcn.ui.components.collapsible :as collapsible]
-   [clojure-shadcn.ui.components.markdown    :as markdown]
-   [clojure-shadcn.ui.components.popover     :as popover]
-   [clojure-shadcn.ui.components.tooltip     :as tooltip]
-   [reagent.core                             :as r])
+   [clojure-shadcn.stories.bubble.bubble-conversation :as bubble-conversation]
+   [clojure-shadcn.stories.bubble.bubble-alignment-and-variant-gallery :as bubble-alignment-and-variant-gallery]
+   [clojure-shadcn.stories.bubble.bubble-markdown-composition :as bubble-markdown-composition]
+   [clojure-shadcn.stories.bubble.bubble-group-with-reactions :as bubble-group-with-reactions]
+   [clojure-shadcn.stories.bubble.bubble-as-child-links-and-buttons :as bubble-as-child-links-and-buttons]
+   [clojure-shadcn.stories.bubble.bubble-interactive-compositions :as bubble-interactive-compositions]
+   [clojure-shadcn.stories.helpers :as helpers]
+   [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -52,12 +52,13 @@
 
 (defstory BubbleConversation
           "Interactive message-bubble playground."
-          {:args {:variant "secondary"
+          {:source-code (embed-source "clojure-shadcn.stories.bubble.bubble-conversation")
+           :args {:variant "secondary"
                   :align "start"
                   :content "Can you send the latest report?"}
            :arg-types {:variant
                        {:name "Variant"
-                                 :control {:type "select"}
+                        :control {:type "select"}
                         :options
                         ["default" "secondary" "muted" "tinted" "outline" "ghost" "destructive"]}
                        :align {:name "Align"
@@ -74,104 +75,34 @@
                             variant (update :variant keyword)
                             align (update :align keyword)))}
           [args]
-          (r/as-element (helpers/wrap-component [sut/bubble-group {:class "max-w-lg"}
-                                                 [sut/bubble
-                                                  (select-keys args [:variant :align])
-                                                  [sut/bubble-content {}
-                                                   (:content args)]]])))
+          (r/as-element (helpers/wrap-component [bubble-conversation/example args])))
 
-(defstory
- BubbleAlignmentAndVariantGallery
+(defstory BubbleAlignmentAndVariantGallery
  "Alignment changes conversation geometry while variants communicate sender, emphasis, and error semantics."
+ {:source-code (embed-source "clojure-shadcn.stories.bubble.bubble-alignment-and-variant-gallery")}
  []
- (r/as-element (helpers/wrap-component
-                [sut/bubble-group {:class "max-w-2xl"}
-                 (for [[variant align copy] [[:default :end "Primary user message"]
-                                             [:secondary :start "Secondary assistant response"]
-                                             [:muted :start "Muted supporting context"]
-                                             [:tinted :start "Tinted generated suggestion"]
-                                             [:outline :end "Outlined pending reply"]
-                                             [:ghost :start "Ghost long-form response"]
-                                             [:destructive :start "Destructive delivery failure"]]]
-                   ^{:key variant}
-                   [sut/bubble {:variant variant
-                                :align align}
-                    [sut/bubble-content {}
-                     copy]])])))
+ (r/as-element (helpers/wrap-component [bubble-alignment-and-variant-gallery/example])))
 
-(defstory
- BubbleMarkdownComposition
+(defstory BubbleMarkdownComposition
  "Markdown remains an explicit child composition, so Bubble owns conversation styling without owning content parsing."
+ {:source-code (embed-source "clojure-shadcn.stories.bubble.bubble-markdown-composition")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [sut/bubble-group {:class "max-w-2xl"}
-    [sut/bubble {:variant :muted}
-     [sut/bubble-content {}
-      [markdown/markdown
-       {:children "### Build summary\n\n- **18** tests passed\n- `release.jar` created\n\n[Open artifacts](https://example.com)"}]]]])))
+ (r/as-element (helpers/wrap-component [bubble-markdown-composition/example])))
 
 (defstory BubbleGroupWithReactions
-          "A grouped exchange with reactions positioned on opposite bubble edges."
-          []
-          (r/as-element (helpers/wrap-component [sut/bubble-group {:class "max-w-lg pb-3"}
-                                                 [sut/bubble {:variant :muted}
-                                                  [sut/bubble-content {}
-                                                   "The release notes are ready for review."]
-                                                  [sut/bubble-reactions {:side :bottom
-                                                                         :align :start}
-                                                   "👍 3"]]
-                                                 [sut/bubble {:align :end}
-                                                  [sut/bubble-content {}
-                                                   "Great — I’ll publish them after lunch."]
-                                                  [sut/bubble-reactions {}
-                                                   "✅ 1"]]])))
+ "A grouped exchange with reactions positioned on opposite bubble edges."
+ {:source-code (embed-source "clojure-shadcn.stories.bubble.bubble-group-with-reactions")}
+ []
+ (r/as-element (helpers/wrap-component [bubble-group-with-reactions/example])))
 
 (defstory BubbleAsChildLinksAndButtons
-          "Use :as-child? when the entire bubble should be a semantic link or button."
-          []
-          (r/as-element (helpers/wrap-component
-                         [sut/bubble-group {:class "max-w-lg"}
-                          [sut/bubble {:variant :outline}
-                           [sut/bubble-content {:as-child? true}
-                            [:a {:href "https://ui.shadcn.com/docs/components/bubble"
-                                 :target "_blank"
-                                 :rel "noopener noreferrer"}
-                             "Open the Bubble documentation →"]]]
-                          [sut/bubble {:variant :secondary}
-                           [sut/bubble-content {:as-child? true}
-                            [:button {:type "button"
-                                      :on-click #(js/console.log "retry")}
-                             "Retry this response"]]]])))
+ "Use :as-child? when the entire bubble should be a semantic link or button."
+ {:source-code (embed-source "clojure-shadcn.stories.bubble.bubble-as-child-links-and-buttons")}
+ []
+ (r/as-element (helpers/wrap-component [bubble-as-child-links-and-buttons/example])))
 
 (defstory BubbleInteractiveCompositions
-          "Bubble content can serve as a trigger for collapsible, tooltip, and popover primitives."
-          []
-          (r/as-element
-           (helpers/wrap-component
-            [:>
-             tooltip/tooltip-provider-component
-             {}
-             [sut/bubble-group {:class "max-w-lg"}
-              [collapsible/collapsible {}
-               [sut/bubble {:variant :outline}
-                [collapsible/collapsible-trigger {:as-child true}
-                 [sut/bubble-content {:as-child? true}
-                  [:button {:type "button"}
-                   "Show delivery details"]]]]
-               [collapsible/collapsible-content {:class "px-3 py-2 text-sm text-muted-foreground"}
-                "Delivered to the project channel at 09:42."]]
-              [sut/bubble {:variant :tinted}
-               [tooltip/tooltip {:trigger (sut/bubble-content {:as-child? true}
-                                                              [:button {:type "button"}
-                                                               "Hover for response timing"])
-                                 :trigger-as-child? true
-                                 :content "Estimated response time: under a minute"}]]
-              [popover/popover {}
-               [popover/popover-trigger {:asChild true}
-                (button/button {:variant :ghost
-                                :size :sm}
-                               "Open response details")]
-               [popover/popover-content {:align "start"}
-                [:p {:class "text-sm"}
-                 "Generated from three indexed project documents."]]]]])))
+ "Bubble content can serve as a trigger for collapsible, tooltip, and popover primitives."
+ {:source-code (embed-source "clojure-shadcn.stories.bubble.bubble-interactive-compositions")}
+ []
+ (r/as-element (helpers/wrap-component [bubble-interactive-compositions/example])))

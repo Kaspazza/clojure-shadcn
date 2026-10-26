@@ -1,21 +1,19 @@
 (ns clojure-shadcn.stories.hover-card-stories
   (:require
-   [clojure-shadcn.stories.helpers          :as helpers]
-   [clojure-shadcn.ui.components.hover-card :as sut]
-   [reagent.core                            :as r])
+   [clojure-shadcn.stories.helpers                           :as helpers]
+   [clojure-shadcn.stories.hover-card.hover-card-basic       :as hover-card-basic]
+   [clojure-shadcn.stories.hover-card.hover-card-delays      :as hover-card-delays]
+   [clojure-shadcn.stories.hover-card.hover-card-positioning :as hover-card-positioning]
+   [clojure-shadcn.stories.hover-card.hover-card-rtl         :as hover-card-rtl]
+   [clojure-shadcn.stories.hover-card.playground             :as playground]
+   [reagent.core                                             :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
   #js {:title "Components/Hover Card"
        :parameters #js {:layout "padded"}})
 
-(defn- project-preview
-  []
-  [:div {:class "space-y-2"}
-   [:h4 {:class "font-semibold"}
-    "shadcn/ui"]
-   [:p {:class "text-sm text-muted-foreground"}
-    "Beautifully designed components you can copy and own."]])
+
 
 (defdoc Installation
         []
@@ -51,86 +49,40 @@
               :description "Content positioning."}]}])))
 
 (defstory HoverCardBasic
+          {:source-code (embed-source "clojure-shadcn.stories.hover-card.hover-card-basic")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "p-16"}
-                                                 [sut/hover-card {}
-                                                  [sut/hover-card-trigger {:as-child true}
-                                                   [:a {:href "https://github.com/shadcn-ui/ui"
-                                                        :class
-                                                        "font-medium underline underline-offset-4"}
-                                                    "@shadcn"]]
-                                                  [sut/hover-card-content {:class "w-80"}
-                                                   [project-preview]]]])))
+          (r/as-element (helpers/wrap-component [hover-card-basic/example])))
 
 (defstory HoverCardDelays
           "Both opening and closing delays tuned for a fast preview interaction."
+          {:source-code (embed-source "clojure-shadcn.stories.hover-card.hover-card-delays")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "p-16"}
-                                                 [sut/hover-card {:open-delay 100
-                                                                  :close-delay 600}
-                                                  [sut/hover-card-trigger {:as-child true}
-                                                   [:a {:href "https://github.com/shadcn-ui/ui"
-                                                        :class
-                                                        "font-medium underline underline-offset-4"}
-                                                    "Preview with custom delays"]]
-                                                  [sut/hover-card-content {}
-                                                   [project-preview]]]])))
+          (r/as-element (helpers/wrap-component [hover-card-delays/example])))
 
 (defstory HoverCardPositioning
           "All preferred sides combined with start, center, and end alignment."
+          {:source-code (embed-source "clojure-shadcn.stories.hover-card.hover-card-positioning")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [:div {:class "grid min-h-[32rem] grid-cols-3 place-items-center gap-16 p-24"}
-             (for [side [:top :right :bottom :left]
-                   align [:start :center :end]]
-               ^{:key (str (name side) "-" (name align))}
-               [sut/hover-card {}
-                [sut/hover-card-trigger {:as-child true}
-                 [:button {:type "button"
-                           :class "rounded-md border px-3 py-2 text-sm"
-                           :aria-label (str "Preview " (name side) " " (name align) " placement")}
-                  (str (name side) " / " (name align))]]
-                [sut/hover-card-content {:side side
-                                         :align align}
-                 [project-preview]]])])))
+          (r/as-element (helpers/wrap-component [hover-card-positioning/example])))
 
 (defstory HoverCardRtl
           "Right-to-left trigger and preview content."
+          {:source-code (embed-source "clojure-shadcn.stories.hover-card.hover-card-rtl")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "p-16 text-right"
-                                :dir "rtl"}
-                          [sut/hover-card {}
-                           [sut/hover-card-trigger {:as-child true}
-                            [:a {:href "https://github.com/shadcn-ui/ui"
-                                 :class "font-medium underline underline-offset-4"}
-                             "معاينة المشروع"]]
-                           [sut/hover-card-content {:align :start
-                                                    :dir "rtl"}
-                            [:div {:class "space-y-2 text-right"}
-                             [:h4 {:class "font-semibold"}
-                              "واجهة المستخدم"]
-                             [:p {:class "text-sm text-muted-foreground"}
-                              "مكوّنات مصممة بعناية يمكنك نسخها وتخصيصها."]]]]])))
+          (r/as-element (helpers/wrap-component [hover-card-rtl/example])))
 
 (defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
-          {:args {:open-delay 700}
+          {:source-code (embed-source "clojure-shadcn.stories.hover-card.playground")
+           :args {:open-delay 700}
            :arg-types {:open-delay {:name "Open delay"
                                     :control {:type "number"}
                                     :min 0
                                     :max 2000
                                     :step 100}}
-           :parameters {:playground {:description "Explore hover card open delay with a live preview."}
+           :parameters {:playground {:description
+                                     "Explore hover card open delay with a live preview."}
                         :controls {:expanded false
                                    :exclude ["children" "open" "default-open" "on-open-change"]}}}
           [args]
-          (r/as-element (helpers/wrap-component [sut/hover-card
-                                                 (select-keys args [:open-delay])
-                                                 [sut/hover-card-trigger {:as-child true}
-                                                  [:a {:href "#"
-                                                       :class "underline"}
-                                                   "@shadcn"]]
-                                                 [sut/hover-card-content {}
-                                                  "A reusable component library."]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))

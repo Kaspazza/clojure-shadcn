@@ -1,71 +1,23 @@
 (ns clojure-shadcn.stories.carousel-stories
-  "Storybook stories for the Carousel component. Ported from mateuszmazurczak.portfolio.ui-components.carousel."
   (:require
-   [clojure-shadcn.stories.helpers        :as helpers]
-   [clojure-shadcn.ui.components.carousel :as sut]
-   [reagent.core                          :as    r
-                                          :refer [defc]]
-   [reagent.hooks                         :as rhooks])
+   [clojure-shadcn.stories.carousel.carousel-demo             :as carousel-demo]
+   [clojure-shadcn.stories.carousel.carousel-drag-free        :as carousel-drag-free]
+   [clojure-shadcn.stories.carousel.carousel-events           :as carousel-events]
+   [clojure-shadcn.stories.carousel.carousel-loop             :as carousel-loop]
+   [clojure-shadcn.stories.carousel.carousel-orientation      :as carousel-orientation]
+   [clojure-shadcn.stories.carousel.carousel-position         :as carousel-position]
+   [clojure-shadcn.stories.carousel.carousel-rtl              :as carousel-rtl]
+   [clojure-shadcn.stories.carousel.carousel-size             :as carousel-size]
+   [clojure-shadcn.stories.carousel.carousel-slides-to-scroll :as carousel-slides-to-scroll]
+   [clojure-shadcn.stories.carousel.carousel-spacing          :as carousel-spacing]
+   [clojure-shadcn.stories.carousel.playground                :as playground]
+   [clojure-shadcn.stories.helpers                            :as helpers]
+   [reagent.core                                              :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
   #js {:title "Components/Carousel"
        :parameters #js {:layout "padded"}})
-
-(defn- slide-card
-  [label]
-  [:div {:class "p-1"}
-   [:div {:class "flex aspect-square items-center justify-center rounded-lg border bg-card"}
-    [:span {:class "text-3xl font-semibold"}
-     label]]])
-
-(defn carousel-events-example
-  []
-  (let [api (r/atom nil)
-        event-log (r/atom [])]
-    (fn []
-      (let [on-select (rhooks/use-callback (fn []
-                                             (when-let [^js current-api @api]
-                                               (swap! event-log conj
-                                                 (str "select → snap "
-                                                      (.selectedScrollSnap current-api)))))
-                                           [])
-            on-settle
-            (rhooks/use-callback (fn [] (swap! event-log conj "settle → carousel stopped")) [])
-            on-pointer-down
-            (rhooks/use-callback (fn [] (swap! event-log conj "pointerDown → drag started")) [])]
-        (rhooks/use-effect (fn []
-                             (when-let [^js current-api @api]
-                               (.on current-api "select" on-select)
-                               (.on current-api "settle" on-settle)
-                               (.on current-api "pointerDown" on-pointer-down)
-                               (fn []
-                                 (.off current-api "select" on-select)
-                                 (.off current-api "settle" on-settle)
-                                 (.off current-api "pointerDown" on-pointer-down))))
-                           [@api])
-        (helpers/wrap-component
-         [:div {:class "p-6"}
-          [sut/carousel {:set-api (fn [carousel-api] (reset! api carousel-api))
-                         :class "w-full max-w-xs"}
-           (into [sut/carousel-content {}]
-                 (for [idx (range 1 6)]
-                   [sut/carousel-item {:key idx}
-                    [slide-card idx]]))
-           [sut/carousel-previous {}]
-           [sut/carousel-next {}]]
-          [:div {:class "mt-4 space-y-1"}
-           [:p {:class "text-sm font-semibold"}
-            "Event Log:"]
-           [:div {:class "rounded-lg border bg-muted/50 p-3 max-h-32 overflow-y-auto"}
-            (if (empty? @event-log)
-              [:p {:class "text-xs text-muted-foreground"}
-               "Interact with carousel..."]
-              (into [:div {:class "space-y-1"}]
-                    (for [[idx event] (map-indexed vector (take-last 5 @event-log))]
-                      [:p {:key idx
-                           :class "text-xs font-mono"}
-                       event])))]]])))))
 
 (defdoc Installation
         "Install dependencies and copy the component code into your project."
@@ -200,15 +152,9 @@
   Library: embla-carousel
 
   Use for showcasing images or featured content."
+ {:source-code (embed-source "clojure-shadcn.stories.carousel.carousel-demo")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/carousel {:class "w-full max-w-xs"}
-                                         (into [sut/carousel-content {}]
-                                               (for [idx (range 1 6)]
-                                                 [sut/carousel-item {:key idx}
-                                                  [slide-card idx]]))
-                                         [sut/carousel-previous {}]
-                                         [sut/carousel-next {}]]])))
+ (r/as-element (helpers/wrap-component [carousel-demo/example])))
 
 (defstory
  CarouselSize
@@ -217,57 +163,15 @@
   Library: embla-carousel
 
   Uses basis-1/2, sm:basis-1/3, and lg:basis-1/4 so visible slide count follows the viewport."
+ {:source-code (embed-source "clojure-shadcn.stories.carousel.carousel-size")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/carousel {:opts {:align "start"}
-                                                       :class "w-full max-w-sm"}
-                                         (into [sut/carousel-content {}]
-                                               (for [idx (range 1 6)]
-                                                 [sut/carousel-item
-                                                  {:key idx
-                                                   :class "basis-1/2 sm:basis-1/3 lg:basis-1/4"}
-                                                  [slide-card idx]]))
-                                         [sut/carousel-previous {}]
-                                         [sut/carousel-next {}]]])))
-
-(defn carousel-position-example
-  []
-  (let [api (r/atom nil)
-        current (r/atom 1)
-        total (r/atom 0)]
-    (fn []
-      (let [sync-position (rhooks/use-callback
-                           (fn []
-                             (when-let [^js carousel-api @api]
-                               (reset! current (inc (.selectedScrollSnap carousel-api)))
-                               (reset! total (.-length (.scrollSnapList carousel-api)))))
-                           [])]
-        (rhooks/use-effect (fn []
-                             (when-let [^js carousel-api @api]
-                               (sync-position)
-                               (.on carousel-api "select" sync-position)
-                               (.on carousel-api "reInit" sync-position)
-                               (fn []
-                                 (.off carousel-api "select" sync-position)
-                                 (.off carousel-api "reInit" sync-position))))
-                           [@api sync-position])
-        (helpers/wrap-component [:div {:class "p-6"}
-                                 [sut/carousel {:set-api #(reset! api %)
-                                                :class "w-full max-w-xs"}
-                                  (into [sut/carousel-content {}]
-                                        (for [idx (range 1 6)]
-                                          [sut/carousel-item {:key idx}
-                                           [slide-card idx]]))
-                                  [sut/carousel-previous {}]
-                                  [sut/carousel-next {}]]
-                                 [:p {:class "mt-4 text-center text-sm text-muted-foreground"
-                                      :aria-live "polite"}
-                                  (str "Slide " @current " of " @total)]])))))
+ (r/as-element (helpers/wrap-component [carousel-size/example])))
 
 (defstory CarouselPosition
           "Consumer-managed current slide and total using the API supplied by :set-api."
+          {:source-code (embed-source "clojure-shadcn.stories.carousel.carousel-position")}
           []
-          (r/as-element [carousel-position-example]))
+          (r/as-element (helpers/wrap-component [carousel-position/example])))
 
 (defstory
  CarouselOrientation
@@ -276,17 +180,9 @@
   Library: embla-carousel
 
   Use :orientation :vertical for stacked slides. Container height determines visible area."
+ {:source-code (embed-source "clojure-shadcn.stories.carousel.carousel-orientation")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/carousel {:opts {:align "start"}
-                                                       :orientation :vertical
-                                                       :class "w-full max-w-xs"}
-                                         (into [sut/carousel-content {:class "h-[340px]"}]
-                                               (for [idx (range 1 6)]
-                                                 [sut/carousel-item {:key idx}
-                                                  [slide-card idx]]))
-                                         [sut/carousel-previous {}]
-                                         [sut/carousel-next {}]]])))
+ (r/as-element (helpers/wrap-component [carousel-orientation/example])))
 
 (defstory
  CarouselSpacing
@@ -295,17 +191,9 @@
   Library: embla-carousel
 
   Use pl-* on items with -ml-* on content to create gaps. Shows 3 items to demonstrate spacing."
+ {:source-code (embed-source "clojure-shadcn.stories.carousel.carousel-spacing")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/carousel {:opts {:align "start"}
-                                                       :class "w-full max-w-sm"}
-                                         (into [sut/carousel-content {:class "-ml-4"}]
-                                               (for [idx (range 1 6)]
-                                                 [sut/carousel-item {:key idx
-                                                                     :class "pl-4 basis-1/3"}
-                                                  [slide-card idx]]))
-                                         [sut/carousel-previous {}]
-                                         [sut/carousel-next {}]]])))
+ (r/as-element (helpers/wrap-component [carousel-spacing/example])))
 
 (defstory
  CarouselLoop
@@ -314,16 +202,9 @@
   Library: embla-carousel — https://www.embla-carousel.com/api/options
 
   Use :loop true in opts for seamless infinite scrolling. Embla auto-adjusts positions."
+ {:source-code (embed-source "clojure-shadcn.stories.carousel.carousel-loop")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/carousel {:opts {:loop true}
-                                                       :class "w-full max-w-xs"}
-                                         (into [sut/carousel-content {}]
-                                               (for [idx (range 1 6)]
-                                                 [sut/carousel-item {:key idx}
-                                                  [slide-card idx]]))
-                                         [sut/carousel-previous {}]
-                                         [sut/carousel-next {}]]])))
+ (r/as-element (helpers/wrap-component [carousel-loop/example])))
 
 (defstory
  CarouselDragFree
@@ -332,18 +213,9 @@
   Library: embla-carousel — https://www.embla-carousel.com/api/options
 
   Use :dragFree true for momentum-based scrolling without snap constraints."
+ {:source-code (embed-source "clojure-shadcn.stories.carousel.carousel-drag-free")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/carousel {:opts {:dragFree true
-                                                              :loop true}
-                                                       :class "w-full max-w-sm"}
-                                         (into [sut/carousel-content {}]
-                                               (for [idx (range 1 10)]
-                                                 [sut/carousel-item {:key idx
-                                                                     :class "basis-1/3"}
-                                                  [slide-card idx]]))
-                                         [sut/carousel-previous {}]
-                                         [sut/carousel-next {}]]])))
+ (r/as-element (helpers/wrap-component [carousel-drag-free/example])))
 
 (defstory
  CarouselSlidesToScroll
@@ -352,53 +224,37 @@
   Library: embla-carousel — https://www.embla-carousel.com/api/options
 
   Use :slidesToScroll in opts to advance multiple slides per navigation action."
+ {:source-code (embed-source "clojure-shadcn.stories.carousel.carousel-slides-to-scroll")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/carousel {:opts {:align "start"
-                                                              :slidesToScroll 2}
-                                                       :class "w-full max-w-sm"}
-                                         (into [sut/carousel-content {}]
-                                               (for [idx (range 1 11)]
-                                                 [sut/carousel-item {:key idx
-                                                                     :class "basis-1/3"}
-                                                  [slide-card idx]]))
-                                         [sut/carousel-previous {}]
-                                         [sut/carousel-next {}]]])))
+ (r/as-element (helpers/wrap-component [carousel-slides-to-scroll/example])))
 
 (defstory
  CarouselRtl
  "RTL carousel with Embla direction configured as well as DOM direction, so dragging and previous/next behavior follow reading order."
+ {:source-code (embed-source "clojure-shadcn.stories.carousel.carousel-rtl")}
  []
- (r/as-element (helpers/wrap-component [:div {:dir "rtl"
-                                              :class "p-6"}
-                                        [sut/carousel {:opts {:direction "rtl"
-                                                              :align "start"}
-                                                       :class "w-full max-w-sm"}
-                                         (into [sut/carousel-content {}]
-                                               (for [idx (range 1 7)]
-                                                 [sut/carousel-item {:key idx
-                                                                     :class "basis-1/2"}
-                                                  [slide-card idx]]))
-                                         [sut/carousel-previous {:aria-label "الشريحة السابقة"}]
-                                         [sut/carousel-next {:aria-label "الشريحة التالية"}]]])))
+ (r/as-element (helpers/wrap-component [carousel-rtl/example])))
 
-(defn ^:export CarouselEvents
-  "Carousel with event listeners for scroll and settle.
+(defstory
+ CarouselEvents
+ "Carousel with event listeners for scroll and settle.
 
   Library: embla-carousel — https://www.embla-carousel.com/api/events
 
   Listen to events: select, scroll, settle, pointerDown, pointerUp via :set-api."
-  []
-  (r/as-element [carousel-events-example]))
-
+ {:source-code (embed-source "clojure-shadcn.stories.carousel.carousel-events")}
+ []
+ (r/as-element (helpers/wrap-component [carousel-events/example])))
 
 (defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
-          {:args {:orientation "horizontal"}
+          {:source-code (embed-source "clojure-shadcn.stories.carousel.playground")
+           :args {:orientation "horizontal"}
            :arg-types {:orientation {:name "Orientation"
                                      :control {:type "select"}
                                      :options ["horizontal" "vertical"]}}
-           :parameters {:playground {:description "Explore carousel orientation with a live preview."}
+           :parameters {:playground {:description
+                                     "Explore carousel orientation with a live preview."}
                         :controls {:expanded false
                                    :exclude ["children" "opts" "plugins" "set-api"]}}
            :decode-args (fn [{:keys [orientation]
@@ -406,13 +262,4 @@
                           (cond-> args
                             orientation (update :orientation keyword)))}
           [args]
-          (r/as-element (helpers/wrap-component
-                         [sut/carousel
-                          (assoc (select-keys args [:orientation]) :class "w-full max-w-xs")
-                          [sut/carousel-content {}
-                           [sut/carousel-item {}
-                            [slide-card "1"]]
-                           [sut/carousel-item {}
-                            [slide-card "2"]]]
-                          [sut/carousel-previous {}]
-                          [sut/carousel-next {}]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))

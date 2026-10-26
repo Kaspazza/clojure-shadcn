@@ -1,9 +1,16 @@
 (ns clojure-shadcn.stories.theme-toggle-stories
   "Storybook stories for the Theme Toggle component."
   (:require
-   [clojure-shadcn.stories.helpers            :as helpers]
-   [clojure-shadcn.ui.components.theme-toggle :as sut]
-   [reagent.core                              :as r])
+   [clojure-shadcn.stories.helpers                                :as helpers]
+   [clojure-shadcn.stories.theme-toggle.playground                :as example-playground]
+   [clojure-shadcn.stories.theme-toggle.theme-toggle-basic        :as example-theme-toggle-basic]
+   [clojure-shadcn.stories.theme-toggle.theme-toggle-dark         :as example-theme-toggle-dark]
+   [clojure-shadcn.stories.theme-toggle.theme-toggle-in-header    :as
+                                                                  example-theme-toggle-in-header]
+   [clojure-shadcn.stories.theme-toggle.theme-toggle-light        :as example-theme-toggle-light]
+   [clojure-shadcn.stories.theme-toggle.theme-toggle-settings-row :as
+                                                                  example-theme-toggle-settings-row]
+   [reagent.core                                                  :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -73,20 +80,11 @@
 ;; ── Private helpers (no ^:export — not stories)
 ;; ──────────────────────────────
 
-(defonce ^:private demo-theme (r/atom :light))
 
-(defn- toggle-demo-theme!
-  "Flip the demo atom and mirror it onto document.documentElement's dark class."
-  []
-  (let [next (if (= @demo-theme :dark) :light :dark)]
-    (.toggle (.-classList js/document.documentElement) "dark" (= next :dark))
-    (reset! demo-theme next)))
 
-(defn- controlled-toggle
-  "Live demo: a reagent atom owns the theme, document class follows."
-  []
-  [sut/theme-toggle {:theme @demo-theme
-                     :on-toggle toggle-demo-theme!}])
+
+
+
 
 ;; ── Stories ─────────────────────────────────────────────────────────────────
 
@@ -95,58 +93,36 @@
  "Live theme toggle. Clicking flips an atom and mirrors it onto the
   document root's `dark` class — the standard wiring for Tailwind dark
   mode. The component itself stays pure: it only fires :on-toggle."
+ {:source-code (embed-source "clojure-shadcn.stories.theme-toggle.theme-toggle-basic")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [controlled-toggle]])))
+ (r/as-element (helpers/wrap-component [example-theme-toggle-basic/example])))
 
 (defstory
  ThemeToggleLight
  "Disabled visual specimen pinned to :light; it is intentionally not presented as an interactive toggle."
+ {:source-code (embed-source "clojure-shadcn.stories.theme-toggle.theme-toggle-light")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/theme-toggle {:theme :light
-                                                           :label "Light theme specimen"
-                                                           :disabled true}]])))
+ (r/as-element (helpers/wrap-component [example-theme-toggle-light/example])))
 
 (defstory
  ThemeToggleDark
  "Disabled visual specimen pinned to :dark; it is intentionally not presented as an interactive toggle."
+ {:source-code (embed-source "clojure-shadcn.stories.theme-toggle.theme-toggle-dark")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/theme-toggle {:theme :dark
-                                                           :aria-label "Dark theme specimen"
-                                                           :disabled true}]])))
+ (r/as-element (helpers/wrap-component [example-theme-toggle-dark/example])))
 
 (defstory ThemeToggleInHeader
           "Composition demo: toggle inside a minimal header."
+          {:source-code (embed-source "clojure-shadcn.stories.theme-toggle.theme-toggle-in-header")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "relative h-20 rounded-md border bg-background"}
-                          [:div {:class "flex h-full items-center justify-between px-4"}
-                           [:span {:class "text-sm font-semibold"}
-                            "Brand"]
-                           [:div {:class "flex items-center gap-4"}
-                            [:a {:href "#"
-                                 :class "text-sm"}
-                             "Home"]
-                            [:a {:href "#"
-                                 :class "text-sm"}
-                             "Docs"]
-                            [controlled-toggle]]]])))
+          (r/as-element (helpers/wrap-component [example-theme-toggle-in-header/example])))
 
 (defstory ThemeToggleSettingsRow
           "Settings panel row with descriptive text next to the live toggle."
+          {:source-code (embed-source
+                         "clojure-shadcn.stories.theme-toggle.theme-toggle-settings-row")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "p-6 max-w-sm"}
-                          [:div {:class
-                                 "flex items-center justify-between rounded-md border px-4 py-3"}
-                           [:div {:class "space-y-1"}
-                            [:p {:class "text-sm font-medium"}
-                             "Dark mode"]
-                            [:p {:class "text-xs text-muted-foreground"}
-                             "Switch theme for the application."]]
-                           [controlled-toggle]]])))
+          (r/as-element (helpers/wrap-component [example-theme-toggle-settings-row/example])))
 
 
 (defstory Playground
@@ -154,16 +130,10 @@
           {:args {:class ""}
            :arg-types {:class {:name "CSS classes"
                                :control {:type "text"}}}
-           :parameters {:playground {:description "Explore theme toggle css classes with a live preview."}
+           :parameters {:playground {:description
+                                     "Explore theme toggle css classes with a live preview."}
                         :controls {:expanded false
-                                   :exclude ["theme" "on-toggle"]}}}
+                                   :exclude ["theme" "on-toggle"]}}
+           :source-code (embed-source "clojure-shadcn.stories.theme-toggle.playground")}
           [args]
-          (r/as-element
-           (helpers/wrap-component
-            [(fn []
-               (let [theme (r/atom :light)]
-                 (fn [] [sut/theme-toggle
-                         {:theme @theme
-                          :class (:class args)
-                          :on-toggle #(swap! theme (fn [current]
-                                                     (if (= current :dark) :light :dark)))}])))])))
+          (r/as-element (helpers/wrap-component [example-playground/example args])))

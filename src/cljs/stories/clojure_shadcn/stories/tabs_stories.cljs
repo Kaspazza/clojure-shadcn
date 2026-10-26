@@ -1,9 +1,12 @@
 (ns clojure-shadcn.stories.tabs-stories
   (:require
-   ["lucide-react"                    :refer [Bell Settings User]]
-   [clojure-shadcn.stories.helpers    :as helpers]
-   [clojure-shadcn.ui.components.tabs :as sut]
-   [reagent.core                      :as r])
+   [clojure-shadcn.stories.helpers              :as helpers]
+   [clojure-shadcn.stories.tabs.playground      :as example-playground]
+   [clojure-shadcn.stories.tabs.tabs-basic      :as example-tabs-basic]
+   [clojure-shadcn.stories.tabs.tabs-disabled   :as example-tabs-disabled]
+   [clojure-shadcn.stories.tabs.tabs-rtl        :as example-tabs-rtl]
+   [clojure-shadcn.stories.tabs.tabs-with-icons :as example-tabs-with-icons]
+   [reagent.core                                :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -43,33 +46,14 @@
                        :description "Keyboard behavior."}]}])))
 
 (defstory TabsBasic
+          {:source-code (embed-source "clojure-shadcn.stories.tabs.tabs-basic")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "w-[420px] p-6"}
-                                                 [sut/tabs {:default-value "account"}
-                                                  [sut/tabs-list {}
-                                                   [sut/tabs-trigger {:value "account"}
-                                                    "Account"]
-                                                   [sut/tabs-trigger {:value "password"}
-                                                    "Password"]]
-                                                  [sut/tabs-content {:value "account"
-                                                                     :class "rounded-md border p-4"}
-                                                   "Manage account preferences."]
-                                                  [sut/tabs-content {:value "password"
-                                                                     :class "rounded-md border p-4"}
-                                                   "Change your password."]]])))
+          (r/as-element (helpers/wrap-component [example-tabs-basic/example])))
 
 (defstory TabsDisabled
+          {:source-code (embed-source "clojure-shadcn.stories.tabs.tabs-disabled")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/tabs {:default-value "active"}
-                                                  [sut/tabs-list {}
-                                                   [sut/tabs-trigger {:value "active"}
-                                                    "Active"]
-                                                   [sut/tabs-trigger {:value "disabled"
-                                                                      :disabled true}
-                                                    "Disabled"]]
-                                                  [sut/tabs-content {:value "active"}
-                                                   "The second tab cannot be selected."]]])))
+          (r/as-element (helpers/wrap-component [example-tabs-disabled/example])))
 
 
 (defstory
@@ -79,30 +63,9 @@
   Radix primitive: @radix-ui/react-tabs
 
   Pair icons with text so each tab retains a clear accessible name."
+ {:source-code (embed-source "clojure-shadcn.stories.tabs.tabs-with-icons")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "w-[420px] p-6"}
-    [sut/tabs {:default-value "profile"}
-     [sut/tabs-list {}
-      [sut/tabs-trigger {:value "profile"}
-       [:> User {:aria-hidden true}]
-       "Profile"]
-      [sut/tabs-trigger {:value "notifications"}
-       [:> Bell {:aria-hidden true}]
-       "Notifications"]
-      [sut/tabs-trigger {:value "settings"}
-       [:> Settings {:aria-hidden true}]
-       "Settings"]]
-     [sut/tabs-content {:value "profile"
-                        :class "rounded-md border p-4"}
-      "Update your public profile."]
-     [sut/tabs-content {:value "notifications"
-                        :class "rounded-md border p-4"}
-      "Choose which alerts you receive."]
-     [sut/tabs-content {:value "settings"
-                        :class "rounded-md border p-4"}
-      "Manage workspace defaults."]]])))
+ (r/as-element (helpers/wrap-component [example-tabs-with-icons/example])))
 
 (defstory
  TabsRtl
@@ -111,26 +74,9 @@
   Radix primitive: @radix-ui/react-tabs
 
   Set :dir on Root so horizontal arrow-key behavior follows reading direction."
+ {:source-code (embed-source "clojure-shadcn.stories.tabs.tabs-rtl")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "w-[420px] p-6"
-          :dir "rtl"}
-    [sut/tabs {:default-value "account"
-               :dir "rtl"}
-     [sut/tabs-list {}
-      [sut/tabs-trigger {:value "account"}
-       [:> User {:aria-hidden true}]
-       "الحساب"]
-      [sut/tabs-trigger {:value "alerts"}
-       [:> Bell {:aria-hidden true}]
-       "التنبيهات"]]
-     [sut/tabs-content {:value "account"
-                        :class "rounded-md border p-4"}
-      "إدارة معلومات الحساب."]
-     [sut/tabs-content {:value "alerts"
-                        :class "rounded-md border p-4"}
-      "اختيار إعدادات التنبيهات."]]])))
+ (r/as-element (helpers/wrap-component [example-tabs-rtl/example])))
 
 (defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
@@ -140,16 +86,7 @@
                                        :options ["account" "password"]}}
            :parameters {:playground {:description "Explore tabs initial value with a live preview."}
                         :controls {:expanded false
-                                   :exclude ["children" "value" "on-value-change"]}}}
+                                   :exclude ["children" "value" "on-value-change"]}}
+           :source-code (embed-source "clojure-shadcn.stories.tabs.playground")}
           [args]
-          (r/as-element (helpers/wrap-component [sut/tabs
-                                                 (select-keys args [:default-value])
-                                                 [sut/tabs-list {}
-                                                  [sut/tabs-trigger {:value "account"}
-                                                   "Account"]
-                                                  [sut/tabs-trigger {:value "password"}
-                                                   "Password"]]
-                                                 [sut/tabs-content {:value "account"}
-                                                  "Account settings"]
-                                                 [sut/tabs-content {:value "password"}
-                                                  "Password settings"]])))
+          (r/as-element (helpers/wrap-component [example-playground/example args])))

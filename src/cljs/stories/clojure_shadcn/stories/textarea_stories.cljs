@@ -1,12 +1,17 @@
 (ns clojure-shadcn.stories.textarea-stories
   "Storybook stories for the Textarea component. Ported from mateuszmazurczak.portfolio.ui-components.textarea."
   (:require
-   [clojure-shadcn.stories.helpers        :as helpers]
-   [clojure-shadcn.ui.components.button   :as button]
-   [clojure-shadcn.ui.components.field    :as field]
-   [clojure-shadcn.ui.components.label    :as label]
-   [clojure-shadcn.ui.components.textarea :as sut]
-   [reagent.core                          :as r])
+   [clojure-shadcn.stories.helpers                          :as helpers]
+   [clojure-shadcn.stories.textarea.playground              :as example-playground]
+   [clojure-shadcn.stories.textarea.textarea-demo           :as example-textarea-demo]
+   [clojure-shadcn.stories.textarea.textarea-disabled       :as example-textarea-disabled]
+   [clojure-shadcn.stories.textarea.textarea-field-disabled :as example-textarea-field-disabled]
+   [clojure-shadcn.stories.textarea.textarea-invalid        :as example-textarea-invalid]
+   [clojure-shadcn.stories.textarea.textarea-rtl            :as example-textarea-rtl]
+   [clojure-shadcn.stories.textarea.textarea-with-button    :as example-textarea-with-button]
+   [clojure-shadcn.stories.textarea.textarea-with-label     :as example-textarea-with-label]
+   [clojure-shadcn.stories.textarea.textarea-with-text      :as example-textarea-with-text]
+   [reagent.core                                            :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -108,9 +113,9 @@
   Native element: <textarea>
 
   Uses Tailwind styling and supports auto-sizing via :auto-size?."
+ {:source-code (embed-source "clojure-shadcn.stories.textarea.textarea-demo")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-sm"}
-                                        [sut/textarea {:placeholder "Type your message here."}]])))
+ (r/as-element (helpers/wrap-component [example-textarea-demo/example])))
 
 (defstory
  TextareaDisabled
@@ -119,10 +124,9 @@
   Native element: <textarea>
 
   Disabled state applies muted styling and blocks input."
+ {:source-code (embed-source "clojure-shadcn.stories.textarea.textarea-disabled")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-sm"}
-                                        [sut/textarea {:placeholder "Type your message here."
-                                                       :disabled true}]])))
+ (r/as-element (helpers/wrap-component [example-textarea-disabled/example])))
 
 (defstory
  TextareaWithLabel
@@ -131,12 +135,9 @@
   Native element: <textarea>
 
   Use labels for longer form inputs and clarity."
+ {:source-code (embed-source "clojure-shadcn.stories.textarea.textarea-with-label")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
-                                        [label/label {:html-for "message"}
-                                         "Your message"]
-                                        [sut/textarea {:id "message"
-                                                       :placeholder "Type your message here."}]])))
+ (r/as-element (helpers/wrap-component [example-textarea-with-label/example])))
 
 (defstory
  TextareaInvalid
@@ -145,16 +146,9 @@
   Native element: <textarea>
 
   Pair :aria-invalid with error messaging for clear validation feedback."
+ {:source-code (embed-source "clojure-shadcn.stories.textarea.textarea-invalid")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
-                                        [label/label {:html-for "feedback-invalid"}
-                                         "Feedback"]
-                                        [sut/textarea {:id "feedback-invalid"
-                                                       :aria-invalid true
-                                                       :default-value "bad"
-                                                       :placeholder "Tell us what happened..."}]
-                                        [:p {:class "text-destructive text-sm"}
-                                         "Feedback should be at least 10 characters."]])))
+ (r/as-element (helpers/wrap-component [example-textarea-invalid/example])))
 
 (defstory
  TextareaWithButton
@@ -163,10 +157,9 @@
   Native element: <textarea>
 
   Useful for support forms or quick feedback widgets."
+ {:source-code (embed-source "clojure-shadcn.stories.textarea.textarea-with-button")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
-                                        [sut/textarea {:placeholder "Type your message here."}]
-                                        (button/button {} "Send message")])))
+ (r/as-element (helpers/wrap-component [example-textarea-with-button/example])))
 
 (defstory
  TextareaWithText
@@ -175,66 +168,50 @@
   Native element: <textarea>
 
   Helper text clarifies what happens after submission."
+ {:source-code (embed-source "clojure-shadcn.stories.textarea.textarea-with-text")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
-                                        [label/label {:html-for "message-2"}
-                                         "Your message"]
-                                        [sut/textarea {:id "message-2"
-                                                       :placeholder "Type your message here."}]
-                                        [:p {:class "text-muted-foreground text-sm"}
-                                         "Your message will be routed to the support team."]])))
+ (r/as-element (helpers/wrap-component [example-textarea-with-text/example])))
 
 
-(defstory Playground
-          "Interactive native textarea playground."
-          {:args {:placeholder "Type your message…"
-                  :default-value ""
-                  :rows 4
-                  :disabled false
-                  :auto-size true}
-           :arg-types {:placeholder {:name "Placeholder"
-                                     :control {:type "text"}}
-                       :default-value {:name "Initial value"
-                                       :control {:type "text"}}
-                       :rows {:name "Rows"
-                              :control {:type "number"}}
-                       :disabled {:name "Disabled"
-                                  :control {:type "boolean"}}
-                       :auto-size {:name "Auto size"
-                                   :control {:type "boolean"}}}
-           :parameters {:playground {:description "Explore textarea placeholder, initial value, rows, disabled and auto size with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["value" "on-change" "class"]}}
-           :decode-args (fn [{:keys [auto-size]
-                              :as args}]
-                          (assoc (dissoc args :auto-size) :auto-size? auto-size))}
-          [args]
-          (r/as-element (helpers/wrap-component [:div {:class "max-w-sm p-6"}
-                                                 [sut/textarea args]])))
+(defstory
+ Playground
+ "Interactive native textarea playground."
+ {:args {:placeholder "Type your message…"
+         :default-value ""
+         :rows 4
+         :disabled false
+         :auto-size true}
+  :arg-types {:placeholder {:name "Placeholder"
+                            :control {:type "text"}}
+              :default-value {:name "Initial value"
+                              :control {:type "text"}}
+              :rows {:name "Rows"
+                     :control {:type "number"}}
+              :disabled {:name "Disabled"
+                         :control {:type "boolean"}}
+              :auto-size {:name "Auto size"
+                          :control {:type "boolean"}}}
+  :parameters
+  {:playground
+   {:description
+    "Explore textarea placeholder, initial value, rows, disabled and auto size with a live preview."}
+   :controls {:expanded false
+              :exclude ["value" "on-change" "class"]}}
+  :decode-args (fn [{:keys [auto-size]
+                     :as args}]
+                 (assoc (dissoc args :auto-size) :auto-size? auto-size))
+  :source-code (embed-source "clojure-shadcn.stories.textarea.playground")}
+ [args]
+ (r/as-element (helpers/wrap-component [example-playground/example args])))
 
 (defstory TextareaFieldDisabled
           "Disabled textarea inside Field. Based on shadcn/ui Textarea — Field Disabled."
+          {:source-code (embed-source "clojure-shadcn.stories.textarea.textarea-field-disabled")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "max-w-md p-6"}
-                                                 [field/field {:data-disabled true}
-                                                  [field/field-label {:html-for "disabled-notes"}
-                                                   "Internal notes"]
-                                                  [sut/textarea {:id "disabled-notes"
-                                                                 :disabled true
-                                                                 :default-value
-                                                                 "Editing is restricted."}]
-                                                  [field/field-description {}
-                                                   "Only administrators can edit notes."]]])))
+          (r/as-element (helpers/wrap-component [example-textarea-field-disabled/example])))
 
 (defstory TextareaRtl
           "Right-to-left textarea field. Based on shadcn/ui Textarea — RTL."
+          {:source-code (embed-source "clojure-shadcn.stories.textarea.textarea-rtl")}
           []
-          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
-                                                       :class "max-w-md p-6"}
-                                                 [field/field {}
-                                                  [field/field-label {:html-for "message-rtl"}
-                                                   "رسالتك"]
-                                                  [sut/textarea {:id "message-rtl"
-                                                                 :placeholder "اكتب رسالتك هنا"}]
-                                                  [field/field-description {}
-                                                   "سنرد خلال يوم عمل."]]])))
+          (r/as-element (helpers/wrap-component [example-textarea-rtl/example])))

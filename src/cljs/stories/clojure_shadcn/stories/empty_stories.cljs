@@ -1,20 +1,18 @@
 (ns clojure-shadcn.stories.empty-stories
   "Storybook stories for the Empty State component. Ported from mateuszmazurczak.portfolio.ui-components.empty."
   (:require
-   ["lucide-react"                           :refer [ArrowUpRight
-                                                     Bell
-                                                     Bookmark
-                                                     Heart
-                                                     Inbox
-                                                     Plus
-                                                     RefreshCcw]]
-   [clojure-shadcn.stories.helpers           :as helpers]
-   [clojure-shadcn.ui.components.avatar      :as avatar]
-   [clojure-shadcn.ui.components.button      :as button]
-   [clojure-shadcn.ui.components.card        :as card]
-   [clojure-shadcn.ui.components.empty       :as sut]
-   [clojure-shadcn.ui.components.input-group :as input-group]
-   [reagent.core                             :as r])
+   [clojure-shadcn.stories.empty.empty-avatar            :as empty-avatar]
+   [clojure-shadcn.stories.empty.empty-avatar-group      :as empty-avatar-group]
+   [clojure-shadcn.stories.empty.empty-background        :as empty-background]
+   [clojure-shadcn.stories.empty.empty-canonical-actions :as empty-canonical-actions]
+   [clojure-shadcn.stories.empty.empty-card              :as empty-card]
+   [clojure-shadcn.stories.empty.empty-icon              :as empty-icon]
+   [clojure-shadcn.stories.empty.empty-input-group       :as empty-input-group]
+   [clojure-shadcn.stories.empty.empty-outline           :as empty-outline]
+   [clojure-shadcn.stories.empty.empty-rtl               :as empty-rtl]
+   [clojure-shadcn.stories.empty.playground              :as playground]
+   [clojure-shadcn.stories.helpers                       :as helpers]
+   [reagent.core                                         :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -117,280 +115,98 @@
        [:code
         "[empty {}\n [empty-header {}\n  [empty-media {:variant :icon} [:> Inbox]]\n  [empty-title {} \"No invoices yet\"]\n  [empty-description {} \"Create your first invoice to get started.\"]]\n [empty-content {}\n  [button {} \"Create invoice\"]]]"]]]]])))
 
-(defstory Playground
-          "Interactive empty-state playground."
-          {:args {:media-variant "icon"
-                  :title "No Projects Yet"
-                  :description "You haven't created any projects yet."
-                  :action-label "Create Project"}
-           :arg-types {:media-variant {:name "Media variant"
-                                       :control {:type "select"}
-                                       :options ["default" "icon"]}
-                       :title {:name "Title"
-                               :control {:type "text"}}
-                       :description {:name "Description"
-                                     :control {:type "text"}}
-                       :action-label {:name "Action label"
-                                      :control {:type "text"}}}
-           :parameters {:playground {:description "Explore empty media variant, title, description and action label with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["class" "on-click"]}}
-           :decode-args (fn [{:keys [mediaVariant actionLabel]
-                              :as args}]
-                          (cond-> (-> args
-                                      (assoc :media-variant mediaVariant :action-label actionLabel)
-                                      (dissoc :mediaVariant :actionLabel))
-                            mediaVariant (update :media-variant keyword)))}
-          [args]
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/empty {}
-                                                  [sut/empty-header {}
-                                                   [sut/empty-media {:variant (:media-variant args)}
-                                                    [:> Inbox]]
-                                                   [sut/empty-title {}
-                                                    (:title args)]
-                                                   [sut/empty-description {}
-                                                    (:description args)]]
-                                                  [sut/empty-content {}
-                                                   [button/button {}
-                                                    (:action-label args)]]]])))
+(defstory
+ Playground
+ "Interactive empty-state playground."
+ {:args {:media-variant "icon"
+         :title "No Projects Yet"
+         :description "You haven't created any projects yet."
+         :action-label "Create Project"}
+  :arg-types {:media-variant {:name "Media variant"
+                              :control {:type "select"}
+                              :options ["default" "icon"]}
+              :title {:name "Title"
+                      :control {:type "text"}}
+              :description {:name "Description"
+                            :control {:type "text"}}
+              :action-label {:name "Action label"
+                             :control {:type "text"}}}
+  :parameters
+  {:playground
+   {:description
+    "Explore empty media variant, title, description and action label with a live preview."}
+   :controls {:expanded false
+              :exclude ["class" "on-click"]}}
+  :decode-args (fn [args]
+                 (let [args (cond-> args
+                              (and (not (contains? args :media-variant))
+                                   (contains? args :mediaVariant))
+                              (assoc :media-variant (:mediaVariant args))
+                              (and (not (contains? args :action-label))
+                                   (contains? args :actionLabel))
+                              (assoc :action-label (:actionLabel args)))]
+                   (cond-> (dissoc args :mediaVariant :actionLabel)
+                     (some? (:media-variant args)) (update :media-variant keyword))))
+  :source-code (embed-source "clojure-shadcn.stories.empty.playground")}
+ [args]
+ (r/as-element (helpers/wrap-component [playground/example args])))
 
 (defstory
  EmptyIcon
- "Grid of empty states with icons.
-
-  Custom component built for empty or zero states.
-
-  Useful for showcasing multiple empty modules."
+ "Grid of empty states with icons.\n\n  Custom component built for empty or zero states.\n\n  Useful for showcasing multiple empty modules."
+ {:source-code (embed-source "clojure-shadcn.stories.empty.empty-icon")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6 grid gap-8 md:grid-cols-2"}
-    [sut/empty {}
-     [sut/empty-header {}
-      [sut/empty-media {:variant :icon}
-       [:> Inbox]]
-      [sut/empty-title {}
-       "No messages"]
-      [sut/empty-description {}
-       "Your inbox is empty. New messages will appear here."]]]
-    [sut/empty {}
-     [sut/empty-header {}
-      [sut/empty-media {:variant :icon}
-       [:> Heart]]
-      [sut/empty-title {}
-       "No likes yet"]
-      [sut/empty-description {}
-       "Content you like will be saved here for easy access."]]]
-    [sut/empty {}
-     [sut/empty-header {}
-      [sut/empty-media {:variant :icon}
-       [:> Bookmark]]
-      [sut/empty-title {}
-       "No bookmarks"]
-      [sut/empty-description {}
-       "Save interesting content by bookmarking it."]]]
-    [sut/empty {}
-     [sut/empty-header {}
-      [sut/empty-media {:variant :icon}
-       [:> Bell]]
-      [sut/empty-title {}
-       "No notifications"]
-      [sut/empty-description {}
-       "You're all caught up. New notifications will appear here."]]]])))
+ (r/as-element (helpers/wrap-component [empty-icon/example])))
 
 (defstory
  EmptyOutline
- "Outlined empty state variant.
-
-  Custom component built for empty or zero states.
-
-  Use a dashed border to emphasize the empty container."
+ "Outlined empty state variant.\n\n  Custom component built for empty or zero states.\n\n  Use a dashed border to emphasize the empty container."
+ {:source-code (embed-source "clojure-shadcn.stories.empty.empty-outline")}
  []
- (r/as-element (helpers/wrap-component
-                [:div {:class "p-6"}
-                 [sut/empty {:class "border border-dashed"}
-                  [sut/empty-header {}
-                   [sut/empty-media {:variant :icon}
-                    [:> Bell]]
-                   [sut/empty-title {}
-                    "Cloud Storage Empty"]
-                   [sut/empty-description {}
-                    "Upload files to your cloud storage to access them anywhere."]]
-                  [sut/empty-content {}
-                   (button/button {:variant :outline
-                                   :size :sm}
-                                  "Upload Files")]]])))
+ (r/as-element (helpers/wrap-component [empty-outline/example])))
 
 (defstory
  EmptyAvatar
- "Empty state with an avatar media.
-
-  Custom component built for empty or zero states.
-
-  Use avatar media for user-centric empty states."
+ "Empty state with an avatar media.\n\n  Custom component built for empty or zero states.\n\n  Use avatar media for user-centric empty states."
+ {:source-code (embed-source "clojure-shadcn.stories.empty.empty-avatar")}
  []
- (r/as-element (helpers/wrap-component
-                [:div {:class "p-6"}
-                 [sut/empty {}
-                  [sut/empty-header {}
-                   [sut/empty-media {:variant :default}
-                    [avatar/avatar {:size :lg}
-                     [avatar/avatar-image {:src "https://github.com/shadcn.png"
-                                           :class "grayscale"}]
-                     [avatar/avatar-fallback {}
-                      "LR"]]]
-                   [sut/empty-title {}
-                    "User Offline"]
-                   [sut/empty-description {}
-                    "This user is currently offline. You can leave a message or try again later."]]
-                  [sut/empty-content {}
-                   (button/button {:size :sm} "Leave Message")]]])))
+ (r/as-element (helpers/wrap-component [empty-avatar/example])))
 
 (defstory
  EmptyBackground
- "Empty state with muted background.
-
-  Custom component built for empty or zero states.
-
-  Gradient backgrounds help differentiate the empty section."
+ "Empty state with muted background.\n\n  Custom component built for empty or zero states.\n\n  Gradient backgrounds help differentiate the empty section."
+ {:source-code (embed-source "clojure-shadcn.stories.empty.empty-background")}
  []
- (r/as-element (helpers/wrap-component
-                [:div {:class "p-6"}
-                 [sut/empty {:class "from-muted/50 to-background bg-gradient-to-b from-30%"}
-                  [sut/empty-header {}
-                   [sut/empty-media {:variant :icon}
-                    [:> Bell]]
-                   [sut/empty-title {}
-                    "No Notifications"]
-                   [sut/empty-description {}
-                    "You're all caught up. New notifications will appear here."]]
-                  [sut/empty-content {}
-                   (button/button {:variant :outline
-                                   :size :sm}
-                                  [:> RefreshCcw]
-                                  "Refresh")]]])))
+ (r/as-element (helpers/wrap-component [empty-background/example])))
 
 (defstory
  EmptyAvatarGroup
- "Empty state with avatar group.
-
-  Custom component built for empty or zero states.
-
-  Use grouped avatars for team invites or collaboration prompts."
+ "Empty state with avatar group.\n\n  Custom component built for empty or zero states.\n\n  Use grouped avatars for team invites or collaboration prompts."
+ {:source-code (embed-source "clojure-shadcn.stories.empty.empty-avatar-group")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/empty {}
-     [sut/empty-header {}
-      [sut/empty-media {}
-       [:div {:class "flex -space-x-2"}
-        [avatar/avatar {:size :lg
-                        :class "ring-2 ring-background grayscale"}
-         [avatar/avatar-image {:src "https://github.com/shadcn.png"
-                               :alt "@shadcn"}]
-         [avatar/avatar-fallback {}
-          "CN"]]
-        [avatar/avatar {:size :lg
-                        :class "ring-2 ring-background grayscale"}
-         [avatar/avatar-image {:src "https://github.com/maxleiter.png"
-                               :alt "@maxleiter"}]
-         [avatar/avatar-fallback {}
-          "LR"]]
-        [avatar/avatar {:size :lg
-                        :class "ring-2 ring-background grayscale"}
-         [avatar/avatar-image {:src "https://github.com/evilrabbit.png"
-                               :alt "@evilrabbit"}]
-         [avatar/avatar-fallback {}
-          "ER"]]]]
-      [sut/empty-title {}
-       "No Team Members"]
-      [sut/empty-description {}
-       "Invite your team to collaborate on this project."]]
-     [sut/empty-content {}
-      (button/button {:size :sm} [:> Plus] "Invite Members")]]])))
+ (r/as-element (helpers/wrap-component [empty-avatar-group/example])))
 
 (defstory
  EmptyCard
  "Empty state nested in a Card, keeping the outer surface responsible for border and elevation."
+ {:source-code (embed-source "clojure-shadcn.stories.empty.empty-card")}
  []
- (r/as-element (helpers/wrap-component
-                [card/card {:class "w-full max-w-xl"}
-                 [card/card-content {}
-                  [sut/empty {:class "min-h-72 border-0 p-0"}
-                   [sut/empty-header {}
-                    [sut/empty-media {:variant :icon}
-                     [:> Inbox]]
-                    [sut/empty-title {}
-                     "No messages"]
-                    [sut/empty-description {}
-                     "When a teammate contacts you, the conversation will appear here."]]
-                   [sut/empty-content {}
-                    (button/button {} [:> Plus] "New message")]]]])))
+ (r/as-element (helpers/wrap-component [empty-card/example])))
 
 (defstory EmptyCanonicalActions
           "Canonical actions — upstream primary, secondary, and inline-link action arrangements."
+          {:source-code (embed-source "clojure-shadcn.stories.empty.empty-canonical-actions")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [:div {:class "grid gap-8 lg:grid-cols-2"}
-             [sut/empty {:class "border"}
-              [sut/empty-header {}
-               [sut/empty-media {:variant :icon}
-                [:> Inbox]]
-               [sut/empty-title {}
-                "No projects yet"]
-               [sut/empty-description {}
-                "Create a project or import one from another workspace."]]
-              [sut/empty-content {:class "flex-row"}
-               (button/button {} [:> Plus] "Create project")
-               (button/button {:variant :outline} "Import")]]
-             [sut/empty {:class "border"}
-              [sut/empty-header {}
-               [sut/empty-title {}
-                "Nothing saved"]
-               [sut/empty-description {}
-                "Bookmarks you save will appear here. "
-                [:a {:href "#learn"}
-                 "Learn how bookmarks work"]]]
-              [sut/empty-content {}
-               (button/button {:variant :outline} [:> ArrowUpRight] "Browse articles")]]])))
+          (r/as-element (helpers/wrap-component [empty-canonical-actions/example])))
 
 (defstory EmptyInputGroup
           "Input Group — upstream empty-state recovery pattern for joining a workspace by code."
+          {:source-code (embed-source "clojure-shadcn.stories.empty.empty-input-group")}
           []
-          (r/as-element (helpers/wrap-component
-                         [sut/empty {:class "max-w-xl border"}
-                          [sut/empty-header {}
-                           [sut/empty-media {:variant :icon}
-                            [:> Inbox]]
-                           [sut/empty-title {}
-                            "Join a workspace"]
-                           [sut/empty-description {}
-                            "Enter an invitation code to find your team."]]
-                          [sut/empty-content {:class "w-full max-w-sm"}
-                           [input-group/input-group {}
-                            [input-group/input-group-input {:aria-label "Invitation code"
-                                                            :placeholder "Invitation code"}]
-                            [input-group/input-group-addon {:align :inline-end}
-                             [input-group/input-group-button {}
-                              "Join"]]]]])))
+          (r/as-element (helpers/wrap-component [empty-input-group/example])))
 
 (defstory EmptyRTL
           "RTL — canonical empty state with logical action ordering."
+          {:source-code (embed-source "clojure-shadcn.stories.empty.empty-rtl")}
           []
-          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
-                                                       :class "text-right"}
-                                                 [sut/empty {:class "border"}
-                                                  [sut/empty-header {}
-                                                   [sut/empty-media {:variant :icon}
-                                                    [:> Inbox]]
-                                                   [sut/empty-title {}
-                                                    "لا توجد مشاريع"]
-                                                   [sut/empty-description {}
-                                                    "أنشئ مشروعك الأول للبدء."]]
-                                                  [sut/empty-content {:class "flex-row"}
-                                                   (button/button {} [:> Plus] "إنشاء مشروع")
-                                                   (button/button {:variant :outline}
-                                                                  "استيراد")]]])))
+          (r/as-element (helpers/wrap-component [empty-rtl/example])))

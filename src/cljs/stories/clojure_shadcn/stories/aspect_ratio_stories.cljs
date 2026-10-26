@@ -1,7 +1,10 @@
 (ns clojure-shadcn.stories.aspect-ratio-stories
   (:require
    [clojure-shadcn.stories.helpers            :as helpers]
-   [clojure-shadcn.ui.components.aspect-ratio :as sut]
+   [clojure-shadcn.stories.aspect-ratio.playground :as playground]
+   [clojure-shadcn.stories.aspect-ratio.aspect-ratio-square :as aspect-ratio-square]
+   [clojure-shadcn.stories.aspect-ratio.aspect-ratio-portrait :as aspect-ratio-portrait]
+   [clojure-shadcn.stories.aspect-ratio.aspect-ratio-rtl :as aspect-ratio-rtl]
    [reagent.core                              :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
@@ -39,7 +42,8 @@
 (defstory
  Playground
  "Interactive aspect-ratio playground."
- {:args {:ratio 1.7778}
+ {:source-code (embed-source "clojure-shadcn.stories.aspect-ratio.playground")
+  :args {:ratio 1.7778}
   :arg-types {:ratio {:name "Ratio"
                                :control {:type "number"}
                       :min 0.5
@@ -49,56 +53,23 @@
                         :controls {:expanded false
                                    :exclude ["class"]}}}
  [args]
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "w-[450px] p-6"}
-    [sut/aspect-ratio {:ratio (or (:ratio args) 1.7778)
-                       :class "overflow-hidden rounded-lg bg-muted"}
-     [:img
-      {:src
-       "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=900&q=80"
-       :alt "Green landscape"
-       :class "size-full object-cover"}]]])))
+ (r/as-element (helpers/wrap-component [playground/example args])))
 
 (defstory AspectRatioSquare
+          {:source-code (embed-source "clojure-shadcn.stories.aspect-ratio.aspect-ratio-square")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [:div {:class "w-64 p-6"}
-             [sut/aspect-ratio
-              {:ratio 1
-               :class "grid place-items-center rounded-lg border bg-muted text-muted-foreground"}
-              "1:1"]])))
+          (r/as-element (helpers/wrap-component [aspect-ratio-square/example])))
 
 (defstory
  AspectRatioPortrait
  "Portrait — upstream 3:4 media treatment for posters and profile photography."
+ {:source-code (embed-source "clojure-shadcn.stories.aspect-ratio.aspect-ratio-portrait")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "w-64"}
-    [sut/aspect-ratio {:ratio 0.75
-                       :class "overflow-hidden rounded-xl bg-muted"}
-     [:img
-      {:src
-       "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=80"
-       :alt "Mountain landscape in portrait format"
-       :class "size-full object-cover"}]]])))
+ (r/as-element (helpers/wrap-component [aspect-ratio-portrait/example])))
 
 (defstory
  AspectRatioRTL
  "RTL — aspect-ratio media embedded in a right-to-left content card."
+ {:source-code (embed-source "clojure-shadcn.stories.aspect-ratio.aspect-ratio-rtl")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:figure {:dir "rtl"
-             :class "w-80 space-y-2 text-right"}
-    [sut/aspect-ratio {:ratio 1.7778
-                       :class "overflow-hidden rounded-lg bg-muted"}
-     [:img
-      {:src
-       "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=700&q=80"
-       :alt "منظر طبيعي أخضر"
-       :class "size-full object-cover"}]]
-    [:figcaption {:class "text-sm text-muted-foreground"}
-     "صورة بنسبة عرض إلى ارتفاع 16:9"]])))
+ (r/as-element (helpers/wrap-component [aspect-ratio-rtl/example])))

@@ -1,12 +1,11 @@
 (ns clojure-shadcn.stories.input-group-stories
   (:require
-   ["lucide-react"                           :refer [AtSign Search Send]]
-   [clojure-shadcn.stories.helpers           :as helpers]
-   [clojure-shadcn.ui.components.card        :as card]
-   [clojure-shadcn.ui.components.input-group :as sut]
-   [clojure-shadcn.ui.components.kbd         :as kbd]
-   [clojure-shadcn.ui.components.spinner     :as spinner]
-   [reagent.core                             :as r])
+   [clojure-shadcn.stories.helpers                          :as helpers]
+   [clojure-shadcn.stories.input-group.input-group-in-card  :as input-group-in-card]
+   [clojure-shadcn.stories.input-group.input-group-patterns :as input-group-patterns]
+   [clojure-shadcn.stories.input-group.playground           :as playground]
+   [clojure-shadcn.stories.input-group.with-addon           :as with-addon]
+   [reagent.core                                            :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -83,21 +82,15 @@
         "Merged and forwarded to span, Input, or Textarea. Supply an accessible label to the actual control."}]}]])))
 
 (defstory WithAddon
+          {:source-code (embed-source "clojure-shadcn.stories.input-group.with-addon")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "w-80"}
-                                                 [sut/input-group {}
-                                                  [sut/input-group-addon {}
-                                                   [:> Search {:aria-hidden true}]]
-                                                  [sut/input-group-input {:aria-label "Search"
-                                                                          :placeholder "Search…"}]
-                                                  [sut/input-group-addon {:align :inline-end}
-                                                   [sut/input-group-text {}
-                                                    "⌘K"]]]])))
+          (r/as-element (helpers/wrap-component [with-addon/example])))
 
 
 (defstory Playground
           "Interactive input-group playground."
-          {:args {:placeholder "Search…"
+          {:source-code (embed-source "clojure-shadcn.stories.input-group.playground")
+           :args {:placeholder "Search…"
                   :disabled false
                   :addon-align "inline-end"}
            :arg-types {:placeholder {:name "Placeholder"
@@ -107,93 +100,26 @@
                        :addon-align {:name "Addon align"
                                      :control {:type "select"}
                                      :options ["inline-start" "inline-end"]}}
-           :parameters {:playground {:description "Explore input group placeholder, disabled and addon align with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["on-click" "class"]}}
-           :decode-args (fn [{:keys [addon-align]
-                              :as args}]
-                          (update args :addon-align keyword))}
+           :parameters
+           {:playground
+            {:description
+             "Explore input group placeholder, disabled and addon align with a live preview."}
+            :controls {:expanded false
+                       :exclude ["on-click" "class"]}}
+           :decode-args (fn [args] (update args :addon-align keyword))}
           [args]
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "w-80"}
-                          [sut/input-group {}
-                           [sut/input-group-addon {:align (:addon-align args)}
-                            [:> Search {:aria-hidden true}]]
-                           [sut/input-group-input {:aria-label "Search"
-                                                   :placeholder (:placeholder args)
-                                                   :disabled (:disabled args)}]]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))
 
 (defstory
  InputGroupInCard
  "Input Group composed inside Card regions, preserving the Card's spacing and the group's single focus ring."
+ {:source-code (embed-source "clojure-shadcn.stories.input-group.input-group-in-card")}
  []
- (r/as-element (helpers/wrap-component [card/card {:class "w-full max-w-md"}
-                                        [card/card-header {}
-                                         [card/card-title {}
-                                          "Invite a teammate"]
-                                         [card/card-description {}
-                                          "Send an invitation by email address."]]
-                                        [card/card-content {}
-                                         [sut/input-group {}
-                                          [sut/input-group-addon {}
-                                           [:> AtSign {:aria-hidden true}]]
-                                          [sut/input-group-input {:type "email"
-                                                                  :aria-label "Email address"
-                                                                  :placeholder "name@example.com"}]
-                                          [sut/input-group-addon {:align :inline-end}
-                                           [sut/input-group-button {}
-                                            "Invite"]]]]])))
+ (r/as-element (helpers/wrap-component [input-group-in-card/example])))
 
 (defstory
  InputGroupPatterns
  "Consolidated block addons, icon/text/button/Kbd/spinner, textarea, custom control, and RTL compositions."
+ {:source-code (embed-source "clojure-shadcn.stories.input-group.input-group-patterns")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "grid w-[36rem] max-w-full gap-5"}
-    [sut/input-group {:class "flex-wrap"}
-     [sut/input-group-addon {:align :block-start}
-      [sut/input-group-text {}
-       "Repository URL"]]
-     [sut/input-group-addon {}
-      [:> AtSign {:aria-hidden true}]]
-     [sut/input-group-input {:aria-label "Repository URL"
-                             :placeholder "owner/project"}]
-     [sut/input-group-addon {:align :inline-end}
-      [kbd/kbd {}
-       "⌘K"]
-      [sut/input-group-button {:size :icon-xs
-                               :aria-label "Submit repository"}
-       [:> Send]]]]
-    [sut/input-group {}
-     [sut/input-group-addon {}
-      [spinner/spinner {}]
-      [sut/input-group-text {}
-       "Checking"]]
-     [sut/input-group-input {:aria-label "Package name"
-                             :default-value "clojure-shadcn"}]]
-    [sut/input-group {:class "flex-wrap"}
-     [sut/input-group-textarea {:aria-label "Message"
-                                :placeholder "Write a message…"}]
-     [sut/input-group-addon {:align :block-end}
-      [sut/input-group-text {}
-       "Markdown supported"]
-      [sut/input-group-button {:class "ml-auto"}
-       "Send"]]]
-    [sut/input-group {}
-     [sut/input-group-addon {}
-      [sut/input-group-text {}
-       "Custom"]]
-     [:input {:data-slot "input-group-control"
-              :aria-label "Custom numeric control"
-              :type "number"
-              :class "h-9 min-w-0 flex-1 bg-transparent px-3 outline-none"}]]
-    [:div {:dir "rtl"}
-     [sut/input-group {}
-      [sut/input-group-addon {}
-       [:> Search {:aria-hidden true}]]
-      [sut/input-group-input {:aria-label "بحث"
-                              :placeholder "بحث…"}]
-      [sut/input-group-addon {:align :inline-end}
-       [sut/input-group-text {}
-        "⌘K"]]]]])))
+ (r/as-element (helpers/wrap-component [input-group-patterns/example])))

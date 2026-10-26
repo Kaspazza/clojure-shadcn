@@ -1,9 +1,13 @@
 (ns clojure-shadcn.stories.direction-stories
   (:require
-   ["@radix-ui/react-radio-group"          :as radio-group]
-   [clojure-shadcn.stories.helpers         :as helpers]
-   [clojure-shadcn.ui.components.direction :as sut]
-   [reagent.core                           :as r])
+   [clojure-shadcn.stories.direction.direction-hook-context-and-override
+    :as direction-hook-context-and-override]
+   [clojure-shadcn.stories.direction.direction-radix-descendant          :as
+                                                                         direction-radix-descendant]
+   [clojure-shadcn.stories.direction.playground                          :as playground]
+   [clojure-shadcn.stories.direction.right-to-left                       :as right-to-left]
+   [clojure-shadcn.stories.helpers                                       :as helpers]
+   [reagent.core                                                         :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -52,74 +56,37 @@
         "Local direction passed to Radix useDirection; without it, reads context or Radix's default."}]}]])))
 
 (defstory RightToLeft
+          {:source-code (embed-source "clojure-shadcn.stories.direction.right-to-left")}
           []
-          (r/as-element (helpers/wrap-component
-                         [sut/direction-provider {:direction :rtl}
-                          [:div {:dir "rtl"
-                                 :class "w-80 rounded-lg border p-6 text-right"}
-                           [:h3 {:class "font-semibold"}
-                            "واجهة من اليمين إلى اليسار"]
-                           [:p {:class "text-muted-foreground"}
-                            "يحافظ المزود على اتجاه مكونات Radix المتداخلة."]]])))
+          (r/as-element (helpers/wrap-component [right-to-left/example])))
 
 
-(defn- direction-reader
-  [{:keys [override]}]
-  (let [direction (if override (sut/use-direction override) (sut/use-direction))]
-    [:output {:class "rounded bg-muted px-2 py-1 font-mono text-xs"}
-     (name direction)]))
+
 
 (defstory
  DirectionRadixDescendant
  "A real Radix radio-group descendant receives direction context; use arrow keys to observe RTL navigation."
+ {:source-code (embed-source "clojure-shadcn.stories.direction.direction-radix-descendant")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [sut/direction-provider {:direction :rtl}
-    [:div {:dir "rtl"
-           :class "space-y-3 rounded-md border p-5"}
-     [:p {:class "text-sm"}
-      "اختر خطة، ثم استخدم مفاتيح الأسهم"]
-     [:>
-      (.-Root radio-group)
-      {:defaultValue "team"
-       :className "flex gap-4"}
-      (for [[value label] [["solo" "فردي"] ["team" "فريق"] ["org" "مؤسسة"]]]
-        ^{:key value}
-        [:label {:class "flex items-center gap-2"}
-         [:>
-          (.-Item radio-group)
-          {:value value
-           :className "size-5 rounded-full border"}
-          [:>
-           (.-Indicator radio-group)
-           {:className "block size-full scale-50 rounded-full bg-primary"}]]
-         label])]]])))
+ (r/as-element (helpers/wrap-component [direction-radix-descendant/example])))
 
 (defstory DirectionHookContextAndOverride
           "The hook reads provider context unless an explicit local direction overrides it."
+          {:source-code (embed-source
+                         "clojure-shadcn.stories.direction.direction-hook-context-and-override")}
           []
-          (r/as-element (helpers/wrap-component
-                         [sut/direction-provider {:direction :rtl}
-                          [:div {:class "flex items-center gap-4 rounded-md border p-4"}
-                           [:span "Context:"]
-                           [:f> direction-reader {}]
-                           [:span "Local override:"]
-                           [:f> direction-reader {:override :ltr}]]])))
+          (r/as-element (helpers/wrap-component [direction-hook-context-and-override/example])))
 
 (defstory
  Playground
  "Interactive provider direction; native dir is mirrored because the provider itself renders no DOM."
  {:args {:dir "ltr"}
   :arg-types {:dir {:name "Text direction"
-                             :control {:type "select"}
+                    :control {:type "select"}
                     :options ["ltr" "rtl"]}}
   :parameters {:playground {:description "Explore direction text direction with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["children"]}}}
+               :controls {:expanded false
+                          :exclude ["children"]}}
+  :source-code (embed-source "clojure-shadcn.stories.direction.playground")}
  [args]
- (r/as-element (helpers/wrap-component [sut/direction-provider
-                                        (select-keys args [:dir])
-                                        [:div {:dir (:dir args)
-                                               :class "rounded-md border p-4"}
-                                         "Direction-aware content"]])))
+ (r/as-element (helpers/wrap-component [playground/example args])))

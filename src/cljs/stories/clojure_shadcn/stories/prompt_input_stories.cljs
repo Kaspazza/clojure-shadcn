@@ -1,11 +1,21 @@
 (ns clojure-shadcn.stories.prompt-input-stories
   "Storybook stories for the Prompt Input component. Ported from mateuszmazurczak.portfolio.ui-components.prompt_input."
   (:require
-   ["lucide-react"                            :refer [Mic Paperclip Send X]]
-   [clojure-shadcn.stories.helpers            :as helpers]
-   [clojure-shadcn.ui.components.button       :as button]
-   [clojure-shadcn.ui.components.prompt-input :as sut]
-   [reagent.core                              :as r])
+   [clojure-shadcn.stories.helpers                                    :as helpers]
+   [clojure-shadcn.stories.prompt-input.playground                    :as example-playground]
+   [clojure-shadcn.stories.prompt-input.prompt-input-basic            :as
+                                                                      example-prompt-input-basic]
+   [clojure-shadcn.stories.prompt-input.prompt-input-disabled         :as
+                                                                      example-prompt-input-disabled]
+   [clojure-shadcn.stories.prompt-input.prompt-input-file-selection
+    :as example-prompt-input-file-selection]
+   [clojure-shadcn.stories.prompt-input.prompt-input-loading          :as
+                                                                      example-prompt-input-loading]
+   [clojure-shadcn.stories.prompt-input.prompt-input-multiple-actions
+    :as example-prompt-input-multiple-actions]
+   [clojure-shadcn.stories.prompt-input.prompt-input-submit-lifecycle
+    :as example-prompt-input-submit-lifecycle]
+   [reagent.core                                                      :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -150,83 +160,31 @@
   Provides shared context for textarea + actions.
 
   Useful for chat or command input fields."
+ {:source-code (embed-source "clojure-shadcn.stories.prompt-input.prompt-input-basic")}
  []
- (r/as-element [(fn []
-                  (let [value (r/atom "")]
-                    (fn []
-                      (helpers/wrap-component
-                       [:div {:class "p-6 max-w-xl"}
-                        [sut/prompt-input {:value @value
-                                           :on-value-change #(reset! value %)
-                                           :on-submit #(js/console.log "submit" @value)}
-                         [sut/prompt-input-textarea {:placeholder "Type your message..."}]
-                         [sut/prompt-input-actions {}
-                          [sut/prompt-input-action {:tooltip "Send"}
-                           (button/button {:variant :outline
-                                           :size :icon}
-                                          [:> Send {:class "size-4"}])]]]]))))]))
+ (r/as-element (helpers/wrap-component [example-prompt-input-basic/example])))
 
 (defstory
  PromptInputMultipleActions
  "Prompt input with multiple actions.
   Use prompt-input-action to wrap action buttons with tooltips."
+ {:source-code (embed-source "clojure-shadcn.stories.prompt-input.prompt-input-multiple-actions")}
  []
- (r/as-element
-  [(fn []
-     (let [value (r/atom "")]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-6 max-w-xl"}
-           [sut/prompt-input {:value @value
-                              :on-value-change #(reset! value %)}
-            [sut/prompt-input-textarea {:placeholder "Ask a question..."}]
-            [sut/prompt-input-actions {}
-             [sut/prompt-input-action {:tooltip "Attach file"}
-              (button/button {:variant :outline
-                              :size :icon}
-                             [:> Paperclip {:class "size-4"}])]
-             [sut/prompt-input-action {:tooltip "Voice input"}
-              (button/button {:variant :outline
-                              :size :icon}
-                             [:> Mic {:class "size-4"}])]
-             [sut/prompt-input-action {:tooltip "Send"}
-              (button/button {:variant :outline
-                              :size :icon}
-                             [:> Send {:class "size-4"}])]]]]))))]))
+ (r/as-element (helpers/wrap-component [example-prompt-input-multiple-actions/example])))
 
 (defstory PromptInputDisabled
           "Disabled prompt input state.
   Use :disabled? or :is-loading? for disabled styling."
+          {:source-code (embed-source "clojure-shadcn.stories.prompt-input.prompt-input-disabled")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "p-6 max-w-xl"}
-                          [sut/prompt-input {:value "Saving..."
-                                             :disabled? true}
-                           [sut/prompt-input-textarea {:placeholder "Disabled"}]
-                           [sut/prompt-input-actions {}
-                            [sut/prompt-input-action {:tooltip "Send"}
-                             (button/button {:variant :outline
-                                             :size :icon}
-                                            [:> Send {:class "size-4"}])]]]])))
+          (r/as-element (helpers/wrap-component [example-prompt-input-disabled/example])))
 
 (defstory PromptInputLoading
           "Prompt input with loading state.
   Use :is-loading? when responses are pending."
+          {:source-code (embed-source "clojure-shadcn.stories.prompt-input.prompt-input-loading")}
           []
-          (r/as-element [(fn []
-                           (let [value (r/atom "Working on it...")]
-                             (fn []
-                               (helpers/wrap-component
-                                [:div {:class "p-6 max-w-xl"}
-                                 [sut/prompt-input {:value @value
-                                                    :is-loading? true
-                                                    :on-value-change #(reset! value %)}
-                                  [sut/prompt-input-textarea {:placeholder "Loading"}]
-                                  [sut/prompt-input-actions {}
-                                   [sut/prompt-input-action {:tooltip "Send"}
-                                    (button/button {:variant :outline
-                                                    :size :icon}
-                                                   [:> Send {:class "size-4"}])]]]]))))]))
+          (r/as-element (helpers/wrap-component [example-prompt-input-loading/example])))
 
 
 (defstory Playground
@@ -240,94 +198,26 @@
                                   :control {:type "boolean"}}
                        :max-height {:name "Max height"
                                     :control {:type "number"}}}
-           :parameters {:playground {:description "Explore prompt input placeholder, disabled and max height with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["value" "on-value-change" "on-submit" "class"]}}}
+           :parameters
+           {:playground
+            {:description
+             "Explore prompt input placeholder, disabled and max height with a live preview."}
+            :controls {:expanded false
+                       :exclude ["value" "on-value-change" "on-submit" "class"]}}
+           :source-code (embed-source "clojure-shadcn.stories.prompt-input.playground")}
           [args]
-          (r/as-element (r/with-let [value (r/atom "")]
-                                    (helpers/wrap-component
-                                     [:div {:class "max-w-xl p-6"}
-                                      [sut/prompt-input {:value @value
-                                                         :disabled? (:disabled args)
-                                                         :max-height (:max-height args)
-                                                         :on-value-change #(reset! value %)}
-                                       [sut/prompt-input-textarea {:placeholder (:placeholder
-                                                                                 args)}]]]))))
+          (r/as-element (helpers/wrap-component [example-playground/example args])))
 
 (defstory
  PromptInputSubmitLifecycle
  "A consumer-owned submit lifecycle clears the prompt, disables controls, then restores editing."
+ {:source-code (embed-source "clojure-shadcn.stories.prompt-input.prompt-input-submit-lifecycle")}
  []
- (r/as-element
-  [(fn []
-     (let [value (r/atom "")
-           submitting? (r/atom false)
-           status (r/atom "Ready")
-           submit! (fn []
-                     (when (seq @value)
-                       (reset! submitting? true)
-                       (reset! status (str "Sending: " @value))
-                       (reset! value "")
-                       (js/setTimeout #(do (reset! submitting? false) (reset! status "Sent"))
-                                      900)))]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "max-w-xl space-y-2"}
-           [sut/prompt-input {:value @value
-                              :is-loading? @submitting?
-                              :on-value-change #(reset! value %)
-                              :on-submit submit!}
-            [sut/prompt-input-textarea {:placeholder "Ask about the project…"}]
-            [sut/prompt-input-actions {:class "justify-end"}
-             [sut/prompt-input-action {:tooltip "Send message"}
-              (button/button {:variant :default
-                              :size :icon
-                              :aria-label "Send message"
-                              :disabled (or @submitting? (empty? @value))
-                              :on-click submit!}
-                             [:> Send])]]]
-           [:p {:class "text-xs text-muted-foreground"
-                :aria-live "polite"}
-            @status]]))))]))
+ (r/as-element (helpers/wrap-component [example-prompt-input-submit-lifecycle/example])))
 
-(defstory
- PromptInputFileSelection
- "Native file selection and removal composed with the current prompt-input action API."
- []
- (r/as-element
-  [(fn []
-     (let [value (r/atom "")
-           file-name (r/atom nil)
-           input-node (atom nil)]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "max-w-xl space-y-3"}
-           [:input {:ref #(reset! input-node %)
-                    :class "sr-only"
-                    :type "file"
-                    :on-change #(reset! file-name (some-> %
-                                                          .-target
-                                                          .-files
-                                                          (aget 0)
-                                                          .-name))}]
-           [sut/prompt-input {:value @value
-                              :on-value-change #(reset! value %)}
-            [sut/prompt-input-textarea {:placeholder "Add a note…"}]
-            [sut/prompt-input-actions {}
-             [sut/prompt-input-action {:tooltip "Choose file"}
-              (button/button {:variant :outline
-                              :size :icon
-                              :aria-label "Choose file"
-                              :on-click #(when-let [node @input-node] (.click ^js node))}
-                             [:> Paperclip])]]]
-           (when @file-name
-             [:div {:class "flex items-center justify-between rounded-md border px-3 py-2 text-sm"}
-              [:span {:class "truncate"}
-               @file-name]
-              (button/button {:variant :ghost
-                              :size :icon-xs
-                              :aria-label (str "Remove " @file-name)
-                              :on-click #(do (when-let [node @input-node]
-                                               (set! (.-value ^js node) ""))
-                                             (reset! file-name nil))}
-                             [:> X])])]))))]))
+(defstory PromptInputFileSelection
+          "Native file selection and removal composed with the current prompt-input action API."
+          {:source-code (embed-source
+                         "clojure-shadcn.stories.prompt-input.prompt-input-file-selection")}
+          []
+          (r/as-element (helpers/wrap-component [example-prompt-input-file-selection/example])))

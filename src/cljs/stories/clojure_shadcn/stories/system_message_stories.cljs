@@ -1,10 +1,20 @@
 (ns clojure-shadcn.stories.system-message-stories
   "Storybook stories for the System Message component. Ported from mateuszmazurczak.portfolio.ui-components.system_message."
   (:require
-   ["lucide-react"                              :refer [Bell]]
-   [clojure-shadcn.stories.helpers              :as helpers]
-   [clojure-shadcn.ui.components.system-message :as sut]
-   [reagent.core                                :as r])
+   [clojure-shadcn.stories.helpers                                              :as helpers]
+   [clojure-shadcn.stories.system-message.playground                            :as
+                                                                                example-playground]
+   [clojure-shadcn.stories.system-message.system-message-cta
+    :as example-system-message-cta]
+   [clojure-shadcn.stories.system-message.system-message-error
+    :as example-system-message-error]
+   [clojure-shadcn.stories.system-message.system-message-filled
+    :as example-system-message-filled]
+   [clojure-shadcn.stories.system-message.system-message-filled-cta-custom-icon
+    :as example-system-message-filled-cta-custom-icon]
+   [clojure-shadcn.stories.system-message.system-message-warning
+    :as example-system-message-warning]
+   [reagent.core                                                                :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -77,79 +87,70 @@
        [:code
         "[system-message {:variant :action\n                 :icon [:span \"ℹ️\"]\n                 :fill true}\n \"Your workspace sync is up to date.\"]"]]]]])))
 
-(defstory Playground
-          "Interactive system-message playground."
-          {:args {:variant "action"
-                  :fill false
-                  :icon-hidden? false
-                  :message "This is an informational system message."}
-           :arg-types {:variant {:name "Variant"
-                                 :control {:type "select"}
-                                 :options ["action" "error" "warning"]}
-                       :fill {:name "Fill background"
-                              :control {:type "boolean"}}
-                       :icon-hidden? {:name "Hide icon"
-                                      :control {:type "boolean"}}
-                       :message {:name "Message"
-                                 :control {:type "text"}}}
-           :parameters {:playground {:description "Explore system message variant, fill background, hide icon and message with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["class" "icon" "cta" "on-click"]}}
-           :decode-args (fn [{:keys [variant]
-                              :as args}]
-                          (cond-> args
-                            variant (update :variant keyword)))}
-          [args]
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/system-message
-                                                  (select-keys args [:variant :fill :icon-hidden?])
-                                                  (:message args)]])))
+(defstory
+ Playground
+ "Interactive system-message playground."
+ {:args {:variant "action"
+         :fill false
+         :icon-hidden? false
+         :message "This is an informational system message."}
+  :arg-types {:variant {:name "Variant"
+                        :control {:type "select"}
+                        :options ["action" "error" "warning"]}
+              :fill {:name "Fill background"
+                     :control {:type "boolean"}}
+              :icon-hidden? {:name "Hide icon"
+                             :control {:type "boolean"}}
+              :message {:name "Message"
+                        :control {:type "text"}}}
+  :parameters
+  {:playground
+   {:description
+    "Explore system message variant, fill background, hide icon and message with a live preview."}
+   :controls {:expanded false
+              :exclude ["class" "icon" "cta" "on-click"]}}
+  :decode-args (fn [{:keys [variant]
+                     :as args}]
+                 (cond-> args
+                   variant (update :variant keyword)))
+  :source-code (embed-source "clojure-shadcn.stories.system-message.playground")}
+ [args]
+ (r/as-element (helpers/wrap-component [example-playground/example args])))
 
 (defstory SystemMessageWarning
           "Warning system message.
   Use :variant :warning for cautionary messages."
+          {:source-code (embed-source
+                         "clojure-shadcn.stories.system-message.system-message-warning")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/system-message {:variant :warning}
-                                                  "Warning: please review your inputs."]])))
+          (r/as-element (helpers/wrap-component [example-system-message-warning/example])))
 
 (defstory SystemMessageError
           "Error system message.
   Use :variant :error for failure states."
+          {:source-code (embed-source "clojure-shadcn.stories.system-message.system-message-error")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/system-message {:variant :error}
-                                                  "Something went wrong while saving."]])))
+          (r/as-element (helpers/wrap-component [example-system-message-error/example])))
 
 (defstory SystemMessageCta
           "System message with CTA button.
   Use :cta to provide an inline action."
+          {:source-code (embed-source "clojure-shadcn.stories.system-message.system-message-cta")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "p-6"}
-                          [sut/system-message {:variant :error
-                                               :cta {:label "Retry"
-                                                     :on-click #(js/console.log "retry")}}
-                           "A network error occurred."]])))
+          (r/as-element (helpers/wrap-component [example-system-message-cta/example])))
 
 (defstory SystemMessageFilled
           "Filled system message style.
   Use :fill true for stronger visual emphasis."
+          {:source-code (embed-source
+                         "clojure-shadcn.stories.system-message.system-message-filled")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/system-message {:variant :warning
-                                                                      :fill true}
-                                                  "Maintenance window starts in 10 minutes."]])))
+          (r/as-element (helpers/wrap-component [example-system-message-filled/example])))
 
 (defstory
  SystemMessageFilledCtaCustomIcon
  "Combine filled emphasis, an inline CTA, and a custom React icon through documented props."
+ {:source-code (embed-source
+                "clojure-shadcn.stories.system-message.system-message-filled-cta-custom-icon")}
  []
- (r/as-element (helpers/wrap-component
-                [:div {:class "p-6"}
-                 [sut/system-message {:variant :action
-                                      :fill true
-                                      :icon Bell
-                                      :cta {:label "Review"
-                                            :on-click #(js/console.log "review invitations")}}
-                  "Three workspace invitations need your review."]])))
+ (r/as-element (helpers/wrap-component [example-system-message-filled-cta-custom-icon/example])))

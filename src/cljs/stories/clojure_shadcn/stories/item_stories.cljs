@@ -1,12 +1,14 @@
 (ns clojure-shadcn.stories.item-stories
   (:require
-   ["lucide-react"                             :refer [FileText MoreHorizontal]]
-   [clojure-shadcn.stories.helpers             :as helpers]
-   [clojure-shadcn.ui.components.avatar        :as avatar]
-   [clojure-shadcn.ui.components.button        :as button]
-   [clojure-shadcn.ui.components.dropdown-menu :as dropdown-menu]
-   [clojure-shadcn.ui.components.item          :as sut]
-   [reagent.core                               :as r])
+   [clojure-shadcn.stories.helpers                     :as helpers]
+   [clojure-shadcn.stories.item.item-dropdown          :as item-dropdown]
+   [clojure-shadcn.stories.item.item-header            :as item-header]
+   [clojure-shadcn.stories.item.item-media-matrix      :as item-media-matrix]
+   [clojure-shadcn.stories.item.item-polymorphic-links :as item-polymorphic-links]
+   [clojure-shadcn.stories.item.item-rtl               :as item-rtl]
+   [clojure-shadcn.stories.item.item-variants          :as item-variants]
+   [clojure-shadcn.stories.item.playground             :as playground]
+   [reagent.core                                       :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -55,35 +57,15 @@
                :default nil}]}]])))
 
 (defstory ItemVariants
+          {:source-code (embed-source "clojure-shadcn.stories.item.item-variants")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [sut/item-group {:class "max-w-xl"}
-             [sut/item {:variant :outline}
-              [sut/item-media {:variant :icon}
-               [:> FileText]]
-              [sut/item-content {}
-               [sut/item-title {}
-                "Quarterly report"]
-               [sut/item-description {}
-                "PDF · 2.4 MB"]]
-              [sut/item-actions {}
-               (button/button {:variant :ghost
-                               :size :icon}
-                              [:> MoreHorizontal])]]
-             [sut/item-separator {}]
-             [sut/item {:variant :muted
-                        :size :sm}
-              [sut/item-content {}
-               [sut/item-title {}
-                "Compact item"]
-               [sut/item-description {}
-                "Muted, small variant"]]]])))
+          (r/as-element (helpers/wrap-component [item-variants/example])))
 
 
 (defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
-          {:args {:variant "outline"
+          {:source-code (embed-source "clojure-shadcn.stories.item.playground")
+           :args {:variant "outline"
                   :size "default"}
            :arg-types {:variant {:name "Variant"
                                  :control {:type "select"}
@@ -91,7 +73,8 @@
                        :size {:name "Size"
                               :control {:type "select"}
                               :options ["default" "sm"]}}
-           :parameters {:playground {:description "Explore item variant and size with a live preview."}
+           :parameters {:playground {:description
+                                     "Explore item variant and size with a live preview."}
                         :controls {:expanded false
                                    :exclude ["children" "as-child?"]}}
            :decode-args (fn [{:keys [variant size]
@@ -100,137 +83,36 @@
                             variant (update :variant keyword)
                             size (update :size keyword)))}
           [args]
-          (r/as-element (helpers/wrap-component [sut/item
-                                                 (select-keys args [:variant :size])
-                                                 [sut/item-content {}
-                                                  [sut/item-title {}
-                                                   "Quarterly report"]
-                                                  [sut/item-description {}
-                                                   "PDF · 2.4 MB"]]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))
 
 (defstory
  ItemPolymorphicLinks
  "Polymorphic links — upstream navigation items render anchors through :as-child? rather than nesting links."
+ {:source-code (embed-source "clojure-shadcn.stories.item.item-polymorphic-links")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [sut/item-group {:class "max-w-xl"}
-    [sut/item {:as-child? true
-               :variant :outline}
-     [:a {:href "#documentation"}
-      [sut/item-media {:variant :icon}
-       [:> FileText]]
-      [sut/item-content {}
-       [sut/item-title {}
-        "Documentation"]
-       [sut/item-description {}
-        "Read installation and component guides."]]]]
-    [sut/item {:as-child? true
-               :variant :muted}
-     [:a {:href "#examples"}
-      [sut/item-content {}
-       [sut/item-title {}
-        "Examples"]
-       [sut/item-description {}
-        "Browse complete composition recipes."]]]]])))
+ (r/as-element (helpers/wrap-component [item-polymorphic-links/example])))
 
-(defstory
- ItemMediaMatrix
- "Avatar and Image — upstream media recipes shown beside the default icon treatment."
- []
- (r/as-element
-  (helpers/wrap-component
-   [sut/item-group {:class "max-w-2xl"}
-    [sut/item {:variant :outline}
-     [sut/item-media {}
-      [avatar/avatar {}
-       [avatar/avatar-image {:src "https://github.com/shadcn.png"
-                             :alt "@shadcn"}]
-       [avatar/avatar-fallback {}
-        "CN"]]]
-     [sut/item-content {}
-      [sut/item-title {}
-       "shadcn"]
-      [sut/item-description {}
-       "Updated the component registry."]]]
-    [sut/item-separator {}]
-    [sut/item {:variant :outline}
-     [sut/item-media {:variant :image}
-      [:img
-       {:src
-        "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=200&q=80"
-        :alt "Modern office"
-        :class "size-full object-cover"}]]
-     [sut/item-content {}
-      [sut/item-title {}
-       "Workspace tour"]
-      [sut/item-description {}
-       "See the new collaboration space."]]]])))
+(defstory ItemMediaMatrix
+          "Avatar and Image — upstream media recipes shown beside the default icon treatment."
+          {:source-code (embed-source "clojure-shadcn.stories.item.item-media-matrix")}
+          []
+          (r/as-element (helpers/wrap-component [item-media-matrix/example])))
 
 (defstory
  ItemDropdown
  "Item actions composed with Dropdown Menu; the icon button is the actual menu trigger and remains independently accessible."
+ {:source-code (embed-source "clojure-shadcn.stories.item.item-dropdown")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [sut/item {:variant :outline
-              :class "max-w-xl"}
-    [sut/item-media {:variant :icon}
-     [:> FileText]]
-    [sut/item-content {}
-     [sut/item-title {}
-      "Quarterly report"]
-     [sut/item-description {}
-      "PDF · 2.4 MB"]]
-    [sut/item-actions {}
-     [dropdown-menu/dropdown-menu {}
-      [dropdown-menu/dropdown-menu-trigger {:as-child true}
-       (button/button {:variant :ghost
-                       :size :icon
-                       :aria-label "Report actions"}
-                      [:> MoreHorizontal])]
-      [dropdown-menu/dropdown-menu-content {:align "end"}
-       [dropdown-menu/dropdown-menu-item {}
-        "Download"]
-       [dropdown-menu/dropdown-menu-item {}
-        "Share"]
-       [dropdown-menu/dropdown-menu-separator {}]
-       [dropdown-menu/dropdown-menu-item {:variant :destructive}
-        "Delete"]]]]])))
+ (r/as-element (helpers/wrap-component [item-dropdown/example])))
 
 (defstory ItemHeader
           "Header — upstream item header/footer composition for richer list content."
+          {:source-code (embed-source "clojure-shadcn.stories.item.item-header")}
           []
-          (r/as-element (helpers/wrap-component
-                         [sut/item {:variant :outline
-                                    :class "max-w-xl"}
-                          [sut/item-header {:class "text-xs text-muted-foreground"}
-                           [:span "Release notes"]
-                           [:time {:date-time "2026-03-01"}
-                            "March 1"]]
-                          [sut/item-content {}
-                           [sut/item-title {}
-                            "Version 2.4"]
-                           [sut/item-description {}
-                            "Improved keyboard navigation and logical RTL spacing."]]
-                          [sut/item-footer {:class "text-xs text-muted-foreground"}
-                           "5 minute read"]])))
+          (r/as-element (helpers/wrap-component [item-header/example])))
 
 (defstory ItemRTL
           "RTL — item media, content, and actions follow logical right-to-left ordering."
+          {:source-code (embed-source "clojure-shadcn.stories.item.item-rtl")}
           []
-          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
-                                                       :class "max-w-xl text-right"}
-                                                 [sut/item {:variant :outline}
-                                                  [sut/item-media {:variant :icon}
-                                                   [:> FileText]]
-                                                  [sut/item-content {}
-                                                   [sut/item-title {}
-                                                    "التقرير الفصلي"]
-                                                   [sut/item-description {}
-                                                    "ملف PDF بحجم 2.4 ميجابايت"]]
-                                                  [sut/item-actions {}
-                                                   (button/button {:variant :ghost
-                                                                   :size :icon
-                                                                   :aria-label "المزيد"}
-                                                                  [:> MoreHorizontal])]]])))
+          (r/as-element (helpers/wrap-component [item-rtl/example])))

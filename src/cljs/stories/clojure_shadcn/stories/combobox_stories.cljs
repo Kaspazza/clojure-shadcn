@@ -1,8 +1,17 @@
 (ns clojure-shadcn.stories.combobox-stories
   (:require
-   [clojure-shadcn.stories.helpers        :as helpers]
-   [clojure-shadcn.ui.components.combobox :as sut]
-   [reagent.core                          :as r])
+   [clojure-shadcn.stories.combobox.backwards-compatible-simple-api :as
+                                                                    backwards-compatible-simple-api]
+   [clojure-shadcn.stories.combobox.basic                           :as basic]
+   [clojure-shadcn.stories.combobox.composition                     :as composition]
+   [clojure-shadcn.stories.combobox.disabled                        :as disabled]
+   [clojure-shadcn.stories.combobox.invalid                         :as invalid]
+   [clojure-shadcn.stories.combobox.multiple-with-chips-and-clear   :as
+                                                                    multiple-with-chips-and-clear]
+   [clojure-shadcn.stories.combobox.popup-initially-open            :as popup-initially-open]
+   [clojure-shadcn.stories.combobox.right-to-left                   :as right-to-left]
+   [clojure-shadcn.stories.helpers                                  :as helpers]
+   [reagent.core                                                    :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -106,130 +115,42 @@
                :default nil
                :description "Render hooks receiving the complete item map."}]}]])))
 
-(def runtimes
-  [{:value :clj
-    :label "Clojure"
-    :keywords ["jvm"]}
-   {:value :cljs
-    :label "ClojureScript"
-    :keywords ["browser"]}
-   {:value :bb
-    :label "Babashka"
-    :keywords ["cli"]}])
-
-(defn- runtime-label [value] (or (:label (some #(when (= value (:value %)) %) runtimes)) "None"))
-
-(defn- composed-example
-  [{:keys [disabled? invalid? default-open rtl?]}]
-  (r/with-let
-   [value (r/atom nil)]
-   [:div {:dir (when rtl? "rtl")
-          :class "grid gap-2"}
-    [:label {:class "text-sm font-medium"}
-     "Runtime"]
-    [sut/combobox-root {:value @value
-                        :on-value-change #(reset! value %)
-                        :default-open default-open
-                        :disabled? disabled?}
-     [:div {:class "flex items-center gap-1"}
-      [sut/combobox-trigger {:aria-invalid invalid?}
-       [sut/combobox-value {:placeholder "Select runtime…"
-                            :render runtime-label}]
-       [:span {:aria-hidden true}
-        "⌄"]]
-      (when @value
-        [sut/combobox-clear {}])]
-     [sut/combobox-content {:align (if rtl? "end" "start")}
-      [sut/combobox-collection {}
-       [sut/combobox-input {:placeholder "Search runtimes…"
-                            :aria-label "Search runtimes"}]
-       [sut/combobox-list {}
-        [sut/combobox-empty {}
-         "No runtime found."]
-        [sut/combobox-group {:heading "Hosted"}
-         [sut/combobox-item {:value :clj
-                             :text-value "Clojure"
-                             :keywords #js ["jvm"]}
-          "Clojure"]
-         [sut/combobox-item {:value :cljs
-                             :text-value "ClojureScript"}
-          "ClojureScript"]]
-        [sut/combobox-separator {}]
-        [sut/combobox-group {}
-         [sut/combobox-label {}
-          "Tools"]
-         [sut/combobox-item {:value :bb
-                             :text-value "Babashka"}
-          "Babashka"]
-         [sut/combobox-item {:value :disabled
-                             :text-value "Unavailable"
-                             :disabled true}
-          "Unavailable"]]]]]]
-    (when invalid?
-      [:p {:class "text-sm text-destructive"}
-       "Choose a supported runtime."])]))
 
 (defstory Basic
+          {:source-code (embed-source "clojure-shadcn.stories.combobox.basic")}
           []
-          (r/as-element (helpers/wrap-component [composed-example {}])))
+          (r/as-element (helpers/wrap-component [basic/example])))
 (defstory Composition
+          {:source-code (embed-source "clojure-shadcn.stories.combobox.composition")}
           []
-          (r/as-element (helpers/wrap-component [composed-example {}])))
+          (r/as-element (helpers/wrap-component [composition/example])))
 (defstory Disabled
+          {:source-code (embed-source "clojure-shadcn.stories.combobox.disabled")}
           []
-          (r/as-element (helpers/wrap-component [composed-example {:disabled? true}])))
+          (r/as-element (helpers/wrap-component [disabled/example])))
 (defstory Invalid
+          {:source-code (embed-source "clojure-shadcn.stories.combobox.invalid")}
           []
-          (r/as-element (helpers/wrap-component [composed-example {:invalid? true}])))
+          (r/as-element (helpers/wrap-component [invalid/example])))
 (defstory PopupInitiallyOpen
+          {:source-code (embed-source "clojure-shadcn.stories.combobox.popup-initially-open")}
           []
-          (r/as-element (helpers/wrap-component [composed-example {:default-open true}])))
+          (r/as-element (helpers/wrap-component [popup-initially-open/example])))
 (defstory RightToLeft
+          {:source-code (embed-source "clojure-shadcn.stories.combobox.right-to-left")}
           []
-          (r/as-element (helpers/wrap-component [composed-example {:rtl? true}])))
+          (r/as-element (helpers/wrap-component [right-to-left/example])))
 
-(defn- multiple-example
-  []
-  (r/with-let [values (r/atom [:clj])]
-              [:div {:class "grid w-[320px] gap-2"}
-               [:div {:class "flex min-h-9 flex-wrap gap-1 rounded-md border p-1"}
-                (for [value @values]
-                  ^{:key (name value)}
-                  [sut/combobox-chip {:on-remove #(swap! values (fn [xs]
-                                                                  (vec (remove #{value} xs))))
-                                      :remove-label (str "Remove " (runtime-label value))}
-                   (runtime-label value)])]
-               [sut/combobox-root {:multiple? true
-                                   :value @values
-                                   :on-value-change #(reset! values %)}
-                [sut/combobox-trigger {:class "w-full"}
-                 [sut/combobox-value {:placeholder "Select runtimes…"
-                                      :render #(str (count %) " selected")}]
-                 [:span {:aria-hidden true}
-                  "⌄"]]
-                [sut/combobox-content {:class "w-[320px]"}
-                 [sut/combobox-collection {}
-                  [sut/combobox-input {:placeholder "Search runtimes…"}]
-                  [sut/combobox-list {}
-                   (into [sut/combobox-group {}]
-                         (for [{:keys [value label]} runtimes]
-                           ^{:key label}
-                           [sut/combobox-item {:value value
-                                               :text-value label}
-                            label]))]]]
-                [sut/combobox-clear {:label "Clear all runtimes"}]]]))
 
-(defstory MultipleWithChipsAndClear [] (r/as-element (helpers/wrap-component [multiple-example])))
+(defstory MultipleWithChipsAndClear
+          {:source-code (embed-source
+                         "clojure-shadcn.stories.combobox.multiple-with-chips-and-clear")}
+          []
+          (r/as-element (helpers/wrap-component [multiple-with-chips-and-clear/example])))
 
-(defn- simple-example
-  []
-  (r/with-let [value (r/atom nil)]
-              [sut/simple-combobox {:items runtimes
-                                    :value @value
-                                    :on-value-change #(reset! value %)
-                                    :placeholder "Select runtime…"
-                                    :search-placeholder "Search runtimes…"
-                                    :empty-text "No runtime found."
-                                    :clearable? true}]))
 
-(defstory BackwardsCompatibleSimpleApi [] (r/as-element (helpers/wrap-component [simple-example])))
+(defstory BackwardsCompatibleSimpleApi
+          {:source-code (embed-source
+                         "clojure-shadcn.stories.combobox.backwards-compatible-simple-api")}
+          []
+          (r/as-element (helpers/wrap-component [backwards-compatible-simple-api/example])))

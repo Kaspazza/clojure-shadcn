@@ -3,6 +3,7 @@
 
   Ported from mateuszmazurczak.portfolio.macros."
   (:require
+   [clojure.java.io :as io]
    [clojure.pprint :as pprint]
    [clojure.string :as str]))
 
@@ -28,7 +29,7 @@
                       (str/replace "-" "_")
                       (str ".cljs"))
         full-path (str "src/cljs/" file-path)]
-    (try (slurp full-path)
+    (try (slurp (or (io/resource file-path) full-path))
          (catch Exception e
            (throw (ex-info (str "Failed to read source file: " full-path)
                            {:namespace namespace-symbol-or-string
@@ -94,6 +95,13 @@
   standard `r/as-element` / `helpers/wrap-component` render boundary,
   Storybook Docs displays and copies only the wrapped component usage.
 
+  An optional config map before the argument vector accepts :source-code,
+  an expression evaluated in the emitted parameters (for example
+  (embed-source clojure-shadcn.stories.calendar.single-date)). This overrides
+  display source verbatim without changing a zero-argument story's arity.
+  Config containing :args, :arg-types, or :decode-args defines a controlled
+  story instead and requires one args symbol; JS args are decoded to a map.
+
   Example:
   (defstory ButtonDemo
     \"Primary button example.\"
@@ -108,7 +116,7 @@
         [config declaration]
         (if (map? (first declaration)) [(first declaration) (next declaration)] [nil declaration])
         [params & body] declaration
-        controlled-story? (some? config)]
+        controlled-story? (boolean (some #(contains? config %) [:args :arg-types :decode-args]))]
     (when-not (symbol? story-name)
       (throw (ex-info "defstory expects a symbol name" {:story-name story-name})))
     (when-not (if controlled-story?
@@ -121,7 +129,7 @@
                        :params params})))
     (when-not (seq body)
       (throw (ex-info "defstory expects at least one body form" {:story-name story-name})))
-    (let [source (story-source body)
+    (let [source (if (contains? config :source-code) (:source-code config) (story-source body))
           api-reference? (= 'ApiReference story-name)
           exported-name (with-meta story-name (assoc (meta story-name) :export true))
           story-object (with-meta story-name {:tag 'js})

@@ -1,9 +1,15 @@
 (ns clojure-shadcn.stories.progress-stories
   (:require
-   [clojure-shadcn.stories.helpers        :as helpers]
-   [clojure-shadcn.ui.components.progress :as sut]
-   [clojure-shadcn.ui.components.slider   :as slider]
-   [reagent.core                          :as r])
+   [clojure-shadcn.stories.helpers                             :as helpers]
+   [clojure-shadcn.stories.progress.playground                 :as example-playground]
+   [clojure-shadcn.stories.progress.progress-basic             :as example-progress-basic]
+   [clojure-shadcn.stories.progress.progress-complete          :as example-progress-complete]
+   [clojure-shadcn.stories.progress.progress-label             :as example-progress-label]
+   [clojure-shadcn.stories.progress.progress-rtl               :as example-progress-rtl]
+   [clojure-shadcn.stories.progress.progress-slider-controlled :as
+                                                               example-progress-slider-controlled]
+   [clojure-shadcn.stories.progress.progress-timed             :as example-progress-timed]
+   [reagent.core                                               :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -42,17 +48,14 @@
                        :description "Indicator override classes."}]}])))
 
 (defstory ProgressBasic
+          {:source-code (embed-source "clojure-shadcn.stories.progress.progress-basic")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "w-[420px] p-6 space-y-2"}
-                                                 [:div {:class "text-sm"}
-                                                  "Uploading — 60%"]
-                                                 [sut/progress {:value 60}]])))
+          (r/as-element (helpers/wrap-component [example-progress-basic/example])))
 
 (defstory ProgressComplete
+          {:source-code (embed-source "clojure-shadcn.stories.progress.progress-complete")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "w-[420px] p-6"}
-                                                 [sut/progress {:value 100
-                                                                :aria-label "Upload complete"}]])))
+          (r/as-element (helpers/wrap-component [example-progress-complete/example])))
 
 
 (defstory Playground
@@ -65,76 +68,32 @@
                                :step 1}}
            :parameters {:playground {:description "Explore progress value with a live preview."}
                         :controls {:expanded false
-                                   :exclude ["children"]}}}
+                                   :exclude ["children"]}}
+           :source-code (embed-source "clojure-shadcn.stories.progress.playground")}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "w-80"}
-                                                 [sut/progress (select-keys args [:value])]])))
+          (r/as-element (helpers/wrap-component [example-playground/example args])))
 
 (defstory
  ProgressTimed
  "Timed — the upstream demonstration advances after mount to communicate asynchronous progress."
+ {:source-code (embed-source "clojure-shadcn.stories.progress.progress-timed")}
  []
- (let [timer-id (atom nil)]
-   (r/as-element
-    [(r/create-class
-      {:display-name "timed-progress-story"
-       :get-initial-state (fn [_] #js {:value 13})
-       :component-did-mount (fn [^js component]
-                              (reset! timer-id (js/setTimeout #(.setState component #js {:value 66})
-                                                              500)))
-       :component-will-unmount (fn [_] (when-let [id @timer-id] (js/clearTimeout id)))
-       :reagent-render (fn []
-                         (let [^js this (r/current-component)
-                               value (.. this -state -value)]
-                           (helpers/wrap-component [:div {:class "w-80 space-y-2"}
-                                                    [:div {:class "flex justify-between text-sm"}
-                                                     [:span "Installing update"]
-                                                     [:span (str value "%")]]
-                                                    [sut/progress {:value value
-                                                                   :aria-label
-                                                                   "Installing update"}]])))})])))
+ (r/as-element (helpers/wrap-component [example-progress-timed/example])))
 
 (defstory ProgressLabel
           "Label — upstream labeled progress recipe keeps value text adjacent to the indicator."
+          {:source-code (embed-source "clojure-shadcn.stories.progress.progress-label")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "w-80 space-y-2"}
-                          [:div {:class "flex items-center justify-between text-sm"}
-                           [:span {:id "storage-label"
-                                   :class "font-medium"}
-                            "Storage used"]
-                           [:span {:class "text-muted-foreground tabular-nums"}
-                            "32 of 50 GB"]]
-                          [sut/progress {:value 64
-                                         :aria-labelledby "storage-label"}]])))
+          (r/as-element (helpers/wrap-component [example-progress-label/example])))
 
 (defstory ProgressSliderControlled
           "Slider controlled — the upstream interactive recipe uses one value for both controls."
+          {:source-code (embed-source "clojure-shadcn.stories.progress.progress-slider-controlled")}
           []
-          (r/as-element [(fn []
-                           (let [value (r/atom 40)]
-                             (fn []
-                               (helpers/wrap-component
-                                [:div {:class "w-80 space-y-5"}
-                                 [:div {:class "flex justify-between text-sm"}
-                                  [:span "Completion"]
-                                  [:output {:class "tabular-nums"}
-                                   (str @value "%")]]
-                                 [sut/progress {:value @value
-                                                :aria-label "Completion"}]
-                                 [slider/slider {:value [@value]
-                                                 :on-value-change #(reset! value (first %))
-                                                 :aria-label "Set completion"}]]))))]))
+          (r/as-element (helpers/wrap-component [example-progress-slider-controlled/example])))
 
 (defstory ProgressRTL
           "RTL — label and progress value follow right-to-left reading order."
+          {:source-code (embed-source "clojure-shadcn.stories.progress.progress-rtl")}
           []
-          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
-                                                       :class "w-80 space-y-2 text-right"}
-                                                 [:div {:class "flex justify-between text-sm"}
-                                                  [:span {:id "rtl-progress-label"}
-                                                   "اكتمل التحميل"]
-                                                  [:span "٧٥٪"]]
-                                                 [sut/progress {:value 75
-                                                                :aria-labelledby
-                                                                "rtl-progress-label"}]])))
+          (r/as-element (helpers/wrap-component [example-progress-rtl/example])))

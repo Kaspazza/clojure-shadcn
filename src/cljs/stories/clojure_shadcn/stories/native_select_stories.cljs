@@ -1,8 +1,12 @@
 (ns clojure-shadcn.stories.native-select-stories
   (:require
-   [clojure-shadcn.stories.helpers             :as helpers]
-   [clojure-shadcn.ui.components.native-select :as sut]
-   [reagent.core                               :as r])
+   [clojure-shadcn.stories.helpers                             :as helpers]
+   [clojure-shadcn.stories.native-select.native-select-demo    :as native-select-demo]
+   [clojure-shadcn.stories.native-select.native-select-invalid :as native-select-invalid]
+   [clojure-shadcn.stories.native-select.native-select-rtl     :as native-select-rtl]
+   [clojure-shadcn.stories.native-select.native-select-sizes   :as native-select-sizes]
+   [clojure-shadcn.stories.native-select.playground            :as playground]
+   [reagent.core                                               :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -55,96 +59,52 @@
         "Classes are merged and remaining normalized props forwarded to option or optgroup."}]}]])))
 
 (defstory NativeSelectDemo
+          {:source-code (embed-source "clojure-shadcn.stories.native-select.native-select-demo")}
           []
-          (r/as-element (helpers/wrap-component [sut/native-select {:aria-label "Choose a framework"
-                                                                    :default-value ""}
-                                                 [sut/native-select-option {:value ""
-                                                                            :disabled true}
-                                                  "Select framework"]
-                                                 [sut/native-select-optgroup {:label "Frontend"}
-                                                  [sut/native-select-option {:value "reagent"}
-                                                   "Reagent"]
-                                                  [sut/native-select-option {:value "react"}
-                                                   "React"]]
-                                                 [sut/native-select-optgroup {:label "Backend"}
-                                                  [sut/native-select-option {:value "clojure"}
-                                                   "Clojure"]]])))
+          (r/as-element (helpers/wrap-component [native-select-demo/example])))
 
 (defstory NativeSelectSizes
+          {:source-code (embed-source "clojure-shadcn.stories.native-select.native-select-sizes")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "flex items-center gap-3"}
-                                                 [sut/native-select {:size :default
-                                                                     :default-value "one"}
-                                                  [sut/native-select-option {:value "one"}
-                                                   "Default"]]
-                                                 [sut/native-select {:size :sm
-                                                                     :default-value "two"}
-                                                  [sut/native-select-option {:value "two"}
-                                                   "Small"]]
-                                                 [sut/native-select {:disabled true}
-                                                  [sut/native-select-option {}
-                                                   "Disabled"]]])))
+          (r/as-element (helpers/wrap-component [native-select-sizes/example])))
 
 
-(defstory Playground
-          "Interactive native-select playground."
-          {:args {:default-value "reagent"
-                  :size "default"
-                  :disabled false
-                  :required false}
-           :arg-types {:default-value {:name "Initial value"
-                                       :control {:type "select"}
-                                       :options ["reagent" "react" "clojure"]}
-                       :size {:name "Size"
+(defstory
+ Playground
+ "Interactive native-select playground."
+ {:source-code (embed-source "clojure-shadcn.stories.native-select.playground")
+  :args {:default-value "reagent"
+         :size "default"
+         :disabled false
+         :required false}
+  :arg-types {:default-value {:name "Initial value"
                               :control {:type "select"}
-                              :options ["default" "sm"]}
-                       :disabled {:name "Disabled"
-                                  :control {:type "boolean"}}
-                       :required {:name "Required"
-                                  :control {:type "boolean"}}}
-           :parameters {:playground {:description "Explore native select initial value, size, disabled and required with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["value" "on-change" "class"]}}
-           :decode-args (fn [{:keys [size]
-                              :as args}]
-                          (update args :size keyword))}
-          [args]
-          (r/as-element (helpers/wrap-component [sut/native-select
-                                                 (assoc args :aria-label "Framework")
-                                                 [sut/native-select-option {:value "reagent"}
-                                                  "Reagent"]
-                                                 [sut/native-select-option {:value "react"}
-                                                  "React"]
-                                                 [sut/native-select-option {:value "clojure"}
-                                                  "Clojure"]])))
+                              :options ["reagent" "react" "clojure"]}
+              :size {:name "Size"
+                     :control {:type "select"}
+                     :options ["default" "sm"]}
+              :disabled {:name "Disabled"
+                         :control {:type "boolean"}}
+              :required {:name "Required"
+                         :control {:type "boolean"}}}
+  :parameters
+  {:playground
+   {:description
+    "Explore native select initial value, size, disabled and required with a live preview."}
+   :controls {:expanded false
+              :exclude ["value" "on-change" "class"]}}
+  :decode-args (fn [args] (update args :size keyword))}
+ [args]
+ (r/as-element (helpers/wrap-component [playground/example args])))
 
 (defstory NativeSelectInvalid
           "Native validation styling and message. Based on shadcn/ui Native Select — Invalid."
+          {:source-code (embed-source "clojure-shadcn.stories.native-select.native-select-invalid")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "max-w-sm space-y-2 p-6"}
-                                                 [sut/native-select {:default-value ""
-                                                                     :required true
-                                                                     :aria-invalid true
-                                                                     :aria-describedby
-                                                                     "framework-error"
-                                                                     :aria-label "Framework"}
-                                                  [sut/native-select-option {:value ""
-                                                                             :disabled true}
-                                                   "Select a framework"]
-                                                  [sut/native-select-option {:value "reagent"}
-                                                   "Reagent"]]
-                                                 [:p {:id "framework-error"
-                                                      :class "text-sm text-destructive"}
-                                                  "Choose a framework."]])))
+          (r/as-element (helpers/wrap-component [native-select-invalid/example])))
 
 (defstory NativeSelectRtl
           "Right-to-left native select. Based on shadcn/ui Native Select — RTL."
+          {:source-code (embed-source "clojure-shadcn.stories.native-select.native-select-rtl")}
           []
-          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
-                                                       :class "max-w-sm p-6"}
-                                                 [sut/native-select {:default-value "ar"
-                                                                     :aria-label "اللغة"}
-                                                  [sut/native-select-option {:value "ar"}
-                                                   "العربية"]
-                                                  [sut/native-select-option {:value "en"}
-                                                   "الإنجليزية"]]])))
+          (r/as-element (helpers/wrap-component [native-select-rtl/example])))

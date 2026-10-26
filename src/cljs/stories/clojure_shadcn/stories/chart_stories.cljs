@@ -1,9 +1,14 @@
 (ns clojure-shadcn.stories.chart-stories
   (:require
-   ["recharts"                         :as recharts]
-   [clojure-shadcn.stories.helpers     :as helpers]
-   [clojure-shadcn.ui.components.chart :as sut]
-   [reagent.core                       :as r])
+   [clojure-shadcn.stories.chart.bar-chart               :as bar-chart]
+   [clojure-shadcn.stories.chart.cartesian-chart-gallery :as cartesian-chart-gallery]
+   [clojure-shadcn.stories.chart.interactive-series      :as interactive-series]
+   [clojure-shadcn.stories.chart.playground              :as playground]
+   [clojure-shadcn.stories.chart.polar-chart-gallery     :as polar-chart-gallery]
+   [clojure-shadcn.stories.chart.themed-rtl-chart        :as themed-rtl-chart]
+   [clojure-shadcn.stories.chart.tooltip-indicators      :as tooltip-indicators]
+   [clojure-shadcn.stories.helpers                       :as helpers]
+   [reagent.core                                         :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -89,398 +94,54 @@
                :description
                "legend-content consumes payload and verticalAlign supplied by Recharts."}]}]])))
 
-(def chart-data
-  #js [#js {:month "January"
-            :desktop 186
-            :mobile 80}
-       #js {:month "February"
-            :desktop 305
-            :mobile 200}
-       #js {:month "March"
-            :desktop 237
-            :mobile 120}
-       #js {:month "April"
-            :desktop 273
-            :mobile 190}])
-
-(def chart-config
-  {:desktop {:label "Desktop"
-             :color "var(--chart-1)"}
-   :mobile {:label "Mobile"
-            :color "var(--chart-2)"}})
-
-(defstory
- BarChart
- []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "w-[560px] rounded-xl border bg-card p-6"}
-    [:h3 {:class "mb-4 font-semibold"}
-     "Visitors by device"]
-    [sut/chart-container {:id "visitors-by-device"
-                          :config chart-config
-                          :class "min-h-[260px] w-full"}
-     [:>
-      recharts/BarChart
-      {:data chart-data
-       :accessibilityLayer true}
-      [:> recharts/CartesianGrid {:vertical false}]
-      [:>
-       recharts/XAxis
-       {:dataKey "month"
-        :tickLine false
-        :axisLine false
-        :tickMargin 10
-        :tickFormatter #(.slice % 0 3)}]
-      [:>
-       sut/chart-tooltip
-       {:cursor false
-        :content (fn [props] (r/as-element [sut/chart-tooltip-content props]))}]
-      [:> sut/chart-legend {:content (fn [props] (r/as-element [sut/chart-legend-content props]))}]
-      [:>
-       recharts/Bar
-       {:dataKey "desktop"
-        :fill "var(--color-desktop)"
-        :radius 4}]
-      [:>
-       recharts/Bar
-       {:dataKey "mobile"
-        :fill "var(--color-mobile)"
-        :radius 4}]]]])))
-
-(defn interactive-series-chart
-  []
-  (let [series (r/atom :desktop)]
-    (fn []
-      (helpers/wrap-component
-       [:div {:class "w-[560px] rounded-xl border bg-card p-6"}
-        [:div {:class "mb-4 flex items-center justify-between gap-4"}
-         [:h3 {:class "font-semibold"}
-          "Visitors by device"]
-         [:div {:class "flex rounded-md border p-1"
-                :aria-label "Visible series"}
-          (for [candidate [:desktop :mobile]]
-            ^{:key candidate}
-            [:button {:type "button"
-                      :class (str "rounded px-3 py-1 text-sm "
-                                  (when (= candidate @series) "bg-primary text-primary-foreground"))
-                      :aria-pressed (= candidate @series)
-                      :on-click #(reset! series candidate)}
-             (get-in chart-config [candidate :label])])]]
-        [sut/chart-container {:id "interactive-series"
-                              :config chart-config
-                              :class "min-h-[260px] w-full"}
-         [:>
-          recharts/BarChart
-          {:data chart-data
-           :accessibilityLayer true}
-          [:> recharts/CartesianGrid {:vertical false}]
-          [:>
-           recharts/XAxis
-           {:dataKey "month"
-            :tickLine false
-            :axisLine false}]
-          [:>
-           sut/chart-tooltip
-           {:cursor false
-            :content (fn [props] (r/as-element [sut/chart-tooltip-content props]))}]
-          [:>
-           recharts/Bar
-           {:dataKey (name @series)
-            :fill (str "var(--color-" (name @series) ")")
-            :radius 4}]]]]))))
+(defstory BarChart
+          {:source-code (embed-source "clojure-shadcn.stories.chart.bar-chart")}
+          []
+          (r/as-element (helpers/wrap-component [bar-chart/example])))
 
 (defstory InteractiveSeries
           "Consumer-controlled series selector; the chart remains a standard Recharts composition."
+          {:source-code (embed-source "clojure-shadcn.stories.chart.interactive-series")}
           []
-          (r/as-element [interactive-series-chart]))
+          (r/as-element (helpers/wrap-component [interactive-series/example])))
 
 (defstory
  TooltipIndicators
  "Supported tooltip indicator matrix. Hover each chart to compare dot, line, dashed, and hidden indicators."
+ {:source-code (embed-source "clojure-shadcn.stories.chart.tooltip-indicators")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "grid w-[760px] grid-cols-2 gap-4"}
-    (for [[indicator hide?] [[:dot false] [:line false] [:dashed false] [:dot true]]]
-      ^{:key (str indicator hide?)}
-      [:div {:class "rounded-lg border bg-card p-3"}
-       [:p {:class "mb-2 text-sm font-medium"}
-        (if hide? "Hidden indicator" (str (name indicator) " indicator"))]
-       [sut/chart-container {:config chart-config
-                             :class "min-h-[180px] w-full"}
-        [:>
-         recharts/BarChart
-         {:data chart-data}
-         [:>
-          sut/chart-tooltip
-          {:content (fn [props]
-                      (aset props "indicator" indicator)
-                      (aset props "hide-label?" false)
-                      (aset props "hide-indicator?" hide?)
-                      (r/as-element [sut/chart-tooltip-content props]))}]
-         [:>
-          recharts/Bar
-          {:dataKey "desktop"
-           :fill "var(--color-desktop)"}]]]])])))
-
-(def polar-data
-  #js [#js {:browser "chrome"
-            :visitors 275
-            :fill "var(--color-chrome)"}
-       #js {:browser "safari"
-            :visitors 200
-            :fill "var(--color-safari)"}
-       #js {:browser "firefox"
-            :visitors 187
-            :fill "var(--color-firefox)"}])
-
-(def polar-config
-  {:visitors {:label "Visitors"}
-   :chrome {:label "Chrome"
-            :color "hsl(221 83% 53%)"}
-   :safari {:label "Safari"
-            :color "hsl(160 84% 39%)"}
-   :firefox {:label "Firefox"
-             :color "hsl(38 92% 50%)"}
-   :desktop {:label "Desktop"
-             :color "hsl(221 83% 53%)"}
-   :mobile {:label "Mobile"
-            :color "hsl(160 84% 39%)"}})
-
-(defn- standard-tooltip
-  ([] (standard-tooltip {}))
-  ([content-props]
-   (fn [props]
-     (doseq [[prop value] content-props] (aset props (name prop) value))
-     (r/as-element [sut/chart-tooltip-content props]))))
+ (r/as-element (helpers/wrap-component [tooltip-indicators/example])))
 
 (defstory
  CartesianChartGallery
  "Area and line charts compare axis, grid, legend, cursor, and tooltip formatting behaviors without repeating cosmetic permutations."
+ {:source-code (embed-source "clojure-shadcn.stories.chart.cartesian-chart-gallery")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "grid w-[900px] gap-4 lg:grid-cols-2"}
-    [:div {:class "rounded-xl border bg-card p-5"}
-     [:h3 {:class "mb-1 font-semibold"}
-      "Area · stacked trend"]
-     [:p {:class "mb-4 text-xs text-muted-foreground"}
-      "Horizontal grid, abbreviated axis, dashed tooltip indicators, and a bottom legend."]
-     [sut/chart-container {:config chart-config
-                           :class "min-h-[240px] w-full"}
-      [:>
-       recharts/AreaChart
-       {:data chart-data
-        :accessibilityLayer true}
-       [:> recharts/CartesianGrid {:vertical false}]
-       [:>
-        recharts/XAxis
-        {:dataKey "month"
-         :axisLine false
-         :tickLine false
-         :tickFormatter #(.slice % 0 3)}]
-       [:>
-        sut/chart-tooltip
-        {:cursor #js {:strokeDasharray "3 3"}
-         :content (standard-tooltip {:indicator :dashed})}]
-       [:>
-        sut/chart-legend
-        {:verticalAlign "bottom"
-         :content (fn [props] (r/as-element [sut/chart-legend-content props]))}]
-       [:>
-        recharts/Area
-        {:type "monotone"
-         :dataKey "desktop"
-         :stackId "visitors"
-         :stroke "var(--color-desktop)"
-         :fill "var(--color-desktop)"
-         :fillOpacity 0.35}]
-       [:>
-        recharts/Area
-        {:type "monotone"
-         :dataKey "mobile"
-         :stackId "visitors"
-         :stroke "var(--color-mobile)"
-         :fill "var(--color-mobile)"
-         :fillOpacity 0.35}]]]]
-    [:div {:class "rounded-xl border bg-card p-5"}
-     [:h3 {:class "mb-1 font-semibold"}
-      "Line · focused comparison"]
-     [:p {:class "mb-4 text-xs text-muted-foreground"}
-      "Both axes, no grid, active cursor, formatted labels and values, and line indicators."]
-     [sut/chart-container {:config chart-config
-                           :class "min-h-[240px] w-full"}
-      [:>
-       recharts/LineChart
-       {:data chart-data
-        :accessibilityLayer true}
-       [:>
-        recharts/XAxis
-        {:dataKey "month"
-         :tickLine false
-         :tickMargin 8}]
-       [:>
-        recharts/YAxis
-        {:axisLine false
-         :tickLine false
-         :width 32}]
-       [:>
-        sut/chart-tooltip
-        {:content (standard-tooltip {:indicator :line
-                                     :label-formatter #(str "Month: " %)
-                                     :formatter
-                                     (fn [value name]
-                                       (r/as-element
-                                        [:span {:class "flex flex-1 justify-between gap-4"}
-                                         [:span (get-in chart-config [(keyword name) :label] name)]
-                                         [:strong (.toLocaleString value)]]))})}]
-       [:>
-        recharts/Line
-        {:type "monotone"
-         :dataKey "desktop"
-         :stroke "var(--color-desktop)"
-         :strokeWidth 2
-         :dot false}]
-       [:>
-        recharts/Line
-        {:type "monotone"
-         :dataKey "mobile"
-         :stroke "var(--color-mobile)"
-         :strokeWidth 2
-         :dot true}]]]]])))
+ (r/as-element (helpers/wrap-component [cartesian-chart-gallery/example])))
 
 (defstory
  PolarChartGallery
  "Pie, radar, and radial-bar compositions cover category tooltips, polar grids/axes, legends, and compact progress-like charts."
+ {:source-code (embed-source "clojure-shadcn.stories.chart.polar-chart-gallery")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "grid w-[980px] gap-4 lg:grid-cols-3"}
-    [:div {:class "rounded-xl border bg-card p-4"}
-     [:h3 {:class "mb-3 font-semibold"}
-      "Pie · browser share"]
-     [sut/chart-container {:config polar-config
-                           :class "mx-auto min-h-[230px] w-full"}
-      [:>
-       recharts/PieChart
-       {:accessibilityLayer true}
-       [:> sut/chart-tooltip {:content (standard-tooltip {:name-key "browser"})}]
-       [:>
-        recharts/Pie
-        {:data polar-data
-         :dataKey "visitors"
-         :nameKey "browser"
-         :innerRadius 52
-         :outerRadius 82
-         :strokeWidth 3}]
-       [:>
-        sut/chart-legend
-        {:content (fn [props] (r/as-element [sut/chart-legend-content props]))}]]]]
-    [:div {:class "rounded-xl border bg-card p-4"}
-     [:h3 {:class "mb-3 font-semibold"}
-      "Radar · device profile"]
-     [sut/chart-container {:config polar-config
-                           :class "mx-auto min-h-[230px] w-full"}
-      [:>
-       recharts/RadarChart
-       {:data chart-data
-        :accessibilityLayer true}
-       [:> recharts/PolarGrid {:gridType "circle"}]
-       [:>
-        recharts/PolarAngleAxis
-        {:dataKey "month"
-         :tickFormatter #(.slice % 0 3)}]
-       [:> sut/chart-tooltip {:content (standard-tooltip)}]
-       [:>
-        recharts/Radar
-        {:dataKey "desktop"
-         :stroke "var(--color-desktop)"
-         :fill "var(--color-desktop)"
-         :fillOpacity 0.35}]
-       [:>
-        recharts/Radar
-        {:dataKey "mobile"
-         :stroke "var(--color-mobile)"
-         :fill "var(--color-mobile)"
-         :fillOpacity 0.2}]]]]
-    [:div {:class "rounded-xl border bg-card p-4"}
-     [:h3 {:class "mb-3 font-semibold"}
-      "Radial · total by browser"]
-     [sut/chart-container {:config polar-config
-                           :class "mx-auto min-h-[230px] w-full"}
-      [:>
-       recharts/RadialBarChart
-       {:data polar-data
-        :innerRadius "30%"
-        :outerRadius "90%"
-        :startAngle 90
-        :endAngle -270
-        :accessibilityLayer true}
-       [:>
-        sut/chart-tooltip
-        {:cursor false
-         :content (standard-tooltip {:hide-label? true
-                                     :name-key "browser"})}]
-       [:>
-        recharts/RadialBar
-        {:dataKey "visitors"
-         :background true
-         :cornerRadius 6}]
-       [:>
-        sut/chart-legend
-        {:content (fn [props] (r/as-element [sut/chart-legend-content props]))}]]]]])))
+ (r/as-element (helpers/wrap-component [polar-chart-gallery/example])))
 
 (defstory
  ThemedRtlChart
  "Theme-aware series colors and an honestly expressed RTL chart: DOM direction plus a reversed categorical axis."
+ {:source-code (embed-source "clojure-shadcn.stories.chart.themed-rtl-chart")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:dir "rtl"
-          :class "dark w-[560px] rounded-xl border bg-background p-6 text-foreground"}
-    [:h3 {:class "mb-4 font-semibold"}
-     "الزيارات حسب الجهاز"]
-    [sut/chart-container {:config chart-config
-                          :class "min-h-[260px] w-full"}
-     [:>
-      recharts/BarChart
-      {:data chart-data
-       :accessibilityLayer true}
-      [:>
-       recharts/XAxis
-       {:dataKey "month"
-        :reversed true
-        :tickLine false
-        :axisLine false}]
-      [:>
-       recharts/Bar
-       {:dataKey "desktop"
-        :fill "var(--color-desktop)"}]
-      [:>
-       recharts/Bar
-       {:dataKey "mobile"
-        :fill "var(--color-mobile)"}]]]])))
+ (r/as-element (helpers/wrap-component [themed-rtl-chart/example])))
 
-(defstory
- Playground
- "Controlled Storybook playground using only safe scalar component props."
- {:args {:class "min-h-[260px] w-full"}
-  :arg-types {:class {:name "CSS classes"
+(defstory Playground
+          "Controlled Storybook playground using only safe scalar component props."
+          {:source-code (embed-source "clojure-shadcn.stories.chart.playground")
+           :args {:class "min-h-[260px] w-full"}
+           :arg-types {:class {:name "CSS classes"
                                :control {:type "text"}}}
-  :parameters {:playground {:description "Explore chart css classes with a live preview."}
+           :parameters {:playground {:description "Explore chart css classes with a live preview."}
                         :controls {:expanded false
-                                   :exclude ["children" "config" "data" "content" "tick-formatter"]}}}
- [args]
- (r/as-element (helpers/wrap-component [:div {:class "w-[560px] rounded-xl border bg-card p-6"}
-                                        [sut/chart-container {:config chart-config
-                                                              :class (:class args)}
-                                         [:>
-                                          recharts/BarChart
-                                          {:data chart-data
-                                           :accessibilityLayer true}
-                                          [:>
-                                           recharts/Bar
-                                           {:dataKey "desktop"
-                                            :fill "var(--color-desktop)"
-                                            :radius 4}]]]])))
+                                   :exclude
+                                   ["children" "config" "data" "content" "tick-formatter"]}}}
+          [args]
+          (r/as-element (helpers/wrap-component [playground/example args])))

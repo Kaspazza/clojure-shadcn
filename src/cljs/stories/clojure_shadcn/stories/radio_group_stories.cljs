@@ -1,11 +1,18 @@
 (ns clojure-shadcn.stories.radio-group-stories
   "Storybook stories for the Radio Group component. Ported from mateuszmazurczak.portfolio.ui-components.radio_group."
   (:require
-   [clojure-shadcn.stories.helpers           :as helpers]
-   [clojure-shadcn.ui.components.field       :as field]
-   [clojure-shadcn.ui.components.label       :as label]
-   [clojure-shadcn.ui.components.radio-group :as sut]
-   [reagent.core                             :as r])
+   [clojure-shadcn.stories.helpers                               :as helpers]
+   [clojure-shadcn.stories.radio-group.field-radio               :as example-field-radio]
+   [clojure-shadcn.stories.radio-group.playground                :as example-playground]
+   [clojure-shadcn.stories.radio-group.radio-choice-cards        :as example-radio-choice-cards]
+   [clojure-shadcn.stories.radio-group.radio-group-demo          :as example-radio-group-demo]
+   [clojure-shadcn.stories.radio-group.radio-group-disabled      :as example-radio-group-disabled]
+   [clojure-shadcn.stories.radio-group.radio-group-horizontal    :as example-radio-group-horizontal]
+   [clojure-shadcn.stories.radio-group.radio-group-invalid       :as example-radio-group-invalid]
+   [clojure-shadcn.stories.radio-group.radio-group-rtl           :as example-radio-group-rtl]
+   [clojure-shadcn.stories.radio-group.radio-option-descriptions :as
+                                                                 example-radio-option-descriptions]
+   [reagent.core                                                 :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -118,30 +125,9 @@
   Radix primitive: @radix-ui/react-radio-group
 
   Use for exclusive choices like density or layout."
+ {:source-code (embed-source "clojure-shadcn.stories.radio-group.radio-group-demo")}
  []
- (r/as-element
-  [(fn []
-     (let [value (r/atom "comfortable")]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-6"}
-           [sut/radio-group {:value @value
-                             :on-value-change #(reset! value %)}
-            [:div {:class "flex items-center gap-3"}
-             [sut/radio-group-item {:value "default"
-                                    :id "density-default"}]
-             [label/label {:html-for "density-default"}
-              "Default"]]
-            [:div {:class "flex items-center gap-3"}
-             [sut/radio-group-item {:value "comfortable"
-                                    :id "density-comfortable"}]
-             [label/label {:html-for "density-comfortable"}
-              "Comfortable"]]
-            [:div {:class "flex items-center gap-3"}
-             [sut/radio-group-item {:value "compact"
-                                    :id "density-compact"}]
-             [label/label {:html-for "density-compact"}
-              "Compact"]]]]))))]))
+ (r/as-element (helpers/wrap-component [example-radio-group-demo/example])))
 
 (defstory
  FieldRadio
@@ -150,38 +136,9 @@
   Radix primitive: @radix-ui/react-radio-group
 
   Ideal for pricing or plan selection with supporting copy."
+ {:source-code (embed-source "clojure-shadcn.stories.radio-group.field-radio")}
  []
- (r/as-element
-  [(fn []
-     (let [value (r/atom "monthly")]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-6 max-w-md"}
-           [field/field-set {}
-            [field/field-label {}
-             "Subscription Plan"]
-            [field/field-description {}
-             "Yearly and lifetime plans offer significant savings."]
-            [sut/radio-group {:value @value
-                              :on-value-change #(reset! value %)}
-             [field/field {:orientation :horizontal}
-              [sut/radio-group-item {:value "monthly"
-                                     :id "plan-monthly"}]
-              [field/field-label {:html-for "plan-monthly"
-                                  :class "font-normal"}
-               "Monthly ($9.99/month)"]]
-             [field/field {:orientation :horizontal}
-              [sut/radio-group-item {:value "yearly"
-                                     :id "plan-yearly"}]
-              [field/field-label {:html-for "plan-yearly"
-                                  :class "font-normal"}
-               "Yearly ($99.99/year)"]]
-             [field/field {:orientation :horizontal}
-              [sut/radio-group-item {:value "lifetime"
-                                     :id "plan-lifetime"}]
-              [field/field-label {:html-for "plan-lifetime"
-                                  :class "font-normal"}
-               "Lifetime ($299.99)"]]]]]))))]))
+ (r/as-element (helpers/wrap-component [example-field-radio/example])))
 
 (defstory
  RadioGroupDisabled
@@ -190,21 +147,9 @@
   Radix primitive: @radix-ui/react-radio-group
 
   Use disabled options for unavailable choices."
+ {:source-code (embed-source "clojure-shadcn.stories.radio-group.radio-group-disabled")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/radio-group {:default-value "standard"}
-                                         [:div {:class "flex items-center gap-3"}
-                                          [sut/radio-group-item {:value "standard"
-                                                                 :id "plan-standard"}]
-                                          [label/label {:html-for "plan-standard"}
-                                           "Standard"]]
-                                         [:div {:class "flex items-center gap-3"}
-                                          [sut/radio-group-item {:value "premium"
-                                                                 :id "plan-premium"
-                                                                 :disabled true}]
-                                          [label/label {:html-for "plan-premium"
-                                                        :class "text-muted-foreground"}
-                                           "Premium (coming soon)"]]]])))
+ (r/as-element (helpers/wrap-component [example-radio-group-disabled/example])))
 
 (defstory
  RadioGroupInvalid
@@ -213,23 +158,9 @@
   Radix primitive: @radix-ui/react-radio-group
 
   Apply :aria-invalid on items and show an explicit error message."
+ {:source-code (embed-source "clojure-shadcn.stories.radio-group.radio-group-invalid")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 space-y-2"}
-                                        [sut/radio-group {:default-value nil}
-                                         [:div {:class "flex items-center gap-3"}
-                                          [sut/radio-group-item {:value "free"
-                                                                 :id "plan-free"
-                                                                 :aria-invalid true}]
-                                          [label/label {:html-for "plan-free"}
-                                           "Free"]]
-                                         [:div {:class "flex items-center gap-3"}
-                                          [sut/radio-group-item {:value "pro"
-                                                                 :id "plan-pro"
-                                                                 :aria-invalid true}]
-                                          [label/label {:html-for "plan-pro"}
-                                           "Pro"]]]
-                                        [:p {:class "text-destructive text-sm"}
-                                         "Please select a billing plan."]])))
+ (r/as-element (helpers/wrap-component [example-radio-group-invalid/example])))
 
 (defstory
  RadioGroupHorizontal
@@ -238,121 +169,54 @@
   Radix primitive: @radix-ui/react-radio-group
 
   Use :orientation :horizontal for inline radio groups."
+ {:source-code (embed-source "clojure-shadcn.stories.radio-group.radio-group-horizontal")}
  []
- (r/as-element
-  [(fn []
-     (let [value (r/atom "monthly")]
-       (fn []
-         (helpers/wrap-component [:div {:class "p-6"}
-                                  [sut/radio-group {:value @value
-                                                    :orientation :horizontal
-                                                    :class "flex items-center gap-6"
-                                                    :on-value-change #(reset! value %)}
-                                   [:div {:class "flex items-center gap-2"}
-                                    [sut/radio-group-item {:value "monthly"
-                                                           :id "cycle-monthly"}]
-                                    [label/label {:html-for "cycle-monthly"}
-                                     "Monthly"]]
-                                   [:div {:class "flex items-center gap-2"}
-                                    [sut/radio-group-item {:value "yearly"
-                                                           :id "cycle-yearly"}]
-                                    [label/label {:html-for "cycle-yearly"}
-                                     "Yearly"]]]]))))]))
+ (r/as-element (helpers/wrap-component [example-radio-group-horizontal/example])))
 
 
-(defstory Playground
-          "Interactive radio-group playground."
-          {:args {:default-value "comfortable"
-                  :orientation "vertical"
-                  :disabled false
-                  :required false}
-           :arg-types {:default-value {:name "Initial value"
-                                       :control {:type "select"}
-                                       :options ["default" "comfortable" "compact"]}
-                       :orientation {:name "Orientation"
-                                     :control {:type "select"}
-                                     :options ["vertical" "horizontal"]}
-                       :disabled {:name "Disabled"
-                                  :control {:type "boolean"}}
-                       :required {:name "Required"
-                                  :control {:type "boolean"}}}
-           :parameters {:playground {:description "Explore radio group initial value, orientation, disabled and required with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["value" "on-value-change" "class"]}}
-           :decode-args (fn [args] (update args :orientation keyword))}
-          [args]
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "p-6"}
-                          [sut/radio-group
-                           args
-                           [:div {:class "flex items-center gap-2"}
-                            [sut/radio-group-item {:id "density-default-playground"
-                                                   :value "default"}]
-                            [label/label {:html-for "density-default-playground"}
-                             "Default"]]
-                           [:div {:class "flex items-center gap-2"}
-                            [sut/radio-group-item {:id "density-comfortable-playground"
-                                                   :value "comfortable"}]
-                            [label/label {:html-for "density-comfortable-playground"}
-                             "Comfortable"]]]])))
+(defstory
+ Playground
+ "Interactive radio-group playground."
+ {:args {:default-value "comfortable"
+         :orientation "vertical"
+         :disabled false
+         :required false}
+  :arg-types {:default-value {:name "Initial value"
+                              :control {:type "select"}
+                              :options ["default" "comfortable" "compact"]}
+              :orientation {:name "Orientation"
+                            :control {:type "select"}
+                            :options ["vertical" "horizontal"]}
+              :disabled {:name "Disabled"
+                         :control {:type "boolean"}}
+              :required {:name "Required"
+                         :control {:type "boolean"}}}
+  :parameters
+  {:playground
+   {:description
+    "Explore radio group initial value, orientation, disabled and required with a live preview."}
+   :controls {:expanded false
+              :exclude ["value" "on-value-change" "class"]}}
+  :decode-args (fn [args] (update args :orientation keyword))
+  :source-code (embed-source "clojure-shadcn.stories.radio-group.playground")}
+ [args]
+ (r/as-element (helpers/wrap-component [example-playground/example args])))
 
 (defstory RadioOptionDescriptions
           "Each option has supporting copy. Based on shadcn/ui Radio Group — Description."
+          {:source-code (embed-source
+                         "clojure-shadcn.stories.radio-group.radio-option-descriptions")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [:div {:class "max-w-md p-6"}
-             [sut/radio-group {:default-value "email"
-                               :aria-label "Notification channel"}
-              (for [[value title description] [["email" "Email" "Receive a daily summary."]
-                                               ["push" "Push" "Receive alerts on this device."]]]
-                ^{:key value}
-                [field/field {:orientation :horizontal}
-                 [sut/radio-group-item {:id (str "channel-" value)
-                                        :value value
-                                        :aria-describedby (str "channel-" value "-description")}]
-                 [field/field-content {}
-                  [field/field-label {:html-for (str "channel-" value)}
-                   title]
-                  [field/field-description {:id (str "channel-" value "-description")}
-                   description]]])]])))
+          (r/as-element (helpers/wrap-component [example-radio-option-descriptions/example])))
 
 (defstory RadioChoiceCards
           "Whole-row selectable choice cards. Based on shadcn/ui Radio Group — Cards."
+          {:source-code (embed-source "clojure-shadcn.stories.radio-group.radio-choice-cards")}
           []
-          (r/as-element
-           (helpers/wrap-component [:div {:class "max-w-md p-6"}
-                                    [sut/radio-group {:default-value "pro"
-                                                      :aria-label "Plan"}
-                                     (for [[value title description]
-                                           [["starter" "Starter" "For personal projects."]
-                                            ["pro" "Pro" "For growing teams."]]]
-                                       ^{:key value}
-                                       [field/field-label {}
-                                        [field/field {:orientation :horizontal}
-                                         [sut/radio-group-item {:id (str "card-" value)
-                                                                :value value}]
-                                         [field/field-content {}
-                                          [field/field-title {}
-                                           title]
-                                          [field/field-description {}
-                                           description]]]])]])))
+          (r/as-element (helpers/wrap-component [example-radio-choice-cards/example])))
 
 (defstory RadioGroupRtl
           "Right-to-left radio choices. Based on shadcn/ui Radio Group — RTL."
+          {:source-code (embed-source "clojure-shadcn.stories.radio-group.radio-group-rtl")}
           []
-          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
-                                                       :class "max-w-md p-6"}
-                                                 [sut/radio-group {:default-value "daily"
-                                                                   :dir "rtl"
-                                                                   :aria-label "تكرار الملخص"}
-                                                  [:div {:class "flex items-center gap-3"}
-                                                   [sut/radio-group-item {:id "digest-daily"
-                                                                          :value "daily"}]
-                                                   [label/label {:html-for "digest-daily"}
-                                                    "يومي"]]
-                                                  [:div {:class "flex items-center gap-3"}
-                                                   [sut/radio-group-item {:id "digest-weekly"
-                                                                          :value "weekly"}]
-                                                   [label/label {:html-for "digest-weekly"}
-                                                    "أسبوعي"]]]])))
+          (r/as-element (helpers/wrap-component [example-radio-group-rtl/example])))

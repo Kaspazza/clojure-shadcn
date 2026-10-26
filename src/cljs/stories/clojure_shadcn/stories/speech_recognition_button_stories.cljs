@@ -1,10 +1,16 @@
 (ns clojure-shadcn.stories.speech-recognition-button-stories
   "Storybook stories for the Speech Recognition Button component. Ported from mateuszmazurczak.portfolio.ui-components.speech_recognition_button."
   (:require
-   [clojure-shadcn.stories.helpers                         :as helpers]
-   [clojure-shadcn.ui.components.prompt-input              :as prompt-input]
-   [clojure-shadcn.ui.components.speech-recognition-button :as sut]
-   [reagent.core                                           :as r])
+   [clojure-shadcn.stories.helpers                                                 :as helpers]
+   [clojure-shadcn.stories.speech-recognition-button.playground
+    :as example-playground]
+   [clojure-shadcn.stories.speech-recognition-button.speech-recognition-in-prompt
+    :as example-speech-recognition-in-prompt]
+   [clojure-shadcn.stories.speech-recognition-button.speech-recognition-standalone
+    :as example-speech-recognition-standalone]
+   [clojure-shadcn.stories.speech-recognition-button.speech-recognition-transcript
+    :as example-speech-recognition-transcript]
+   [reagent.core                                                                   :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -80,81 +86,47 @@
   Wraps react-speech-recognition for microphone input.
 
   Use inside prompt-input actions for best UX."
+ {:source-code (embed-source
+                "clojure-shadcn.stories.speech-recognition-button.speech-recognition-standalone")}
  []
- (r/as-element [(fn []
-                  (let [value (r/atom "")]
-                    (fn []
-                      (helpers/wrap-component
-                       [:div {:class "p-6 space-y-2"}
-                        [:div {:class "text-sm text-muted-foreground"}
-                         "Transcript: "
-                         (or @value "(empty)")]
-                        [prompt-input/prompt-input {:value @value
-                                                    :on-value-change #(reset! value %)}
-                         [prompt-input/prompt-input-textarea {:placeholder "Try voice input..."}]
-                         [prompt-input/prompt-input-actions {}
-                          [sut/speech-recognition-button {:on-transcript-change #(reset! value
-                                                                                   %)}]]]]))))]))
+ (r/as-element (helpers/wrap-component [example-speech-recognition-standalone/example])))
 
 (defstory SpeechRecognitionInPrompt
           "Speech recognition inside prompt input.
   Demonstrates composition with prompt-input."
+          {:source-code
+           (embed-source
+            "clojure-shadcn.stories.speech-recognition-button.speech-recognition-in-prompt")}
           []
-          (r/as-element [(fn []
-                           (let [value (r/atom "")]
-                             (fn []
-                               (helpers/wrap-component
-                                [:div {:class "p-6 max-w-xl"}
-                                 [prompt-input/prompt-input {:value @value
-                                                             :on-value-change #(reset! value %)}
-                                  [prompt-input/prompt-input-textarea
-                                   {:placeholder "Speak or type a message..."}]
-                                  [prompt-input/prompt-input-actions {}
-                                   [sut/speech-recognition-button {:on-transcript-change
-                                                                   #(reset! value %)}]]]]))))]))
+          (r/as-element (helpers/wrap-component [example-speech-recognition-in-prompt/example])))
 
 (defstory SpeechRecognitionTranscript
           "Transcript display with live updates.
   Shows how to mirror transcript into the UI."
+          {:source-code
+           (embed-source
+            "clojure-shadcn.stories.speech-recognition-button.speech-recognition-transcript")}
           []
-          (r/as-element [(fn []
-                           (let [value (r/atom "")]
-                             (fn []
-                               (helpers/wrap-component
-                                [:div {:class "p-6 space-y-3"}
-                                 [:div {:class "rounded-md border bg-muted/50 p-3 text-sm"}
-                                  "Current transcript: "
-                                  (if (seq @value) @value "(none)")]
-                                 [prompt-input/prompt-input {:value @value
-                                                             :on-value-change #(reset! value %)}
-                                  [prompt-input/prompt-input-textarea {:placeholder
-                                                                       "Start talking..."}]
-                                  [prompt-input/prompt-input-actions {}
-                                   [sut/speech-recognition-button {:on-transcript-change
-                                                                   #(reset! value %)}]]]]))))]))
+          (r/as-element (helpers/wrap-component [example-speech-recognition-transcript/example])))
 
 
-(defstory Playground
-          "Speech-recognition playground."
-          {:args {:language "en-US"
-                  :continuous true}
-           :arg-types {:language {:name "Language"
-                                  :control {:type "select"}
-                                  :options ["en-US" "pl-PL"]}
-                       :continuous {:name "Continuous listening"
-                                    :control {:type "boolean"}}}
-           :parameters {:playground {:description "Explore speech recognition button language and continuous listening with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["on-transcript-change" "class"]}}}
-          [args]
-          (r/as-element (r/with-let
-                         [value (r/atom "")]
-                         (helpers/wrap-component
-                          [:div {:class "max-w-xl p-6"}
-                           [prompt-input/prompt-input {:value @value
-                                                       :on-value-change #(reset! value %)}
-                            [prompt-input/prompt-input-textarea {:placeholder "Speak or type…"}]
-                            [prompt-input/prompt-input-actions {}
-                             [sut/speech-recognition-button
-                              (assoc args :on-transcript-change #(reset! value %))]]]]))))
+(defstory
+ Playground
+ "Speech-recognition playground."
+ {:args {:language "en-US"
+         :continuous true}
+  :arg-types {:language {:name "Language"
+                         :control {:type "select"}
+                         :options ["en-US" "pl-PL"]}
+              :continuous {:name "Continuous listening"
+                           :control {:type "boolean"}}}
+  :parameters
+  {:playground
+   {:description
+    "Explore speech recognition button language and continuous listening with a live preview."}
+   :controls {:expanded false
+              :exclude ["on-transcript-change" "class"]}}
+  :source-code (embed-source "clojure-shadcn.stories.speech-recognition-button.playground")}
+ [args]
+ (r/as-element (helpers/wrap-component [example-playground/example args])))
 \n

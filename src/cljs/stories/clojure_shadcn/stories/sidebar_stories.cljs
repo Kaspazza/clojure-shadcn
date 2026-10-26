@@ -1,10 +1,19 @@
 (ns clojure-shadcn.stories.sidebar-stories
   "Storybook stories for the Sidebar component. Ported from mateuszmazurczak.portfolio.ui-components.sidebar."
   (:require
-   ["lucide-react"                       :refer [Folder Kanban Settings Users]]
-   [clojure-shadcn.stories.helpers       :as helpers]
-   [clojure-shadcn.ui.components.sidebar :as sut]
-   [reagent.core                         :as r])
+   [clojure-shadcn.stories.helpers                          :as helpers]
+   [clojure-shadcn.stories.sidebar.application-layout       :as example-application-layout]
+   [clojure-shadcn.stories.sidebar.playground               :as example-playground]
+   [clojure-shadcn.stories.sidebar.provider-adapter         :as example-provider-adapter]
+   [clojure-shadcn.stories.sidebar.provider-controlled      :as example-provider-controlled]
+   [clojure-shadcn.stories.sidebar.provider-mobile-rtl      :as example-provider-mobile-rtl]
+   [clojure-shadcn.stories.sidebar.sidebar-controlled       :as example-sidebar-controlled]
+   [clojure-shadcn.stories.sidebar.sidebar-demo             :as example-sidebar-demo]
+   [clojure-shadcn.stories.sidebar.sidebar-menu             :as example-sidebar-menu]
+   [clojure-shadcn.stories.sidebar.sidebar-menu-collapsible :as example-sidebar-menu-collapsible]
+   [clojure-shadcn.stories.sidebar.sidebar-menu-sub         :as example-sidebar-menu-sub]
+   [clojure-shadcn.stories.sidebar.sidebar-mobile           :as example-sidebar-mobile]
+   [reagent.core                                            :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -313,173 +322,34 @@
        [:code
         "[:div {:class \"flex min-h-svh\"}\n [sidebar {:open? open? :is-mobile mobile? :on-open-change set-open! :variant \"inset\"}\n  [sidebar-header {} ...]\n  [sidebar-content {} ...]\n  [sidebar-rail {:on-click toggle!}]]\n [sidebar-inset {}\n  [sidebar-trigger {:on-click toggle!}]\n  [:section {:class \"p-4\"} \"Content\"]]]"]]]]])))
 
-(defn context-sidebar-layout
-  [{:keys [dir label]}]
-  (let [{:keys [open? set-open! open-mobile? set-open-mobile! is-mobile state toggle-sidebar!]}
-        (sut/use-sidebar)
-        active-open? (if is-mobile open-mobile? open?)]
-    (helpers/wrap-component
-     [:div {:class "flex min-h-[420px] w-full overflow-hidden rounded-xl border"
-            :dir dir}
-      [sut/sidebar {:open? active-open?
-                    :is-mobile is-mobile
-                    :on-open-change (if is-mobile set-open-mobile! set-open!)
-                    :side (if (= dir "rtl") "right" "left")
-                    :collapsible "icon"}
-       [sut/sidebar-header {}
-        [:strong {:class "px-2 text-sm"}
-         label]]
-       [sut/sidebar-content {}
-        [sut/sidebar-menu {}
-         [sut/sidebar-menu-item {}
-          [sut/sidebar-menu-button {:is-active? true
-                                    :collapsed? (= state "collapsed")
-                                    :is-mobile is-mobile
-                                    :tooltip "Overview"}
-           [:> Kanban]
-           [:span "Overview"]]]]]
-       [sut/sidebar-rail {:on-click toggle-sidebar!}]]
-      [sut/sidebar-inset {}
-       [:header {:class "flex h-14 items-center gap-3 border-b px-4"}
-        [sut/sidebar-trigger {:on-click toggle-sidebar!}]
-        [:span {:class "text-sm"}
-         (str "state=" state ", mobile=" is-mobile)]
-        [:span {:class "ms-auto text-xs text-muted-foreground"}
-         "Press Ctrl/Cmd+B"]]
-       [:div {:class "p-6 text-sm text-muted-foreground"}
-        "Provider state is read with use-sidebar and passed explicitly to every presentational component."]]])))
+
 
 (defstory
  ProviderAdapter
  "Uncontrolled provider adapter with keyboard toggle and automatic responsive matchMedia coordination. Cookie persistence remains disabled."
+ {:source-code (embed-source "clojure-shadcn.stories.sidebar.provider-adapter")}
  []
- (r/as-element [sut/sidebar-provider {:default-open? true}
-                [:f> context-sidebar-layout {:label "Context adapter"}]]))
+ (r/as-element (helpers/wrap-component [example-provider-adapter/example])))
 
 (defstory ProviderControlled
           "Controlled provider: the owner receives changes and remains the source of truth."
+          {:source-code (embed-source "clojure-shadcn.stories.sidebar.provider-controlled")}
           []
-          (r/as-element
-           [(fn []
-              (let [open? (r/atom true)]
-                (fn [] [sut/sidebar-provider {:open? @open?
-                                              :on-open-change #(reset! open? %)
-                                              :is-mobile false
-                                              :shortcut nil}
-                        [:f> context-sidebar-layout {:label "Controlled context"}]])))]))
+          (r/as-element (helpers/wrap-component [example-provider-controlled/example])))
 
 (defstory ProviderMobileRtl
           "Forced mobile provider with independent open-mobile state and RTL/right-side rendering."
+          {:source-code (embed-source "clojure-shadcn.stories.sidebar.provider-mobile-rtl")}
           []
-          (r/as-element [sut/sidebar-provider {:default-open-mobile? true
-                                               :is-mobile true}
-                         [:f>
-                          context-sidebar-layout
-                          {:dir "rtl"
-                           :label "Mobile RTL"}]]))
+          (r/as-element (helpers/wrap-component [example-provider-mobile-rtl/example])))
 
-(defn application-sidebar
-  []
-  (let [open? (r/atom true)
-        mobile? (r/atom false)
-        toggle! #(swap! open? not)]
-    (fn []
-      (helpers/wrap-component
-       [:div {:class "flex min-h-[680px] w-full overflow-hidden rounded-xl border"}
-        [sut/sidebar {:open? @open?
-                      :is-mobile @mobile?
-                      :on-open-change #(reset! open? %)
-                      :variant "inset"
-                      :collapsible "icon"}
-         [sut/sidebar-header {}
-          [sut/sidebar-menu {}
-           [sut/sidebar-menu-item {}
-            [sut/sidebar-menu-button {:as-child true
-                                      :size :lg}
-             [:a {:href "#workspace"}
-              [:> Kanban]
-              [:span "Northstar"]]]]]
-          [sut/sidebar-input {:placeholder "Search projects"
-                              :aria-label "Search projects"}]]
-         [sut/sidebar-separator {}]
-         [sut/sidebar-content {}
-          [sut/sidebar-group {}
-           [sut/sidebar-group-label {}
-            "Platform"]
-           [sut/sidebar-group-action {:aria-label "Add project"}
-            "+"]
-           [sut/sidebar-group-content {}
-            [sut/sidebar-menu {}
-             [sut/sidebar-menu-item {}
-              [sut/sidebar-menu-button {:as-child true
-                                        :is-active? true
-                                        :tooltip "Dashboard"
-                                        :collapsed? (not @open?)
-                                        :is-mobile @mobile?}
-               [:a {:href "#dashboard"}
-                [:> Kanban]
-                [:span "Dashboard"]]]]
-             [sut/sidebar-menu-item {}
-              [sut/sidebar-menu-button {:as-child true
-                                        :tooltip "Projects"
-                                        :collapsed? (not @open?)
-                                        :is-mobile @mobile?}
-               [:a {:href "#projects"}
-                [:> Folder]
-                [:span "Projects"]]]
-              [sut/sidebar-menu-action {:aria-label "Project actions"
-                                        :show-on-hover? true}
-               "⋯"]
-              [sut/sidebar-menu-badge {}
-               "8"]]
-             [sut/sidebar-menu-item {}
-              [sut/sidebar-menu-button {:as-child true
-                                        :tooltip "Team"
-                                        :collapsed? (not @open?)
-                                        :is-mobile @mobile?}
-               [:a {:href "#team"}
-                [:> Users]
-                [:span "Team"]]]]]]]
-          [sut/sidebar-group {}
-           [sut/sidebar-group-label {}
-            "Loading example"]
-           [sut/sidebar-menu {}
-            [sut/sidebar-menu-skeleton {:show-icon? true
-                                        :width "62%"}]
-            [sut/sidebar-menu-skeleton {:show-icon? true
-                                        :width "78%"}]]]]]
-        [sut/sidebar-footer {}
-         [sut/sidebar-menu {}
-          [sut/sidebar-menu-item {}
-           [sut/sidebar-menu-button {:as-child true
-                                     :tooltip "Settings"
-                                     :collapsed? (not @open?)
-                                     :is-mobile @mobile?}
-            [:a {:href "#settings"}
-             [:> Settings]
-             [:span "Settings"]]]]]]
-        [sut/sidebar-rail {:on-click toggle!}]]
-       [sut/sidebar-inset {}
-        [:header {:class "flex h-14 items-center gap-3 border-b px-4"}
-         [sut/sidebar-trigger {:on-click toggle!}]
-         [:h1 {:class "font-semibold"}
-          "Project overview"]
-         [:button {:type "button"
-                   :class "ml-auto rounded-md border px-3 py-1 text-sm"
-                   :on-click #(do (reset! mobile? (not @mobile?)) (reset! open? true))}
-          (if @mobile? "Use desktop layout" "Preview mobile sheet")]]
-        [:section {:class "grid flex-1 place-items-center p-8 text-center"}
-         [:div
-          [:h2 {:class "text-2xl font-semibold"}
-           "Application content"]
-          [:p {:class "mt-2 text-muted-foreground"}
-           "Controlled state is shared explicitly; no hidden provider coordinates this layout."]]]]))))
 
 (defstory
  ApplicationLayout
  "Application-scale, providerless controlled layout covering inset, trigger, rail, groups, actions, Slot links, collapse tooltips, skeletons, header/footer, and an explicit mobile-sheet preview."
+ {:source-code (embed-source "clojure-shadcn.stories.sidebar.application-layout")}
  []
- (r/as-element [application-sidebar]))
+ (r/as-element (helpers/wrap-component [example-application-layout/example])))
 
 (defstory
  SidebarDemo
@@ -488,38 +358,9 @@
   Custom component with composable slots.
 
   Use sidebar-content and sidebar-menu to structure navigation."
+ {:source-code (embed-source "clojure-shadcn.stories.sidebar.sidebar-demo")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/sidebar {:open? true
-                  :is-mobile false
-                  :collapsible "none"
-                  :variant "sidebar"}
-     [sut/sidebar-header {}
-      [:div {:class "text-sm font-semibold px-2"}
-       "Workspace"]]
-     [sut/sidebar-content {}
-      [sut/sidebar-menu {}
-       [sut/sidebar-menu-item {}
-        [sut/sidebar-menu-button {:is-active? true}
-         [:> Kanban]
-         "Dashboard"]]
-       [sut/sidebar-menu-item {}
-        [sut/sidebar-menu-button {}
-         [:> Folder]
-         "Projects"]]
-       [sut/sidebar-menu-item {}
-        [sut/sidebar-menu-button {}
-         [:> Users]
-         "Team"]]
-       [sut/sidebar-menu-item {}
-        [sut/sidebar-menu-button {}
-         [:> Settings]
-         "Settings"]]]]
-     [sut/sidebar-footer {}
-      [:div {:class "text-xs text-muted-foreground px-2"}
-       "v1.0"]]]])))
+ (r/as-element (helpers/wrap-component [example-sidebar-demo/example])))
 
 (defstory
  SidebarMenu
@@ -528,30 +369,9 @@
   Custom component with optional menu actions.
 
   Use menu-action and menu-badge for per-item utilities."
+ {:source-code (embed-source "clojure-shadcn.stories.sidebar.sidebar-menu")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/sidebar {:open? true
-                  :is-mobile false
-                  :collapsible "none"}
-     [sut/sidebar-content {}
-      [sut/sidebar-menu {}
-       [sut/sidebar-menu-item {}
-        [sut/sidebar-menu-button {:is-active? true}
-         "Inbox"]
-        [sut/sidebar-menu-badge {}
-         "12"]
-        [sut/sidebar-menu-action {:show-on-hover? true}
-         "✎"]]
-       [sut/sidebar-menu-item {}
-        [sut/sidebar-menu-button {}
-         "Notifications"]
-        [sut/sidebar-menu-badge {}
-         "3"]]
-       [sut/sidebar-menu-item {}
-        [sut/sidebar-menu-button {}
-         "Archives"]]]]]])))
+ (r/as-element (helpers/wrap-component [example-sidebar-menu/example])))
 
 (defstory
  SidebarMenuSub
@@ -560,31 +380,9 @@
   Custom component with nested menu-sub elements.
 
   Use menu-sub for secondary navigation."
+ {:source-code (embed-source "clojure-shadcn.stories.sidebar.sidebar-menu-sub")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/sidebar {:open? true
-                  :is-mobile false
-                  :collapsible "none"}
-     [sut/sidebar-content {}
-      [sut/sidebar-menu {}
-       [sut/sidebar-menu-item {}
-        [sut/sidebar-menu-button {:is-active? true}
-         "Projects"]
-        [sut/sidebar-menu-sub {}
-         [sut/sidebar-menu-sub-item {}
-          [sut/sidebar-menu-sub-button {}
-           "Roadmap"]]
-         [sut/sidebar-menu-sub-item {}
-          [sut/sidebar-menu-sub-button {}
-           "Backlog"]]
-         [sut/sidebar-menu-sub-item {}
-          [sut/sidebar-menu-sub-button {}
-           "Archive"]]]]
-       [sut/sidebar-menu-item {}
-        [sut/sidebar-menu-button {}
-         "Analytics"]]]]]])))
+ (r/as-element (helpers/wrap-component [example-sidebar-menu-sub/example])))
 
 (defstory
  SidebarMenuCollapsible
@@ -593,27 +391,9 @@
   Custom component supports :collapsible 'icon'.
 
   When collapsed, icons remain visible while labels hide."
+ {:source-code (embed-source "clojure-shadcn.stories.sidebar.sidebar-menu-collapsible")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/sidebar {:open? false
-                  :is-mobile false
-                  :collapsible "icon"}
-     [sut/sidebar-content {}
-      [sut/sidebar-menu {}
-       [sut/sidebar-menu-item {}
-        [sut/sidebar-menu-button {:tooltip "Dashboard"}
-         [:> Kanban]
-         "Dashboard"]]
-       [sut/sidebar-menu-item {}
-        [sut/sidebar-menu-button {:tooltip "Projects"}
-         [:> Folder]
-         "Projects"]]
-       [sut/sidebar-menu-item {}
-        [sut/sidebar-menu-button {:tooltip "Team"}
-         [:> Users]
-         "Team"]]]]]])))
+ (r/as-element (helpers/wrap-component [example-sidebar-menu-collapsible/example])))
 
 (defstory
  SidebarControlled
@@ -622,26 +402,9 @@
   Custom component expects open? and callbacks from the consumer.
 
   Use controlled state for responsive layouts."
+ {:source-code (embed-source "clojure-shadcn.stories.sidebar.sidebar-controlled")}
  []
- (r/as-element
-  [(fn []
-     (let [open? (r/atom true)]
-       (fn []
-         (helpers/wrap-component [:div {:class "p-6"}
-                                  [:button {:class "mb-4 text-sm underline"
-                                            :on-click #(swap! open? not)}
-                                   (if @open? "Collapse" "Expand")]
-                                  [sut/sidebar {:open? @open?
-                                                :is-mobile false
-                                                :collapsible "offcanvas"}
-                                   [sut/sidebar-content {}
-                                    [sut/sidebar-menu {}
-                                     [sut/sidebar-menu-item {}
-                                      [sut/sidebar-menu-button {:is-active? true}
-                                       "Overview"]]
-                                     [sut/sidebar-menu-item {}
-                                      [sut/sidebar-menu-button {}
-                                       "Reports"]]]]]]))))]))
+ (r/as-element (helpers/wrap-component [example-sidebar-controlled/example])))
 
 (defstory
  SidebarMobile
@@ -650,22 +413,9 @@
   Custom component toggles to a sheet when :is-mobile is true.
 
   Use for off-canvas mobile navigation."
+ {:source-code (embed-source "clojure-shadcn.stories.sidebar.sidebar-mobile")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/sidebar {:open? true
-                                                      :is-mobile true
-                                                      :collapsible "offcanvas"}
-                                         [sut/sidebar-header {}
-                                          [:div {:class "text-sm font-semibold px-2"}
-                                           "Mobile Nav"]]
-                                         [sut/sidebar-content {}
-                                          [sut/sidebar-menu {}
-                                           [sut/sidebar-menu-item {}
-                                            [sut/sidebar-menu-button {:is-active? true}
-                                             "Home"]]
-                                           [sut/sidebar-menu-item {}
-                                            [sut/sidebar-menu-button {}
-                                             "Settings"]]]]]])))
+ (r/as-element (helpers/wrap-component [example-sidebar-mobile/example])))
 
 
 (defstory Playground
@@ -676,17 +426,7 @@
                                  :options ["sidebar" "floating" "inset"]}}
            :parameters {:playground {:description "Explore sidebar variant with a live preview."}
                         :controls {:expanded false
-                                   :exclude ["children" "open?" "on-open-change" "is-mobile"]}}}
+                                   :exclude ["children" "open?" "on-open-change" "is-mobile"]}}
+           :source-code (embed-source "clojure-shadcn.stories.sidebar.playground")}
           [args]
-          (r/as-element
-           (helpers/wrap-component
-            [sut/sidebar
-             (assoc (select-keys args [:variant]) :open? true :is-mobile false :collapsible "none")
-             [sut/sidebar-header {}
-              [:div {:class "px-2 text-sm font-semibold"}
-               "Workspace"]]
-             [sut/sidebar-content {}
-              [sut/sidebar-menu {}
-               [sut/sidebar-menu-item {}
-                [sut/sidebar-menu-button {:is-active? true}
-                 "Dashboard"]]]]])))
+          (r/as-element (helpers/wrap-component [example-playground/example args])))

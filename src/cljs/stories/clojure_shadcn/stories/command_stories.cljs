@@ -1,10 +1,15 @@
 (ns clojure-shadcn.stories.command-stories
   "Storybook stories for the Command component. Ported from mateuszmazurczak.portfolio.ui-components.command."
   (:require
-   ["lucide-react"                       :refer [Calendar CreditCard Settings Smile User]]
-   [clojure-shadcn.stories.helpers       :as helpers]
-   [clojure-shadcn.ui.components.command :as sut]
-   [reagent.core                         :as r])
+   [clojure-shadcn.stories.command.command-composition :as command-composition]
+   [clojure-shadcn.stories.command.command-demo        :as command-demo]
+   [clojure-shadcn.stories.command.command-dialog      :as command-dialog]
+   [clojure-shadcn.stories.command.command-rtl         :as command-rtl]
+   [clojure-shadcn.stories.command.command-scrollable  :as command-scrollable]
+   [clojure-shadcn.stories.command.command-shortcuts   :as command-shortcuts]
+   [clojure-shadcn.stories.command.playground          :as playground]
+   [clojure-shadcn.stories.helpers                     :as helpers]
+   [reagent.core                                       :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -217,177 +222,45 @@
 
 (defstory
  CommandDemo
- "Command list with groups, separators, and disabled items.
-
-  Library: cmdk
-
-  Use Command for searchable lists and quick actions."
+ "Command list with groups, separators, and disabled items.\n\n  Library: cmdk\n\n  Use Command for searchable lists and quick actions."
+ {:source-code (embed-source "clojure-shadcn.stories.command.command-demo")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/command {:class "rounded-lg border shadow-md md:min-w-[450px]"}
-     [sut/command-input {:placeholder "Type a command or search..."}]
-     [sut/command-list {}
-      [sut/command-empty {}
-       "No results found."]
-      [sut/command-group {:heading "Suggestions"}
-       [sut/command-item {}
-        [:> Calendar]
-        [:span "Calendar"]]
-       [sut/command-item {}
-        [:> Smile]
-        [:span "Search Emoji"]]
-       [sut/command-item {:disabled true}
-        [:> CreditCard]
-        [:span "Calculator"]]]
-      [sut/command-separator {}]
-      [sut/command-group {:heading "Settings"}
-       [sut/command-item {}
-        [:> User]
-        [:span "Profile"]]
-       [sut/command-item {}
-        [:> Settings]
-        [:span "Settings"]]]]]])))
+ (r/as-element (helpers/wrap-component [command-demo/example])))
 
 (defstory
  CommandDialog
- "Command dialog with open state.
-
-  Library: cmdk
-
-  Useful for global search triggered from a button or shortcut."
+ "Command dialog with open state.\n\n  Library: cmdk\n\n  Useful for global search triggered from a button or shortcut."
+ {:source-code (embed-source "clojure-shadcn.stories.command.command-dialog")}
  []
- (r/as-element
-  [(fn []
-     (let [open? (r/atom false)]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-6 space-y-3"}
-           [:button {:type "button"
-                     :class "rounded-md border px-4 py-2 text-sm font-medium"
-                     :on-click #(reset! open? true)}
-            "Open command palette"]
-           [sut/command-dialog {:open @open?
-                                :onOpenChange #(reset! open? %)
-                                :title "Quick Actions"
-                                :description "Search grouped workspace and account actions."}
-            [sut/command-input {:placeholder "Type a command or search..."}]
-            [sut/command-list {}
-             [sut/command-empty {}
-              "No results found."]
-             [sut/command-group {:heading "Workspace"}
-              [sut/command-item {:value "calendar"
-                                 :onSelect #(reset! open? false)}
-               [:> Calendar {:aria-hidden true}]
-               [:span "Open calendar"]
-               [sut/command-shortcut {}
-                "⌘C"]]
-              [sut/command-item {:value "calculator"
-                                 :onSelect #(reset! open? false)}
-               [:> CreditCard {:aria-hidden true}]
-               [:span "Open billing"]]]
-             [sut/command-separator {}]
-             [sut/command-group {:heading "Account"}
-              [sut/command-item {:value "profile"
-                                 :onSelect #(reset! open? false)}
-               [:> User {:aria-hidden true}]
-               [:span "Profile"]]
-              [sut/command-item {:value "settings"
-                                 :onSelect #(reset! open? false)}
-               [:> Settings {:aria-hidden true}]
-               [:span "Settings"]]]]]]))))]))
+ (r/as-element (helpers/wrap-component [command-dialog/example])))
 
 (defstory
  CommandShortcuts
- "Command items with visual keyboard shortcut hints.
-
-  Library: cmdk
-
-  Shortcuts communicate existing commands; register the actual key handlers separately."
+ "Command items with visual keyboard shortcut hints.\n\n  Library: cmdk\n\n  Shortcuts communicate existing commands; register the actual key handlers separately."
+ {:source-code (embed-source "clojure-shadcn.stories.command.command-shortcuts")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "max-w-md p-6"}
-                                        [sut/command {:class "rounded-lg border"}
-                                         [sut/command-input {:placeholder "Search actions..."}]
-                                         [sut/command-list {}
-                                          [sut/command-group {:heading "File"}
-                                           [sut/command-item {:value "new-file"}
-                                            [:span "New file"]
-                                            [sut/command-shortcut {}
-                                             "⌘N"]]
-                                           [sut/command-item {:value "open-file"}
-                                            [:span "Open file"]
-                                            [sut/command-shortcut {}
-                                             "⌘O"]]]]]])))
+ (r/as-element (helpers/wrap-component [command-shortcuts/example])))
 
 (defstory
  CommandScrollable
- "Scrollable command list with enough grouped results to overflow.
-
-  Library: cmdk
-
-  Keep the search input visible while command-list owns vertical scrolling."
+ "Scrollable command list with enough grouped results to overflow.\n\n  Library: cmdk\n\n  Keep the search input visible while command-list owns vertical scrolling."
+ {:source-code (embed-source "clojure-shadcn.stories.command.command-scrollable")}
  []
- (r/as-element (helpers/wrap-component
-                [:div {:class "max-w-md p-6"}
-                 [sut/command {:class "rounded-lg border"}
-                  [sut/command-input {:placeholder "Jump to a section..."}]
-                  [sut/command-list {:class "max-h-48 overflow-y-auto"}
-                   (for [[heading items] [["Workspace" ["Overview" "Activity" "Members" "Settings"]]
-                                          ["Projects"
-                                           ["Website" "Mobile app" "Design system" "Research"]]
-                                          ["Account" ["Profile" "Billing" "Security" "Sign out"]]]]
-                     ^{:key heading}
-                     [sut/command-group {:heading heading}
-                      (for [item items]
-                        ^{:key item}
-                        [sut/command-item {:value (str heading " " item)}
-                         item])])]]])))
+ (r/as-element (helpers/wrap-component [command-scrollable/example])))
 
 (defstory
  CommandRtl
- "Right-to-left grouped command menu.
-
-  Library: cmdk
-
-  Apply dir=rtl at the command surface so text, groups, and shortcut placement inherit direction."
+ "Right-to-left grouped command menu.\n\n  Library: cmdk\n\n  Apply dir=rtl at the command surface so text, groups, and shortcut placement inherit direction."
+ {:source-code (embed-source "clojure-shadcn.stories.command.command-rtl")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "max-w-md p-6"
-                                              :dir "rtl"}
-                                        [sut/command {:class "rounded-lg border"}
-                                         [sut/command-input {:placeholder "ابحث عن أمر..."}]
-                                         [sut/command-list {}
-                                          [sut/command-group {:heading "الحساب"}
-                                           [sut/command-item {:value "profile"}
-                                            [:> User {:aria-hidden true}]
-                                            [:span "الملف الشخصي"]
-                                            [sut/command-shortcut {}
-                                             "⌘P"]]
-                                           [sut/command-item {:value "settings"}
-                                            [:> Settings {:aria-hidden true}]
-                                            [:span "الإعدادات"]]]]]])))
+ (r/as-element (helpers/wrap-component [command-rtl/example])))
 
 (defstory
  CommandComposition
- "Command embedded in a card-like container.
-
-  Library: cmdk
-
-  Demonstrates how Command can be styled to match surrounding UI."
+ "Command embedded in a card-like container.\n\n  Library: cmdk\n\n  Demonstrates how Command can be styled to match surrounding UI."
+ {:source-code (embed-source "clojure-shadcn.stories.command.command-composition")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-md"}
-                                        [:div {:class "rounded-lg border bg-card p-4 shadow-sm"}
-                                         [:p {:class "text-sm font-medium mb-2"}
-                                          "Quick Actions"]
-                                         [sut/command {}
-                                          [sut/command-input {:placeholder "Filter actions..."}]
-                                          [sut/command-list {}
-                                           [sut/command-item {}
-                                            "Create project"]
-                                           [sut/command-item {}
-                                            "Invite teammate"]
-                                           [sut/command-item {}
-                                            "Open settings"]]]]])))
+ (r/as-element (helpers/wrap-component [command-composition/example])))
 
 
 (defstory Playground
@@ -398,20 +271,12 @@
                                      :control {:type "text"}}
                        :loop {:name "Loop keyboard navigation"
                               :control {:type "boolean"}}}
-           :parameters {:playground {:description "Explore command placeholder and loop keyboard navigation with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["value" "onValueChange" "filter" "class"]}}}
+           :parameters
+           {:playground
+            {:description
+             "Explore command placeholder and loop keyboard navigation with a live preview."}
+            :controls {:expanded false
+                       :exclude ["value" "onValueChange" "filter" "class"]}}
+           :source-code (embed-source "clojure-shadcn.stories.command.playground")}
           [args]
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "p-6"}
-                          [sut/command {:loop (:loop args)
-                                        :class "rounded-lg border shadow-md md:min-w-[450px]"}
-                           [sut/command-input {:placeholder (:placeholder args)}]
-                           [sut/command-list {}
-                            [sut/command-empty {}
-                             "No results found."]
-                            [sut/command-group {:heading "Suggestions"}
-                             [sut/command-item {}
-                              "Calendar"]
-                             [sut/command-item {}
-                              "Settings"]]]]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))

@@ -1,11 +1,16 @@
 (ns clojure-shadcn.stories.date-picker-stories
   (:require
-   ["date-fns/locale"                        :refer [arSA]]
-   [clojure-shadcn.stories.helpers           :as helpers]
-   [clojure-shadcn.ui.components.button      :as button]
-   [clojure-shadcn.ui.components.date-picker :as sut]
-   [clojure-shadcn.ui.components.input       :as input]
-   [reagent.core                             :as r])
+   [clojure-shadcn.stories.date-picker.controlled-range       :as controlled-range]
+   [clojure-shadcn.stories.date-picker.controlled-single      :as controlled-single]
+   [clojure-shadcn.stories.date-picker.date-of-birth-dropdown :as date-of-birth-dropdown]
+   [clojure-shadcn.stories.date-picker.date-picker-states     :as date-picker-states]
+   [clojure-shadcn.stories.date-picker.input-and-time         :as input-and-time]
+   [clojure-shadcn.stories.date-picker.playground             :as playground]
+   [clojure-shadcn.stories.date-picker.presets                :as presets]
+   [clojure-shadcn.stories.date-picker.right-to-left          :as right-to-left]
+   [clojure-shadcn.stories.date-picker.uncontrolled-single    :as uncontrolled-single]
+   [clojure-shadcn.stories.helpers                            :as helpers]
+   [reagent.core                                              :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -102,209 +107,83 @@
 
 (defstory DatePickerStates
           "Backward-compatible native date input under both its legacy and explicit names."
+          {:source-code (embed-source "clojure-shadcn.stories.date-picker.date-picker-states")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "grid max-w-sm gap-5"}
-                                                 [:label {:class "grid gap-2 text-sm font-medium"}
-                                                  "Existing date-picker caller"
-                                                  [sut/date-picker {:name "start-date"
-                                                                    :default-value "2026-03-01"}]]
-                                                 [:label {:class "grid gap-2 text-sm font-medium"}
-                                                  "Explicit native-date-picker"
-                                                  [sut/native-date-picker {:min "2026-03-01"
-                                                                           :max "2026-12-31"
-                                                                           :required true}]]])))
+          (r/as-element (helpers/wrap-component [date-picker-states/example])))
 
-(defn- date-label
-  [date]
-  (if date (.toLocaleDateString date "en-US" #js {:dateStyle "long"}) "Pick a date"))
-
-(defn- single-controlled-example
-  []
-  (r/with-let [selected (r/atom nil) open? (r/atom false)]
-              [sut/composed-date-picker {:open @open?
-                                         :on-open-change #(reset! open? %)}
-               [sut/date-picker-trigger {}
-                [sut/date-picker-button {:data-placeholder (nil? @selected)}
-                 (date-label @selected)]]
-               [sut/date-picker-content {}
-                [sut/date-picker-calendar {:mode "single"
-                                           :selected @selected
-                                           :on-select
-                                           #(when % (reset! selected %) (reset! open? false))}]]]))
 
 (defstory ControlledSingle
           "Controlled single selection and controlled Radix Popover state."
+          {:source-code (embed-source "clojure-shadcn.stories.date-picker.controlled-single")}
           []
-          (r/as-element (helpers/wrap-component [single-controlled-example])))
+          (r/as-element (helpers/wrap-component [controlled-single/example])))
 
 (defstory
  UncontrolledSingle
  "Uncontrolled Popover and DayPicker interaction: no open or selected value is retained by this composition layer."
+ {:source-code (embed-source "clojure-shadcn.stories.date-picker.uncontrolled-single")}
  []
- (r/as-element (helpers/wrap-component [sut/composed-date-picker {:default-open false}
-                                        [sut/date-picker-trigger {}
-                                         [sut/date-picker-button {:data-placeholder true}
-                                          "Pick a date"]]
-                                        [sut/date-picker-content {}
-                                         [sut/date-picker-calendar {:mode "single"}]]])))
+ (r/as-element (helpers/wrap-component [uncontrolled-single/example])))
 
-(defn- range-example
-  []
-  (r/with-let [selected (r/atom nil)]
-              [sut/composed-date-picker {}
-               [sut/date-picker-trigger {}
-                [sut/date-picker-button {:class "w-[320px]"}
-                 (if-let [from (some-> @selected
-                                       .-from)]
-                   (str (date-label from)
-                        (when-let [to (aget @selected "to")] (str " – " (date-label to))))
-                   "Pick a date range")]]
-               [sut/date-picker-content {}
-                [sut/date-picker-calendar {:mode "range"
-                                           :number-of-months 2
-                                           :selected @selected
-                                           :on-select #(reset! selected %)}]]]))
 
 (defstory ControlledRange
           "Controlled range selection with two months."
+          {:source-code (embed-source "clojure-shadcn.stories.date-picker.controlled-range")}
           []
-          (r/as-element (helpers/wrap-component [range-example])))
+          (r/as-element (helpers/wrap-component [controlled-range/example])))
 
-(defn- add-days [date days] (doto (js/Date. (.getTime date)) (.setDate (+ (.getDate date) days))))
-
-(defn- presets-example
-  []
-  (r/with-let [selected (r/atom (js/Date.))]
-              [:div {:class "flex flex-col gap-3"}
-               [:div {:class "flex gap-2"}
-                [button/button {:variant :outline
-                                :size :sm
-                                :on-click #(reset! selected (js/Date.))}
-                 "Today"]
-                [button/button {:variant :outline
-                                :size :sm
-                                :on-click #(reset! selected (add-days (js/Date.) 7))}
-                 "In one week"]]
-               [sut/composed-date-picker {}
-                [sut/date-picker-trigger {}
-                 [sut/date-picker-button {}
-                  (date-label @selected)]]
-                [sut/date-picker-content {}
-                 [sut/date-picker-calendar {:mode "single"
-                                            :selected @selected
-                                            :on-select #(when % (reset! selected %))}]]]]))
 
 (defstory Presets
           "Presets remain ordinary buttons that update the same controlled date value."
+          {:source-code (embed-source "clojure-shadcn.stories.date-picker.presets")}
           []
-          (r/as-element (helpers/wrap-component [presets-example])))
+          (r/as-element (helpers/wrap-component [presets/example])))
 
-(defn- dob-example
-  []
-  (r/with-let [selected (r/atom nil)]
-              [sut/composed-date-picker {}
-               [sut/date-picker-trigger {}
-                [sut/date-picker-button {:data-placeholder (nil? @selected)}
-                 (if @selected (date-label @selected) "Date of birth")]]
-               [sut/date-picker-content {}
-                [sut/date-picker-calendar {:mode "single"
-                                           :caption-layout :dropdown
-                                           :start-month (js/Date. 1900 0)
-                                           :end-month (js/Date.)
-                                           :default-month (js/Date. 1990 0)
-                                           :selected @selected
-                                           :on-select #(reset! selected %)}]]]))
 
 (defstory DateOfBirthDropdown
           "DOB selection with month/year dropdowns and an explicit 1900-to-current month interval."
+          {:source-code (embed-source "clojure-shadcn.stories.date-picker.date-of-birth-dropdown")}
           []
-          (r/as-element (helpers/wrap-component [dob-example])))
+          (r/as-element (helpers/wrap-component [date-of-birth-dropdown/example])))
 
-(defn- date->iso
-  [date]
-  (when date
-    (str (.getFullYear date)
-         "-" (.padStart (str (inc (.getMonth date))) 2 "0")
-         "-" (.padStart (str (.getDate date)) 2 "0"))))
-
-(defn- iso->date
-  [value]
-  (when-let [[_ year month day] (re-matches #"(\d{4})-(\d{2})-(\d{2})" value)]
-    (js/Date. (js/parseInt year 10) (dec (js/parseInt month 10)) (js/parseInt day 10))))
-
-(defn- input-time-example
-  []
-  (r/with-let
-   [selected (r/atom (js/Date. 2026 2 12)) date-input (r/atom "2026-03-12") time (r/atom "09:00")]
-   [:div {:class "grid max-w-sm gap-3"}
-    [input/input {:aria-label "Date"
-                  :placeholder "yyyy-MM-dd"
-                  :value @date-input
-                  :on-change #(let [value (.. % -target -value)]
-                                (reset! date-input value)
-                                (when-let [date (iso->date value)] (reset! selected date)))}]
-    [sut/composed-date-picker {}
-     [sut/date-picker-trigger {}
-      [sut/date-picker-button {}
-       (date-label @selected)]]
-     [sut/date-picker-content {}
-      [sut/date-picker-calendar {:mode "single"
-                                 :selected @selected
-                                 :on-select
-                                 #(when % (reset! selected %) (reset! date-input (date->iso %)))}]]]
-    [input/input {:aria-label "Appointment time"
-                  :type "time"
-                  :value @time
-                  :on-change #(reset! time (.. % -target -value))}]
-    [:p {:class "text-sm text-muted-foreground"}
-     (str "Form value: " @date-input "T" @time)]]))
 
 (defstory InputAndTime
           "A controlled Calendar synchronized with a text input and a separate native time input."
+          {:source-code (embed-source "clojure-shadcn.stories.date-picker.input-and-time")}
           []
-          (r/as-element (helpers/wrap-component [input-time-example])))
+          (r/as-element (helpers/wrap-component [input-and-time/example])))
 
-(defn- rtl-example
-  []
-  (r/with-let [selected (r/atom nil)]
-              [:div {:dir "rtl"}
-               [sut/composed-date-picker {}
-                [sut/date-picker-trigger {}
-                 [sut/date-picker-button {:data-placeholder (nil? @selected)}
-                  (if @selected (.toLocaleDateString @selected "ar-SA") "اختر تاريخًا")]]
-                [sut/date-picker-content {:align "start"}
-                 [sut/date-picker-calendar {:mode "single"
-                                            :dir "rtl"
-                                            :locale arSA
-                                            :selected @selected
-                                            :on-select #(reset! selected %)}]]]]))
 
 (defstory RightToLeft
           "Representative Arabic locale and RTL direction across trigger and calendar."
+          {:source-code (embed-source "clojure-shadcn.stories.date-picker.right-to-left")}
           []
-          (r/as-element (helpers/wrap-component [rtl-example])))
+          (r/as-element (helpers/wrap-component [right-to-left/example])))
 
-(defstory Playground
-          "Legacy native date-picker playground retained for existing consumers."
-          {:args {:default-value "2026-03-01"
-                  :disabled false
-                  :required false
-                  :min "2026-01-01"
-                  :max "2026-12-31"}
-           :arg-types {:default-value {:name "Initial value"
-                                       :control {:type "text"}}
-                       :disabled {:name "Disabled"
-                                  :control {:type "boolean"}}
-                       :required {:name "Required"
-                                  :control {:type "boolean"}}
-                       :min {:name "Min"
-                             :control {:type "text"}}
-                       :max {:name "Max"
-                             :control {:type "text"}}}
-           :parameters {:playground {:description "Explore date picker initial value, disabled, required, min and max with a live preview."}
-                        :controls {:expanded false
-                                   :exclude
-                                   ["value" "on-change" "class" "wrapper-class" "icon-class"]}}}
-          [args]
-          (r/as-element (helpers/wrap-component [:div {:class "max-w-sm p-6"}
-                                                 [sut/date-picker args]])))
+(defstory
+ Playground
+ "Legacy native date-picker playground retained for existing consumers."
+ {:args {:default-value "2026-03-01"
+         :disabled false
+         :required false
+         :min "2026-01-01"
+         :max "2026-12-31"}
+  :arg-types {:default-value {:name "Initial value"
+                              :control {:type "text"}}
+              :disabled {:name "Disabled"
+                         :control {:type "boolean"}}
+              :required {:name "Required"
+                         :control {:type "boolean"}}
+              :min {:name "Min"
+                    :control {:type "text"}}
+              :max {:name "Max"
+                    :control {:type "text"}}}
+  :parameters
+  {:playground
+   {:description
+    "Explore date picker initial value, disabled, required, min and max with a live preview."}
+   :controls {:expanded false
+              :exclude ["value" "on-change" "class" "wrapper-class" "icon-class"]}}
+  :source-code (embed-source "clojure-shadcn.stories.date-picker.playground")}
+ [args]
+ (r/as-element (helpers/wrap-component [playground/example args])))

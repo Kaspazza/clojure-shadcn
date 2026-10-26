@@ -1,9 +1,23 @@
 (ns clojure-shadcn.stories.tag-combobox-stories
   "Storybook stories for the Tag Combobox component. Ported from mateuszmazurczak.portfolio.ui-components.tag_combobox."
   (:require
-   [clojure-shadcn.stories.helpers            :as helpers]
-   [clojure-shadcn.ui.components.tag-combobox :as sut]
-   [reagent.core                              :as r])
+   [clojure-shadcn.stories.helpers                                    :as helpers]
+   [clojure-shadcn.stories.tag-combobox.basic-tag-selection           :as
+                                                                      example-basic-tag-selection]
+   [clojure-shadcn.stories.tag-combobox.multiple-tag-comboboxes
+    :as example-multiple-tag-comboboxes]
+   [clojure-shadcn.stories.tag-combobox.playground                    :as example-playground]
+   [clojure-shadcn.stories.tag-combobox.tag-combobox-case-handling
+    :as example-tag-combobox-case-handling]
+   [clojure-shadcn.stories.tag-combobox.tag-combobox-localized-search
+    :as example-tag-combobox-localized-search]
+   [clojure-shadcn.stories.tag-combobox.tag-creation-workflow         :as
+                                                                      example-tag-creation-workflow]
+   [clojure-shadcn.stories.tag-combobox.tag-with-custom-placeholder
+    :as example-tag-with-custom-placeholder]
+   [clojure-shadcn.stories.tag-combobox.tag-with-custom-width         :as
+                                                                      example-tag-with-custom-width]
+   [reagent.core                                                      :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -88,223 +102,69 @@
 
    Select from existing tags or create new ones.
    Responsive: uses popover on desktop, sheet on mobile."
+ {:source-code (embed-source "clojure-shadcn.stories.tag-combobox.basic-tag-selection")}
  []
- (r/as-element
-  [(fn []
-     (let [available-tags (r/atom #{"urgent" "important" "review" "blocked" "in-progress"})
-           selected-tag (r/atom nil)]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-8 space-y-4"}
-           [:div
-            [:h3 {:class "text-lg font-semibold mb-2"}
-             "Select a Tag"]
-            [:p {:class "text-sm text-muted-foreground mb-4"}
-             "Choose from existing tags or create a new one"]
-            [sut/tag-combobox {:tags @available-tags
-                               :selected-tag @selected-tag
-                               :on-select #(reset! selected-tag %)
-                               :on-create (fn [new-tag]
-                                            (swap! available-tags conj new-tag)
-                                            (reset! selected-tag new-tag))}]]]))))]))
+ (r/as-element (helpers/wrap-component [example-basic-tag-selection/example])))
 
 (defstory TagWithCustomPlaceholder
           "Tag combobox with custom placeholder text."
+          {:source-code (embed-source
+                         "clojure-shadcn.stories.tag-combobox.tag-with-custom-placeholder")}
           []
-          (r/as-element [(fn []
-                           (let [tags (r/atom #{"feature" "bug" "enhancement" "documentation"})
-                                 selected (r/atom nil)]
-                             (fn []
-                               (helpers/wrap-component [:div {:class "p-8"}
-                                                        [:h3 {:class "text-lg font-semibold mb-4"}
-                                                         "Issue Type"]
-                                                        [sut/tag-combobox
-                                                         {:tags @tags
-                                                          :selected-tag @selected
-                                                          :placeholder "+ Select type"
-                                                          :on-select #(reset! selected %)
-                                                          :on-create (fn [new-tag]
-                                                                       (swap! tags conj new-tag)
-                                                                       (reset! selected
-                                                                         new-tag))}]]))))]))
+          (r/as-element (helpers/wrap-component [example-tag-with-custom-placeholder/example])))
 
 (defstory TagWithCustomWidth
           "Tag combobox with custom width styling."
+          {:source-code (embed-source "clojure-shadcn.stories.tag-combobox.tag-with-custom-width")}
           []
-          (r/as-element
-           [(fn []
-              (let [tags (r/atom #{"red" "green" "blue" "yellow" "purple"})
-                    selected (r/atom nil)]
-                (fn []
-                  (helpers/wrap-component [:div {:class "p-8"}
-                                           [:h3 {:class "text-lg font-semibold mb-4"}
-                                            "Color Tag"]
-                                           [sut/tag-combobox {:tags @tags
-                                                              :selected-tag @selected
-                                                              :class "w-[200px]"
-                                                              :placeholder "+ Choose color"
-                                                              :on-select #(reset! selected %)
-                                                              :on-create (fn [new-tag]
-                                                                           (swap! tags conj new-tag)
-                                                                           (reset! selected
-                                                                             new-tag))}]]))))]))
+          (r/as-element (helpers/wrap-component [example-tag-with-custom-width/example])))
 
 (defstory
  MultipleTagComboboxes
  "Multiple independent tag comboboxes.
 
    Shows how to use multiple tag comboboxes with different tag sets."
+ {:source-code (embed-source "clojure-shadcn.stories.tag-combobox.multiple-tag-comboboxes")}
  []
- (r/as-element
-  [(fn []
-     (let [priority-tags (r/atom #{"low" "medium" "high" "critical"})
-           status-tags (r/atom #{"todo" "doing" "done" "archived"})
-           selected-priority (r/atom nil)
-           selected-status (r/atom nil)]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-8 space-y-6"}
-           [:div
-            [:h3 {:class "text-lg font-semibold mb-2"}
-             "Task Management"]
-            [:div {:class "flex gap-4 mt-4"}
-             [:div {:class "space-y-2"}
-              [:label {:class "text-sm font-medium"}
-               "Priority"]
-              [sut/tag-combobox {:tags @priority-tags
-                                 :selected-tag @selected-priority
-                                 :placeholder "+ Priority"
-                                 :on-select #(reset! selected-priority %)
-                                 :on-create (fn [new-tag]
-                                              (swap! priority-tags conj new-tag)
-                                              (reset! selected-priority new-tag))}]]
-             [:div {:class "space-y-2"}
-              [:label {:class "text-sm font-medium"}
-               "Status"]
-              [sut/tag-combobox {:tags @status-tags
-                                 :selected-tag @selected-status
-                                 :placeholder "+ Status"
-                                 :on-select #(reset! selected-status %)
-                                 :on-create (fn [new-tag]
-                                              (swap! status-tags conj new-tag)
-                                              (reset! selected-status new-tag))}]]]]
-           [:div {:class "mt-6 p-4 bg-muted rounded-md"}
-            [:p {:class "text-sm font-medium"}
-             "Selection:"]
-            [:p {:class "text-xs mt-2"}
-             (str "Priority: " @selected-priority)]
-            [:p {:class "text-xs"}
-             (str "Status: " @selected-status)]]]))))]))
+ (r/as-element (helpers/wrap-component [example-multiple-tag-comboboxes/example])))
 
 (defstory
  TagCreationWorkflow
  "Demonstrates the tag creation workflow.
 
    Type a tag name that doesn't exist and see the 'Create' option appear."
+ {:source-code (embed-source "clojure-shadcn.stories.tag-combobox.tag-creation-workflow")}
  []
- (r/as-element
-  [(fn []
-     (let [tags (r/atom #{"existing-tag-1" "existing-tag-2"})
-           selected (r/atom nil)
-           creation-log (r/atom [])]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-8 space-y-4"}
-           [:div
-            [:h3 {:class "text-lg font-semibold mb-2"}
-             "Tag Creation Demo"]
-            [:p {:class "text-sm text-muted-foreground mb-4"}
-             "Try typing 'new-tag' to see the create option"]
-            [sut/tag-combobox {:tags @tags
-                               :selected-tag @selected
-                               :on-select #(reset! selected %)
-                               :on-create (fn [new-tag]
-                                            (swap! tags conj new-tag)
-                                            (reset! selected new-tag)
-                                            (swap! creation-log conj
-                                              {:tag new-tag
-                                               :timestamp (.toISOString (js/Date.))}))}]]
-           [:div {:class "mt-6 p-4 bg-muted rounded-md"}
-            [:p {:class "text-sm font-medium mb-2"}
-             "Available tags:"]
-            [:div {:class "flex flex-wrap gap-2 mb-4"}
-             (for [tag @tags]
-               ^{:key tag}
-               [:span {:class "text-xs bg-primary text-primary-foreground px-2 py-1 rounded"}
-                tag])]
-            (when (seq @creation-log)
-              [:div
-               [:p {:class "text-sm font-medium mb-2"}
-                "Creation log:"]
-               [:div {:class "space-y-1"}
-                (for [[idx entry] (map-indexed vector @creation-log)]
-                  ^{:key idx}
-                  [:p {:class "text-xs"}
-                   (str "Created: " (:tag entry))])]])]]))))]))
+ (r/as-element (helpers/wrap-component [example-tag-creation-workflow/example])))
 
 
-(defstory
- Playground
- "Interactive tag-combobox playground."
- {:args {:placeholder "+ Add tag"
-         :allow-create true}
-  :arg-types {:placeholder {:name "Placeholder"
+(defstory Playground
+          "Interactive tag-combobox playground."
+          {:args {:placeholder "+ Add tag"
+                  :allow-create true}
+           :arg-types {:placeholder {:name "Placeholder"
                                      :control {:type "text"}}
-              :allow-create {:name "Allow new tags"
+                       :allow-create {:name "Allow new tags"
                                       :control {:type "boolean"}}}
-  :parameters {:playground {:description "Explore tag combobox placeholder and allow new tags with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["tags" "selected-tag" "on-select" "on-create" "class"]}}}
- [args]
- (r/as-element (r/with-let [tags (r/atom #{"bug" "feature" "urgent"}) selected (r/atom nil)]
-                           (helpers/wrap-component [:div {:class "p-6"}
-                                                    [sut/tag-combobox
-                                                     {:tags @tags
-                                                      :selected-tag @selected
-                                                      :placeholder (:placeholder args)
-                                                      :on-select #(reset! selected %)
-                                                      :on-create (when (:allow-create args)
-                                                                   (fn [tag]
-                                                                     (swap! tags conj tag)
-                                                                     (reset! selected tag)))}]]))))
+           :parameters
+           {:playground {:description
+                         "Explore tag combobox placeholder and allow new tags with a live preview."}
+            :controls {:expanded false
+                       :exclude ["tags" "selected-tag" "on-select" "on-create" "class"]}}
+           :source-code (embed-source "clojure-shadcn.stories.tag-combobox.playground")}
+          [args]
+          (r/as-element (helpers/wrap-component [example-playground/example args])))
 
 (defstory
  TagComboboxLocalizedSearch
  "Localized consumer copy covers search, empty results, creation, and the responsive sheet title."
+ {:source-code (embed-source "clojure-shadcn.stories.tag-combobox.tag-combobox-localized-search")}
  []
- (r/as-element
-  [(fn []
-     (let [tags (r/atom ["Projekt" "Pilne" "Do przeglądu"])
-           selected (r/atom nil)]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "max-w-sm space-y-3 p-6"}
-           [:p {:class "text-sm text-muted-foreground"}
-            "Search for ‘brak’ to see the localized empty state and create action."]
-           [sut/tag-combobox {:tags @tags
-                              :selected-tag @selected
-                              :placeholder "+ Dodaj tag"
-                              :search-placeholder "Szukaj tagów…"
-                              :empty-text "Nie znaleziono tagów."
-                              :mobile-title "Wybierz lub utwórz tag"
-                              :create-label #(str "Utwórz „" % "”")
-                              :on-select #(reset! selected %)
-                              :on-create
-                              (fn [tag] (swap! tags conj tag) (reset! selected tag))}]]))))]))
+ (r/as-element (helpers/wrap-component [example-tag-combobox-localized-search/example])))
 
 (defstory
  TagComboboxCaseHandling
  "Input tags are trimmed and deduplicated case-insensitively while preserving the first display spelling."
+ {:source-code (embed-source "clojure-shadcn.stories.tag-combobox.tag-combobox-case-handling")}
  []
- (r/as-element
-  [(fn []
-     (let [selected (r/atom nil)]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "max-w-sm space-y-3 p-6"}
-           [sut/tag-combobox {:tags ["Bug" " bug " "BUG" "Feature"]
-                              :selected-tag @selected
-                              :on-select #(reset! selected %)
-                              :on-create #(reset! selected %)}]
-           [:p {:class "text-xs text-muted-foreground"}
-            "Open the list: Bug appears once; searching ‘bug’ does not offer a duplicate create action."]]))))]))
+ (r/as-element (helpers/wrap-component [example-tag-combobox-case-handling/example])))

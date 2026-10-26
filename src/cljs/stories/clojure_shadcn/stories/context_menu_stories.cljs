@@ -1,9 +1,13 @@
 (ns clojure-shadcn.stories.context-menu-stories
   (:require
-   ["lucide-react"                            :refer [Copy Mail Share2 Trash2]]
-   [clojure-shadcn.stories.helpers            :as helpers]
-   [clojure-shadcn.ui.components.context-menu :as sut]
-   [reagent.core                              :as r])
+   [clojure-shadcn.stories.context-menu.context-menu-choices          :as context-menu-choices]
+   [clojure-shadcn.stories.context-menu.context-menu-demo             :as context-menu-demo]
+   [clojure-shadcn.stories.context-menu.context-menu-groups-and-icons :as
+                                                                      context-menu-groups-and-icons]
+   [clojure-shadcn.stories.context-menu.context-menu-rtl              :as context-menu-rtl]
+   [clojure-shadcn.stories.context-menu.playground                    :as playground]
+   [clojure-shadcn.stories.helpers                                    :as helpers]
+   [reagent.core                                                      :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -97,136 +101,39 @@
                :description "Normalized, class-merged, and forwarded."}]}]])))
 
 (defstory ContextMenuDemo
+          {:source-code (embed-source "clojure-shadcn.stories.context-menu.context-menu-demo")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [sut/context-menu {}
-             [sut/context-menu-trigger
-              {:class
-               "flex h-40 w-72 items-center justify-center rounded-md border border-dashed text-sm"}
-              "Right click here"]
-             [sut/context-menu-content {:class "w-56"}
-              [sut/context-menu-item {}
-               "Back"
-               [sut/context-menu-shortcut {}
-                "⌘["]]
-              [sut/context-menu-item {:disabled true}
-               "Forward"]
-              [sut/context-menu-sub {}
-               [sut/context-menu-sub-trigger {}
-                "Share"]
-               [sut/context-menu-sub-content {:class "w-44"}
-                [sut/context-menu-item {}
-                 "Email"]
-                [sut/context-menu-item {}
-                 "Messages"]]]
-              [sut/context-menu-separator {}]
-              [sut/context-menu-item {:variant :destructive}
-               "Delete"]]])))
+          (r/as-element (helpers/wrap-component [context-menu-demo/example])))
 
 (defstory
  ContextMenuGroupsAndIcons
- "Explicit Radix Context Menu groups with decorative action icons.
-
-  Radix primitive: @radix-ui/react-context-menu
-
-  Groups preserve menu semantics while separators communicate related action sets."
+ "Explicit Radix Context Menu groups with decorative action icons.\n\n  Radix primitive: @radix-ui/react-context-menu\n\n  Groups preserve menu semantics while separators communicate related action sets."
+ {:source-code (embed-source "clojure-shadcn.stories.context-menu.context-menu-groups-and-icons")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [sut/context-menu {}
-    [sut/context-menu-trigger
-     {:class "flex h-36 w-72 items-center justify-center rounded-md border border-dashed text-sm"}
-     "Right click the document"]
-    [sut/context-menu-content {:class "w-56"}
-     [sut/context-menu-group {}
-      [sut/context-menu-item {}
-       [:> Copy {:aria-hidden true}]
-       "Duplicate"]
-      [sut/context-menu-item {}
-       [:> Share2 {:aria-hidden true}]
-       "Share"]]
-     [sut/context-menu-separator {}]
-     [sut/context-menu-group {}
-      [sut/context-menu-item {}
-       [:> Mail {:aria-hidden true}]
-       "Send by email"]
-      [sut/context-menu-item {:variant :destructive}
-       [:> Trash2 {:aria-hidden true}]
-       "Move to trash"]]]])))
+ (r/as-element (helpers/wrap-component [context-menu-groups-and-icons/example])))
 
 (defstory
  ContextMenuRtl
- "Right-to-left Radix Context Menu with grouped actions.
-
-  Radix primitive: @radix-ui/react-context-menu
-
-  Pass :dir to Root so keyboard navigation and submenu direction match the content."
+ "Right-to-left Radix Context Menu with grouped actions.\n\n  Radix primitive: @radix-ui/react-context-menu\n\n  Pass :dir to Root so keyboard navigation and submenu direction match the content."
+ {:source-code (embed-source "clojure-shadcn.stories.context-menu.context-menu-rtl")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [sut/context-menu {:dir "rtl"}
-    [sut/context-menu-trigger
-     {:class "flex h-36 w-72 items-center justify-center rounded-md border text-sm"
-      :dir "rtl"}
-     "انقر بزر الفأرة الأيمن"]
-    [sut/context-menu-content {:class "w-56"}
-     [sut/context-menu-group {}
-      [sut/context-menu-item {}
-       [:> Copy {:aria-hidden true}]
-       "نسخ"]
-      [sut/context-menu-item {}
-       [:> Share2 {:aria-hidden true}]
-       "مشاركة"]]
-     [sut/context-menu-separator {}]
-     [sut/context-menu-item {:disabled true}
-      "إعادة تسمية"]]])))
+ (r/as-element (helpers/wrap-component [context-menu-rtl/example])))
 
 (defstory ContextMenuChoices
+          {:source-code (embed-source "clojure-shadcn.stories.context-menu.context-menu-choices")}
           []
-          (r/as-element
-           [(fn []
-              (let [checked? (r/atom true)
-                    position (r/atom "bottom")]
-                (fn []
-                  (helpers/wrap-component
-                   [sut/context-menu {}
-                    [sut/context-menu-trigger
-                     {:class "flex h-32 w-72 items-center justify-center rounded-md border"}
-                     "Right click for preferences"]
-                    [sut/context-menu-content {:class "w-56"}
-                     [sut/context-menu-checkbox-item {:checked @checked?
-                                                      :on-checked-change #(reset! checked? %)}
-                      "Show toolbar"]
-                     [sut/context-menu-separator {}]
-                     [sut/context-menu-label {}
-                      "Panel position"]
-                     [sut/context-menu-radio-group {:value @position
-                                                    :on-value-change #(reset! position %)}
-                      [sut/context-menu-radio-item {:value "top"}
-                       "Top"]
-                      [sut/context-menu-radio-item {:value "bottom"}
-                       "Bottom"]]]]))))]))
+          (r/as-element (helpers/wrap-component [context-menu-choices/example])))
 
 
-(defstory
- Playground
- "Controlled Storybook playground using only safe scalar component props."
- {:args {:class ""}
-  :arg-types {:class {:name "CSS classes"
+(defstory Playground
+          "Controlled Storybook playground using only safe scalar component props."
+          {:args {:class ""}
+           :arg-types {:class {:name "CSS classes"
                                :control {:type "text"}}}
-  :parameters {:playground {:description "Explore context menu css classes with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["children" "on-select" "on-value-change" "on-checked-change"]}}}
- [args]
- (r/as-element (helpers/wrap-component
-                [sut/context-menu {}
-                 [sut/context-menu-trigger
-                  {:class (str "flex h-32 w-64 items-center justify-center rounded-md border "
-                               (:class args))}
-                  "Right click here"]
-                 [sut/context-menu-content {}
-                  [sut/context-menu-item {}
-                   "Back"]
-                  [sut/context-menu-item {:disabled true}
-                   "Forward"]]])))
+           :parameters
+           {:playground {:description "Explore context menu css classes with a live preview."}
+            :controls {:expanded false
+                       :exclude ["children" "on-select" "on-value-change" "on-checked-change"]}}
+           :source-code (embed-source "clojure-shadcn.stories.context-menu.playground")}
+          [args]
+          (r/as-element (helpers/wrap-component [playground/example args])))

@@ -1,13 +1,20 @@
 (ns clojure-shadcn.stories.checkbox-stories
-  "Storybook stories for the Checkbox component. Ported from mateuszmazurczak.portfolio.ui-components.checkbox."
   (:require
-   [clojure-shadcn.stories.helpers        :as helpers]
-   [clojure-shadcn.ui.components.checkbox :as sut]
-   [clojure-shadcn.ui.components.field    :as field]
-   [clojure-shadcn.ui.components.label    :as label]
-   [clojure-shadcn.ui.components.table    :as table]
-   [clojure.string                        :as str]
-   [reagent.core                          :as r])
+   [clojure-shadcn.stories.checkbox.checkbox-demo             :as checkbox-demo]
+   [clojure-shadcn.stories.checkbox.checkbox-disabled         :as checkbox-disabled]
+   [clojure-shadcn.stories.checkbox.checkbox-field-disabled   :as checkbox-field-disabled]
+   [clojure-shadcn.stories.checkbox.checkbox-form-integration :as checkbox-form-integration]
+   [clojure-shadcn.stories.checkbox.checkbox-group            :as checkbox-group]
+   [clojure-shadcn.stories.checkbox.checkbox-indeterminate    :as checkbox-indeterminate]
+   [clojure-shadcn.stories.checkbox.checkbox-invalid          :as checkbox-invalid]
+   [clojure-shadcn.stories.checkbox.checkbox-rtl              :as checkbox-rtl]
+   [clojure-shadcn.stories.checkbox.checkbox-table            :as checkbox-table]
+   [clojure-shadcn.stories.checkbox.checkbox-with-field-label :as checkbox-with-field-label]
+   [clojure-shadcn.stories.checkbox.checkbox-with-text        :as checkbox-with-text]
+   [clojure-shadcn.stories.checkbox.field-checkbox            :as field-checkbox]
+   [clojure-shadcn.stories.checkbox.playground                :as playground]
+   [clojure-shadcn.stories.helpers                            :as helpers]
+   [reagent.core                                              :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -91,359 +98,117 @@
         [:li
          "Use :aria-invalid true to show error styling — pair with Field and field-error for full validation UX."]]]]])))
 
-(defn ^:export CheckboxDemo
-  "Checkbox variants: uncontrolled and controlled usage.
+(defstory
+ CheckboxDemo
+ "Checkbox variants: uncontrolled and controlled usage.
 
   Radix primitive: @radix-ui/react-checkbox
 
   Use labels and helper text for clarity. Always pair :checked with :on-checked-change for controlled usage."
-  []
-  (r/as-element
-   [(fn []
-      (let [checked? (r/atom false)]
-        (fn []
-          (helpers/wrap-component
-           [:div {:class "p-6 space-y-6"}
-            [:div {:class "space-y-4"}
-             [:p {:class "text-xs font-semibold uppercase tracking-wide text-muted-foreground"}
-              "Uncontrolled"]
-             [:div {:class "flex items-center gap-2"}
-              [sut/checkbox {:id "terms"}]
-              [label/label {:html-for "terms"}
-               "Accept terms and conditions"]]
-             [:div {:class "flex items-start gap-3"}
-              [sut/checkbox {:id "terms-2"
-                             :default-checked true}]
-              [:div {:class "grid gap-2"}
-               [label/label {:html-for "terms-2"}
-                "Accept terms and conditions"]
-               [:p {:class "text-muted-foreground text-sm"}
-                "By clicking this checkbox, you agree to the terms and conditions."]]]]
-            [:div {:class "space-y-4"}
-             [:p {:class "text-xs font-semibold uppercase tracking-wide text-muted-foreground"}
-              "Controlled"]
-             [:div {:class "flex items-center gap-2"}
-              [sut/checkbox {:id "controlled"
-                             :checked @checked?
-                             :on-checked-change #(reset! checked? %)}]
-              [label/label {:html-for "controlled"}
-               "Enable feature"]]
-             [:p {:class "text-sm text-muted-foreground"}
-              (str "State: " (if @checked? "checked" "unchecked"))]]]))))]))
+ {:source-code (embed-source "clojure-shadcn.stories.checkbox.checkbox-demo")}
+ []
+ (r/as-element (helpers/wrap-component [checkbox-demo/example])))
 
-(defn ^:export CheckboxWithFieldLabel
-  "Checkbox inside Field wrapped by FieldLabel with title and description.
+(defstory
+ CheckboxWithFieldLabel
+ "Checkbox inside Field wrapped by FieldLabel with title and description.
 
   Radix primitive: @radix-ui/react-checkbox
 
   Wrapping a horizontal Field inside field-label makes the entire row clickable.
   Use field-title and field-description for structured labelling."
-  []
-  (r/as-element (helpers/wrap-component
-                 [:div {:class "p-6"}
-                  [field/field-label {}
-                   [field/field {:orientation :horizontal}
-                    [sut/checkbox {:id "toggle-checkbox-2"
-                                   :name "toggle-checkbox-2"}]
-                    [field/field-content {}
-                     [field/field-title {}
-                      "Enable notifications"]
-                     [field/field-description {}
-                      "You can enable or disable notifications at any time."]]]]])))
+ {:source-code (embed-source "clojure-shadcn.stories.checkbox.checkbox-with-field-label")}
+ []
+ (r/as-element (helpers/wrap-component [checkbox-with-field-label/example])))
 
-(defn ^:export CheckboxDisabled
-  "Disabled checkbox state.
+(defstory
+ CheckboxDisabled
+ "Disabled checkbox state.
 
   Radix primitive: @radix-ui/react-checkbox
 
   Disabled checkboxes are muted and non-interactive."
-  []
-  (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                         [:div {:class "flex items-center gap-2"}
-                                          [sut/checkbox {:id "notifications"
-                                                         :disabled true}]
-                                          [:span {:class "text-sm text-muted-foreground"}
-                                           "Enable notifications"]]])))
+ {:source-code (embed-source "clojure-shadcn.stories.checkbox.checkbox-disabled")}
+ []
+ (r/as-element (helpers/wrap-component [checkbox-disabled/example])))
 
-(defn ^:export CheckboxWithText
-  "Checkbox with supporting text.
+(defstory
+ CheckboxWithText
+ "Checkbox with supporting text.
 
   Radix primitive: @radix-ui/react-checkbox
 
   Use descriptive text for legal agreements or onboarding flows."
-  []
-  (r/as-element (helpers/wrap-component
-                 [:div {:class "p-6"}
-                  [:div {:class "flex items-start gap-2"}
-                   [sut/checkbox {:id "terms-3"}]
-                   [:div {:class "grid gap-1.5 leading-none"}
-                    [label/label {:html-for "terms-3"}
-                     "Accept terms and conditions"]
-                    [:p {:class "text-muted-foreground text-sm"}
-                     "You agree to our Terms of Service and Privacy Policy."]]]])))
+ {:source-code (embed-source "clojure-shadcn.stories.checkbox.checkbox-with-text")}
+ []
+ (r/as-element (helpers/wrap-component [checkbox-with-text/example])))
 
-(defn ^:export FieldCheckbox
-  "Checkboxes inside Field layout.
+(defstory
+ FieldCheckbox
+ "Checkboxes inside Field layout.
 
   Radix primitive: @radix-ui/react-checkbox
 
   The Field components provide structured form layouts."
-  []
-  (r/as-element
-   (helpers/wrap-component
-    [:div {:class "p-6 max-w-md"}
-     [field/field-group {}
-      [field/field-set {}
-       [field/field-legend {:variant :label}
-        "Show these items on the desktop"]
-       [field/field-description {}
-        "Select the items you want to show on the desktop."]
-       [field/field-group {:class "gap-3"}
-        [field/field {:orientation :horizontal}
-         [sut/checkbox {:id "hard-disks"}]
-         [field/field-label {:html-for "hard-disks"
-                             :class "font-normal"}
-          "Hard disks"]]
-        [field/field {:orientation :horizontal}
-         [sut/checkbox {:id "external-disks"}]
-         [field/field-label {:html-for "external-disks"
-                             :class "font-normal"}
-          "External disks"]]
-        [field/field {:orientation :horizontal}
-         [sut/checkbox {:id "cds"}]
-         [field/field-label {:html-for "cds"
-                             :class "font-normal"}
-          "CDs, DVDs, and iPods"]]
-        [field/field {:orientation :horizontal}
-         [sut/checkbox {:id "servers"}]
-         [field/field-label {:html-for "servers"
-                             :class "font-normal"}
-          "Connected servers"]]]]
-      [field/field-separator {}]
-      [field/field {:orientation :horizontal}
-       [sut/checkbox {:id "icloud"
-                      :default-checked true}]
-       [field/field-content {}
-        [field/field-label {:html-for "icloud"}
-         "Sync Desktop & Documents folders"]
-        [field/field-description {}
-         "Your Desktop & Documents folders are being synced with iCloud Drive."]]]]])))
+ {:source-code (embed-source "clojure-shadcn.stories.checkbox.field-checkbox")}
+ []
+ (r/as-element (helpers/wrap-component [field-checkbox/example])))
 
 (defstory CheckboxGroup
           "Controlled checkbox group with independent values. Based on shadcn/ui Checkbox — Group."
+          {:source-code (embed-source "clojure-shadcn.stories.checkbox.checkbox-group")}
           []
-          (r/as-element
-           [(fn []
-              (let [selected (r/atom #{"comments"})
-                    options [{:id "checkbox-group-comments"
-                              :value "comments"
-                              :label "Comments"}
-                             {:id "checkbox-group-mentions"
-                              :value "mentions"
-                              :label "Mentions"}
-                             {:id "checkbox-group-replies"
-                              :value "replies"
-                              :label "Replies"}]]
-                (fn []
-                  (helpers/wrap-component
-                   [field/field-set {:class "max-w-md p-6"}
-                    [field/field-legend {:variant :label}
-                     "Email notifications"]
-                    [field/field-description {}
-                     "Choose which activity should trigger an email."]
-                    [field/field-group {:class "gap-3"}
-                     (doall (for [{:keys [id value label]} options]
-                              ^{:key value}
-                              [field/field {:orientation :horizontal}
-                               [sut/checkbox {:id id
-                                              :name "notifications"
-                                              :value value
-                                              :checked (contains? @selected value)
-                                              :on-checked-change
-                                              (fn [checked?]
-                                                (swap! selected (if checked? conj disj) value))}]
-                               [field/field-label {:html-for id
-                                                   :class "font-normal"}
-                                label]]))]
-                    [:p {:class "text-sm text-muted-foreground"}
-                     (str "Selected: "
-                          (if (seq @selected) (str/join ", " (sort @selected)) "none"))]]))))]))
+          (r/as-element (helpers/wrap-component [checkbox-group/example])))
 
-(defn ^:export CheckboxIndeterminate
-  "Indeterminate checkbox for partial selections.
+(defstory
+ CheckboxIndeterminate
+ "Indeterminate checkbox for partial selections.
 
   Radix primitive: @radix-ui/react-checkbox
 
   Use :checked :indeterminate for partial selection states."
-  []
-  (r/as-element [(fn []
-                   (let [checked (r/atom :indeterminate)]
-                     (fn []
-                       (helpers/wrap-component [:div {:class "p-6 space-y-2"}
-                                                [:div {:class "flex items-center gap-2"}
-                                                 [sut/checkbox {:checked @checked
-                                                                :on-checked-change #(reset! checked
-                                                                                      %)}]
-                                                 [:span {:class "text-sm"}
-                                                  "Select all projects"]]
-                                                [:p {:class "text-muted-foreground text-sm"}
-                                                 (str "Current state: " @checked)]]))))]))
+ {:source-code (embed-source "clojure-shadcn.stories.checkbox.checkbox-indeterminate")}
+ []
+ (r/as-element (helpers/wrap-component [checkbox-indeterminate/example])))
 
-(defn ^:export CheckboxInvalid
-  "Checkbox with invalid/error state for form validation.
+(defstory
+ CheckboxInvalid
+ "Checkbox with invalid/error state for form validation.
 
   Radix primitive: @radix-ui/react-checkbox
 
   Use :aria-invalid true to show destructive ring and border styling.
   Pair with Field and field-error for a complete validation UX."
-  []
-  (r/as-element
-   (helpers/wrap-component
-    [:div {:class "p-6 space-y-6"}
-     [:div {:class "space-y-3"}
-      [:p {:class "text-sm font-medium"}
-       "Standalone invalid checkbox"]
-      [:div {:class "flex items-center gap-2"}
-       [sut/checkbox {:id "invalid-standalone"
-                      :aria-invalid true}]
-       [label/label {:html-for "invalid-standalone"}
-        "I accept the terms and conditions"]]]
-     [:div {:class "space-y-3"}
-      [:p {:class "text-sm font-medium"}
-       "Invalid checkbox inside Field with error messages"]
-      [field/field {}
-       [field/field-content {}
-        [:div {:class "flex items-center gap-2"}
-         [sut/checkbox {:id "invalid-field"
-                        :aria-invalid true}]
-         [field/field-label {:html-for "invalid-field"}
-          "I accept the terms and conditions"]]
-        [field/field-error {:errors [{:message "You must accept the terms to continue"}]}]]]]
-     [:div {:class "space-y-3"}
-      [:p {:class "text-sm font-medium"}
-       "Comparison: valid vs invalid"]
-      [:div {:class "flex items-start gap-6"}
-       [:div {:class "flex items-center gap-2"}
-        [sut/checkbox {:id "valid-example"
-                       :default-checked true}]
-        [label/label {:html-for "valid-example"}
-         "Valid"]]
-       [:div {:class "flex items-center gap-2"}
-        [sut/checkbox {:id "invalid-example"
-                       :aria-invalid true}]
-        [label/label {:html-for "invalid-example"}
-         "Invalid"]]]]])))
+ {:source-code (embed-source "clojure-shadcn.stories.checkbox.checkbox-invalid")}
+ []
+ (r/as-element (helpers/wrap-component [checkbox-invalid/example])))
 
-(defn ^:export CheckboxFormIntegration
-  "Checkbox used inside a native HTML form with :name, :value, and :required.
+(defstory
+ CheckboxFormIntegration
+ "Checkbox used inside a native HTML form with :name, :value, and :required.
 
   Radix primitive: @radix-ui/react-checkbox
 
   Use :name and :value for native form submission. Use :required to enforce the field before submit."
-  []
-  (r/as-element
-   (helpers/wrap-component
-    [:div {:class "p-6 max-w-sm"}
-     [:form {:on-submit (fn [e]
-                          (.preventDefault e)
-                          (let [data (js/FormData. (.-target e))]
-                            (js/alert (str "terms: " (.get data "terms")))))}
-      [:div {:class "space-y-4"}
-       [:div {:class "flex items-start gap-2"}
-        [sut/checkbox {:id "terms-form"
-                       :name "terms"
-                       :value "accepted"
-                       :required true}]
-        [:div {:class "grid gap-1.5 leading-none"}
-         [label/label {:html-for "terms-form"}
-          "Accept terms and conditions"]
-         [:p {:class "text-muted-foreground text-sm"}
-          "Required to continue. Value submitted: \"accepted\"."]]]
-       [:button
-        {:type "submit"
-         :class
-         "mt-4 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90"}
-        "Submit form"]]]])))
+ {:source-code (embed-source "clojure-shadcn.stories.checkbox.checkbox-form-integration")}
+ []
+ (r/as-element (helpers/wrap-component [checkbox-form-integration/example])))
 
-(defn ^:export CheckboxTable
-  "Checkboxes inside a data table for row selection.
+(defstory
+ CheckboxTable
+ "Checkboxes inside a data table for row selection.
 
   Combines: Checkbox + Table components
 
   Common pattern for bulk actions in admin dashboards and data management UIs."
-  []
-  (r/as-element
-   [(fn []
-      (let [all-tasks [{:id "TASK-001"
-                        :title "Update documentation"
-                        :status "Done"
-                        :priority "Low"}
-                       {:id "TASK-002"
-                        :title "Fix login redirect"
-                        :status "In Progress"
-                        :priority "High"}
-                       {:id "TASK-003"
-                        :title "Add dark mode"
-                        :status "Todo"
-                        :priority "Medium"}
-                       {:id "TASK-004"
-                        :title "Optimize bundle size"
-                        :status "In Progress"
-                        :priority "High"}
-                       {:id "TASK-005"
-                        :title "Write unit tests"
-                        :status "Todo"
-                        :priority "Medium"}]
-            selected (r/atom #{})]
-        (fn []
-          (let [all-ids (set (map :id all-tasks))
-                all-selected? (= @selected all-ids)
-                some-selected? (and (seq @selected) (not all-selected?))
-                toggle-all! (fn [checked?] (reset! selected (if checked? all-ids #{})))
-                toggle-row! (fn [id checked?] (swap! selected (if checked? conj disj) id))]
-            (helpers/wrap-component
-             [:div {:class "p-6"}
-              [:div {:class "mb-3 text-sm text-muted-foreground"}
-               (str (count @selected) " of " (count all-tasks) " row(s) selected.")]
-              [table/table {}
-               [table/table-header {}
-                [table/table-row {}
-                 [table/table-head {:class "w-[50px]"}
-                  [sut/checkbox {:checked (if some-selected? :indeterminate all-selected?)
-                                 :on-checked-change toggle-all!
-                                 :aria-label "Select all"}]]
-                 [table/table-head {}
-                  "Task"]
-                 [table/table-head {}
-                  "Title"]
-                 [table/table-head {}
-                  "Status"]
-                 [table/table-head {:class "text-right"}
-                  "Priority"]]]
-               [table/table-body {}
-                ;; doall: @selected is derefed while realizing the seq; a
-                ;; lazy seq would realize outside the reactive context
-                ;; and not re-render.
-                (doall (for [{:keys [id title status priority]} all-tasks]
-                         ^{:key id}
-                         [table/table-row {:class (when (contains? @selected id) "bg-muted/50")}
-                          [table/table-cell {}
-                           [sut/checkbox {:checked (contains? @selected id)
-                                          :on-checked-change (partial toggle-row! id)
-                                          :aria-label (str "Select " id)}]]
-                          [table/table-cell {:class "font-medium"}
-                           id]
-                          [table/table-cell {}
-                           title]
-                          [table/table-cell {}
-                           status]
-                          [table/table-cell {:class "text-right"}
-                           priority]]))]]])))))]))
-
+ {:source-code (embed-source "clojure-shadcn.stories.checkbox.checkbox-table")}
+ []
+ (r/as-element (helpers/wrap-component [checkbox-table/example])))
 
 (defstory Playground
           "Interactive checkbox playground."
-          {:args {:default-checked false
+          {:source-code (embed-source "clojure-shadcn.stories.checkbox.playground")
+           :args {:default-checked false
                   :disabled false
                   :required false}
            :arg-types {:default-checked {:name "Initially checked"
@@ -452,40 +217,23 @@
                                   :control {:type "boolean"}}
                        :required {:name "Required"
                                   :control {:type "boolean"}}}
-           :parameters {:playground {:description "Explore checkbox initially checked, disabled and required with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["checked" "on-checked-change" "class"]}}}
+           :parameters
+           {:playground
+            {:description
+             "Explore checkbox initially checked, disabled and required with a live preview."}
+            :controls {:expanded false
+                       :exclude ["checked" "on-checked-change" "class"]}}}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/checkbox
-                                                  (assoc args :id "checkbox-playground")]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))
 
 (defstory CheckboxFieldDisabled
           "Disabled Field row. Based on shadcn/ui Checkbox — Field Disabled."
+          {:source-code (embed-source "clojure-shadcn.stories.checkbox.checkbox-field-disabled")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "max-w-md p-6"}
-                                                 [field/field {:orientation :horizontal
-                                                               :data-disabled true}
-                                                  [sut/checkbox {:id "checkbox-field-disabled"
-                                                                 :disabled true
-                                                                 :checked true}]
-                                                  [field/field-content {}
-                                                   [field/field-label {:html-for
-                                                                       "checkbox-field-disabled"}
-                                                    "Share analytics"]
-                                                   [field/field-description {}
-                                                    "Managed by your organization."]]]])))
+          (r/as-element (helpers/wrap-component [checkbox-field-disabled/example])))
 
 (defstory CheckboxRtl
           "Right-to-left checkbox field. Based on shadcn/ui Checkbox — RTL."
+          {:source-code (embed-source "clojure-shadcn.stories.checkbox.checkbox-rtl")}
           []
-          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
-                                                       :class "max-w-md p-6"}
-                                                 [field/field {:orientation :horizontal}
-                                                  [sut/checkbox {:id "checkbox-rtl"
-                                                                 :default-checked true}]
-                                                  [field/field-content {}
-                                                   [field/field-label {:html-for "checkbox-rtl"}
-                                                    "تفعيل الإشعارات"]
-                                                   [field/field-description {}
-                                                    "يمكنك تغيير هذا الإعداد لاحقًا."]]]])))
+          (r/as-element (helpers/wrap-component [checkbox-rtl/example])))

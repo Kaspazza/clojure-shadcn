@@ -1,9 +1,13 @@
 (ns clojure-shadcn.stories.toggle-stories
   (:require
-   ["lucide-react"                      :refer [Bold Italic Underline]]
-   [clojure-shadcn.stories.helpers      :as helpers]
-   [clojure-shadcn.ui.components.toggle :as sut]
-   [reagent.core                        :as r])
+   [clojure-shadcn.stories.helpers                        :as helpers]
+   [clojure-shadcn.stories.toggle.playground              :as example-playground]
+   [clojure-shadcn.stories.toggle.toggle-basic            :as example-toggle-basic]
+   [clojure-shadcn.stories.toggle.toggle-icon-and-text    :as example-toggle-icon-and-text]
+   [clojure-shadcn.stories.toggle.toggle-outline-disabled :as example-toggle-outline-disabled]
+   [clojure-shadcn.stories.toggle.toggle-rtl              :as example-toggle-rtl]
+   [clojure-shadcn.stories.toggle.toggle-states           :as example-toggle-states]
+   [reagent.core                                          :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -61,85 +65,53 @@
      "Provide an accessible name with visible text or :aria-label when rendering only an icon."]])))
 
 (defstory ToggleBasic
+          {:source-code (embed-source "clojure-shadcn.stories.toggle.toggle-basic")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "flex gap-3 p-6"}
-                                                 [sut/toggle {:aria-label "Toggle bold"}
-                                                  [:> Bold]]
-                                                 [sut/toggle {:variant :outline
-                                                              :aria-label "Toggle italic"}
-                                                  [:> Italic]]])))
+          (r/as-element (helpers/wrap-component [example-toggle-basic/example])))
 
 (defstory ToggleStates
+          {:source-code (embed-source "clojure-shadcn.stories.toggle.toggle-states")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class
-                                                       "flex flex-wrap items-center gap-3 p-6"}
-                                                 [sut/toggle {:default-pressed true
-                                                              :aria-label "Bold enabled"}
-                                                  [:> Bold]]
-                                                 [sut/toggle {:disabled true
-                                                              :aria-label "Italic unavailable"}
-                                                  [:> Italic]]
-                                                 [sut/toggle {:size :sm
-                                                              :variant :outline}
-                                                  "Small"]
-                                                 [sut/toggle {:size :lg
-                                                              :variant :outline}
-                                                  "Large"]])))
+          (r/as-element (helpers/wrap-component [example-toggle-states/example])))
 
 
-(defstory
- Playground
- "Controlled Storybook playground using only safe scalar component props."
- {:args {:variant "outline"
-         :size "default"}
-  :arg-types {:variant {:name "Variant"
+(defstory Playground
+          "Controlled Storybook playground using only safe scalar component props."
+          {:args {:variant "outline"
+                  :size "default"}
+           :arg-types {:variant {:name "Variant"
                                  :control {:type "select"}
-                        :options ["default" "outline"]}
-              :size {:name "Size"
+                                 :options ["default" "outline"]}
+                       :size {:name "Size"
                               :control {:type "select"}
-                     :options ["default" "sm" "lg"]}}
-  :parameters {:playground {:description "Explore toggle variant and size with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["children" "pressed" "default-pressed" "on-pressed-change"]}}
-  :decode-args (fn [{:keys [variant size]
-                     :as args}]
-                 (cond-> args
-                   variant (update :variant keyword)
-                   size (update :size keyword)))}
- [args]
- (r/as-element (helpers/wrap-component [sut/toggle (select-keys args [:variant :size]) "Toggle"])))
+                              :options ["default" "sm" "lg"]}}
+           :parameters
+           {:playground {:description "Explore toggle variant and size with a live preview."}
+            :controls {:expanded false
+                       :exclude ["children" "pressed" "default-pressed" "on-pressed-change"]}}
+           :decode-args (fn [{:keys [variant size]
+                              :as args}]
+                          (cond-> args
+                            variant (update :variant keyword)
+                            size (update :size keyword)))
+           :source-code (embed-source "clojure-shadcn.stories.toggle.playground")}
+          [args]
+          (r/as-element (helpers/wrap-component [example-playground/example args])))
 
 (defstory ToggleIconAndText
           "Toggle with a visible icon and label. Based on shadcn/ui Toggle — With Text."
+          {:source-code (embed-source "clojure-shadcn.stories.toggle.toggle-icon-and-text")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "flex gap-3 p-6"}
-                                                 [sut/toggle {:aria-label "Toggle bold"}
-                                                  [:> Bold]
-                                                  "Bold"]
-                                                 [sut/toggle {:variant :outline
-                                                              :aria-label "Toggle underline"}
-                                                  [:> Underline]
-                                                  "Underline"]])))
+          (r/as-element (helpers/wrap-component [example-toggle-icon-and-text/example])))
 
 (defstory ToggleOutlineDisabled
           "Enabled and disabled outline states. Based on shadcn/ui Toggle — Outline and Disabled."
+          {:source-code (embed-source "clojure-shadcn.stories.toggle.toggle-outline-disabled")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "flex gap-3 p-6"}
-                                                 [sut/toggle {:variant :outline
-                                                              :default-pressed true}
-                                                  [:> Bold]
-                                                  "Bold"]
-                                                 [sut/toggle {:variant :outline
-                                                              :disabled true}
-                                                  [:> Italic]
-                                                  "Italic"]])))
+          (r/as-element (helpers/wrap-component [example-toggle-outline-disabled/example])))
 
 (defstory ToggleRtl
           "Right-to-left icon and text toggle. Based on shadcn/ui Toggle — RTL."
+          {:source-code (embed-source "clojure-shadcn.stories.toggle.toggle-rtl")}
           []
-          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
-                                                       :class "p-6"}
-                                                 [sut/toggle {:variant :outline
-                                                              :aria-label "تبديل الخط العريض"}
-                                                  [:> Bold]
-                                                  "عريض"]])))
+          (r/as-element (helpers/wrap-component [example-toggle-rtl/example])))

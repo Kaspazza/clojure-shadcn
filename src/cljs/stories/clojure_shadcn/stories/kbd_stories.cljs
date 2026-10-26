@@ -1,12 +1,13 @@
 (ns clojure-shadcn.stories.kbd-stories
   (:require
-   ["lucide-react"                           :refer [Command]]
-   [clojure-shadcn.stories.helpers           :as helpers]
-   [clojure-shadcn.ui.components.button      :as button]
-   [clojure-shadcn.ui.components.input-group :as input-group]
-   [clojure-shadcn.ui.components.kbd         :as sut]
-   [clojure-shadcn.ui.components.tooltip     :as tooltip]
-   [reagent.core                             :as r])
+   [clojure-shadcn.stories.helpers             :as helpers]
+   [clojure-shadcn.stories.kbd.kbd-button      :as kbd-button]
+   [clojure-shadcn.stories.kbd.kbd-group       :as kbd-group]
+   [clojure-shadcn.stories.kbd.kbd-input-group :as kbd-input-group]
+   [clojure-shadcn.stories.kbd.kbd-rtl         :as kbd-rtl]
+   [clojure-shadcn.stories.kbd.kbd-tooltip     :as kbd-tooltip]
+   [clojure-shadcn.stories.kbd.playground      :as playground]
+   [reagent.core                               :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -51,7 +52,8 @@
 
 (defstory Playground
           "Interactive keyboard hint playground."
-          {:args {:prefix "Press"
+          {:source-code (embed-source "clojure-shadcn.stories.kbd.playground")
+           :args {:prefix "Press"
                   :key "K"
                   :suffix "to search"}
            :arg-types {:prefix {:name "Prefix"
@@ -60,82 +62,40 @@
                              :control {:type "text"}}
                        :suffix {:name "Suffix"
                                 :control {:type "text"}}}
-           :parameters {:playground {:description "Explore kbd prefix, shortcut key and suffix with a live preview."}
+           :parameters {:playground
+                        {:description
+                         "Explore kbd prefix, shortcut key and suffix with a live preview."}
                         :controls {:expanded false
                                    :exclude ["class"]}}}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "flex items-center gap-2 text-sm"}
-                                                 (:prefix args)
-                                                 [sut/kbd {}
-                                                  "⌘"]
-                                                 [sut/kbd {}
-                                                  (:key args)]
-                                                 (:suffix args)])))
+          (r/as-element (helpers/wrap-component [playground/example args])))
 
 (defstory KbdGroup
+          {:source-code (embed-source "clojure-shadcn.stories.kbd.kbd-group")}
           []
-          (r/as-element (helpers/wrap-component [sut/kbd-group {}
-                                                 [sut/kbd {}
-                                                  [:> Command]]
-                                                 [:span "+"]
-                                                 [sut/kbd {}
-                                                  "Shift"]
-                                                 [:span "+"]
-                                                 [sut/kbd {}
-                                                  "P"]])))
+          (r/as-element (helpers/wrap-component [kbd-group/example])))
 
 (defstory
  KbdButton
  "Button — upstream command-button recipe pairs an action label with a visual shortcut hint."
+ {:source-code (embed-source "clojure-shadcn.stories.kbd.kbd-button")}
  []
- (r/as-element (helpers/wrap-component (button/button {:variant :outline
-                                                       :class "gap-4"}
-                                                      "Open command menu"
-                                                      [sut/kbd-group {}
-                                                       [sut/kbd {}
-                                                        [:> Command]]
-                                                       [sut/kbd {}
-                                                        "K"]]))))
+ (r/as-element (helpers/wrap-component [kbd-button/example])))
 
 (defstory KbdTooltip
           "Tooltip — a shortcut hint enriches an icon button without becoming interactive itself."
+          {:source-code (embed-source "clojure-shadcn.stories.kbd.kbd-tooltip")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:>
-                          tooltip/tooltip-provider-component
-                          {}
-                          [tooltip/tooltip {:trigger (button/button {:variant :outline} "Save")
-                                            :trigger-as-child? true
-                                            :content [sut/kbd-group {}
-                                                      [sut/kbd {}
-                                                       [:> Command]]
-                                                      [sut/kbd {}
-                                                       "S"]]}]])))
+          (r/as-element (helpers/wrap-component [kbd-tooltip/example])))
 
 (defstory KbdInputGroup
           "Input Group — upstream search field shows its keyboard shortcut as an end addon."
+          {:source-code (embed-source "clojure-shadcn.stories.kbd.kbd-input-group")}
           []
-          (r/as-element (helpers/wrap-component [input-group/input-group {:class "max-w-sm"}
-                                                 [input-group/input-group-input
-                                                  {:type "search"
-                                                   :aria-label "Search"
-                                                   :placeholder "Search documentation..."}]
-                                                 [input-group/input-group-addon {:align :inline-end}
-                                                  [sut/kbd-group {}
-                                                   [sut/kbd {}
-                                                    [:> Command]]
-                                                   [sut/kbd {}
-                                                    "K"]]]])))
+          (r/as-element (helpers/wrap-component [kbd-input-group/example])))
 
 (defstory KbdRTL
           "RTL — shortcut tokens remain legible inside right-to-left instructional copy."
+          {:source-code (embed-source "clojure-shadcn.stories.kbd.kbd-rtl")}
           []
-          (r/as-element (helpers/wrap-component [:p {:dir "rtl"
-                                                     :class "flex items-center gap-2 text-sm"}
-                                                 "اضغط"
-                                                 [sut/kbd-group {}
-                                                  [sut/kbd {}
-                                                   [:> Command]]
-                                                  [sut/kbd {}
-                                                   "K"]]
-                                                 "للبحث"])))
+          (r/as-element (helpers/wrap-component [kbd-rtl/example])))

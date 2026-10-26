@@ -2,8 +2,11 @@
   "Storybook stories for the Chat Container component. Ported from mateuszmazurczak.portfolio.ui-components.chat_container."
   (:require
    [clojure-shadcn.stories.helpers              :as helpers]
-   [clojure-shadcn.ui.components.chat-container :as sut]
-   [clojure-shadcn.ui.components.scroll-button  :as scroll-button]
+   [clojure-shadcn.stories.chat-container.playground :as playground]
+   [clojure-shadcn.stories.chat-container.chat-container-long :as chat-container-long]
+   [clojure-shadcn.stories.chat-container.chat-container-composition :as chat-container-composition]
+   [clojure-shadcn.stories.chat-container.chat-container-append :as chat-container-append]
+   [clojure-shadcn.stories.chat-container.chat-container-streaming :as chat-container-streaming]
    [reagent.core                                :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
@@ -78,7 +81,8 @@
 
 (defstory Playground
           "Interactive chat-container playground."
-          {:args {:resize "smooth"
+          {:source-code (embed-source "clojure-shadcn.stories.chat-container.playground")
+           :args {:resize "smooth"
                   :initial "instant"}
            :arg-types {:resize {:name "Resize scroll behavior"
                                 :control {:type "select"}
@@ -90,103 +94,30 @@
                         :controls {:expanded false
                                    :exclude ["class"]}}}
           [args]
-          (r/as-element
-           (helpers/wrap-component
-            [:div {:class "p-6"}
-             [sut/chat-container-root
-              (assoc (select-keys args [:resize :initial]) :class "h-64 w-full rounded-md border")
-              [sut/chat-container-content {:class "p-4 space-y-3"}
-               (for [idx (range 1 8)]
-                 ^{:key idx}
-                 [:div {:class "rounded-lg bg-muted px-3 py-2 text-sm"}
-                  (str "Message " idx)])
-               [sut/chat-container-scroll-anchor {}]]]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))
 
-(defstory
- ChatContainerLong
+(defstory ChatContainerLong
  "Chat container with many messages and scroll-to-bottom button.
   Demonstrates overflow, stick-to-bottom behavior, and interactive recovery when scrolled up."
+ {:source-code (embed-source "clojure-shadcn.stories.chat-container.chat-container-long")}
  []
- (r/as-element (helpers/wrap-component
-                [:div {:class "p-6"}
-                 [sut/chat-container-root {:class "relative h-64 w-full rounded-md border"}
-                  [sut/chat-container-content {:class "p-4 space-y-3"}
-                   (for [idx (range 1 25)]
-                     ^{:key idx}
-                     [:div {:class "rounded-lg bg-muted px-3 py-2 text-sm"}
-                      (str "Log line " idx " — status update.")])
-                   [sut/chat-container-scroll-anchor {}]]
-                  [scroll-button/scroll-button {:class "absolute bottom-4 right-4"}]]])))
+ (r/as-element (helpers/wrap-component [chat-container-long/example])))
 
-(defstory
- ChatContainerComposition
+(defstory ChatContainerComposition
  "Chat container with header and footer content.
   Use additional elements around the scroll region for composition."
+ {:source-code (embed-source "clojure-shadcn.stories.chat-container.chat-container-composition")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [:div {:class "rounded-md border"}
-                                         [:div {:class "border-b px-4 py-2 text-sm font-medium"}
-                                          "Team Chat"]
-                                         [sut/chat-container-root {:class "h-56"}
-                                          [sut/chat-container-content {:class "p-4 space-y-3"}
-                                           (for [idx (range 1 10)]
-                                             ^{:key idx}
-                                             [:div {:class "rounded-lg bg-muted px-3 py-2 text-sm"}
-                                              (str "Message " idx)])
-                                           [sut/chat-container-scroll-anchor {}]]]
-                                         [:div {:class
-                                                "border-t px-4 py-2 text-xs text-muted-foreground"}
-                                          "Typing indicator goes here."]]])))
+ (r/as-element (helpers/wrap-component [chat-container-composition/example])))
 
-(defstory
- ChatContainerAppend
+(defstory ChatContainerAppend
  "Append messages while pinned to the live edge; scroll up to inspect history without being pulled back."
+ {:source-code (embed-source "clojure-shadcn.stories.chat-container.chat-container-append")}
  []
- (r/as-element
-  [(fn []
-     (let [messages (r/atom ["Project created" "Repository connected" "First build passed"])]
-       (fn []
-         (helpers/wrap-component [:div {:class "max-w-xl space-y-3"}
-                                  [sut/chat-container-root {:class "h-56 rounded-md border"}
-                                   [sut/chat-container-content {:class "space-y-3 p-4"}
-                                    (for [[index message] (map-indexed vector @messages)]
-                                      ^{:key index}
-                                      [:div {:class "rounded-lg bg-muted px-3 py-2 text-sm"}
-                                       message])
-                                    [sut/chat-container-scroll-anchor {}]]]
-                                  [:button {:type "button"
-                                            :class "rounded-md border px-3 py-2 text-sm"
-                                            :on-click #(swap! messages conj
-                                                         (str "Update " (inc (count @messages))))}
-                                   "Append message"]]))))]))
+ (r/as-element (helpers/wrap-component [chat-container-append/example])))
 
-(defstory
- ChatContainerStreaming
+(defstory ChatContainerStreaming
  "A growing final message demonstrates resize-follow behavior during token streaming."
+ {:source-code (embed-source "clojure-shadcn.stories.chat-container.chat-container-streaming")}
  []
- (r/as-element
-  [(fn []
-     (let [chunks
-           ["Streaming" " keeps" " the" " current" " response" " visible" " as" " it" " grows."]
-           text (r/atom (first chunks))
-           timer (atom nil)]
-       (r/create-class
-        {:component-did-mount (fn [_]
-                                (let [index (atom 1)]
-                                  (reset! timer (js/setInterval (fn []
-                                                                  (if (< @index (count chunks))
-                                                                    (do (swap! text str
-                                                                          (nth chunks @index))
-                                                                        (swap! index inc))
-                                                                    (js/clearInterval @timer)))
-                                                                450))))
-         :component-will-unmount #(when @timer (js/clearInterval @timer))
-         :reagent-render (fn []
-                           (helpers/wrap-component
-                            [sut/chat-container-root {:class "h-56 max-w-xl rounded-md border"}
-                             [sut/chat-container-content {:class "space-y-3 p-4"}
-                              [:div {:class "rounded-lg bg-muted px-3 py-2 text-sm"}
-                               "Summarize the release status."]
-                              [:div {:class "rounded-lg border px-3 py-2 text-sm"}
-                               @text]
-                              [sut/chat-container-scroll-anchor {}]]]))})))]))
+ (r/as-element (helpers/wrap-component [chat-container-streaming/example])))

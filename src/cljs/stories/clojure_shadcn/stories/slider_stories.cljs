@@ -1,8 +1,14 @@
 (ns clojure-shadcn.stories.slider-stories
   (:require
-   [clojure-shadcn.stories.helpers      :as helpers]
-   [clojure-shadcn.ui.components.slider :as sut]
-   [reagent.core                        :as r])
+   [clojure-shadcn.stories.helpers                   :as helpers]
+   [clojure-shadcn.stories.slider.playground         :as example-playground]
+   [clojure-shadcn.stories.slider.slider-basic       :as example-slider-basic]
+   [clojure-shadcn.stories.slider.slider-disabled    :as example-slider-disabled]
+   [clojure-shadcn.stories.slider.slider-range       :as example-slider-range]
+   [clojure-shadcn.stories.slider.slider-rtl         :as example-slider-rtl]
+   [clojure-shadcn.stories.slider.slider-three-thumb :as example-slider-three-thumb]
+   [clojure-shadcn.stories.slider.slider-vertical    :as example-slider-vertical]
+   [reagent.core                                     :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -41,98 +47,68 @@
                        :description "Numeric bounds."}]}])))
 
 (defstory SliderBasic
+          {:source-code (embed-source "clojure-shadcn.stories.slider.slider-basic")}
           []
-          (r/as-element [(fn []
-                           (let [value (r/atom [40])]
-                             (fn []
-                               (helpers/wrap-component [:div {:class "w-[420px] p-6 space-y-3"}
-                                                        [:p {:class "text-sm"}
-                                                         (str "Volume: " (first @value))]
-                                                        [sut/slider {:value @value
-                                                                     :on-value-change
-                                                                     #(reset! value (js->clj %))
-                                                                     :max 100
-                                                                     :step 1
-                                                                     :aria-label "Volume"}]]))))]))
+          (r/as-element (helpers/wrap-component [example-slider-basic/example])))
 
 (defstory SliderRange
+          {:source-code (embed-source "clojure-shadcn.stories.slider.slider-range")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "w-[420px] p-6"}
-                                                 [sut/slider {:default-value [25 75]
-                                                              :min 0
-                                                              :max 100
-                                                              :thumb-labels ["Minimum price"
-                                                                             "Maximum price"]}]])))
+          (r/as-element (helpers/wrap-component [example-slider-range/example])))
 
 
-(defstory Playground
-          "Interactive slider playground."
-          {:args {:default-value [40]
-                  :min 0
-                  :max 100
-                  :step 1
-                  :disabled false}
-           :arg-types {:default-value {:name "Initial value"
-                                       :control {:type "number"}}
-                       :min {:name "Min"
-                             :control {:type "number"}}
-                       :max {:name "Max"
-                             :control {:type "number"}}
-                       :step {:name "Step"
+(defstory
+ Playground
+ "Interactive slider playground."
+ {:args {:default-value 40
+         :min 0
+         :max 100
+         :step 1
+         :disabled false}
+  :arg-types {:default-value {:name "Initial value"
                               :control {:type "number"}}
-                       :disabled {:name "Disabled"
-                                  :control {:type "boolean"}}}
-           :parameters {:playground {:description "Explore slider initial value, min, max, step and disabled with a live preview."}
-                        :controls
-                        {:expanded false
-                                   :exclude
-                         ["value" "on-value-change" "on-value-commit" "class" "thumb-class"]}}
-           :decode-args (fn [{:keys [default-value]
-                              :as args}]
-                          (assoc args :default-value [default-value]))}
-          [args]
-          (r/as-element (helpers/wrap-component [:div {:class "w-[420px] p-6"}
-                                                 [sut/slider (assoc args :aria-label "Value")]])))
+              :min {:name "Min"
+                    :control {:type "number"}}
+              :max {:name "Max"
+                    :control {:type "number"}}
+              :step {:name "Step"
+                     :control {:type "number"}}
+              :disabled {:name "Disabled"
+                         :control {:type "boolean"}}}
+  :parameters
+  {:playground {:description
+                "Explore slider initial value, min, max, step and disabled with a live preview."}
+   :controls {:expanded false
+              :exclude ["value" "on-value-change" "on-value-commit" "class" "thumb-class"]}}
+  :decode-args (fn [{:keys [default-value]
+                     :as args}]
+                 (cond-> args
+                   (number? default-value) (assoc :default-value [default-value])))
+  :source-code (embed-source "clojure-shadcn.stories.slider.playground")}
+ [args]
+ (r/as-element (helpers/wrap-component [example-playground/example args])))
 
 (defstory SliderThreeThumb
           "Three-point range. Based on shadcn/ui Slider — Multiple Thumbs."
+          {:source-code (embed-source "clojure-shadcn.stories.slider.slider-three-thumb")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "w-[420px] p-6"}
-                                                 [sut/slider {:default-value [20 50 80]
-                                                              :min 0
-                                                              :max 100
-                                                              :thumb-labels ["Low threshold"
-                                                                             "Target"
-                                                                             "High threshold"]}]])))
+          (r/as-element (helpers/wrap-component [example-slider-three-thumb/example])))
 
 (defstory SliderVertical
           "Vertical orientation with an explicit height. Based on shadcn/ui Slider — Vertical."
+          {:source-code (embed-source "clojure-shadcn.stories.slider.slider-vertical")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "flex h-64 justify-center p-6"}
-                                                 [sut/slider {:orientation :vertical
-                                                              :default-value [35]
-                                                              :aria-label "Volume"}]])))
+          (r/as-element (helpers/wrap-component [example-slider-vertical/example])))
 
 (defstory
  SliderDisabled
  "Disabled single-value and range sliders retain their values while preventing pointer and keyboard changes."
+ {:source-code (embed-source "clojure-shadcn.stories.slider.slider-disabled")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "grid w-[420px] gap-8 p-6"}
-                                        [sut/slider {:default-value [40]
-                                                     :disabled true
-                                                     :aria-label "Disabled volume"}]
-                                        [sut/slider {:default-value [20 75]
-                                                     :disabled true
-                                                     :thumb-labels ["Disabled minimum"
-                                                                    "Disabled maximum"]}]])))
+ (r/as-element (helpers/wrap-component [example-slider-disabled/example])))
 
 (defstory SliderRtl
           "Right-to-left range direction. Based on shadcn/ui Slider — RTL."
+          {:source-code (embed-source "clojure-shadcn.stories.slider.slider-rtl")}
           []
-          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
-                                                       :class "w-[420px] space-y-3 p-6"}
-                                                 [:p {:class "text-sm"}
-                                                  "مستوى الصوت"]
-                                                 [sut/slider {:dir "rtl"
-                                                              :default-value [65]
-                                                              :aria-label "مستوى الصوت"}]])))
+          (r/as-element (helpers/wrap-component [example-slider-rtl/example])))

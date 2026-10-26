@@ -1,17 +1,16 @@
 (ns clojure-shadcn.stories.field-stories
   "Storybook stories for the Field component. Ported from mateuszmazurczak.portfolio.ui-components.field."
   (:require
-   [clojure-shadcn.stories.helpers           :as helpers]
-   [clojure-shadcn.ui.components.button      :as button]
-   [clojure-shadcn.ui.components.checkbox    :as checkbox]
-   [clojure-shadcn.ui.components.field       :as sut]
-   [clojure-shadcn.ui.components.input       :as input]
-   [clojure-shadcn.ui.components.radio-group :as radio]
-   [clojure-shadcn.ui.components.select      :as select]
-   [clojure-shadcn.ui.components.slider      :as slider]
-   [clojure-shadcn.ui.components.switch      :as switch]
-   [clojure-shadcn.ui.components.textarea    :as textarea]
-   [reagent.core                             :as r])
+   [clojure-shadcn.stories.field.field-choices            :as field-choices]
+   [clojure-shadcn.stories.field.field-patterns           :as field-patterns]
+   [clojure-shadcn.stories.field.field-with-error         :as field-with-error]
+   [clojure-shadcn.stories.field.field-with-input         :as field-with-input]
+   [clojure-shadcn.stories.field.field-with-select        :as field-with-select]
+   [clojure-shadcn.stories.field.field-with-textarea      :as field-with-textarea]
+   [clojure-shadcn.stories.field.fieldset-multiple-fields :as fieldset-multiple-fields]
+   [clojure-shadcn.stories.field.playground               :as playground]
+   [clojure-shadcn.stories.helpers                        :as helpers]
+   [reagent.core                                          :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -164,116 +163,38 @@
 
 (defstory
  FieldWithInput
- "Field with label, input, and description.
-
-  Custom component for form layouts.
-
-  Use field-content to group controls and description text."
+ "Field with label, input, and description.\n\n  Custom component for form layouts.\n\n  Use field-content to group controls and description text."
+ {:source-code (embed-source "clojure-shadcn.stories.field.field-with-input")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-md"}
-                                        [sut/field-set {}
-                                         [sut/field-legend {}
-                                          "Profile"]
-                                         [sut/field {}
-                                          [sut/field-label {:html-for "name"}
-                                           "Name"]
-                                          [sut/field-content {}
-                                           [input/input {:id "name"
-                                                         :placeholder "Jane Doe"}]
-                                           [sut/field-description {}
-                                            "Use your full name for display purposes."]]]]])))
+ (r/as-element (helpers/wrap-component [field-with-input/example])))
 
 (defstory
  FieldWithTextarea
- "Field with textarea.
-
-  Custom component for form layouts.
-
-  Use for multi-line inputs and richer descriptions."
+ "Field with textarea.\n\n  Custom component for form layouts.\n\n  Use for multi-line inputs and richer descriptions."
+ {:source-code (embed-source "clojure-shadcn.stories.field.field-with-textarea")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-md"}
-                                        [sut/field {}
-                                         [sut/field-label {:html-for "bio"}
-                                          "Bio"]
-                                         [sut/field-content {}
-                                          [textarea/textarea {:id "bio"
-                                                              :placeholder
-                                                              "Tell us about yourself"}]
-                                          [sut/field-description {}
-                                           "A short bio will appear on your profile."]]]])))
+ (r/as-element (helpers/wrap-component [field-with-textarea/example])))
 
 (defstory
  FieldWithSelect
- "Field with select control.
-
-  Custom component for form layouts.
-
-  Combine field + select for structured inputs."
+ "Field with select control.\n\n  Custom component for form layouts.\n\n  Combine field + select for structured inputs."
+ {:source-code (embed-source "clojure-shadcn.stories.field.field-with-select")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-md"}
-                                        [sut/field {}
-                                         [sut/field-label {}
-                                          "Department"]
-                                         [select/select {:default-value "design"}
-                                          [select/select-trigger {}
-                                           [select/select-value {:placeholder "Choose department"}]]
-                                          [select/select-content {}
-                                           [select/select-item {:value "engineering"}
-                                            "Engineering"]
-                                           [select/select-item {:value "design"}
-                                            "Design"]
-                                           [select/select-item {:value "marketing"}
-                                            "Marketing"]]]
-                                         [sut/field-description {}
-                                          "Select your department or area of work."]]])))
+ (r/as-element (helpers/wrap-component [field-with-select/example])))
 
 (defstory
  FieldWithError
- "Field displaying validation errors.
-
-  Custom component for form layouts.
-
-  Use field-error to show validation messages."
+ "Field displaying validation errors.\n\n  Custom component for form layouts.\n\n  Use field-error to show validation messages."
+ {:source-code (embed-source "clojure-shadcn.stories.field.field-with-error")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-md"}
-                                        [sut/field {}
-                                         [sut/field-label {:html-for "email"}
-                                          "Email"]
-                                         [sut/field-content {}
-                                          [input/input {:id "email"
-                                                        :placeholder "name@example.com"
-                                                        :aria-invalid true}]
-                                          [sut/field-error
-                                           {:errors [{:message "Email is required"}
-                                                     {:message "Email must be valid"}]}]]]])))
+ (r/as-element (helpers/wrap-component [field-with-error/example])))
 
 (defstory
  FieldsetMultipleFields
- "Field set with multiple related fields.
-
-  Custom component for form layouts.
-
-  Use field-set + field-group for multi-field sections."
+ "Field set with multiple related fields.\n\n  Custom component for form layouts.\n\n  Use field-set + field-group for multi-field sections."
+ {:source-code (embed-source "clojure-shadcn.stories.field.fieldset-multiple-fields")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6 max-w-md"}
-    [sut/field-set {}
-     [sut/field-legend {}
-      "Billing"]
-     [sut/field-group {}
-      [sut/field {}
-       [sut/field-label {:html-for "card"}
-        "Card Number"]
-       [sut/field-content {}
-        [input/input {:id "card"
-                      :placeholder "1234 5678 9012 3456"}]]]
-      [sut/field {:orientation :responsive}
-       [sut/field-label {:html-for "zip"}
-        "ZIP"]
-       [sut/field-content {}
-        [input/input {:id "zip"
-                      :placeholder "94105"}]]]]]])))
+ (r/as-element (helpers/wrap-component [fieldset-multiple-fields/example])))
 
 
 (defstory Playground
@@ -288,129 +209,25 @@
                                      :control {:type "text"}}
                        :disabled {:name "Disabled"
                                   :control {:type "boolean"}}}
-           :parameters {:playground {:description "Explore field orientation, placeholder and disabled with a live preview."}
+           :parameters {:playground
+                        {:description
+                         "Explore field orientation, placeholder and disabled with a live preview."}
                         :controls {:expanded false
                                    :exclude ["class"]}}
-           :decode-args (fn [{:keys [orientation]
-                              :as args}]
-                          (update args :orientation keyword))}
+           :decode-args (fn [args] (update args :orientation keyword))
+           :source-code (embed-source "clojure-shadcn.stories.field.playground")}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "max-w-md p-6"}
-                                                 [sut/field {:orientation (:orientation args)}
-                                                  [sut/field-label {:html-for "field-playground"}
-                                                   "Name"]
-                                                  [input/input {:id "field-playground"
-                                                                :placeholder (:placeholder args)
-                                                                :disabled (:disabled args)}]]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))
 
 (defstory FieldPatterns
           "Aggregate form, slider, choice-card, responsive, invalid, and RTL field compositions."
+          {:source-code (embed-source "clojure-shadcn.stories.field.field-patterns")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [:form {:class "grid max-w-2xl gap-8"
-                    :on-submit #(.preventDefault %)}
-             [sut/field-set {}
-              [sut/field-legend {}
-               "Notification settings"]
-              [sut/field-group {}
-               [sut/field {:orientation :responsive}
-                [sut/field-label {:html-for "display-name"}
-                 "Display name"]
-                [sut/field-content {}
-                 [input/input {:id "display-name"
-                               :name "display-name"
-                               :required true}]
-                 [sut/field-description {}
-                  "Shown to collaborators."]]]
-               [sut/field {}
-                [sut/field-label {:html-for "volume"}
-                 "Alert volume"]
-                [slider/slider {:id "volume"
-                                :name "volume"
-                                :default-value [40]
-                                :aria-label "Alert volume"}]]
-               [sut/field {:class "rounded-lg border p-4"
-                           :orientation :horizontal}
-                [checkbox/checkbox {:id "weekly-summary"
-                                    :name "weekly-summary"}]
-                [sut/field-content {}
-                 [sut/field-label {:html-for "weekly-summary"}
-                  [sut/field-title {}
-                   "Weekly summary"]]
-                 [sut/field-description {}
-                  "Receive one concise activity email."]]]
-               [sut/field {}
-                [sut/field-label {:html-for "work-email"}
-                 "Work email"]
-                [input/input {:id "work-email"
-                              :type "email"
-                              :aria-invalid true
-                              :default-value "not-an-email"}]
-                [sut/field-error {:errors [{:message "Enter a valid work email."}]}]]]]
-             [:div {:dir "rtl"}
-              [sut/field {:orientation :responsive}
-               [sut/field-label {:html-for "arabic-name"}
-                "الاسم"]
-               [sut/field-content {}
-                [input/input {:id "arabic-name"
-                              :name "arabic-name"}]
-                [sut/field-description {}
-                 "يظهر هذا الاسم في ملفك الشخصي."]]]]
-             [button/button {:type "submit"}
-              "Save settings"]])))
+          (r/as-element (helpers/wrap-component [field-patterns/example])))
 
 (defstory
  FieldChoices
  "Radio, switch, and selectable choice-card field compositions. Based on current shadcn/ui Field examples."
+ {:source-code (embed-source "clojure-shadcn.stories.field.field-choices")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "grid max-w-xl gap-8 p-6"}
-    [sut/field-set {}
-     [sut/field-legend {:variant :label}
-      "Workspace visibility"]
-     [sut/field-description {}
-      "Choose who can discover this workspace."]
-     [radio/radio-group {:default-value "team"}
-      [sut/field {:orientation :horizontal}
-       [radio/radio-group-item {:id "visibility-team"
-                                :value "team"}]
-       [sut/field-label {:html-for "visibility-team"
-                         :class "font-normal"}
-        "Team members"]]
-      [sut/field {:orientation :horizontal}
-       [radio/radio-group-item {:id "visibility-public"
-                                :value "public"}]
-       [sut/field-label {:html-for "visibility-public"
-                         :class "font-normal"}
-        "Anyone with the link"]]]]
-    [sut/field {:orientation :horizontal
-                :class "rounded-lg border p-4"}
-     [sut/field-content {}
-      [sut/field-label {:html-for "field-switch"}
-       "Automatic updates"]
-      [sut/field-description {}
-       "Install stable updates when the app is idle."]]
-     [switch/switch {:id "field-switch"
-                     :default-checked true}]]
-    [radio/radio-group {:default-value "starter"
-                        :class "grid sm:grid-cols-2"}
-     [sut/field-label {:class "cursor-pointer"}
-      [sut/field {:orientation :horizontal
-                  :class "rounded-lg border p-4 has-[[data-state=checked]]:border-primary"}
-       [radio/radio-group-item {:value "starter"}]
-       [sut/field-content {}
-        [sut/field-title {}
-         "Starter"]
-        [sut/field-description {}
-         "For personal projects and prototypes."]]]]
-     [sut/field-label {:class "cursor-pointer"}
-      [sut/field {:orientation :horizontal
-                  :class "rounded-lg border p-4 has-[[data-state=checked]]:border-primary"}
-       [radio/radio-group-item {:value "team"}]
-       [sut/field-content {}
-        [sut/field-title {}
-         "Team"]
-        [sut/field-description {}
-         "Shared controls for growing teams."]]]]]])))
+ (r/as-element (helpers/wrap-component [field-choices/example])))

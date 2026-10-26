@@ -1,12 +1,12 @@
 (ns clojure-shadcn.stories.label-stories
   "Storybook stories for the Label component. Ported from mateuszmazurczak.portfolio.ui-components.label."
   (:require
-   [clojure-shadcn.stories.helpers        :as helpers]
-   [clojure-shadcn.ui.components.checkbox :as checkbox]
-   [clojure-shadcn.ui.components.input    :as input]
-   [clojure-shadcn.ui.components.label    :as sut]
-   [clojure-shadcn.ui.components.textarea :as textarea]
-   [reagent.core                          :as r])
+   [clojure-shadcn.stories.helpers                   :as helpers]
+   [clojure-shadcn.stories.label.input-with-label    :as input-with-label]
+   [clojure-shadcn.stories.label.label-rtl           :as label-rtl]
+   [clojure-shadcn.stories.label.playground          :as playground]
+   [clojure-shadcn.stories.label.textarea-with-label :as textarea-with-label]
+   [reagent.core                                     :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -60,22 +60,19 @@
 
 (defstory Playground
           "Interactive label playground."
-          {:args {:label "Accept terms and conditions"
+          {:source-code (embed-source "clojure-shadcn.stories.label.playground")
+           :args {:label "Accept terms and conditions"
                   :disabled false}
            :arg-types {:label {:name "Label"
                                :control {:type "text"}}
                        :disabled {:name "Disabled"
                                   :control {:type "boolean"}}}
-           :parameters {:playground {:description "Explore label label and disabled with a live preview."}
+           :parameters {:playground {:description
+                                     "Explore label label and disabled with a live preview."}
                         :controls {:expanded false
                                    :exclude ["class" "html-for" "id" "on-checked-change"]}}}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [:div {:class "flex items-center gap-2"}
-                                                  [checkbox/checkbox {:id "terms"
-                                                                      :disabled (:disabled args)}]
-                                                  [sut/label {:html-for "terms"}
-                                                   (:label args)]]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))
 
 (defstory
  InputWithLabel
@@ -84,13 +81,9 @@
   Radix primitive: @radix-ui/react-label
 
   Keep labels close to inputs for clarity."
+ {:source-code (embed-source "clojure-shadcn.stories.label.input-with-label")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
-                                        [sut/label {:html-for "email"}
-                                         "Email"]
-                                        [input/input {:id "email"
-                                                      :type "email"
-                                                      :placeholder "Email"}]])))
+ (r/as-element (helpers/wrap-component [input-with-label/example])))
 
 (defstory
  TextareaWithLabel
@@ -99,21 +92,12 @@
   Radix primitive: @radix-ui/react-label
 
   Use labels to describe longer-form fields."
+ {:source-code (embed-source "clojure-shadcn.stories.label.textarea-with-label")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
-                                        [sut/label {:html-for "message"}
-                                         "Your message"]
-                                        [textarea/textarea {:id "message"
-                                                            :placeholder
-                                                            "Type your message here."}]])))
+ (r/as-element (helpers/wrap-component [textarea-with-label/example])))
 
 (defstory LabelRtl
           "Right-to-left label association. Based on shadcn/ui Label — RTL."
+          {:source-code (embed-source "clojure-shadcn.stories.label.label-rtl")}
           []
-          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
-                                                       :class "max-w-sm space-y-2 p-6"}
-                                                 [sut/label {:html-for "label-rtl-email"}
-                                                  "البريد الإلكتروني"]
-                                                 [input/input {:id "label-rtl-email"
-                                                               :type "email"
-                                                               :placeholder "name@example.com"}]])))
+          (r/as-element (helpers/wrap-component [label-rtl/example])))

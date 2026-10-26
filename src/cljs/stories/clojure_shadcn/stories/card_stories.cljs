@@ -1,10 +1,13 @@
 (ns clojure-shadcn.stories.card-stories
   (:require
-   [clojure-shadcn.stories.helpers      :as helpers]
-   [clojure-shadcn.ui.components.button :as button]
-   [clojure-shadcn.ui.components.card   :as sut]
-   [clojure-shadcn.ui.components.input  :as input]
-   [reagent.core                        :as r])
+   [clojure-shadcn.stories.card.playground :as playground]
+   [clojure-shadcn.stories.card.card-simple :as card-simple]
+   [clojure-shadcn.stories.card.card-form :as card-form]
+   [clojure-shadcn.stories.card.card-image :as card-image]
+   [clojure-shadcn.stories.card.card-edge-spacing :as card-edge-spacing]
+   [clojure-shadcn.stories.card.card-rtl :as card-rtl]
+   [clojure-shadcn.stories.helpers :as helpers]
+   [reagent.core :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -67,7 +70,8 @@
 
 (defstory Playground
           "Interactive card playground."
-          {:args {:title "Create project"
+          {:source-code (embed-source "clojure-shadcn.stories.card.playground")
+           :args {:title "Create project"
                   :description "Deploy a new project in one click."
                   :action-label "Deploy"}
            :arg-types {:title {:name "Title"
@@ -80,130 +84,33 @@
                         :controls {:expanded false
                                    :exclude ["class" "on-click"]}}}
           [args]
-          (r/as-element (helpers/wrap-component [sut/card {:class "w-full max-w-sm"}
-                                                 [sut/card-header {}
-                                                  [sut/card-title {}
-                                                   (:title args)]
-                                                  [sut/card-description {}
-                                                   (:description args)]]
-                                                 [sut/card-content {}
-                                                  "Configure your project settings."]
-                                                 [sut/card-footer {:class "justify-end border-t"}
-                                                  [button/button {}
-                                                   (or (:action-label args)
-                                                       (:actionLabel args))]]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))
 
 (defstory CardSimple
-          []
-          (r/as-element (helpers/wrap-component [sut/card {:class "max-w-md"}
-                                                 [sut/card-header {}
-                                                  [sut/card-title {}
-                                                   "Notifications"]
-                                                  [sut/card-description {}
-                                                   "You have three unread messages."]]
-                                                 [sut/card-content {}
-                                                  "Your latest activity appears here."]])))
+ {:source-code (embed-source "clojure-shadcn.stories.card.card-simple")}
+ []
+ (r/as-element (helpers/wrap-component [card-simple/example])))
 
-(defstory
- CardForm
+(defstory CardForm
  "Form — the fuller upstream card recipe with labeled fields, header action, and footer actions."
+ {:source-code (embed-source "clojure-shadcn.stories.card.card-form")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [sut/card {:class "w-full max-w-md"}
-    [sut/card-header {}
-     [sut/card-title {}
-      [:h2 "Create project"]]
-     [sut/card-description {}
-      "Deploy a new project to your workspace."]
-     [sut/card-action {}
-      (button/button {:variant :ghost
-                      :size :sm}
-                     "Import")]]
-    [sut/card-content {:class "space-y-4"}
-     [:div {:class "grid gap-2"}
-      [:label {:for "project-name"
-               :class "text-sm font-medium"}
-       "Project name"]
-      [input/input {:id "project-name"
-                    :placeholder "Acme website"}]]
-     [:div {:class "grid gap-2"}
-      [:label {:for "project-domain"
-               :class "text-sm font-medium"}
-       "Domain"]
-      [input/input {:id "project-domain"
-                    :placeholder "acme.example.com"}]]]
-    [sut/card-footer {:class "justify-between border-t"}
-     (button/button {:variant :outline} "Cancel")
-     (button/button {} "Create project")]])))
+ (r/as-element (helpers/wrap-component [card-form/example])))
 
-(defstory
- CardImage
+(defstory CardImage
  "Image — the upstream media card recipe composes a native image with Card regions."
+ {:source-code (embed-source "clojure-shadcn.stories.card.card-image")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [sut/card {:class "w-full max-w-sm overflow-hidden pt-0"}
-    [:img
-     {:src
-      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80"
-      :alt "Team collaborating around a table"
-      :class "aspect-video w-full object-cover"}]
-    [sut/card-header {}
-     [sut/card-title {}
-      [:h2 "Design systems workshop"]]
-     [sut/card-description {}
-      "A practical session for building a shared component language."]]
-    [sut/card-footer {}
-     (button/button {:class "w-full"} "Reserve a seat")]])))
+ (r/as-element (helpers/wrap-component [card-image/example])))
 
-(defstory
- CardEdgeSpacing
+(defstory CardEdgeSpacing
  "Edge and size recipes. Flush media removes top padding; :size :sm applies compact spacing consistently across Card regions."
+ {:source-code (embed-source "clojure-shadcn.stories.card.card-edge-spacing")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "grid gap-6 md:grid-cols-2"}
-    [sut/card {:class "overflow-hidden pt-0"}
-     [:div {:class "grid aspect-video place-items-center bg-muted text-sm text-muted-foreground"}
-      "Flush edge media"]
-     [sut/card-header {:class "border-b"}
-      [sut/card-title {}
-       "Edge treatment"]
-      [sut/card-description {}
-       "Media reaches the card boundary while the header retains its inset."]]
-     [sut/card-content {}
-      "Content keeps the standard six-unit inset."]]
-    [sut/card {:size :sm}
-     [sut/card-header {:class "border-b"}
-      [sut/card-title {}
-       "Compact card"]
-      [sut/card-description {}
-       "The small size is declared once on the root."]]
-     [sut/card-content {}
-      "Shared spacing keeps every region aligned."]
-     [sut/card-footer {:class "border-t"}
-      (button/button {:size :sm} "Continue")]]])))
+ (r/as-element (helpers/wrap-component [card-edge-spacing/example])))
 
 (defstory CardRTL
-          "RTL — the full card composition follows right-to-left reading order."
-          []
-          (r/as-element
-           (helpers/wrap-component
-            [:div {:dir "rtl"
-                   :class "text-right"}
-             [sut/card {:class "w-full max-w-md"}
-              [sut/card-header {}
-               [sut/card-title {}
-                [:h2 "إنشاء مشروع"]]
-               [sut/card-description {}
-                "أدخل بيانات المشروع الجديد."]]
-              [sut/card-content {}
-               [:div {:class "grid gap-2"}
-                [:label {:for "rtl-project"
-                         :class "text-sm font-medium"}
-                 "اسم المشروع"]
-                [input/input {:id "rtl-project"
-                              :placeholder "موقع الشركة"}]]]
-              [sut/card-footer {:class "justify-end border-t"}
-               (button/button {} "إنشاء")]]])))
+ "RTL — the full card composition follows right-to-left reading order."
+ {:source-code (embed-source "clojure-shadcn.stories.card.card-rtl")}
+ []
+ (r/as-element (helpers/wrap-component [card-rtl/example])))

@@ -1,13 +1,17 @@
 (ns clojure-shadcn.stories.message-stories
   "Storybook stories for the Message component. Ported from mateuszmazurczak.portfolio.ui-components.message."
   (:require
-   ["lucide-react"                          :refer [Copy FileText ThumbsDown ThumbsUp Trash2]]
-   [clojure-shadcn.stories.helpers          :as helpers]
-   [clojure-shadcn.ui.components.attachment :as attachment]
-   [clojure-shadcn.ui.components.bubble     :as bubble]
-   [clojure-shadcn.ui.components.button     :as button]
-   [clojure-shadcn.ui.components.message    :as sut]
-   [reagent.core                            :as r])
+   [clojure-shadcn.stories.helpers                           :as helpers]
+   [clojure-shadcn.stories.message.message-actions           :as message-actions]
+   [clojure-shadcn.stories.message.message-avatar-fallback   :as message-avatar-fallback]
+   [clojure-shadcn.stories.message.message-grouped-metadata  :as message-grouped-metadata]
+   [clojure-shadcn.stories.message.message-markdown          :as message-markdown]
+   [clojure-shadcn.stories.message.message-rich-markdown     :as message-rich-markdown]
+   [clojure-shadcn.stories.message.message-stateful-feedback :as message-stateful-feedback]
+   [clojure-shadcn.stories.message.message-user-vs-assistant :as message-user-vs-assistant]
+   [clojure-shadcn.stories.message.message-with-attachment   :as message-with-attachment]
+   [clojure-shadcn.stories.message.playground                :as playground]
+   [reagent.core                                             :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -144,7 +148,8 @@
 
 (defstory Playground
           "Interactive message playground."
-          {:args {:align "start"
+          {:source-code (embed-source "clojure-shadcn.stories.message.playground")
+           :args {:align "start"
                   :content "Hello! This is a basic message."
                   :fallback "JD"}
            :arg-types {:align {:name "Align"
@@ -154,7 +159,9 @@
                                  :control {:type "text"}}
                        :fallback {:name "Fallback text"
                                   :control {:type "text"}}}
-           :parameters {:playground {:description "Explore message align, content and fallback text with a live preview."}
+           :parameters {:playground
+                        {:description
+                         "Explore message align, content and fallback text with a live preview."}
                         :controls {:expanded false
                                    :exclude ["class" "src" "alt" "on-click"]}}
            :decode-args (fn [{:keys [align]
@@ -162,27 +169,14 @@
                           (cond-> args
                             align (update :align keyword)))}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/message
-                                                  (select-keys args [:align])
-                                                  [sut/message-avatar
-                                                   {:src "https://placehold.co/40x40/png"
-                                                    :alt "User"
-                                                    :fallback (:fallback args)}]
-                                                  [sut/message-content {}
-                                                   (:content args)]]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))
 
 (defstory MessageAvatarFallback
           "Message showing avatar fallback.
   Useful when image URLs fail or are missing."
+          {:source-code (embed-source "clojure-shadcn.stories.message.message-avatar-fallback")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/message {}
-                                                  [sut/message-avatar {:src ""
-                                                                       :alt "User"
-                                                                       :fallback "AL"}]
-                                                  [sut/message-content {}
-                                                   "Fallback initials are shown."]]])))
+          (r/as-element (helpers/wrap-component [message-avatar-fallback/example])))
 
 (defstory
  MessageMarkdown
@@ -190,15 +184,9 @@
   Uses the Markdown component internally.
 
   Useful for rich assistant responses."
+ {:source-code (embed-source "clojure-shadcn.stories.message.message-markdown")}
  []
- (r/as-element (helpers/wrap-component
-                [:div {:class "p-6"}
-                 [sut/message {}
-                  [sut/message-avatar {:src "https://placehold.co/40x40/png"
-                                       :alt "Assistant"
-                                       :fallback "AI"}]
-                  [sut/message-content {:markdown? true}
-                   "**Markdown** supports lists:\n\n- First\n- Second\n- Third"]]])))
+ (r/as-element (helpers/wrap-component [message-markdown/example])))
 
 (defstory
  MessageActions
@@ -206,26 +194,9 @@
   Actions are wrapped with tooltips.
 
   Use for copy, delete, or feedback actions."
+ {:source-code (embed-source "clojure-shadcn.stories.message.message-actions")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/message {}
-     [sut/message-avatar {:src "https://placehold.co/40x40/png"
-                          :alt "User"
-                          :fallback "JD"}]
-     [:div {:class "flex flex-col gap-2"}
-      [sut/message-content {}
-       "Here is a message with actions."]
-      [sut/message-actions {}
-       [sut/message-action {:tooltip "Copy"}
-        (button/button {:variant :ghost
-                        :size :icon}
-                       [:> Copy {:class "size-4"}])]
-       [sut/message-action {:tooltip "Delete"}
-        (button/button {:variant :ghost
-                        :size :icon}
-                       [:> Trash2 {:class "size-4"}])]]]]])))
+ (r/as-element (helpers/wrap-component [message-actions/example])))
 
 (defstory
  MessageUserVsAssistant
@@ -233,127 +204,31 @@
   Use classes to align and style different roles.
 
   Helpful for chat UIs with role-based presentation."
+ {:source-code (embed-source "clojure-shadcn.stories.message.message-user-vs-assistant")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6 space-y-4"}
-    [sut/message {:align :end}
-     [sut/message-avatar {:src "https://placehold.co/40x40/png"
-                          :alt "User"
-                          :fallback "ME"}]
-     [sut/message-content {}
-      [bubble/bubble {:align :end}
-       [bubble/bubble-content {}
-        "User message aligned right."]]]]
-    [sut/message {}
-     [sut/message-avatar {:src "https://placehold.co/40x40/png"
-                          :alt "Assistant"
-                          :fallback "AI"}]
-     [sut/message-content {}
-      [bubble/bubble {:variant :muted}
-       [bubble/bubble-content {}
-        "Assistant response aligned left."]]]]])))
+ (r/as-element (helpers/wrap-component [message-user-vs-assistant/example])))
 
 (defstory
  MessageGroupedMetadata
  "Adjacent messages share a group while headers and footers retain per-message metadata and actions."
+ {:source-code (embed-source "clojure-shadcn.stories.message.message-grouped-metadata")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [sut/message-group {:class "max-w-2xl"}
-    [sut/message {}
-     [sut/message-avatar {:src ""
-                          :alt "Avery"
-                          :fallback "AV"}]
-     [sut/message-content {}
-      [sut/message-header {}
-       "Avery · 09:41"]
-      [bubble/bubble {:variant :muted}
-       [bubble/bubble-content {}
-        "I’ve attached the approved brief."]]
-      [sut/message-footer {:class "gap-2"}
-       [:span "Delivered"]
-       [sut/message-actions {}
-        [sut/message-action {:tooltip "Copy message"}
-         (button/button {:variant :ghost
-                         :size :icon-xs
-                         :aria-label "Copy message"}
-                        [:> Copy])]]]]]
-    [sut/message {:align :end}
-     [sut/message-avatar {:src ""
-                          :alt "You"
-                          :fallback "ME"}]
-     [sut/message-content {}
-      [sut/message-header {}
-       "You · 09:42"]
-      [bubble/bubble {:align :end}
-       [bubble/bubble-content {}
-        "Thanks, I’ll review it now."]]
-      [sut/message-footer {}
-       "Read"]]]])))
+ (r/as-element (helpers/wrap-component [message-grouped-metadata/example])))
 
 (defstory MessageWithAttachment
           "Compose Attachment inside message-content without a message-specific attachment prop."
+          {:source-code (embed-source "clojure-shadcn.stories.message.message-with-attachment")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [sut/message {:class "max-w-2xl"}
-             [sut/message-avatar {:src ""
-                                  :alt "Assistant"
-                                  :fallback "AI"}]
-             [sut/message-content {}
-              [sut/message-header {}
-               "Assistant"]
-              [bubble/bubble {:variant :ghost}
-               [bubble/bubble-content {}
-                "Here is the requested project brief."]]
-              [attachment/attachment {}
-               [attachment/attachment-media {}
-                [:> FileText]]
-               [attachment/attachment-content {}
-                [attachment/attachment-title {}
-                 "project-brief.pdf"]
-                [attachment/attachment-description {}
-                 "PDF · 1.8 MB"]]]]])))
+          (r/as-element (helpers/wrap-component [message-with-attachment/example])))
 
-(defstory
- MessageRichMarkdown
- "A richer assistant response with headings, links, code, and a task list."
- []
- (r/as-element
-  (helpers/wrap-component
-   [sut/message {:class "max-w-3xl"}
-    [sut/message-avatar {:src ""
-                         :alt "Assistant"
-                         :fallback "AI"}]
-    [sut/message-content {:markdown? true}
-     "## Release checklist\n\n- [x] Run tests\n- [ ] Publish artifacts\n\nUse `npm publish` after reviewing the [package guide](https://docs.npmjs.com/cli/v11/commands/npm-publish).\n\n```clojure\n(def release-ready? true)\n```"]])))
+(defstory MessageRichMarkdown
+          "A richer assistant response with headings, links, code, and a task list."
+          {:source-code (embed-source "clojure-shadcn.stories.message.message-rich-markdown")}
+          []
+          (r/as-element (helpers/wrap-component [message-rich-markdown/example])))
 
 (defstory MessageStatefulFeedback
           "Feedback actions keep selected state in the consumer and remain accessible buttons."
+          {:source-code (embed-source "clojure-shadcn.stories.message.message-stateful-feedback")}
           []
-          (r/as-element
-           [(fn []
-              (let [feedback (r/atom nil)]
-                (fn []
-                  (helpers/wrap-component
-                   [sut/message {:class "max-w-2xl"}
-                    [sut/message-avatar {:src ""
-                                         :alt "Assistant"
-                                         :fallback "AI"}]
-                    [sut/message-content {}
-                     [bubble/bubble {:variant :muted}
-                      [bubble/bubble-content {}
-                       "The deployment completed successfully."]]
-                     [sut/message-footer {}
-                      [sut/message-actions {}
-                       (for [[value label icon] [[:helpful "Helpful" ThumbsUp]
-                                                 [:not-helpful "Not helpful" ThumbsDown]]]
-                         ^{:key value}
-                         [sut/message-action {:tooltip label}
-                          (button/button {:variant (if (= @feedback value) :secondary :ghost)
-                                          :size :icon-xs
-                                          :aria-label label
-                                          :aria-pressed (= @feedback value)
-                                          :on-click #(reset! feedback value)}
-                                         [:> icon])])]]]]))))]))
+          (r/as-element (helpers/wrap-component [message-stateful-feedback/example])))

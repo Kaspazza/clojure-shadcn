@@ -1,28 +1,24 @@
 (ns clojure-shadcn.stories.stepper-stories
   "Storybook stories for the Stepper component. Ported from mateuszmazurczak.portfolio.ui-components.stepper."
   (:require
-   ["lucide-react"                       :refer [Check CircleDollarSign User]]
-   [clojure-shadcn.stories.helpers       :as helpers]
-   [clojure-shadcn.ui.components.button  :as button]
-   [clojure-shadcn.ui.components.stepper :as sut]
-   [reagent.core                         :as r])
+   [clojure-shadcn.stories.helpers                           :as helpers]
+   [clojure-shadcn.stories.stepper.playground                :as example-playground]
+   [clojure-shadcn.stories.stepper.stepper-circle            :as example-stepper-circle]
+   [clojure-shadcn.stories.stepper.stepper-custom-icons      :as example-stepper-custom-icons]
+   [clojure-shadcn.stories.stepper.stepper-disabled-steps    :as example-stepper-disabled-steps]
+   [clojure-shadcn.stories.stepper.stepper-form-content      :as example-stepper-form-content]
+   [clojure-shadcn.stories.stepper.stepper-horizontal        :as example-stepper-horizontal]
+   [clojure-shadcn.stories.stepper.stepper-label-orientation :as example-stepper-label-orientation]
+   [clojure-shadcn.stories.stepper.stepper-reverse-progress  :as example-stepper-reverse-progress]
+   [clojure-shadcn.stories.stepper.stepper-vertical          :as example-stepper-vertical]
+   [reagent.core                                             :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
   #js {:title "Components/Stepper"
        :parameters #js {:layout "padded"}})
 
-(defn- step-data
-  []
-  [{:id :details
-    :title "Details"
-    :description "Account info"}
-   {:id :billing
-    :title "Billing"
-    :description "Payment setup"}
-   {:id :confirm
-    :title "Confirm"
-    :description "Review"}])
+
 
 (defdoc
  Installation
@@ -152,276 +148,95 @@
   Uses React Context to share step state across components.
 
   Best for linear multi-step flows."
+ {:source-code (embed-source "clojure-shadcn.stories.stepper.stepper-horizontal")}
  []
- (r/as-element
-  [(fn []
-     (let [steps (step-data)
-           step-ids (mapv :id steps)
-           current-step (r/atom (first step-ids))]
-       (fn []
-         (let [current-index (.indexOf step-ids @current-step)
-               prev-id (get step-ids (dec current-index))
-               next-id (get step-ids (inc current-index))]
-           (helpers/wrap-component
-            [:div {:class "p-6 max-w-xl space-y-6"}
-             [sut/stepper {:current-step @current-step
-                           :on-step-change #(reset! current-step %)}
-              [sut/stepper-navigation {}
-               (for [{:keys [id title description]} steps]
-                 ^{:key id}
-                 [sut/stepper-step {:id id}
-                  [sut/stepper-title {}
-                   title]
-                  [sut/stepper-description {}
-                   description]])]
-              [sut/stepper-panel {:id :details}
-               [:div {:class "text-sm text-muted-foreground"}
-                "Fill in your account details."]]
-              [sut/stepper-panel {:id :billing}
-               [:div {:class "text-sm text-muted-foreground"}
-                "Add your billing information."]]
-              [sut/stepper-panel {:id :confirm}
-               [:div {:class "text-sm text-muted-foreground"}
-                "Review and confirm."]]
-              [sut/stepper-controls {}
-               (button/button {:variant :outline
-                               :disabled (nil? prev-id)
-                               :on-click #(when prev-id (reset! current-step prev-id))}
-                              "Back")
-               (button/button {:disabled (nil? next-id)
-                               :on-click #(when next-id (reset! current-step next-id))}
-                              "Next")]]])))))]))
+ (r/as-element (helpers/wrap-component [example-stepper-horizontal/example])))
 
 (defstory StepperVertical
           "Vertical stepper layout.
   Use :variant :vertical for stacked steps and panels."
+          {:source-code (embed-source "clojure-shadcn.stories.stepper.stepper-vertical")}
           []
-          (r/as-element
-           [(fn []
-              (let [steps (step-data)
-                    current-step (r/atom :billing)]
-                (fn []
-                  (helpers/wrap-component
-                   [:div {:class "p-6 max-w-xl"}
-                    [sut/stepper {:current-step @current-step
-                                  :variant :vertical
-                                  :on-step-change #(reset! current-step %)}
-                     [sut/stepper-navigation {}
-                      (for [{:keys [id title description]} steps]
-                        ^{:key id}
-                        [sut/stepper-step {:id id}
-                         [sut/stepper-title {}
-                          title]
-                         [sut/stepper-description {}
-                          description]])]
-                     [sut/stepper-panel {:id :details}
-                      [:div {:class "text-sm text-muted-foreground"}
-                       "Account setup details."]]
-                     [sut/stepper-panel {:id :billing}
-                      [:div {:class "text-sm text-muted-foreground"}
-                       "Billing preferences."]]
-                     [sut/stepper-panel {:id :confirm}
-                      [:div {:class "text-sm text-muted-foreground"}
-                       "Confirmation step."]]]]))))]))
+          (r/as-element (helpers/wrap-component [example-stepper-vertical/example])))
 
 (defstory
  StepperCircle
  "Circle progress rendering with the current implementation gap exposed: it shows count/label but cannot change steps from the circle itself."
+ {:source-code (embed-source "clojure-shadcn.stories.stepper.stepper-circle")}
  []
- (r/as-element
-  [(fn []
-     (let [steps (step-data)
-           current-step (r/atom :details)]
-       (fn []
-         (helpers/wrap-component [:div {:class "p-6"}
-                                  [sut/stepper {:current-step @current-step
-                                                :variant :circle
-                                                :on-step-change #(reset! current-step %)}
-                                   [sut/stepper-navigation {}
-                                    (for [{:keys [id title description]} steps]
-                                      ^{:key id}
-                                      [sut/stepper-step {:id id}
-                                       [sut/stepper-title {}
-                                        title]
-                                       [sut/stepper-description {}
-                                        description]])]]]))))]))
+ (r/as-element (helpers/wrap-component [example-stepper-circle/example])))
 
 (defstory
  StepperReverseProgress
  "Reverse progress for newest-first lists.
   Use :reverse-progress? to mark later steps as completed."
+ {:source-code (embed-source "clojure-shadcn.stories.stepper.stepper-reverse-progress")}
  []
- (r/as-element
-  [(fn []
-     (let [steps (step-data)
-           current-step (r/atom :billing)]
-       (fn []
-         (helpers/wrap-component [:div {:class "p-6"}
-                                  [sut/stepper {:current-step @current-step
-                                                :reverse-progress? true
-                                                :on-step-change #(reset! current-step %)}
-                                   [sut/stepper-navigation {}
-                                    (for [{:keys [id title description]} steps]
-                                      ^{:key id}
-                                      [sut/stepper-step {:id id}
-                                       [sut/stepper-title {}
-                                        title]
-                                       [sut/stepper-description {}
-                                        description]])]]]))))]))
+ (r/as-element (helpers/wrap-component [example-stepper-reverse-progress/example])))
 
 (defstory StepperDisabledSteps
           "Stepper with disabled steps.
   Disabled steps are not interactive and appear muted."
+          {:source-code (embed-source "clojure-shadcn.stories.stepper.stepper-disabled-steps")}
           []
-          (r/as-element
-           [(fn []
-              (let [steps (step-data)
-                    current-step (r/atom :details)]
-                (fn []
-                  (helpers/wrap-component [:div {:class "p-6"}
-                                           [sut/stepper {:current-step @current-step
-                                                         :on-step-change #(reset! current-step %)}
-                                            [sut/stepper-navigation {}
-                                             (for [{:keys [id title description]} steps]
-                                               ^{:key id}
-                                               [sut/stepper-step {:id id
-                                                                  :disabled? (= id :billing)}
-                                                [sut/stepper-title {}
-                                                 title]
-                                                [sut/stepper-description {}
-                                                 description]])]]]))))]))
+          (r/as-element (helpers/wrap-component [example-stepper-disabled-steps/example])))
 
 (defstory StepperLabelOrientation
           "Vertical label orientation.
   Use :label-orientation :vertical for compact headers."
+          {:source-code (embed-source "clojure-shadcn.stories.stepper.stepper-label-orientation")}
           []
-          (r/as-element
-           [(fn []
-              (let [steps (step-data)
-                    current-step (r/atom :details)]
-                (fn []
-                  (helpers/wrap-component [:div {:class "p-6"}
-                                           [sut/stepper {:current-step @current-step
-                                                         :label-orientation :vertical
-                                                         :on-step-change #(reset! current-step %)}
-                                            [sut/stepper-navigation {}
-                                             (for [{:keys [id title description]} steps]
-                                               ^{:key id}
-                                               [sut/stepper-step {:id id}
-                                                [sut/stepper-title {}
-                                                 title]
-                                                [sut/stepper-description {}
-                                                 description]])]]]))))]))
+          (r/as-element (helpers/wrap-component [example-stepper-label-orientation/example])))
 
 (defstory StepperCustomIcons
           "Stepper with custom icons per step.
   Provide an :icon to override the step number."
+          {:source-code (embed-source "clojure-shadcn.stories.stepper.stepper-custom-icons")}
           []
-          (r/as-element
-           [(fn []
-              (let [steps [{:id :account
-                            :title "Account"
-                            :icon [:> User]}
-                           {:id :billing
-                            :title "Billing"
-                            :icon [:> CircleDollarSign]}
-                           {:id :done
-                            :title "Complete"
-                            :icon [:> Check]}]
-                    current-step (r/atom :billing)]
-                (fn []
-                  (helpers/wrap-component [:div {:class "p-6"}
-                                           [sut/stepper {:current-step @current-step
-                                                         :on-step-change #(reset! current-step %)}
-                                            [sut/stepper-navigation {}
-                                             (for [{:keys [id title icon]} steps]
-                                               ^{:key id}
-                                               [sut/stepper-step {:id id
-                                                                  :icon icon}
-                                                [sut/stepper-title {}
-                                                 title]])]]]))))]))
+          (r/as-element (helpers/wrap-component [example-stepper-custom-icons/example])))
 
 (defstory
  StepperFormContent
  "Stepper panels with form-like content.
   Panels can host any content, including forms or summaries."
+ {:source-code (embed-source "clojure-shadcn.stories.stepper.stepper-form-content")}
  []
- (r/as-element
-  [(fn []
-     (let [current-step (r/atom :details)]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-6 max-w-xl space-y-4"}
-           [sut/stepper {:current-step @current-step
-                         :on-step-change #(reset! current-step %)}
-            [sut/stepper-navigation {}
-             [sut/stepper-step {:id :details}
-              [sut/stepper-title {}
-               "Details"]]
-             [sut/stepper-step {:id :billing}
-              [sut/stepper-title {}
-               "Billing"]]
-             [sut/stepper-step {:id :confirm}
-              [sut/stepper-title {}
-               "Confirm"]]]
-            [sut/stepper-panel {:id :details}
-             [:div {:class "rounded-md border p-4 text-sm"}
-              "Account details form fields go here."]]
-            [sut/stepper-panel {:id :billing}
-             [:div {:class "rounded-md border p-4 text-sm"}
-              "Billing preferences and card form fields."]]
-            [sut/stepper-panel {:id :confirm}
-             [:div {:class "rounded-md border p-4 text-sm"}
-              "Review summary and confirm action."]]]]))))]))
+ (r/as-element (helpers/wrap-component [example-stepper-form-content/example])))
 
 
-(defstory Playground
-          "Interactive stepper playground."
-          {:args {:current-step "details"
-                  :variant "horizontal"
-                  :label-orientation "horizontal"
-                  :reverse-progress false}
-           :arg-types {:current-step {:name "Current step"
-                                      :control {:type "select"}
-                                      :options ["details" "billing" "confirm"]}
-                       :variant {:name "Variant"
-                                 :control {:type "select"}
-                                 :options ["horizontal" "vertical" "circle"]}
-                       :label-orientation {:name "Label orientation"
-                                           :control {:type "select"}
-                                           :options ["horizontal" "vertical"]}
-                       :reverse-progress {:name "Reverse progress"
-                                          :control {:type "boolean"}}}
-           :parameters {:playground {:description "Explore stepper current step, variant, label orientation and reverse progress with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["on-step-change" "class"]}}
-           :decode-args (fn [{:keys [current-step variant label-orientation reverse-progress]
-                              :as args}]
-                          (-> args
-                              (assoc :current-step (keyword current-step)
-                                     :variant (keyword variant)
-                                     :label-orientation (keyword label-orientation)
-                                     :reverse-progress? reverse-progress)
-                              (dissoc :reverse-progress)))}
-          [args]
-          (r/as-element
-           (r/with-let [current (r/atom (:current-step args))]
-                       (helpers/wrap-component
-                        [:div {:class "max-w-xl p-6"}
-                         [sut/stepper
-                          (assoc args :current-step @current :on-step-change #(reset! current %))
-                          [sut/stepper-navigation {}
-                           (for [{:keys [id title description]} (step-data)]
-                             ^{:key id}
-                             [sut/stepper-step {:id id}
-                              [sut/stepper-title {}
-                               title]
-                              [sut/stepper-description {}
-                               description]])]
-                          [sut/stepper-panel {:id :details}
-                           "Account details."]
-                          [sut/stepper-panel {:id :billing}
-                           "Billing preferences."]
-                          [sut/stepper-panel {:id :confirm}
-                           "Review and confirm."]]]))))
+(defstory
+ Playground
+ "Interactive stepper playground."
+ {:args {:current-step "details"
+         :variant "horizontal"
+         :label-orientation "horizontal"
+         :reverse-progress false}
+  :arg-types {:current-step {:name "Current step"
+                             :control {:type "select"}
+                             :options ["details" "billing" "confirm"]}
+              :variant {:name "Variant"
+                        :control {:type "select"}
+                        :options ["horizontal" "vertical" "circle"]}
+              :label-orientation {:name "Label orientation"
+                                  :control {:type "select"}
+                                  :options ["horizontal" "vertical"]}
+              :reverse-progress {:name "Reverse progress"
+                                 :control {:type "boolean"}}}
+  :parameters
+  {:playground
+   {:description
+    "Explore stepper current step, variant, label orientation and reverse progress with a live preview."}
+   :controls {:expanded false
+              :exclude ["on-step-change" "class"]}}
+  :decode-args (fn [{:keys [current-step variant label-orientation reverse-progress]
+                     :as args}]
+                 (-> args
+                     (assoc :current-step (keyword current-step)
+                            :variant (keyword variant)
+                            :label-orientation (keyword label-orientation)
+                            :reverse-progress? reverse-progress)
+                     (dissoc :reverse-progress)))
+  :source-code (embed-source "clojure-shadcn.stories.stepper.playground")}
+ [args]
+ (r/as-element (helpers/wrap-component [example-playground/example args])))
 \n

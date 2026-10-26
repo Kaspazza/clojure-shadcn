@@ -1,42 +1,25 @@
 (ns clojure-shadcn.stories.tooltip-stories
   "Storybook stories for the Radix-compatible Tooltip compound API."
   (:require
-   [clojure-shadcn.stories.helpers       :as helpers]
-   [clojure-shadcn.ui.components.button  :as button]
-   [clojure-shadcn.ui.components.tooltip :as sut]
-   [reagent.core                         :as r])
+   [clojure-shadcn.stories.helpers                              :as helpers]
+   [clojure-shadcn.stories.tooltip.controlled                   :as example-controlled]
+   [clojure-shadcn.stories.tooltip.delayed                      :as example-delayed]
+   [clojure-shadcn.stories.tooltip.disabled-trigger             :as example-disabled-trigger]
+   [clojure-shadcn.stories.tooltip.keyboard-kbd                 :as example-keyboard-kbd]
+   [clojure-shadcn.stories.tooltip.rtl                          :as example-rtl]
+   [clojure-shadcn.stories.tooltip.sides                        :as example-sides]
+   [clojure-shadcn.stories.tooltip.simple-tooltip-compatibility
+    :as example-simple-tooltip-compatibility]
+   [clojure-shadcn.stories.tooltip.tooltip-demo                 :as example-tooltip-demo]
+   [reagent.core                                                :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defdoc defstory]]))
 
 (def ^:export default
   #js {:title "Components/Tooltip"
        :parameters #js {:layout "padded"}})
 
-(defn- compound-tooltip
-  [{:keys [trigger content root content-props trigger-props portal arrow-props]}]
-  [sut/tooltip-root
-   root
-   [sut/tooltip-trigger (merge {:as-child true} trigger-props) trigger]
-   [sut/tooltip-portal
-    portal
-    [sut/tooltip-content
-     content-props
-     content
-     (when arrow-props [sut/tooltip-arrow arrow-props])]]])
 
-(defn- controlled-example
-  []
-  (r/with-let [open? (r/atom false)]
-              [:div {:class "flex items-center gap-4"}
-               [button/button {:variant :outline
-                               :on-click #(swap! open? not)}
-                (if @open? "Close tooltip" "Open tooltip")]
-               [compound-tooltip {:root {:open @open?
-                                         :on-open-change #(reset! open? %)}
-                                  :trigger (button/button {:variant :secondary}
-                                                          "Controlled trigger")
-                                  :content "State is owned by the story."}]
-               [:span {:class "text-sm text-muted-foreground"}
-                (if @open? "Open" "Closed")]]))
+
 
 (defdoc Installation
         "Install dependencies and copy the component code into your project."
@@ -123,107 +106,51 @@
 (defstory
  TooltipDemo
  "Basic compound tooltip with explicit Provider, Root, Trigger, Portal, Content, and Arrow."
+ {:source-code (embed-source "clojure-shadcn.stories.tooltip.tooltip-demo")}
  []
- (r/as-element (helpers/wrap-component
-                [sut/tooltip-provider {}
-                 [compound-tooltip {:trigger (button/button {:variant :outline} "Hover or focus")
-                                    :content "Add to library"
-                                    :arrow-props {}}]])))
+ (r/as-element (helpers/wrap-component [example-tooltip-demo/example])))
 
 (defstory KeyboardKbd
           "Keyboard-focusable triggers with shortcut hints rendered as KBD content."
+          {:source-code (embed-source "clojure-shadcn.stories.tooltip.keyboard-kbd")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [sut/tooltip-provider {}
-             [:div {:class "flex gap-4 p-6"}
-              (for [[label shortcut] [["Save" "⌘ S"] ["Search" "⌘ K"]]]
-                ^{:key label}
-                [compound-tooltip
-                 {:trigger (button/button {:variant :outline
-                                           :size :sm}
-                                          label)
-                  :content
-                  [:span {:class "flex items-center gap-2"}
-                   label
-                   [:kbd
-                    {:class
-                     "rounded border bg-muted px-1.5 font-mono text-[10px] text-muted-foreground"}
-                    shortcut]]}])]])))
+          (r/as-element (helpers/wrap-component [example-keyboard-kbd/example])))
 
 (defstory Delayed
           "Provider delay with a root-level instant override, demonstrating both timing scopes."
+          {:source-code (embed-source "clojure-shadcn.stories.tooltip.delayed")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [sut/tooltip-provider {:delay-duration 1200
-                                   :skip-delay-duration 300}
-             [:div {:class "flex gap-4 p-6"}
-              [compound-tooltip {:trigger (button/button {:variant :outline} "1.2 second delay")
-                                 :content "Uses the provider delay."}]
-              [compound-tooltip {:root {:delay-duration 0}
-                                 :trigger (button/button {:variant :outline} "Instant override")
-                                 :content "This root opens immediately."}]]])))
+          (r/as-element (helpers/wrap-component [example-delayed/example])))
 
 (defstory Sides
           "Content positioned on every supported side."
+          {:source-code (embed-source "clojure-shadcn.stories.tooltip.sides")}
           []
-          (r/as-element (helpers/wrap-component
-                         [sut/tooltip-provider {}
-                          [:div {:class "grid min-h-72 grid-cols-2 place-items-center gap-20 p-16"}
-                           (for [side [:top :right :bottom :left]]
-                             ^{:key side}
-                             [compound-tooltip {:trigger (button/button {:variant :outline}
-                                                                        (name side))
-                                                :content (str "Tooltip on the " (name side))
-                                                :content-props {:side side
-                                                                :side-offset 8}}])]])))
+          (r/as-element (helpers/wrap-component [example-sides/example])))
 
 (defstory
  DisabledTrigger
  "A focusable wrapper explains a disabled control because disabled buttons cannot reliably receive pointer or focus events."
+ {:source-code (embed-source "clojure-shadcn.stories.tooltip.disabled-trigger")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [sut/tooltip-provider {}
-    [compound-tooltip
-     {:trigger
-      [:span
-       {:tab-index 0
-        :aria-label "Why publishing is unavailable"
-        :class
-        "inline-flex rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"}
-       (button/button {:disabled true
-                       :class "pointer-events-none"}
-                      "Publish")]
-      :content "Complete all required fields before publishing."}]])))
+ (r/as-element (helpers/wrap-component [example-disabled-trigger/example])))
 
 (defstory Controlled
           "A controlled Root whose open state is shared with an external button and status label."
+          {:source-code (embed-source "clojure-shadcn.stories.tooltip.controlled")}
           []
-          (r/as-element (helpers/wrap-component [controlled-example])))
+          (r/as-element (helpers/wrap-component [example-controlled/example])))
 
 (defstory
  Rtl
  "Provider-level RTL direction with start alignment, Arabic trigger text, and localized content."
+ {:source-code (embed-source "clojure-shadcn.stories.tooltip.rtl")}
  []
- (r/as-element (helpers/wrap-component
-                [sut/tooltip-provider {:dir "rtl"}
-                 [:div {:class "p-12 text-right"
-                        :dir "rtl"}
-                  [compound-tooltip {:trigger (button/button {:variant :outline} "معلومات إضافية")
-                                     :content "تظهر هذه المعلومة عند التركيز أو المرور."
-                                     :content-props {:side :top
-                                                     :align :start}}]]])))
+ (r/as-element (helpers/wrap-component [example-rtl/example])))
 
 (defstory
  SimpleTooltipCompatibility
  "The convenience behavior now has the honest simple-tooltip name; tooltip remains its backwards-compatible alias."
+ {:source-code (embed-source "clojure-shadcn.stories.tooltip.simple-tooltip-compatibility")}
  []
- (r/as-element (helpers/wrap-component
-                [sut/tooltip-provider {}
-                 [sut/simple-tooltip {:trigger (button/button {:variant :outline} "Convenience API")
-                                      :trigger-as-child? true
-                                      :content "One map still composes all Radix parts."
-                                      :side :bottom
-                                      :arrow? true}]])))
+ (r/as-element (helpers/wrap-component [example-simple-tooltip-compatibility/example])))

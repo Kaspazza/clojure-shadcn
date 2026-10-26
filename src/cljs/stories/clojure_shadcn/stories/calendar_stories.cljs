@@ -1,9 +1,10 @@
 (ns clojure-shadcn.stories.calendar-stories
   (:require
-   ["date-fns/locale"                     :refer [arSA]]
-   [clojure-shadcn.stories.helpers        :as helpers]
-   [clojure-shadcn.ui.components.button   :as button]
-   [clojure-shadcn.ui.components.calendar :as sut]
+   [clojure-shadcn.stories.calendar.calendar-patterns :as calendar-patterns]
+   [clojure-shadcn.stories.calendar.date-range :as date-range]
+   [clojure-shadcn.stories.calendar.playground :as playground]
+   [clojure-shadcn.stories.calendar.single-date :as single-date]
+   [clojure-shadcn.stories.helpers :as helpers]
    [reagent.core                          :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
@@ -60,29 +61,23 @@
      [:p {:class "text-xs text-muted-foreground"}
       "This project uses react-day-picker 10.0.1, whose installed package exposes no Hijri calendar build or Hijri date adapter. date-fns 4.4.0 provides locale text but not Hijri calendar arithmetic, and no Hijri date dependency is installed. A truthful Hijri story therefore cannot be implemented with the existing dependencies; locale and RTL props only localize the Gregorian calendar."]]])))
 
-(defn- single-date-example
-  []
-  (r/with-let [selected (r/atom nil)]
-              [sut/calendar {:mode "single"
-                             :selected @selected
-                             :on-select #(reset! selected %)}]))
 
-(defstory SingleDate [] (r/as-element (helpers/wrap-component [single-date-example])))
+(defstory SingleDate
+          {:source-code (embed-source "clojure-shadcn.stories.calendar.single-date")}
+          []
+          (r/as-element (helpers/wrap-component [single-date/example])))
 
-(defn- date-range-example
-  []
-  (r/with-let [selected (r/atom nil)]
-              [sut/calendar {:mode "range"
-                             :number-of-months 2
-                             :selected @selected
-                             :on-select #(reset! selected %)}]))
 
-(defstory DateRange [] (r/as-element (helpers/wrap-component [date-range-example])))
+(defstory DateRange
+          {:source-code (embed-source "clojure-shadcn.stories.calendar.date-range")}
+          []
+          (r/as-element (helpers/wrap-component [date-range/example])))
 
 
 (defstory Playground
           "Interactive calendar playground."
-          {:args {:show-outside-days true
+          {:source-code (embed-source "clojure-shadcn.stories.calendar.playground")
+           :args {:show-outside-days true
                   :caption-layout "label"
                   :number-of-months 1}
            :arg-types {:show-outside-days {:name "Show outside days"
@@ -95,57 +90,14 @@
                                           :options [1 2]}}
            :parameters {:playground {:description "Explore calendar show outside days, caption layout and number of months with a live preview."}
                         :controls {:expanded false
-                                   :exclude ["selected" "on-select" "class" "class-names"]}}
-           :decode-args (fn [{:keys [caption-layout]
-                              :as args}]
-                          (update args :caption-layout keyword))}
+                                   :exclude ["selected" "on-select" "class" "class-names"]}}}
           [args]
-          (r/as-element (helpers/wrap-component [sut/calendar (assoc args :mode "single")])))
+          (r/as-element (helpers/wrap-component [playground/example args])))
 
-(defn- calendar-patterns-example
-  []
-  (r/with-let
-   [selected (r/atom (js/Date. 2026 2 12)) time (r/atom "09:00")]
-   [:div {:class "grid gap-8 lg:grid-cols-2"}
-    [:section {:class "space-y-3"}
-     [:h3 {:class "font-medium"}
-      "Presets and appointment time"]
-     [:div {:class "flex flex-wrap gap-2"}
-      [button/button {:variant :outline
-                      :size :sm
-                      :on-click #(reset! selected (js/Date.))}
-       "Today"]
-      [button/button {:variant :outline
-                      :size :sm
-                      :on-click #(reset! selected (js/Date. 2026 2 20))}
-       "March 20"]]
-     [sut/calendar {:mode "single"
-                    :selected @selected
-                    :on-select #(when % (reset! selected %))
-                    :disabled #js [(js/Date. 2026 2 14) (js/Date. 2026 2 18)]
-                    :show-week-number true}]
-     [:label {:class "grid gap-1 text-sm"}
-      "Time"
-      [:input {:type "time"
-               :value @time
-               :on-change #(reset! time (.. % -target -value))
-               :class "h-9 rounded-md border bg-background px-3"}]]
-     [:p {:class "text-sm text-muted-foreground"}
-      "Booked dates are disabled; time remains a separate native control."]]
-    [:section {:class "space-y-3"
-               :dir "rtl"}
-     [:h3 {:class "font-medium"}
-      "Arabic locale, RTL, fixed time zone"]
-     [sut/calendar {:mode "single"
-                    :locale arSA
-                    :dir "rtl"
-                    :time-zone "Asia/Riyadh"
-                    :show-week-number true}]
-     [:p {:class "text-sm text-muted-foreground"}
-      "Locale, direction, week numbers, and IANA time zone are forwarded to React DayPicker."]]]))
 
 (defstory
  CalendarPatterns
  "Presets, separate date/time controls, booked dates, week numbers, timezone, and RTL locale using React DayPicker props."
+ {:source-code (embed-source "clojure-shadcn.stories.calendar.calendar-patterns")}
  []
- (r/as-element (helpers/wrap-component [calendar-patterns-example])))
+ (r/as-element (helpers/wrap-component [calendar-patterns/example])))

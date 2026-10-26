@@ -1,8 +1,17 @@
 (ns clojure-shadcn.stories.navigation-menu-stories
   (:require
-   [clojure-shadcn.stories.helpers               :as helpers]
-   [clojure-shadcn.ui.components.navigation-menu :as sut]
-   [reagent.core                                 :as r])
+   [clojure-shadcn.stories.helpers                                          :as helpers]
+   [clojure-shadcn.stories.navigation-menu.navigation-menu-custom-link
+    :as navigation-menu-custom-link]
+   [clojure-shadcn.stories.navigation-menu.navigation-menu-demo             :as
+                                                                            navigation-menu-demo]
+   [clojure-shadcn.stories.navigation-menu.navigation-menu-indicator
+    :as navigation-menu-indicator]
+   [clojure-shadcn.stories.navigation-menu.navigation-menu-rtl              :as navigation-menu-rtl]
+   [clojure-shadcn.stories.navigation-menu.navigation-menu-without-viewport
+    :as navigation-menu-without-viewport]
+   [clojure-shadcn.stories.navigation-menu.playground                       :as playground]
+   [reagent.core                                                            :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -76,42 +85,10 @@
                "Merged after the default trigger classes; returns a class string."}]}]])))
 
 (defstory NavigationMenuDemo
+          {:source-code (embed-source
+                         "clojure-shadcn.stories.navigation-menu.navigation-menu-demo")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [sut/navigation-menu {}
-             [sut/navigation-menu-list {}
-              [sut/navigation-menu-item {}
-               [sut/navigation-menu-trigger {}
-                "Getting started"]
-               [sut/navigation-menu-content {}
-                [:ul {:class "grid w-[400px] gap-2 p-2"}
-                 [:li
-                  [sut/navigation-menu-link {:href "#"}
-                   [:div {:class "font-medium"}
-                    "Introduction"]
-                   [:p {:class "text-muted-foreground"}
-                    "Reusable data-oriented Reagent components."]]]
-                 [:li
-                  [sut/navigation-menu-link {:href "#"}
-                   [:div {:class "font-medium"}
-                    "Installation"]
-                   [:p {:class "text-muted-foreground"}
-                    "Add only the modules your application needs."]]]]]]
-              [sut/navigation-menu-item {}
-               [sut/navigation-menu-link {:href "#"
-                                          :class (sut/navigation-menu-trigger-style)}
-                "Documentation"]]
-              [sut/navigation-menu-item {}
-               [sut/navigation-menu-trigger {}
-                "Components"]
-               [sut/navigation-menu-content {}
-                [:ul {:class "grid w-[500px] grid-cols-2 gap-2 p-2"}
-                 (for [label ["Button" "Card" "Dialog" "Menu"]]
-                   ^{:key label}
-                   [:li
-                    [sut/navigation-menu-link {:href "#"}
-                     label]])]]]]])))
+          (r/as-element (helpers/wrap-component [navigation-menu-demo/example])))
 
 (defstory
  NavigationMenuCustomLink
@@ -120,20 +97,9 @@
   Radix primitive: @radix-ui/react-navigation-menu
 
   Use :as-child for router links or anchors that own navigation props."
+ {:source-code (embed-source "clojure-shadcn.stories.navigation-menu.navigation-menu-custom-link")}
  []
- (r/as-element (helpers/wrap-component [sut/navigation-menu {}
-                                        [sut/navigation-menu-list {}
-                                         [sut/navigation-menu-item {}
-                                          [sut/navigation-menu-link {:as-child true}
-                                           [:a {:href "#guides"
-                                                :class (sut/navigation-menu-trigger-style)
-                                                :data-router-link true}
-                                            "Guides"]]]
-                                         [sut/navigation-menu-item {}
-                                          [sut/navigation-menu-link
-                                           {:href "#api"
-                                            :class (sut/navigation-menu-trigger-style)}
-                                           "API reference"]]]])))
+ (r/as-element (helpers/wrap-component [navigation-menu-custom-link/example])))
 
 (defstory
  NavigationMenuIndicator
@@ -142,16 +108,9 @@
   Radix primitive: @radix-ui/react-navigation-menu
 
   Place one indicator under the list when the design needs a viewport pointer."
+ {:source-code (embed-source "clojure-shadcn.stories.navigation-menu.navigation-menu-indicator")}
  []
- (r/as-element (helpers/wrap-component [sut/navigation-menu {}
-                                        [sut/navigation-menu-list {}
-                                         [sut/navigation-menu-item {}
-                                          [sut/navigation-menu-trigger {}
-                                           "Resources"]
-                                          [sut/navigation-menu-content {}
-                                           [sut/navigation-menu-link {:href "#guides"}
-                                            "Guides"]]]
-                                         [sut/navigation-menu-indicator {}]]])))
+ (r/as-element (helpers/wrap-component [navigation-menu-indicator/example])))
 
 (defstory
  NavigationMenuRtl
@@ -160,56 +119,26 @@
   Radix primitive: @radix-ui/react-navigation-menu
 
   Pass :dir to Root so focus movement and content motion follow reading direction."
+ {:source-code (embed-source "clojure-shadcn.stories.navigation-menu.navigation-menu-rtl")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:dir "rtl"}
-    [sut/navigation-menu {:dir "rtl"}
-     [sut/navigation-menu-list {}
-      [sut/navigation-menu-item {}
-       [sut/navigation-menu-trigger {}
-        "البدء"]
-       [sut/navigation-menu-content {:dir "rtl"}
-        [:ul {:class "grid w-72 gap-2 p-2"}
-         [:li
-          [sut/navigation-menu-link {:href "#intro"}
-           "مقدمة"]]
-         [:li
-          [sut/navigation-menu-link {:href "#install"}
-           "التثبيت"]]]]]
-      [sut/navigation-menu-item {}
-       [sut/navigation-menu-link {:href "#docs"
-                                  :class (sut/navigation-menu-trigger-style)}
-        "التوثيق"]]]]])))
+ (r/as-element (helpers/wrap-component [navigation-menu-rtl/example])))
 
 (defstory NavigationMenuWithoutViewport
+          {:source-code (embed-source
+                         "clojure-shadcn.stories.navigation-menu.navigation-menu-without-viewport")}
           []
-          (r/as-element (helpers/wrap-component [sut/navigation-menu {:viewport false}
-                                                 [sut/navigation-menu-list {}
-                                                  [sut/navigation-menu-item {}
-                                                   [sut/navigation-menu-trigger {}
-                                                    "Direct panel"]
-                                                   [sut/navigation-menu-content {:class "w-64"}
-                                                    [sut/navigation-menu-link {:href "#"}
-                                                     "A non-viewport menu link"]]]]])))
+          (r/as-element (helpers/wrap-component [navigation-menu-without-viewport/example])))
 
 
 (defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
-          {:args {:viewport true}
+          {:source-code (embed-source "clojure-shadcn.stories.navigation-menu.playground")
+           :args {:viewport true}
            :arg-types {:viewport {:name "Viewport"
                                   :control {:type "boolean"}}}
-           :parameters {:playground {:description "Explore navigation menu viewport with a live preview."}
-                        :controls {:expanded false
-                                   :exclude
-                                   ["children" "value" "default-value" "on-value-change"]}}}
+           :parameters
+           {:playground {:description "Explore navigation menu viewport with a live preview."}
+            :controls {:expanded false
+                       :exclude ["children" "value" "default-value" "on-value-change"]}}}
           [args]
-          (r/as-element (helpers/wrap-component [sut/navigation-menu
-                                                 (select-keys args [:viewport])
-                                                 [sut/navigation-menu-list {}
-                                                  [sut/navigation-menu-item {}
-                                                   [sut/navigation-menu-trigger {}
-                                                    "Getting started"]
-                                                   [sut/navigation-menu-content {}
-                                                    [sut/navigation-menu-link {:href "#"}
-                                                     "Introduction"]]]]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))

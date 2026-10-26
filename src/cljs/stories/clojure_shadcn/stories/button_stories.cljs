@@ -1,11 +1,23 @@
 (ns clojure-shadcn.stories.button-stories
-  "Storybook stories for the Button component. Ported from mateuszmazurczak.portfolio.ui-components.button."
   (:require
-   ["lucide-react"                       :refer [ArrowLeft ArrowRight ArrowUpRight GitBranch]]
-   [clojure-shadcn.stories.helpers       :as helpers]
-   [clojure-shadcn.ui.components.button  :as button]
-   [clojure-shadcn.ui.components.spinner :as spinner]
-   [reagent.core                         :as r])
+   [clojure-shadcn.stories.button.button-as-child           :as button-as-child]
+   [clojure-shadcn.stories.button.button-destructive        :as button-destructive]
+   [clojure-shadcn.stories.button.button-ghost              :as button-ghost]
+   [clojure-shadcn.stories.button.button-icon               :as button-icon]
+   [clojure-shadcn.stories.button.button-icon-size-matrix   :as button-icon-size-matrix]
+   [clojure-shadcn.stories.button.button-link               :as button-link]
+   [clojure-shadcn.stories.button.button-loading            :as button-loading]
+   [clojure-shadcn.stories.button.button-loading-placements :as button-loading-placements]
+   [clojure-shadcn.stories.button.button-outline            :as button-outline]
+   [clojure-shadcn.stories.button.button-rounded            :as button-rounded]
+   [clojure-shadcn.stories.button.button-rtl                :as button-rtl]
+   [clojure-shadcn.stories.button.button-secondary          :as button-secondary]
+   [clojure-shadcn.stories.button.button-size               :as button-size]
+   [clojure-shadcn.stories.button.button-with-icon          :as button-with-icon]
+   [clojure-shadcn.stories.button.button-xs-size            :as button-xs-size]
+   [clojure-shadcn.stories.button.playground                :as playground]
+   [clojure-shadcn.stories.helpers                          :as helpers]
+   [reagent.core                                            :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -95,32 +107,32 @@
 
   Our CLJS wrapper uses keyword props (:variant, :size) instead of
   string variants. The default variant is :default."
- {:args {:label "Continue"
+ {:source-code (embed-source "clojure-shadcn.stories.button.playground")
+  :args {:label "Continue"
          :variant "default"
          :size "default"
          :disabled false}
   :arg-types {:label {:name "Label"
-                               :control {:type "text"}}
+                      :control {:type "text"}}
               :variant {:name "Variant"
-                                 :control {:type "select"}
+                        :control {:type "select"}
                         :options ["default" "destructive" "outline" "secondary" "ghost" "link"]}
               :size {:name "Size"
-                              :control {:type "select"}
+                     :control {:type "select"}
                      :options ["xs" "sm" "default" "lg" "icon" "icon-xs" "icon-sm" "icon-lg"]}
               :disabled {:name "Disabled"
-                                  :control {:type "boolean"}}}
-  :parameters {:playground {:description "Explore button label, variant, size and disabled with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["on-click" "as-child" "class"]}}
+                         :control {:type "boolean"}}}
+  :parameters {:playground {:description
+                            "Explore button label, variant, size and disabled with a live preview."}
+               :controls {:expanded false
+                          :exclude ["on-click" "as-child" "class"]}}
   :decode-args (fn [{:keys [variant size]
                      :as args}]
                  (cond-> args
                    variant (update :variant keyword)
                    size (update :size keyword)))}
  [args]
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        (button/button (select-keys args [:variant :size :disabled])
-                                                       (:label args))])))
+ (r/as-element (helpers/wrap-component [playground/example args])))
 
 (defstory
  ButtonDestructive
@@ -129,9 +141,9 @@
   Radix primitive: @radix-ui/react-slot
 
   Use :destructive for irreversible actions (delete, remove, etc.)."
+ {:source-code (embed-source "clojure-shadcn.stories.button.button-destructive")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        (button/button {:variant :destructive} "Delete project")])))
+ (r/as-element (helpers/wrap-component [button-destructive/example])))
 
 (defstory
  ButtonOutline
@@ -140,9 +152,9 @@
   Radix primitive: @radix-ui/react-slot
 
   Outline buttons are visually lighter but still prominent."
+ {:source-code (embed-source "clojure-shadcn.stories.button.button-outline")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        (button/button {:variant :outline} "View details")])))
+ (r/as-element (helpers/wrap-component [button-outline/example])))
 
 (defstory
  ButtonSecondary
@@ -151,9 +163,9 @@
   Radix primitive: @radix-ui/react-slot
 
   Use :secondary to de-emphasize a primary action."
+ {:source-code (embed-source "clojure-shadcn.stories.button.button-secondary")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        (button/button {:variant :secondary} "Secondary action")])))
+ (r/as-element (helpers/wrap-component [button-secondary/example])))
 
 (defstory
  ButtonGhost
@@ -162,9 +174,9 @@
   Radix primitive: @radix-ui/react-slot
 
   Ghost buttons are useful in dense toolbars."
+ {:source-code (embed-source "clojure-shadcn.stories.button.button-ghost")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        (button/button {:variant :ghost} "Dismiss")])))
+ (r/as-element (helpers/wrap-component [button-ghost/example])))
 
 (defstory
  ButtonLink
@@ -173,9 +185,9 @@
   Radix primitive: @radix-ui/react-slot
 
   Use :link when you want a textual action that still behaves like a button."
+ {:source-code (embed-source "clojure-shadcn.stories.button.button-link")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        (button/button {:variant :link} "Learn more")])))
+ (r/as-element (helpers/wrap-component [button-link/example])))
 
 (defstory
  ButtonIcon
@@ -185,12 +197,9 @@
 
   Use :size :icon for square icon buttons.
   Note: shadcn uses size=icon; our wrapper uses :icon."
+ {:source-code (embed-source "clojure-shadcn.stories.button.button-icon")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        (button/button {:variant :outline
-                                                        :size :icon
-                                                        :aria-label "Open"}
-                                                       [:> ArrowUpRight])])))
+ (r/as-element (helpers/wrap-component [button-icon/example])))
 
 (defstory
  ButtonWithIcon
@@ -199,12 +208,9 @@
   Radix primitive: @radix-ui/react-slot
 
   Icons should be placed before text for consistent alignment."
+ {:source-code (embed-source "clojure-shadcn.stories.button.button-with-icon")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        (button/button {:variant :outline
-                                                        :size :sm}
-                                                       [:> GitBranch]
-                                                       "New branch")])))
+ (r/as-element (helpers/wrap-component [button-with-icon/example])))
 
 (defstory
  ButtonLoading
@@ -213,13 +219,9 @@
   Radix primitive: @radix-ui/react-slot
 
   Use a spinner + disabled to communicate in-progress actions."
+ {:source-code (embed-source "clojure-shadcn.stories.button.button-loading")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        (button/button {:variant :outline
-                                                        :size :sm
-                                                        :disabled true}
-                                                       [spinner/spinner {:class "size-4"}]
-                                                       "Submitting")])))
+ (r/as-element (helpers/wrap-component [button-loading/example])))
 
 (defstory
  ButtonAsChild
@@ -228,11 +230,9 @@
   Radix primitive: @radix-ui/react-slot
 
   Use :as-child to render as an anchor while preserving button styles."
+ {:source-code (embed-source "clojure-shadcn.stories.button.button-as-child")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        (button/button {:as-child true}
-                                                       [:a {:href "#"}
-                                                        "Go to login"])])))
+ (r/as-element (helpers/wrap-component [button-as-child/example])))
 
 (defstory
  ButtonSize
@@ -241,22 +241,9 @@
   Radix primitive: @radix-ui/react-slot
 
   Our wrapper supports :xs, :sm, :default, :lg, and icon sizes (:icon, :icon-xs, :icon-sm, :icon-lg)."
+ {:source-code (embed-source "clojure-shadcn.stories.button.button-size")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 flex flex-wrap items-center gap-3"}
-                                        (button/button {:variant :outline
-                                                        :size :xs}
-                                                       "XS")
-                                        (button/button {:variant :outline
-                                                        :size :sm}
-                                                       "Small")
-                                        (button/button {:variant :outline} "Default")
-                                        (button/button {:variant :outline
-                                                        :size :lg}
-                                                       "Large")
-                                        (button/button {:variant :outline
-                                                        :size :icon
-                                                        :aria-label "Open in new tab"}
-                                                       [:> ArrowUpRight])])))
+ (r/as-element (helpers/wrap-component [button-size/example])))
 
 (defstory
  ButtonRounded
@@ -265,13 +252,9 @@
   Radix primitive: @radix-ui/react-slot
 
   Add a custom :class to achieve rounded-full styling."
+ {:source-code (embed-source "clojure-shadcn.stories.button.button-rounded")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        (button/button {:variant :outline
-                                                        :size :icon
-                                                        :class "rounded-full"
-                                                        :aria-label "Move up"}
-                                                       [:> ArrowUpRight])])))
+ (r/as-element (helpers/wrap-component [button-rounded/example])))
 
 (defstory
  ButtonXsSize
@@ -279,56 +262,25 @@
 
   Aligned with the current shadcn style profile.
   Use :size :xs for compact toolbars or inline actions."
+ {:source-code (embed-source "clojure-shadcn.stories.button.button-xs-size")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        (button/button {:size :xs
-                                                        :variant :secondary}
-                                                       "Compact action")])))
+ (r/as-element (helpers/wrap-component [button-xs-size/example])))
 
 (defstory ButtonIconSizeMatrix
           "All supported square icon sizes. Based on shadcn/ui Button — Icon Size."
+          {:source-code (embed-source "clojure-shadcn.stories.button.button-icon-size-matrix")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "flex items-center gap-3 p-6"}
-                                                 (for [[size label] [[:icon-xs "Extra-small"]
-                                                                     [:icon-sm "Small"]
-                                                                     [:icon "Default"]
-                                                                     [:icon-lg "Large"]]]
-                                                   ^{:key (name size)}
-                                                   (button/button {:variant :outline
-                                                                   :size size
-                                                                   :aria-label
-                                                                   (str label " external link")}
-                                                                  [:> ArrowUpRight]))])))
+          (r/as-element (helpers/wrap-component [button-icon-size-matrix/example])))
 
 (defstory
  ButtonLoadingPlacements
  "Leading, trailing, and icon-only loading states across supported variants. Based on shadcn/ui Button — Spinner."
+ {:source-code (embed-source "clojure-shadcn.stories.button.button-loading-placements")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "flex flex-wrap items-center gap-3 p-6"}
-    (button/button {:disabled true}
-                   [spinner/spinner {}]
-                   "Saving")
-    (button/button {:variant :secondary
-                    :disabled true}
-                   "Publishing"
-                   [spinner/spinner {}])
-    (button/button {:variant :outline
-                    :disabled true}
-                   [spinner/spinner {}]
-                   "Loading")
-    (button/button {:variant :ghost
-                    :size :icon
-                    :disabled true
-                    :aria-label "Loading"}
-                   [spinner/spinner {}])])))
+ (r/as-element (helpers/wrap-component [button-loading-placements/example])))
 
 (defstory ButtonRtl
           "Bidirectional icon placement. Based on shadcn/ui Button — RTL."
+          {:source-code (embed-source "clojure-shadcn.stories.button.button-rtl")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:dir "rtl"
-                                :class "flex items-center gap-3 p-6"}
-                          (button/button {} [:> ArrowRight] "التالي")
-                          (button/button {:variant :outline} "السابق" [:> ArrowLeft])])))
+          (r/as-element (helpers/wrap-component [button-rtl/example])))

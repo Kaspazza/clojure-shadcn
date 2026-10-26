@@ -1,10 +1,19 @@
 (ns clojure-shadcn.stories.code-block-stories
   "Storybook stories for the Code Block component. Ported from mateuszmazurczak.portfolio.ui-components.code_block."
   (:require
-   [clojure-shadcn.stories.helpers          :as helpers]
-   [clojure-shadcn.ui.components.button     :as button]
-   [clojure-shadcn.ui.components.code-block :as sut]
-   [reagent.core                            :as r])
+   [clojure-shadcn.stories.code-block.code-block-copy-action         :as code-block-copy-action]
+   [clojure-shadcn.stories.code-block.code-block-empty-and-fallback  :as
+                                                                     code-block-empty-and-fallback]
+   [clojure-shadcn.stories.code-block.code-block-invalid-language    :as
+                                                                     code-block-invalid-language]
+   [clojure-shadcn.stories.code-block.code-block-multiple-languages  :as
+                                                                     code-block-multiple-languages]
+   [clojure-shadcn.stories.code-block.code-block-rapid-async-changes :as
+                                                                     code-block-rapid-async-changes]
+   [clojure-shadcn.stories.code-block.code-block-single              :as code-block-single]
+   [clojure-shadcn.stories.code-block.code-block-with-header         :as code-block-with-header]
+   [clojure-shadcn.stories.helpers                                   :as helpers]
+   [reagent.core                                                     :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -107,119 +116,51 @@
                                :options ["github-light" "github-dark" "one-dark-pro"]}
                        :code {:name "Code"
                               :control {:type "text"}}}
-           :parameters {:playground {:description "Explore code block language, theme and code with a live preview."}
+           :parameters {:playground
+                        {:description
+                         "Explore code block language, theme and code with a live preview."}
                         :controls {:expanded false
-                                   :exclude ["class"]}}}
+                                   :exclude ["class"]}}
+           :source-code (embed-source "clojure-shadcn.stories.code-block.code-block-single")}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-xl"}
-                                                 [sut/code-block {}
-                                                  [sut/code-block-code
-                                                   (select-keys args [:language :theme :code])]]])))
+          (r/as-element (helpers/wrap-component [code-block-single/example args])))
 
 (defstory CodeBlockWithHeader
-          "Code block with filename header.
-  Use code-block-group to build headers or actions."
+          "Code block with filename header.\n  Use code-block-group to build headers or actions."
+          {:source-code (embed-source "clojure-shadcn.stories.code-block.code-block-with-header")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [:div {:class "p-6 max-w-xl"}
-             [sut/code-block {}
-              [sut/code-block-group {:class "px-4 py-2 border-b text-xs text-muted-foreground"}
-               [:span "handlers.cljs"]
-               (button/button {:size :sm
-                               :variant :ghost}
-                              "Copy")]
-              [sut/code-block-code
-               {:language "clojure"
-                :code "(defn handle-request [req]\n  {:status 200 :body \"OK\"})"}]]])))
+          (r/as-element (helpers/wrap-component [code-block-with-header/example])))
 
-(defstory CodeBlockMultipleLanguages
-          "Code blocks in multiple languages.
-  Shows how to switch language prop for highlighting."
-          []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "p-6 grid gap-4"}
-                          [sut/code-block {}
-                           [sut/code-block-code {:language "javascript"
-                                                 :code "const greet = (name) => `Hello ${name}`"}]]
-                          [sut/code-block {}
-                           [sut/code-block-code
-                            {:language "python"
-                             :code "def greet(name):\n    return f'Hello {name}'"}]]])))
+(defstory
+ CodeBlockMultipleLanguages
+ "Code blocks in multiple languages.\n  Shows how to switch language prop for highlighting."
+ {:source-code (embed-source "clojure-shadcn.stories.code-block.code-block-multiple-languages")}
+ []
+ (r/as-element (helpers/wrap-component [code-block-multiple-languages/example])))
 
 (defstory CodeBlockCopyAction
           "Functional copy action with visible success feedback."
+          {:source-code (embed-source "clojure-shadcn.stories.code-block.code-block-copy-action")}
           []
-          (r/as-element
-           [(fn []
-              (let [code "{:db/id :user/email\n :db/valueType :db.type/string}"
-                    copied? (r/atom false)]
-                (fn []
-                  (helpers/wrap-component
-                   [:div {:class "p-6 max-w-xl"}
-                    [sut/code-block {}
-                     [sut/code-block-group {:class
-                                            "px-4 py-2 border-b flex items-center justify-between"}
-                      [:span {:class "text-xs text-muted-foreground"}
-                       "schema.edn"]
-                      (button/button {:size :sm
-                                      :variant :ghost
-                                      :on-click #(-> (.writeText js/navigator.clipboard code)
-                                                     (.then (fn [] (reset! copied? true))))}
-                                     (if @copied? "Copied" "Copy"))]
-                     [sut/code-block-code {:language "clojure"
-                                           :code code}]]]))))]))
+          (r/as-element (helpers/wrap-component [code-block-copy-action/example])))
 
 (defstory CodeBlockEmptyAndFallback
           "Empty input and nil fallback remain stable while highlighting resolves."
+          {:source-code (embed-source
+                         "clojure-shadcn.stories.code-block.code-block-empty-and-fallback")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "grid gap-4 p-6"}
-                                                 [:div
-                                                  [:p {:class "mb-2 text-xs text-muted-foreground"}
-                                                   "Empty string"]
-                                                  [sut/code-block
-                                                   [sut/code-block-code {:code ""
-                                                                         :language "clojure"}]]]
-                                                 [:div
-                                                  [:p {:class "mb-2 text-xs text-muted-foreground"}
-                                                   "Nil code"]
-                                                  [sut/code-block
-                                                   [sut/code-block-code {:code nil
-                                                                         :language "clojure"}]]]])))
+          (r/as-element (helpers/wrap-component [code-block-empty-and-fallback/example])))
 
 (defstory CodeBlockInvalidLanguage
           "An invalid Shiki language demonstrates the component's raw-code fallback."
+          {:source-code (embed-source
+                         "clojure-shadcn.stories.code-block.code-block-invalid-language")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "p-6 max-w-xl"}
-                          [sut/code-block
-                           [sut/code-block-code
-                            {:language "not-a-real-language"
-                             :code "This remains readable when highlighting fails."}]]])))
+          (r/as-element (helpers/wrap-component [code-block-invalid-language/example])))
 
 (defstory CodeBlockRapidAsyncChanges
           "Rapidly replace code, language, and theme to exercise stale async-result protection."
+          {:source-code (embed-source
+                         "clojure-shadcn.stories.code-block.code-block-rapid-async-changes")}
           []
-          (r/as-element
-           [(fn []
-              (let [selection (r/atom 0)
-                    samples [{:language "clojure"
-                              :theme "github-light"
-                              :code "(def answer 42)"}
-                             {:language "javascript"
-                              :theme "github-dark"
-                              :code "const answer = 42"}
-                             {:language "python"
-                              :theme "github-light"
-                              :code "answer = 42"}]]
-                (fn []
-                  (let [sample (nth samples @selection)]
-                    (helpers/wrap-component
-                     [:div {:class "p-6 max-w-xl space-y-3"}
-                      (button/button {:on-click #(dotimes [i 9]
-                                                   (js/setTimeout (fn []
-                                                                    (reset! selection
-                                                                      (mod i (count samples))))
-                                                                  (* i 35)))}
-                                     "Run rapid changes")
-                      [sut/code-block [sut/code-block-code sample]]])))))]))
+          (r/as-element (helpers/wrap-component [code-block-rapid-async-changes/example])))

@@ -1,10 +1,15 @@
 (ns clojure-shadcn.stories.select-stories
   "Storybook stories for the Select component. Ported from mateuszmazurczak.portfolio.ui-components.select."
   (:require
-   [clojure-shadcn.stories.helpers      :as helpers]
-   [clojure-shadcn.ui.components.field  :as field]
-   [clojure-shadcn.ui.components.select :as sut]
-   [reagent.core                        :as r])
+   [clojure-shadcn.stories.helpers                      :as helpers]
+   [clojure-shadcn.stories.select.field-select          :as example-field-select]
+   [clojure-shadcn.stories.select.playground            :as example-playground]
+   [clojure-shadcn.stories.select.select-demo           :as example-select-demo]
+   [clojure-shadcn.stories.select.select-disabled-items :as example-select-disabled-items]
+   [clojure-shadcn.stories.select.select-invalid        :as example-select-invalid]
+   [clojure-shadcn.stories.select.select-patterns       :as example-select-patterns]
+   [clojure-shadcn.stories.select.select-scrollable     :as example-select-scrollable]
+   [reagent.core                                        :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -158,31 +163,9 @@
   Radix primitive: @radix-ui/react-select
 
   Our wrapper exposes select, trigger, content, and items as components."
+ {:source-code (embed-source "clojure-shadcn.stories.select.select-demo")}
  []
- (r/as-element
-  [(fn []
-     (let [value (r/atom "banana")]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-6"}
-           [sut/select {:value @value
-                        :on-value-change #(reset! value %)}
-            [sut/select-trigger {:class "w-[180px]"}
-             [sut/select-value {:placeholder "Select a fruit"}]]
-            [sut/select-content {}
-             [sut/select-group {}
-              [sut/select-label {}
-               "Fruits"]
-              [sut/select-item {:value "apple"}
-               "Apple"]
-              [sut/select-item {:value "banana"}
-               "Banana"]
-              [sut/select-item {:value "blueberry"}
-               "Blueberry"]
-              [sut/select-item {:value "grapes"}
-               "Grapes"]
-              [sut/select-item {:value "pineapple"}
-               "Pineapple"]]]]]))))]))
+ (r/as-element (helpers/wrap-component [example-select-demo/example])))
 
 (defstory
  SelectScrollable
@@ -191,48 +174,9 @@
   Radix primitive: @radix-ui/react-select
 
   Long lists automatically scroll within the content panel."
+ {:source-code (embed-source "clojure-shadcn.stories.select.select-scrollable")}
  []
- (r/as-element
-  [(fn []
-     (let [value (r/atom "cet")]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-6"}
-           [sut/select {:value @value
-                        :on-value-change #(reset! value %)}
-            [sut/select-trigger {:class "w-[280px]"}
-             [sut/select-value {:placeholder "Select a timezone"}]]
-            [sut/select-content {}
-             [sut/select-group {}
-              [sut/select-label {}
-               "North America"]
-              [sut/select-item {:value "est"}
-               "Eastern Standard Time (EST)"]
-              [sut/select-item {:value "cst"}
-               "Central Standard Time (CST)"]
-              [sut/select-item {:value "mst"}
-               "Mountain Standard Time (MST)"]
-              [sut/select-item {:value "pst"}
-               "Pacific Standard Time (PST)"]
-              [sut/select-item {:value "akst"}
-               "Alaska Standard Time (AKST)"]
-              [sut/select-item {:value "hst"}
-               "Hawaii Standard Time (HST)"]]
-             [sut/select-group {}
-              [sut/select-label {}
-               "Europe & Africa"]
-              [sut/select-item {:value "gmt"}
-               "Greenwich Mean Time (GMT)"]
-              [sut/select-item {:value "cet"}
-               "Central European Time (CET)"]
-              [sut/select-item {:value "eet"}
-               "Eastern European Time (EET)"]
-              [sut/select-item {:value "west"}
-               "Western European Summer Time (WEST)"]
-              [sut/select-item {:value "cat"}
-               "Central Africa Time (CAT)"]
-              [sut/select-item {:value "eat"}
-               "East Africa Time (EAT)"]]]]]))))]))
+ (r/as-element (helpers/wrap-component [example-select-scrollable/example])))
 
 (defstory
  FieldSelect
@@ -241,31 +185,9 @@
   Radix primitive: @radix-ui/react-select
 
   Useful for richer forms with descriptions."
+ {:source-code (embed-source "clojure-shadcn.stories.select.field-select")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6 max-w-md"}
-    [field/field {}
-     [field/field-label {}
-      "Department"]
-     [sut/select {:default-value "design"}
-      [sut/select-trigger {}
-       [sut/select-value {:placeholder "Choose department"}]]
-      [sut/select-content {}
-       [sut/select-item {:value "engineering"}
-        "Engineering"]
-       [sut/select-item {:value "design"}
-        "Design"]
-       [sut/select-item {:value "marketing"}
-        "Marketing"]
-       [sut/select-item {:value "sales"}
-        "Sales"]
-       [sut/select-item {:value "support"}
-        "Customer Support"]
-       [sut/select-item {:value "hr"}
-        "Human Resources"]]]
-     [field/field-description {}
-      "Select your department or area of work."]]])))
+ (r/as-element (helpers/wrap-component [example-field-select/example])))
 
 (defstory
  SelectInvalid
@@ -274,21 +196,9 @@
   Radix primitive: @radix-ui/react-select
 
   Pass :aria-invalid on select-trigger and show error copy beneath field."
+ {:source-code (embed-source "clojure-shadcn.stories.select.select-invalid")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-sm space-y-2"}
-                                        [field/field {}
-                                         [field/field-label {}
-                                          "Department"]
-                                         [sut/select {:default-value nil}
-                                          [sut/select-trigger {:aria-invalid true}
-                                           [sut/select-value {:placeholder "Choose department"}]]
-                                          [sut/select-content {}
-                                           [sut/select-item {:value "engineering"}
-                                            "Engineering"]
-                                           [sut/select-item {:value "design"}
-                                            "Design"]]]
-                                         [field/field-description {:class "text-destructive"}
-                                          "Department is required."]]])))
+ (r/as-element (helpers/wrap-component [example-select-invalid/example])))
 
 (defstory
  SelectDisabledItems
@@ -297,19 +207,9 @@
   Radix primitive: @radix-ui/react-select
 
   Use :disabled on items that are not selectable."
+ {:source-code (embed-source "clojure-shadcn.stories.select.select-disabled-items")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [sut/select {:default-value "pro"}
-                                         [sut/select-trigger {:class "w-[200px]"}
-                                          [sut/select-value {:placeholder "Choose a plan"}]]
-                                         [sut/select-content {}
-                                          [sut/select-item {:value "starter"}
-                                           "Starter"]
-                                          [sut/select-item {:value "pro"}
-                                           "Pro"]
-                                          [sut/select-item {:value "enterprise"
-                                                            :disabled true}
-                                           "Enterprise (contact us)"]]]])))
+ (r/as-element (helpers/wrap-component [example-select-disabled-items/example])))
 
 
 (defstory Playground
@@ -325,84 +225,21 @@
                        :trigger-size {:name "Trigger size"
                                       :control {:type "select"}
                                       :options ["default" "sm"]}}
-           :parameters {:playground {:description "Explore select initial value, disabled and trigger size with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["value" "on-value-change" "class"]}}}
+           :parameters
+           {:playground
+            {:description
+             "Explore select initial value, disabled and trigger size with a live preview."}
+            :controls {:expanded false
+                       :exclude ["value" "on-value-change" "class"]}}
+           :source-code (embed-source "clojure-shadcn.stories.select.playground")}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/select
-                                                  (select-keys args [:default-value :disabled])
-                                                  [sut/select-trigger {:class "w-[180px]"
-                                                                       :size (:trigger-size args)}
-                                                   [sut/select-value {:placeholder
-                                                                      "Select a fruit"}]]
-                                                  [sut/select-content {}
-                                                   [sut/select-item {:value "apple"}
-                                                    "Apple"]
-                                                   [sut/select-item {:value "banana"}
-                                                    "Banana"]
-                                                   [sut/select-item {:value "blueberry"}
-                                                    "Blueberry"]]]])))
+          (r/as-element (helpers/wrap-component [example-playground/example args])))
 
-(defn- grouped-select
-  [content-props trigger-props]
-  [sut/select {:default-value "paris"}
-   [sut/select-trigger
-    (merge {:class "w-56"} trigger-props)
-    [sut/select-value {:placeholder "Choose a city"}]]
-   [sut/select-content
-    content-props
-    [sut/select-group {}
-     [sut/select-label {}
-      "Europe"]
-     [sut/select-item {:value "paris"}
-      "Paris"]
-     [sut/select-item {:value "lisbon"}
-      "Lisbon"]]
-    [sut/select-separator {}]
-    [sut/select-group {}
-     [sut/select-label {}
-      "Asia"]
-     [sut/select-item {:value "tokyo"}
-      "Tokyo"]
-     [sut/select-item {:value "riyadh"}
-      "Riyadh"]]]])
+
 
 (defstory
  SelectPatterns
  "Content alignment, labeled groups and separator, canonical Field error composition, and RTL context."
+ {:source-code (embed-source "clojure-shadcn.stories.select.select-patterns")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "grid gap-8 md:grid-cols-2"}
-    [:section {:class "grid gap-3"}
-     [:p {:class "text-sm font-medium"}
-      "Start aligned"]
-     [grouped-select {:align "start"}
-      {}]
-     [:p {:class "text-sm font-medium"}
-      "End aligned"]
-     [grouped-select {:align "end"}
-      {}]]
-    [field/field {}
-     [field/field-label {:html-for "office"}
-      "Office"]
-     [sut/select {}
-      [sut/select-trigger {:id "office"
-                           :class "w-56"
-                           :aria-invalid true
-                           :aria-describedby "office-error"}
-       [sut/select-value {:placeholder "Choose an office"}]]
-      [sut/select-content {}
-       [sut/select-item {:value "remote"}
-        "Remote"]
-       [sut/select-item {:value "hq"}
-        "Headquarters"]]]
-     [field/field-error {:id "office-error"
-                         :errors [{:message "Choose an office."}]}]]
-    [:section {:dir "rtl"
-               :class "grid gap-2"}
-     [:label {:class "text-sm font-medium"}
-      "المدينة"]
-     [grouped-select {:align "start"}
-      {:aria-label "المدينة"}]]])))
+ (r/as-element (helpers/wrap-component [example-select-patterns/example])))

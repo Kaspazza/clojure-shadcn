@@ -1,22 +1,17 @@
 (ns clojure-shadcn.stories.dropdown-menu-stories
   "Storybook stories for the Dropdown Menu component. Ported from mateuszmazurczak.portfolio.ui-components.dropdown_menu."
   (:require
-   ["lucide-react"                             :refer [CircleUser
-                                                       CreditCard
-                                                       LogOut
-                                                       Mail
-                                                       MoreHorizontal
-                                                       Settings
-                                                       UserPlus]]
-   [clojure-shadcn.stories.helpers             :as helpers]
-   [clojure-shadcn.ui.components.button        :as button]
-   [clojure-shadcn.ui.components.dialog        :as dialog]
-   [clojure-shadcn.ui.components.dropdown-menu :as sut]
-   [clojure-shadcn.ui.components.field         :as field]
-   [clojure-shadcn.ui.components.input         :as input]
-   [clojure-shadcn.ui.components.label         :as label]
-   [clojure-shadcn.ui.components.textarea      :as textarea]
-   [reagent.core                               :as r])
+   [clojure-shadcn.stories.dropdown-menu.dropdown-menu-avatar       :as dropdown-menu-avatar]
+   [clojure-shadcn.stories.dropdown-menu.dropdown-menu-checkboxes   :as dropdown-menu-checkboxes]
+   [clojure-shadcn.stories.dropdown-menu.dropdown-menu-demo         :as dropdown-menu-demo]
+   [clojure-shadcn.stories.dropdown-menu.dropdown-menu-dialog       :as dropdown-menu-dialog]
+   [clojure-shadcn.stories.dropdown-menu.dropdown-menu-icons        :as dropdown-menu-icons]
+   [clojure-shadcn.stories.dropdown-menu.dropdown-menu-radio-group  :as dropdown-menu-radio-group]
+   [clojure-shadcn.stories.dropdown-menu.dropdown-menu-rtl          :as dropdown-menu-rtl]
+   [clojure-shadcn.stories.dropdown-menu.dropdown-menu-team-actions :as dropdown-menu-team-actions]
+   [clojure-shadcn.stories.dropdown-menu.playground                 :as playground]
+   [clojure-shadcn.stories.helpers                                  :as helpers]
+   [reagent.core                                                    :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -317,340 +312,59 @@
 
 (defstory
  DropdownMenuDemo
- "Dropdown menu with grouped items and submenu.
-
-  Radix primitive: @radix-ui/react-dropdown-menu
-
-  Use groups, separators, and submenus for structured menus."
+ "Dropdown menu with grouped items and submenu.\n\n  Radix primitive: @radix-ui/react-dropdown-menu\n\n  Use groups, separators, and submenus for structured menus."
+ {:source-code (embed-source "clojure-shadcn.stories.dropdown-menu.dropdown-menu-demo")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [:div {:class "p-6"}
-    [sut/dropdown-menu {}
-     [sut/dropdown-menu-trigger {:as-child true}
-      (button/button {:variant :outline} "Open")]
-     [sut/dropdown-menu-content {:class "w-56"
-                                 :align "start"}
-      [sut/dropdown-menu-label {}
-       "My Account"]
-      [sut/dropdown-menu-group {}
-       [sut/dropdown-menu-item {}
-        "Profile"
-        [sut/dropdown-menu-shortcut {}
-         "⇧⌘P"]]
-       [sut/dropdown-menu-item {}
-        "Billing"
-        [sut/dropdown-menu-shortcut {}
-         "⌘B"]]
-       [sut/dropdown-menu-item {}
-        "Settings"
-        [sut/dropdown-menu-shortcut {}
-         "⌘S"]]
-       [sut/dropdown-menu-item {}
-        "Keyboard shortcuts"
-        [sut/dropdown-menu-shortcut {}
-         "⌘K"]]]
-      [sut/dropdown-menu-separator {}]
-      [sut/dropdown-menu-group {}
-       [sut/dropdown-menu-item {}
-        "Team"]
-       [sut/dropdown-menu-sub {}
-        [sut/dropdown-menu-sub-trigger {}
-         "Invite users"]
-        [sut/dropdown-menu-sub-content {}
-         [sut/dropdown-menu-item {}
-          "Email"]
-         [sut/dropdown-menu-item {}
-          "Message"]
-         [sut/dropdown-menu-separator {}]
-         [sut/dropdown-menu-item {}
-          "More..."]]]
-       [sut/dropdown-menu-item {}
-        "New Team"
-        [sut/dropdown-menu-shortcut {}
-         "⌘+T"]]]
-      [sut/dropdown-menu-separator {}]
-      [sut/dropdown-menu-item {}
-       "GitHub"]
-      [sut/dropdown-menu-item {}
-       "Support"]
-      [sut/dropdown-menu-item {:disabled true}
-       "API"]
-      [sut/dropdown-menu-separator {}]
-      [sut/dropdown-menu-item {}
-       "Log out"
-       [sut/dropdown-menu-shortcut {}
-        "⇧⌘Q"]]]]])))
+ (r/as-element (helpers/wrap-component [dropdown-menu-demo/example])))
 
 (defstory
  DropdownMenuIcons
- "Ordinary dropdown actions with decorative Lucide icons.
-
-  Radix primitive: @radix-ui/react-dropdown-menu
-
-  Keep icon meaning paired with visible item text."
+ "Ordinary dropdown actions with decorative Lucide icons.\n\n  Radix primitive: @radix-ui/react-dropdown-menu\n\n  Keep icon meaning paired with visible item text."
+ {:source-code (embed-source "clojure-shadcn.stories.dropdown-menu.dropdown-menu-icons")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [sut/dropdown-menu {}
-    [sut/dropdown-menu-trigger {:as-child true}
-     [button/button {:variant :outline}
-      "Account actions"]]
-    [sut/dropdown-menu-content {:class "w-52"
-                                :align "start"}
-     [sut/dropdown-menu-item {}
-      [:> CircleUser {:aria-hidden true}]
-      "Profile"]
-     [sut/dropdown-menu-item {}
-      [:> CreditCard {:aria-hidden true}]
-      "Billing"]
-     [sut/dropdown-menu-item {}
-      [:> Settings {:aria-hidden true}]
-      "Settings"]
-     [sut/dropdown-menu-separator {}]
-     [sut/dropdown-menu-item {}
-      [:> LogOut {:aria-hidden true}]
-      "Sign out"]]])))
+ (r/as-element (helpers/wrap-component [dropdown-menu-icons/example])))
 
 (defstory
  DropdownMenuAvatar
- "Avatar-style trigger for an account menu.
-
-  Radix primitive: @radix-ui/react-dropdown-menu
-
-  Give icon-only or image triggers an accessible name."
+ "Avatar-style trigger for an account menu.\n\n  Radix primitive: @radix-ui/react-dropdown-menu\n\n  Give icon-only or image triggers an accessible name."
+ {:source-code (embed-source "clojure-shadcn.stories.dropdown-menu.dropdown-menu-avatar")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [sut/dropdown-menu {}
-    [sut/dropdown-menu-trigger {:as-child true}
-     [:button {:type "button"
-               :aria-label "Open user menu"
-               :class "flex size-10 items-center justify-center rounded-full border bg-muted"}
-      [:>
-       CircleUser
-       {:aria-hidden true
-        :class "size-6"}]]]
-    [sut/dropdown-menu-content {:class "w-56"
-                                :align "end"}
-     [sut/dropdown-menu-label {}
-      "Maya Chen"]
-     [sut/dropdown-menu-separator {}]
-     [sut/dropdown-menu-group {}
-      [sut/dropdown-menu-item {}
-       [:> Settings {:aria-hidden true}]
-       "Account settings"]
-      [sut/dropdown-menu-item {}
-       [:> LogOut {:aria-hidden true}]
-       "Sign out"]]]])))
+ (r/as-element (helpers/wrap-component [dropdown-menu-avatar/example])))
 
 (defstory
  DropdownMenuTeamActions
- "Focused composition with labels, groups, icons, shortcuts, and a submenu.
-
-  Radix primitive: @radix-ui/react-dropdown-menu
-
-  Use this structure for a dense but coherent team action menu."
+ "Focused composition with labels, groups, icons, shortcuts, and a submenu.\n\n  Radix primitive: @radix-ui/react-dropdown-menu\n\n  Use this structure for a dense but coherent team action menu."
+ {:source-code (embed-source "clojure-shadcn.stories.dropdown-menu.dropdown-menu-team-actions")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [sut/dropdown-menu {}
-    [sut/dropdown-menu-trigger {:as-child true}
-     [button/button {:variant :outline}
-      "Acme team"]]
-    [sut/dropdown-menu-content {:class "w-60"
-                                :align "start"}
-     [sut/dropdown-menu-label {}
-      "Team workspace"]
-     [sut/dropdown-menu-group {}
-      [sut/dropdown-menu-item {}
-       [:> UserPlus {:aria-hidden true}]
-       "Invite member"
-       [sut/dropdown-menu-shortcut {}
-        "⌘I"]]
-      [sut/dropdown-menu-item {}
-       [:> Mail {:aria-hidden true}]
-       "Email team"]]
-     [sut/dropdown-menu-separator {}]
-     [sut/dropdown-menu-sub {}
-      [sut/dropdown-menu-sub-trigger {}
-       [:> Settings {:aria-hidden true}]
-       "Preferences"]
-      [sut/dropdown-menu-sub-content {}
-       [sut/dropdown-menu-item {}
-        "Notifications"]
-       [sut/dropdown-menu-item {}
-        "Permissions"]]]]])))
+ (r/as-element (helpers/wrap-component [dropdown-menu-team-actions/example])))
 
 (defstory
  DropdownMenuRtl
- "Right-to-left Radix Dropdown Menu.
-
-  Radix primitive: @radix-ui/react-dropdown-menu
-
-  Set :dir on Root so keyboard and submenu direction follow the content."
+ "Right-to-left Radix Dropdown Menu.\n\n  Radix primitive: @radix-ui/react-dropdown-menu\n\n  Set :dir on Root so keyboard and submenu direction follow the content."
+ {:source-code (embed-source "clojure-shadcn.stories.dropdown-menu.dropdown-menu-rtl")}
  []
- (r/as-element
-  (helpers/wrap-component
-   [sut/dropdown-menu {:dir "rtl"}
-    [sut/dropdown-menu-trigger {:as-child true}
-     [button/button {:variant :outline}
-      "فتح القائمة"]]
-    [sut/dropdown-menu-content {:class "w-52"
-                                :align "start"
-                                :dir "rtl"}
-     [sut/dropdown-menu-label {}
-      "الحساب"]
-     [sut/dropdown-menu-group {}
-      [sut/dropdown-menu-item {}
-       [:> CircleUser {:aria-hidden true}]
-       "الملف الشخصي"]
-      [sut/dropdown-menu-item {}
-       [:> Settings {:aria-hidden true}]
-       "الإعدادات"]]
-     [sut/dropdown-menu-separator {}]
-     [sut/dropdown-menu-item {}
-      [:> LogOut {:aria-hidden true}]
-      "تسجيل الخروج"]]])))
+ (r/as-element (helpers/wrap-component [dropdown-menu-rtl/example])))
 
 (defstory
  DropdownMenuCheckboxes
- "Dropdown menu with checkbox items.
-
-  Radix primitive: @radix-ui/react-dropdown-menu
-
-  Checkbox items allow toggling view preferences."
+ "Dropdown menu with checkbox items.\n\n  Radix primitive: @radix-ui/react-dropdown-menu\n\n  Checkbox items allow toggling view preferences."
+ {:source-code (embed-source "clojure-shadcn.stories.dropdown-menu.dropdown-menu-checkboxes")}
  []
- (r/as-element
-  [(fn []
-     (let [show-status? (r/atom true)
-           show-activity? (r/atom false)
-           show-panel? (r/atom false)]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-6"}
-           [sut/dropdown-menu {}
-            [sut/dropdown-menu-trigger {:as-child true}
-             (button/button {:variant :outline} "Appearance")]
-            [sut/dropdown-menu-content {:class "w-56"}
-             [sut/dropdown-menu-label {}
-              "Appearance"]
-             [sut/dropdown-menu-separator {}]
-             [sut/dropdown-menu-checkbox-item {:checked @show-status?
-                                               :on-checked-change #(reset! show-status? %)}
-              "Status Bar"]
-             [sut/dropdown-menu-checkbox-item {:checked @show-activity?
-                                               :disabled true
-                                               :on-checked-change #(reset! show-activity? %)}
-              "Activity Bar"]
-             [sut/dropdown-menu-checkbox-item {:checked @show-panel?
-                                               :on-checked-change #(reset! show-panel? %)}
-              "Panel"]]]]))))]))
+ (r/as-element (helpers/wrap-component [dropdown-menu-checkboxes/example])))
 
 (defstory
  DropdownMenuRadioGroup
- "Dropdown menu with radio group selection.
-
-  Radix primitive: @radix-ui/react-dropdown-menu
-
-  Radio groups enforce a single selection within the menu."
+ "Dropdown menu with radio group selection.\n\n  Radix primitive: @radix-ui/react-dropdown-menu\n\n  Radio groups enforce a single selection within the menu."
+ {:source-code (embed-source "clojure-shadcn.stories.dropdown-menu.dropdown-menu-radio-group")}
  []
- (r/as-element
-  [(fn []
-     (let [position (r/atom "bottom")]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-6"}
-           [sut/dropdown-menu {}
-            [sut/dropdown-menu-trigger {:as-child true}
-             (button/button {:variant :outline} "Panel Position")]
-            [sut/dropdown-menu-content {:class "w-56"}
-             [sut/dropdown-menu-label {}
-              "Panel Position"]
-             [sut/dropdown-menu-separator {}]
-             [sut/dropdown-menu-radio-group {:value @position
-                                             :on-value-change #(reset! position %)}
-              [sut/dropdown-menu-radio-item {:value "top"}
-               "Top"]
-              [sut/dropdown-menu-radio-item {:value "bottom"}
-               "Bottom"]
-              [sut/dropdown-menu-radio-item {:value "right"}
-               "Right"]]]]]))))]))
+ (r/as-element (helpers/wrap-component [dropdown-menu-radio-group/example])))
 
 (defstory
  DropdownMenuDialog
- "Dropdown menu launching dialogs.
-
-  Radix primitives: @radix-ui/react-dropdown-menu, @radix-ui/react-dialog
-
-  Useful for contextual actions that open richer modals."
+ "Dropdown menu launching dialogs.\n\n  Radix primitives: @radix-ui/react-dropdown-menu, @radix-ui/react-dialog\n\n  Useful for contextual actions that open richer modals."
+ {:source-code (embed-source "clojure-shadcn.stories.dropdown-menu.dropdown-menu-dialog")}
  []
- (r/as-element
-  [(fn []
-     (let [show-new? (r/atom false)
-           show-share? (r/atom false)]
-       (fn []
-         (helpers/wrap-component
-          [:div {:class "p-6"}
-           [sut/dropdown-menu {:modal false}
-            [sut/dropdown-menu-trigger {:as-child true}
-             (button/button {:variant :outline
-                             :size :icon
-                             :aria-label "Open menu"}
-                            [:> MoreHorizontal])]
-            [sut/dropdown-menu-content {:class "w-40"
-                                        :align "end"}
-             [sut/dropdown-menu-label {}
-              "File Actions"]
-             [sut/dropdown-menu-group {}
-              [sut/dropdown-menu-item {:on-select #(reset! show-new? true)}
-               "New File..."]
-              [sut/dropdown-menu-item {:on-select #(reset! show-share? true)}
-               "Share..."]
-              [sut/dropdown-menu-item {:disabled true}
-               "Download"]]]]
-           [dialog/dialog {:open @show-new?
-                           :on-open-change #(reset! show-new? %)}
-            [dialog/dialog-content {:class "sm:max-w-[425px]"}
-             [dialog/dialog-header {}
-              [dialog/dialog-title {}
-               "Create New File"]
-              [dialog/dialog-description {}
-               "Provide a name for your new file. Click create when you're done."]]
-             [field/field-group {:class "pb-3"}
-              [field/field {}
-               [field/field-label {:html-for "filename"}
-                "File Name"]
-               [input/input {:id "filename"
-                             :placeholder "document.txt"}]]]
-             [dialog/dialog-footer {}
-              [dialog/dialog-close {:as-child true}
-               (button/button {:variant :outline} "Cancel")]
-              (button/button {:type "submit"} "Create")]]]
-           [dialog/dialog {:open @show-share?
-                           :on-open-change #(reset! show-share? %)}
-            [dialog/dialog-content {:class "sm:max-w-[425px]"}
-             [dialog/dialog-header {}
-              [dialog/dialog-title {}
-               "Share File"]
-              [dialog/dialog-description {}
-               "Anyone with the link will be able to view this file."]]
-             [field/field-group {:class "py-3"}
-              [field/field {}
-               [label/label {:html-for "share-email"}
-                "Email Address"]
-               [input/input {:id "share-email"
-                             :type "email"
-                             :placeholder "shadcn@vercel.com"}]]
-              [field/field {}
-               [field/field-label {:html-for "share-message"}
-                "Message (Optional)"]
-               [textarea/textarea {:id "share-message"
-                                   :placeholder "Check out this file"}]]]
-             [dialog/dialog-footer {}
-              [dialog/dialog-close {:as-child true}
-               (button/button {:variant :outline} "Cancel")]
-              (button/button {:type "submit"} "Send Invite")]]]]))))]))
+ (r/as-element (helpers/wrap-component [dropdown-menu-dialog/example])))
 
 
 (defstory Playground
@@ -658,18 +372,10 @@
           {:args {:modal true}
            :arg-types {:modal {:name "Modal"
                                :control {:type "boolean"}}}
-           :parameters {:playground {:description "Explore dropdown menu modal with a live preview."}
-                        :controls
-                        {:expanded false
-                                   :exclude ["children" "open" "default-open" "on-open-change" "on-select"]}}}
+           :parameters
+           {:playground {:description "Explore dropdown menu modal with a live preview."}
+            :controls {:expanded false
+                       :exclude ["children" "open" "default-open" "on-open-change" "on-select"]}}
+           :source-code (embed-source "clojure-shadcn.stories.dropdown-menu.playground")}
           [args]
-          (r/as-element (helpers/wrap-component [sut/dropdown-menu
-                                                 (select-keys args [:modal])
-                                                 [sut/dropdown-menu-trigger {:as-child true}
-                                                  [button/button {:variant :outline}
-                                                   "Open menu"]]
-                                                 [sut/dropdown-menu-content {}
-                                                  [sut/dropdown-menu-item {}
-                                                   "Profile"]
-                                                  [sut/dropdown-menu-item {}
-                                                   "Settings"]]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))

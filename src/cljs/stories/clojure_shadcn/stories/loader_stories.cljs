@@ -1,9 +1,13 @@
 (ns clojure-shadcn.stories.loader-stories
   "Storybook stories for the Loader component. Ported from mateuszmazurczak.portfolio.ui-components.loader."
   (:require
-   [clojure-shadcn.stories.helpers      :as helpers]
-   [clojure-shadcn.ui.components.loader :as sut]
-   [reagent.core                        :as r])
+   [clojure-shadcn.stories.helpers                        :as helpers]
+   [clojure-shadcn.stories.loader.loader-accessible-label :as loader-accessible-label]
+   [clojure-shadcn.stories.loader.loader-all-variants     :as loader-all-variants]
+   [clojure-shadcn.stories.loader.loader-sizes            :as loader-sizes]
+   [clojure-shadcn.stories.loader.loader-text-variants    :as loader-text-variants]
+   [clojure-shadcn.stories.loader.playground              :as playground]
+   [reagent.core                                          :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -201,80 +205,34 @@
         "[:div {:class \"flex items-center gap-3\"}\n [loader {:variant :circular :size :sm}]\n [loader {:variant :pulse-dot :size :md}]\n [loader {:variant :text-shimmer :text \"Generating\"}]]"]]]]])))
 
 (defstory LoaderAllVariants
+          {:source-code (embed-source "clojure-shadcn.stories.loader.loader-all-variants")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class
-                                                       "p-6 flex flex-wrap items-center gap-6"}
-                                                 [sut/loader {:variant :circular}]
-                                                 [sut/loader {:variant :classic}]
-                                                 [sut/loader {:variant :pulse}]
-                                                 [sut/loader {:variant :pulse-dot}]
-                                                 [sut/loader {:variant :dots}]
-                                                 [sut/loader {:variant :typing}]
-                                                 [sut/loader {:variant :wave}]
-                                                 [sut/loader {:variant :bars}]
-                                                 [sut/loader {:variant :terminal}]])))
+          (r/as-element (helpers/wrap-component [loader-all-variants/example])))
 
 (defstory LoaderSizes
           "Size-by-variant matrix. Every variant supports :sm, :md, and :lg."
+          {:source-code (embed-source "clojure-shadcn.stories.loader.loader-sizes")}
           []
-          (r/as-element
-           (helpers/wrap-component
-            [:div {:class "p-6 overflow-x-auto"}
-             (into [:div {:class "grid grid-cols-4 items-center gap-5 text-sm"}
-                    [:strong "Variant"]
-                    [:strong "Small"]
-                    [:strong "Medium"]
-                    [:strong "Large"]]
-                   (for [variant [:circular
-                                  :classic
-                                  :pulse
-                                  :pulse-dot
-                                  :dots
-                                  :typing
-                                  :wave
-                                  :bars
-                                  :terminal
-                                  :text-blink
-                                  :text-shimmer
-                                  :loading-dots]
-                         item (concat [[:span {:class "font-mono text-xs"}
-                                        (name variant)]]
-                                      (for [size [:sm :md :lg]]
-                                        [sut/loader {:variant variant
-                                                     :size size
-                                                     :text "Loading"
-                                                     :label
-                                                     (str (name variant) " " (name size))}]))]
-                     ^{:key (str variant "-" (hash item))} item))])))
+          (r/as-element (helpers/wrap-component [loader-sizes/example])))
 
 (defstory LoaderAccessibleLabel
           "Custom accessible labels describe the operation without adding duplicate visible text."
+          {:source-code (embed-source "clojure-shadcn.stories.loader.loader-accessible-label")}
           []
-          (r/as-element (helpers/wrap-component [:div {:class "p-6 flex items-center gap-3"}
-                                                 [sut/loader {:variant :circular
-                                                              :label "Saving account settings"}]
-                                                 [:span {:class "text-sm"}
-                                                  "Saving account settings"]])))
+          (r/as-element (helpers/wrap-component [loader-accessible-label/example])))
 
 (defstory
  LoaderTextVariants
  "Text-based loaders with custom text.
   Text variants: :text-blink, :text-shimmer, :loading-dots."
+ {:source-code (embed-source "clojure-shadcn.stories.loader.loader-text-variants")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 space-y-3"}
-                                        [sut/loader {:variant :text-blink
-                                                     :text "Thinking"
-                                                     :size :md}]
-                                        [sut/loader {:variant :text-shimmer
-                                                     :text "Processing"
-                                                     :size :md}]
-                                        [sut/loader {:variant :loading-dots
-                                                     :text "Loading"
-                                                     :size :md}]])))
+ (r/as-element (helpers/wrap-component [loader-text-variants/example])))
 
 (defstory Playground
           "Interactive unified loader playground."
-          {:args {:variant "circular"
+          {:source-code (embed-source "clojure-shadcn.stories.loader.playground")
+           :args {:variant "circular"
                   :size "md"
                   :text "Thinking"}
            :arg-types {:variant {:name "Variant"
@@ -296,7 +254,8 @@
                               :options ["sm" "md" "lg"]}
                        :text {:name "Text"
                               :control {:type "text"}}}
-           :parameters {:playground {:description "Explore loader variant, size and text with a live preview."}
+           :parameters {:playground {:description
+                                     "Explore loader variant, size and text with a live preview."}
                         :controls {:expanded false
                                    :exclude ["class"]}}
            :decode-args (fn [{:keys [variant size]
@@ -305,6 +264,4 @@
                             variant (update :variant keyword)
                             size (update :size keyword)))}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/loader
-                                                  (select-keys args [:variant :size :text])]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))

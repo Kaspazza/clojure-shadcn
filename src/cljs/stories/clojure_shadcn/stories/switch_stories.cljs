@@ -1,11 +1,17 @@
 (ns clojure-shadcn.stories.switch-stories
   "Storybook stories for the Switch component. Ported from mateuszmazurczak.portfolio.ui-components.switch."
   (:require
-   [clojure-shadcn.stories.helpers      :as helpers]
-   [clojure-shadcn.ui.components.field  :as field]
-   [clojure-shadcn.ui.components.label  :as label]
-   [clojure-shadcn.ui.components.switch :as sut]
-   [reagent.core                        :as r])
+   [clojure-shadcn.stories.helpers                      :as helpers]
+   [clojure-shadcn.stories.switch.field-switch          :as example-field-switch]
+   [clojure-shadcn.stories.switch.playground            :as example-playground]
+   [clojure-shadcn.stories.switch.switch-choice-cards   :as example-switch-choice-cards]
+   [clojure-shadcn.stories.switch.switch-controlled     :as example-switch-controlled]
+   [clojure-shadcn.stories.switch.switch-demo           :as example-switch-demo]
+   [clojure-shadcn.stories.switch.switch-disabled       :as example-switch-disabled]
+   [clojure-shadcn.stories.switch.switch-field-disabled :as example-switch-field-disabled]
+   [clojure-shadcn.stories.switch.switch-invalid        :as example-switch-invalid]
+   [clojure-shadcn.stories.switch.switch-rtl            :as example-switch-rtl]
+   [reagent.core                                        :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -96,12 +102,9 @@
   Radix primitive: @radix-ui/react-switch
 
   Useful for single boolean preferences."
+ {:source-code (embed-source "clojure-shadcn.stories.switch.switch-demo")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [:div {:class "flex items-center gap-2"}
-                                         [sut/switch {:id "airplane-mode"}]
-                                         [label/label {:html-for "airplane-mode"}
-                                          "Airplane Mode"]]])))
+ (r/as-element (helpers/wrap-component [example-switch-demo/example])))
 
 (defstory
  FieldSwitch
@@ -110,15 +113,9 @@
   Radix primitive: @radix-ui/react-switch
 
   Use for richer settings forms with copy."
+ {:source-code (embed-source "clojure-shadcn.stories.switch.field-switch")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 max-w-md"}
-                                        [field/field {:orientation :horizontal}
-                                         [field/field-content {}
-                                          [field/field-label {:html-for "mfa"}
-                                           "Multi-factor authentication"]
-                                          [field/field-description {}
-                                           "Enable MFA for additional account security."]]
-                                         [sut/switch {:id "mfa"}]]])))
+ (r/as-element (helpers/wrap-component [example-field-switch/example])))
 
 (defstory
  SwitchDisabled
@@ -127,14 +124,9 @@
   Radix primitive: @radix-ui/react-switch
 
   Use disabled state when the preference is locked."
+ {:source-code (embed-source "clojure-shadcn.stories.switch.switch-disabled")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                        [:div {:class "flex items-center gap-2"}
-                                         [sut/switch {:id "locked"
-                                                      :disabled true
-                                                      :checked true}]
-                                         [:span {:class "text-sm text-muted-foreground"}
-                                          "Locked setting"]]])))
+ (r/as-element (helpers/wrap-component [example-switch-disabled/example])))
 
 (defstory
  SwitchInvalid
@@ -143,16 +135,9 @@
   Radix primitive: @radix-ui/react-switch
 
   Use :aria-invalid true and helper text for validation feedback."
+ {:source-code (embed-source "clojure-shadcn.stories.switch.switch-invalid")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "p-6 space-y-2"}
-                                        [:div {:class "flex items-center gap-2"}
-                                         [sut/switch {:id "terms-invalid"
-                                                      :aria-invalid true
-                                                      :checked false}]
-                                         [label/label {:html-for "terms-invalid"}
-                                          "Accept terms"]]
-                                        [:p {:class "text-destructive text-sm"}
-                                         "You must accept terms to continue."]])))
+ (r/as-element (helpers/wrap-component [example-switch-invalid/example])))
 
 (defstory
  SwitchControlled
@@ -161,16 +146,9 @@
   Radix primitive: @radix-ui/react-switch
 
   Use controlled switches when state drives other UI."
+ {:source-code (embed-source "clojure-shadcn.stories.switch.switch-controlled")}
  []
- (r/as-element [(fn []
-                  (let [enabled? (r/atom true)]
-                    (fn []
-                      (helpers/wrap-component [:div {:class "p-6 flex items-center gap-3"}
-                                               [sut/switch {:checked @enabled?
-                                                            :on-checked-change #(reset! enabled?
-                                                                                  %)}]
-                                               [:span {:class "text-sm"}
-                                                (if @enabled? "Enabled" "Disabled")]]))))]))
+ (r/as-element (helpers/wrap-component [example-switch-controlled/example])))
 
 
 (defstory Playground
@@ -184,60 +162,31 @@
                                   :control {:type "boolean"}}
                        :required {:name "Required"
                                   :control {:type "boolean"}}}
-           :parameters {:playground {:description "Explore switch initially checked, disabled and required with a live preview."}
-                        :controls {:expanded false
-                                   :exclude ["checked" "on-checked-change" "class"]}}}
+           :parameters
+           {:playground
+            {:description
+             "Explore switch initially checked, disabled and required with a live preview."}
+            :controls {:expanded false
+                       :exclude ["checked" "on-checked-change" "class"]}}
+           :source-code (embed-source "clojure-shadcn.stories.switch.playground")}
           [args]
-          (r/as-element (helpers/wrap-component [:div {:class "p-6"}
-                                                 [sut/switch
-                                                  (assoc args :id "switch-playground")]])))
+          (r/as-element (helpers/wrap-component [example-playground/example args])))
 
 (defstory SwitchChoiceCards
           "Whole-card switch choices. Based on shadcn/ui Switch — Cards."
+          {:source-code (embed-source "clojure-shadcn.stories.switch.switch-choice-cards")}
           []
-          (r/as-element (helpers/wrap-component
-                         [:div {:class "max-w-md space-y-3 p-6"}
-                          (for [[id title description checked?]
-                                [["switch-wifi" "Wi-Fi" "Connect automatically." true]
-                                 ["switch-roaming" "Data roaming" "May incur charges." false]]]
-                            ^{:key id}
-                            [field/field-label {}
-                             [field/field {:orientation :horizontal}
-                              [field/field-content {}
-                               [field/field-title {}
-                                title]
-                               [field/field-description {}
-                                description]]
-                              [sut/switch {:id id
-                                           :default-checked checked?
-                                           :aria-label title}]]])])))
+          (r/as-element (helpers/wrap-component [example-switch-choice-cards/example])))
 
 (defstory
  SwitchFieldDisabled
  "Disabled Field row without unsupported size props. Based on shadcn/ui Switch — Field Disabled."
+ {:source-code (embed-source "clojure-shadcn.stories.switch.switch-field-disabled")}
  []
- (r/as-element (helpers/wrap-component [:div {:class "max-w-md p-6"}
-                                        [field/field {:orientation :horizontal
-                                                      :data-disabled true}
-                                         [field/field-content {}
-                                          [field/field-label {:html-for "switch-disabled-field"}
-                                           "Automatic updates"]
-                                          [field/field-description {}
-                                           "Required by your administrator."]]
-                                         [sut/switch {:id "switch-disabled-field"
-                                                      :disabled true
-                                                      :checked true}]]])))
+ (r/as-element (helpers/wrap-component [example-switch-field-disabled/example])))
 
 (defstory SwitchRtl
           "Right-to-left switch field. Based on shadcn/ui Switch — RTL."
+          {:source-code (embed-source "clojure-shadcn.stories.switch.switch-rtl")}
           []
-          (r/as-element (helpers/wrap-component [:div {:dir "rtl"
-                                                       :class "max-w-md p-6"}
-                                                 [field/field {:orientation :horizontal}
-                                                  [field/field-content {}
-                                                   [field/field-label {:html-for "switch-rtl"}
-                                                    "الوضع الداكن"]
-                                                   [field/field-description {}
-                                                    "استخدم مظهرًا داكنًا."]]
-                                                  [sut/switch {:id "switch-rtl"
-                                                               :dir "rtl"}]]])))
+          (r/as-element (helpers/wrap-component [example-switch-rtl/example])))

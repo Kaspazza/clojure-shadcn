@@ -1,9 +1,11 @@
 (ns clojure-shadcn.stories.menubar-stories
   (:require
-   ["lucide-react"                       :refer [Copy Mail Scissors Undo2]]
-   [clojure-shadcn.stories.helpers       :as helpers]
-   [clojure-shadcn.ui.components.menubar :as sut]
-   [reagent.core                         :as r])
+   [clojure-shadcn.stories.helpers                    :as helpers]
+   [clojure-shadcn.stories.menubar.menubar-demo       :as menubar-demo]
+   [clojure-shadcn.stories.menubar.menubar-rtl        :as menubar-rtl]
+   [clojure-shadcn.stories.menubar.menubar-selections :as menubar-selections]
+   [clojure-shadcn.stories.menubar.playground         :as playground]
+   [reagent.core                                      :as r])
   (:require-macros [clojure-shadcn.stories.macros :refer [embed-source defstory defdoc]]))
 
 (def ^:export default
@@ -98,84 +100,15 @@
                :default nil
                :description "Normalized, class-merged, and forwarded."}]}]])))
 
-(defstory
- MenubarDemo
- []
- (r/as-element
-  (helpers/wrap-component
-   [sut/menubar {}
-    [sut/menubar-menu {}
-     [sut/menubar-trigger {}
-      "File"]
-     [sut/menubar-content {}
-      [sut/menubar-item {}
-       "New tab"
-       [sut/menubar-shortcut {}
-        "⌘T"]]
-      [sut/menubar-item {}
-       "New window"
-       [sut/menubar-shortcut {}
-        "⌘N"]]
-      [sut/menubar-separator {}]
-      [sut/menubar-sub {}
-       [sut/menubar-sub-trigger {}
-        "Share"]
-       [sut/menubar-sub-content {}
-        [sut/menubar-item {}
-         "Email"]
-        [sut/menubar-item {}
-         "Messages"]]]
-      [sut/menubar-item {:variant :destructive}
-       "Close"]]]
-    [sut/menubar-menu {}
-     [sut/menubar-trigger {}
-      "Edit"]
-     [sut/menubar-content {}
-      [sut/menubar-item {}
-       [:> Undo2 {:aria-hidden true}]
-       "Undo"
-       [sut/menubar-shortcut {}
-        "⌘Z"]]
-      [sut/menubar-item {:inset true
-                         :disabled true}
-       "Redo"]
-      [sut/menubar-separator {}]
-      [sut/menubar-group {}
-       [sut/menubar-label {:inset true}
-        "Clipboard"]
-       [sut/menubar-item {}
-        [:> Scissors {:aria-hidden true}]
-        "Cut"]
-       [sut/menubar-item {}
-        [:> Copy {:aria-hidden true}]
-        "Copy"]]]]])))
+(defstory MenubarDemo
+          {:source-code (embed-source "clojure-shadcn.stories.menubar.menubar-demo")}
+          []
+          (r/as-element (helpers/wrap-component [menubar-demo/example])))
 
 (defstory MenubarSelections
+          {:source-code (embed-source "clojure-shadcn.stories.menubar.menubar-selections")}
           []
-          (r/as-element
-           [(fn []
-              (let [bookmarks? (r/atom true)
-                    profile (r/atom "benoit")]
-                (fn []
-                  (helpers/wrap-component
-                   [sut/menubar {}
-                    [sut/menubar-menu {}
-                     [sut/menubar-trigger {}
-                      "View"]
-                     [sut/menubar-content {}
-                      [sut/menubar-checkbox-item {:checked @bookmarks?
-                                                  :on-checked-change #(reset! bookmarks? %)}
-                       "Bookmarks bar"]]]
-                    [sut/menubar-menu {}
-                     [sut/menubar-trigger {}
-                      "Profiles"]
-                     [sut/menubar-content {}
-                      [sut/menubar-radio-group {:value @profile
-                                                :on-value-change #(reset! profile %)}
-                       [sut/menubar-radio-item {:value "andy"}
-                        "Andy"]
-                       [sut/menubar-radio-item {:value "benoit"}
-                        "Benoit"]]]]]))))]))
+          (r/as-element (helpers/wrap-component [menubar-selections/example])))
 
 
 (defstory
@@ -185,45 +118,19 @@
   Radix primitive: @radix-ui/react-menubar
 
   Set :dir on Root so arrow-key navigation follows reading direction."
+ {:source-code (embed-source "clojure-shadcn.stories.menubar.menubar-rtl")}
  []
- (r/as-element
-  [(fn []
-     (let [mail? (r/atom true)]
-       (fn []
-         (helpers/wrap-component
-          [sut/menubar {:dir "rtl"}
-           [sut/menubar-menu {}
-            [sut/menubar-trigger {}
-             "تحرير"]
-            [sut/menubar-content {:dir "rtl"}
-             [sut/menubar-group {}
-              [sut/menubar-item {}
-               [:> Copy {:aria-hidden true}]
-               "نسخ"]
-              [sut/menubar-item {:inset true}
-               "لصق"]]
-             [sut/menubar-separator {}]
-             [sut/menubar-checkbox-item {:checked @mail?
-                                         :on-checked-change #(reset! mail? %)}
-              [:> Mail {:aria-hidden true}]
-              "إشعارات البريد"]]]]))))]))
+ (r/as-element (helpers/wrap-component [menubar-rtl/example])))
 
 (defstory Playground
           "Controlled Storybook playground using only safe scalar component props."
-          {:args {:class ""}
+          {:source-code (embed-source "clojure-shadcn.stories.menubar.playground")
+           :args {:class ""}
            :arg-types {:class {:name "CSS classes"
                                :control {:type "text"}}}
-           :parameters {:playground {:description "Explore menubar css classes with a live preview."}
+           :parameters {:playground {:description
+                                     "Explore menubar css classes with a live preview."}
                         :controls {:expanded false
                                    :exclude ["children" "on-value-change" "on-checked-change"]}}}
           [args]
-          (r/as-element (helpers/wrap-component [sut/menubar
-                                                 (select-keys args [:class])
-                                                 [sut/menubar-menu {}
-                                                  [sut/menubar-trigger {}
-                                                   "File"]
-                                                  [sut/menubar-content {}
-                                                   [sut/menubar-item {}
-                                                    "New tab"]
-                                                   [sut/menubar-item {}
-                                                    "Close"]]]])))
+          (r/as-element (helpers/wrap-component [playground/example args])))
