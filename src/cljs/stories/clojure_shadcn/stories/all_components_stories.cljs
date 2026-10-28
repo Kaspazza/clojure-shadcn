@@ -110,7 +110,8 @@
    {:name "Calendar"
     :preview calendar/SingleDate}
    {:name "Card"
-    :preview card/Playground}
+    :preview card/Playground
+    :preview-class "p-6"}
    {:name "Carousel"
     :preview carousel/CarouselDemo}
    {:name "Chart"
@@ -148,7 +149,8 @@
    {:name "Field"
     :preview field/FieldWithInput}
    {:name "Form"
-    :preview form/Validation}
+    :preview form/Validation
+    :preview-class "p-6"}
    {:name "Hover Card"
     :preview hover-card/HoverCardBasic}
    {:name "Input"
@@ -156,11 +158,14 @@
    {:name "Input Group"
     :preview input-group/WithAddon}
    {:name "Input OTP"
-    :preview input-otp/SixDigits}
+    :preview input-otp/SixDigits
+    :preview-class "p-6"}
    {:name "Item"
-    :preview item/ItemVariants}
+    :preview item/ItemVariants
+    :preview-class "p-6"}
    {:name "Kbd"
-    :preview kbd/Playground}
+    :preview kbd/Playground
+    :preview-class "p-6"}
    {:name "Label"
     :preview label/Playground}
    {:name "Loader"

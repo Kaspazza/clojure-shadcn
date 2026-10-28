@@ -10,7 +10,7 @@
    (fn []
      (let [methods (form/use-form {:default-values {:email ""}})]
        [form/form {:methods methods}
-        [:form {:class "w-80 space-y-4"
+        [:form {:class "w-full min-w-0 max-w-80 space-y-4"
                 :no-validate true
                 :on-submit
                 (form/handle-submit methods (fn* [%1] (js/alert (str "Submitted " (:email %1)))))}
@@ -30,7 +30,7 @@
                         (merge field
                                {:type "email"
                                 :placeholder "you@example.com"})]]
-                      [:f> form/form-description {} "We only use this for account messages."]
+                      [:f> form/form-description {} "Leave this empty and submit to see a validation error."]
                       [:f> form/form-message {}]])}]
          [button/button {:type "submit"}
           "Submit"]]]))])
