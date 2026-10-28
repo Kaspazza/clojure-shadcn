@@ -93,14 +93,15 @@
          [card/card-description {}
           "How can I help you today?"]
          [card/card-action {}
-          [tooltip/tooltip {:trigger (r/as-element [button/button {:variant :outline
+          [tooltip/tooltip-provider {}
+           [tooltip/tooltip {:trigger (r/as-element [button/button {:variant :outline
                                                                    :size :icon
                                                                    :aria-label "Reset conversation"
                                                                    :on-click reset-conversation!
                                                                    :disabled @busy?}
                                                     [:> RotateCwIcon]])
                             :content "Reset"
-                            :trigger-as-child? true}]]]
+                            :trigger-as-child? true}]]]]
         [card/card-content {:class "flex-1 overflow-hidden p-0"}
          (if (empty? @messages)
            [empty/empty {:class "h-full border-0"}
